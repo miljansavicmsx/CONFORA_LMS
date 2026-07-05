@@ -1,0 +1,30 @@
+{
+  "audit": {
+    "label": "audit:f4-frontend-api",
+    "pass": true,
+    "exitCode": 0,
+    "stdout": "\n> confora@0.0.0 audit:f4-frontend-api\n> node scripts/ops/audit-f4-frontend-api-usage.mjs\n\nF4-8f Legacy API Usage Audit Gate\nTimestamp: 2026-07-05T07-56-02\nVerdict: GO\nRoots scanned: frontend-app, apps-web, apps-admin, packages\nSkipped roots: (none)\n\nTotal hits (incl. tests): 89\nProduction API hits: 26\nFallback-only hits: 12\nCanonical production hits: 11\nLegacy production hits: 6\nF4 FastAPI production hits: 0\nBlocked production hits: 0\nLegacy mutation production hits: 0\nExport bypass violations: 0\nUnknown production hits: 9\nEnv var hits: 7\nUndocumented mutations (non-F4 allowlist): 0\nMissing required canonical: 0\nEndpoint registry issues: 0\nF4 client auth/data issues: 0\nGate failures: 0\n\nPASS: all F4-8f gate checks satisfied.\n\nEvidence: docs/evidence/f4-8f-legacy-api-usage-audit/2026-07-05T07-56-02\n\nGO: F4-8f Legacy API Usage Audit Gate passed.\n",
+    "stderr": ""
+  },
+  "smokeTest": {
+    "label": "ops:f4-9-smoke-test",
+    "pass": true,
+    "exitCode": 0,
+    "stdout": "\n> confora@0.0.0 ops:f4-9-smoke-test\n> node --test scripts/ops/test-f4-9-smoke-helpers.mjs\n\n▶ f4-9-smoke-helpers\n  ✔ builds contact and report paths (4.2319ms)\n  ✔ classifies HTTP status helpers (0.5538ms)\n  ✔ detects forbidden F4 FastAPI production routes (1.1997ms)\n  ✔ evaluates public contact redaction (1.2603ms)\n  ✔ evaluates report and audit redaction (1.5536ms)\n  ✔ evaluates CSV formula injection protection (0.8632ms)\n  ✔ counts audit rows and summarizes smoke results (0.9284ms)\n  ✔ evaluates F4 side-effect invariants with allowed contact delta (0.8441ms)\n  ✔ parses Content-Disposition filename (0.6893ms)\n  ✔ defines legacy blocked paths (0.6536ms)\n✔ f4-9-smoke-helpers (20.2168ms)\nℹ tests 10\nℹ suites 1\nℹ pass 10\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 296.1257\n",
+    "stderr": ""
+  },
+  "f5_5": {
+    "label": "ops:f5-5-security-gdpr-audit",
+    "pass": true,
+    "exitCode": 0,
+    "stdout": "\n> confora@0.0.0 ops:f5-5-security-gdpr-audit\n> node scripts/ops/run-f5-5-security-gdpr-audit-hardening.mjs\n\nF5-5 evidence: C:\\Users\\milja\\Desktop\\CONFORA_LMS\\docs\\evidence\\f5-pilot-readiness\\2026-07-05T09-56-07-f5-5-security-gdpr-audit-hardening\nVerdict: F5_5_PARTIAL_RESIDUAL_SECURITY_PRIVACY_AUDIT_GAPS\nChecks: 18/18\nRisks: H=1 M=4 L=3\n",
+    "stderr": "(node:652) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.\n(Use `node --trace-deprecation ...` to show where the warning was created)\n"
+  },
+  "vitest": {
+    "label": "admin-reports-api vitest",
+    "pass": true,
+    "exitCode": 0,
+    "stdout": "\n RUN  v3.2.4 C:/Users/milja/Desktop/CONFORA_LMS/frontend-app\n\n ✓ src/lib/__tests__/admin-reports-api.test.ts (7 tests) 120ms\n\n Test Files  1 passed (1)\n      Tests  7 passed (7)\n   Start at  09:56:22\n   Duration  8.13s (transform 1.11s, setup 2.12s, collect 161ms, tests 120ms, environment 3.41s, prepare 1.37s)\n\n",
+    "stderr": ""
+  }
+}
