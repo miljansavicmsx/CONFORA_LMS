@@ -1,0 +1,33 @@
+{
+  "dbExternalUserId": "c5100000-0000-4000-8000-000000000098",
+  "externalUserNoBypass": {
+    "loginOk": true,
+    "mfaVerified": false,
+    "amr": []
+  },
+  "externalUserStaffRoute": {
+    "path": "/v1/staff/reports/overview",
+    "status": 403,
+    "deniedForMfa": true,
+    "message": "MFA required: configure TOTP in Keycloak and complete OTP step (amr must include otp/totp)."
+  },
+  "smokeStaffBypass": {
+    "loginOk": true,
+    "mfaVerified": true
+  },
+  "smokeStaffRoute": {
+    "status": 200,
+    "ok": true
+  },
+  "learnerLogin": {
+    "ok": true
+  },
+  "publicVerify": {
+    "status": 200,
+    "noAuth": true
+  },
+  "mfaUserWithTotp": {
+    "status": "PARTIAL",
+    "note": "TOTP grant or amr otp not confirmed — Keycloak direct grant limitation"
+  }
+}

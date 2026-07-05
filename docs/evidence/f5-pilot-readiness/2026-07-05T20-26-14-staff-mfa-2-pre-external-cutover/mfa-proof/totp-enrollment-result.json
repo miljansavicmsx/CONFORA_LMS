@@ -1,0 +1,11 @@
+{
+  "partialImportOk": true,
+  "partialImportStatus": 200,
+  "bodyPreview": "{\"overwritten\":1,\"added\":0,\"skipped\":0,\"results\":[{\"action\":\"OVERWRITTEN\",\"resourceType\":\"USER\",\"resourceName\":\"pilot.mfa.staff@confora.test\",\"id\":\"0760f23b-212d-47b0-95df-f090f4e67c9a\"}]}",
+  "passwordOnlyAfterEnrollment": {
+    "status": 401,
+    "blocked": true
+  },
+  "totpGrantOk": false,
+  "amrIncludesOtp": false
+}

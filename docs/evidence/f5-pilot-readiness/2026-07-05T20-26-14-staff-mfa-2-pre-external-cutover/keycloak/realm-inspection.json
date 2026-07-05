@@ -1,0 +1,74 @@
+{
+  "otpPolicy": {
+    "type": "totp",
+    "digits": 6,
+    "period": 30
+  },
+  "browserFlowOtp": [
+    {
+      "id": "d0f4b448-333a-4d16-8d1f-067c41ab450c",
+      "requirement": "CONDITIONAL",
+      "displayName": "Browser - Conditional OTP",
+      "description": "Flow to determine if the OTP is required for the authentication",
+      "requirementChoices": [
+        "REQUIRED",
+        "ALTERNATIVE",
+        "DISABLED",
+        "CONDITIONAL"
+      ],
+      "configurable": false,
+      "authenticationFlow": true,
+      "flowId": "ec2f3f23-41af-4a26-bc0c-b9188fa99ac7",
+      "level": 1,
+      "index": 1,
+      "priority": 20
+    },
+    {
+      "id": "e3d6ccdf-be12-4514-a513-88a704a3e75a",
+      "requirement": "REQUIRED",
+      "displayName": "OTP Form",
+      "requirementChoices": [
+        "REQUIRED",
+        "ALTERNATIVE",
+        "DISABLED"
+      ],
+      "configurable": false,
+      "providerId": "auth-otp-form",
+      "level": 2,
+      "index": 1,
+      "priority": 20
+    }
+  ],
+  "users": {
+    "pilot.staff@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": "true"
+    },
+    "pilot.director@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": "true"
+    },
+    "pilot.mfa.staff@confora.test": {
+      "exists": true,
+      "hasOtp": true,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null
+    },
+    "pilot.staff.mfa.external@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null
+    },
+    "pilot.learner@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null
+    }
+  }
+}
