@@ -73,7 +73,8 @@
     "ops:s17-public-verify-browser": "node scripts/ops/run-s17-public-verify-browser.mjs",
     "ops:staff-mfa-2-pre-external-cutover": "node scripts/ops/run-staff-mfa-2-pre-external-cutover.mjs",
     "ops:dpo-legal-1-external-pilot-review-package": "node scripts/ops/run-dpo-legal-1-external-pilot-review-package.mjs",
-    "ops:dpo-legal-2-decision-session": "node scripts/ops/run-dpo-legal-2-decision-session.mjs"
+    "ops:dpo-legal-2-decision-session": "node scripts/ops/run-dpo-legal-2-decision-session.mjs",
+    "ops:admin-gov-ux-polish-1": "node scripts/ops/run-admin-gov-ux-polish-1.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,cjs,js,json,md,yml,yaml}": [
