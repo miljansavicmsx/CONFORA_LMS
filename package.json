@@ -72,7 +72,8 @@
     "ops:f5-7-recheck-after-ca-h01": "node scripts/ops/run-f5-7-recheck-after-ca-h01.mjs",
     "ops:s17-public-verify-browser": "node scripts/ops/run-s17-public-verify-browser.mjs",
     "ops:staff-mfa-2-pre-external-cutover": "node scripts/ops/run-staff-mfa-2-pre-external-cutover.mjs",
-    "ops:dpo-legal-1-external-pilot-review-package": "node scripts/ops/run-dpo-legal-1-external-pilot-review-package.mjs"
+    "ops:dpo-legal-1-external-pilot-review-package": "node scripts/ops/run-dpo-legal-1-external-pilot-review-package.mjs",
+    "ops:dpo-legal-2-decision-session": "node scripts/ops/run-dpo-legal-2-decision-session.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,cjs,js,json,md,yml,yaml}": [
