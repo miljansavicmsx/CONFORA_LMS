@@ -1,0 +1,28 @@
+{
+  "stack": {
+    "pg": true,
+    "kc": true,
+    "api": true,
+    "fe": true
+  },
+  "stackOk": true,
+  "kcReachable": true,
+  "postgresContainer": "docker-postgres-1",
+  "missingPilotEnv": [],
+  "loginProbe": {
+    "status": "PASS",
+    "ok": true
+  },
+  "meProbe": {
+    "ok": true,
+    "hasEmail": true,
+    "tenantPresent": true,
+    "staffRoleDenied": true
+  },
+  "rbacProbes": {
+    "staffReportsExport": 403,
+    "staffIdentityReview": 403,
+    "learnerDeniedExport": true
+  },
+  "verifyHashPresent": true
+}
