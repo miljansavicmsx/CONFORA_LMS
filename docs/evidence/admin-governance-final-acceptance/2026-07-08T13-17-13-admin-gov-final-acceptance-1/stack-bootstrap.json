@@ -1,0 +1,12 @@
+{
+  "dockerComposeAttempted": false,
+  "stack": {
+    "pg": true,
+    "kc": true,
+    "api": true,
+    "fe": true
+  },
+  "apiHealth": true,
+  "stackOk": true,
+  "note": "Stack reachable for acceptance"
+}

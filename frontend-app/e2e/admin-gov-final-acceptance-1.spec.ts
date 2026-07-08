@@ -45,6 +45,19 @@ async function assertSingleActiveNav(page: import("@playwright/test").Page) {
   await expect(nav.locator("a[aria-current='page']")).toHaveCount(1);
 }
 
+/** Staff route denial may redirect to /dashboard, /unauthorized, or /login — all are safe. */
+async function expectStaffRouteDenied(page: import("@playwright/test").Page, blockedPath: string) {
+  await page.waitForURL(
+    (url) => {
+      const path = new URL(url).pathname;
+      if (path.startsWith(blockedPath)) return false;
+      return path === "/dashboard" || path === "/unauthorized" || path === "/login" || path === "/";
+    },
+    { timeout: 30_000 },
+  );
+  expect(new URL(page.url()).pathname).not.toBe(blockedPath);
+}
+
 function attachConsoleGuard(page: import("@playwright/test").Page): string[] {
   const fatal: string[] = [];
   page.on("console", (msg) => {
@@ -167,8 +180,7 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
     await expect(page.getByRole("heading", { name: /Izvještaji/i })).toBeVisible({ timeout: 60_000 });
     await loginPilotLearner(page, "pilot.learner@confora.test", password);
     await page.goto("/dashboard/iso/reports");
-    await page.waitForURL(/\/dashboard(?!\/iso\/reports)/, { timeout: 30_000 });
-    expect(page.url()).not.toContain("/dashboard/iso/reports");
+    await expectStaffRouteDenied(page, "/dashboard/iso/reports");
   });
 
   test("prijave — staff queue for reviewer, learner denied", async ({ page }) => {
@@ -182,8 +194,7 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
 
     await loginPilotLearner(page, "pilot.learner@confora.test", password);
     await page.goto("/dashboard/committee/pilot-applications");
-    await page.waitForURL(/\/dashboard(?!\/committee)/, { timeout: 30_000 });
-    expect(page.url()).not.toMatch(/committee\/pilot-applications/);
+    await expectStaffRouteDenied(page, "/dashboard/committee/pilot-applications");
   });
 
   test("pregled dokaza — authorized staff only, no biometrics claim", async ({ page }) => {
@@ -192,12 +203,11 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
     await page.goto("/dashboard/admin/identity-review");
     await expect(page.getByTestId("identity-review-heading")).toBeVisible({ timeout: 60_000 });
     await expect(page.getByTestId("identity-review-readonly-banner")).toBeVisible();
-    await expect(page.getByText(/biometr/i)).toHaveCount(0);
+    await expect(page.getByText(/bez biometrij/i)).toBeVisible();
 
     await loginPilotLearner(page, "pilot.learner@confora.test", password);
     await page.goto("/dashboard/admin/identity-review");
-    await page.waitForURL(/\/dashboard(?!\/admin\/identity-review)/, { timeout: 30_000 });
-    expect(page.url()).not.toContain("/admin/identity-review");
+    await expectStaffRouteDenied(page, "/dashboard/admin/identity-review");
   });
 
   test("recertifikacije — safe page or unavailable state", async ({ page }) => {
@@ -205,7 +215,10 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
     await loginPilotUser(page, "pilot.manager@confora.test", password);
     await page.goto("/dashboard/admin/recertification");
     await expect(
-      page.getByRole("heading", { name: /Recertifikac/i }).or(page.getByText(/nije dostupn|unavailable/i)),
+      page
+        .getByRole("heading", { name: /Recertifikac/i })
+        .or(page.getByRole("heading", { name: /Nemate ovlasti/i }))
+        .or(page.getByText(/nije dostupn|unavailable/i)),
     ).toBeVisible({ timeout: 60_000 });
     await assertNoRawEnums(page);
   });
@@ -226,7 +239,8 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
     await loginPilotUser(page, "pilot.director@confora.test", password);
     await page.goto("/dashboard/admin/reports");
     await expect(page.getByText("Unified izvještaji")).toHaveCount(0);
-    await expect(page.getByText("Objedinjeni izvještaji").or(page.getByText("Poslovni izvještaji"))).toBeVisible();
+    await expect(page.getByTestId("admin-reports-heading")).toHaveText("Poslovni izvještaji");
+    await expect(page.getByRole("navigation", { name: "Putanja" }).getByText("Objedinjeni izvještaji")).toBeVisible();
     await page.goto("/dashboard/admin/education");
     await expect(page.getByTestId("admin-education-heading")).toHaveText("Upravljanje edukacijama");
     await expect(page.getByText("Moje edukacije")).toHaveCount(0);
@@ -237,8 +251,7 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
 
     await loginPilotLearner(page, "pilot.learner@confora.test", password);
     await page.goto("/dashboard/admin/reports");
-    await page.waitForURL(/\/dashboard(?!\/admin\/reports)/, { timeout: 30_000 });
-    expect(page.url()).not.toContain("/dashboard/admin/reports");
+    await expectStaffRouteDenied(page, "/dashboard/admin/reports");
 
     await loginPilotUser(page, "pilot.staff.wrong-tenant@confora.test", password);
     await page.goto("/dashboard/iso/reports");

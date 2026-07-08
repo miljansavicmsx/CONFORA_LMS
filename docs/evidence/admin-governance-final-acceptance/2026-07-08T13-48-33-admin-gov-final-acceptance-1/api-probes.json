@@ -1,0 +1,101 @@
+{
+  "stack": {
+    "pg": true,
+    "kc": true,
+    "api": true,
+    "fe": true
+  },
+  "stackOk": true,
+  "kcReachable": true,
+  "apiHealth": true,
+  "loginProbes": {
+    "manager": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    },
+    "staff": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    },
+    "director": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    },
+    "reviewer": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    },
+    "wrongTenant": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    },
+    "noTenant": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    },
+    "learner": {
+      "ok": true,
+      "status": 201,
+      "hasToken": true
+    }
+  },
+  "meProbes": {
+    "manager": {
+      "ok": true,
+      "status": 200,
+      "hasEmail": true,
+      "tenantPresent": true
+    },
+    "staff": {
+      "ok": true,
+      "status": 200,
+      "hasEmail": true,
+      "tenantPresent": true
+    },
+    "director": {
+      "ok": true,
+      "status": 200,
+      "hasEmail": true,
+      "tenantPresent": true
+    },
+    "reviewer": {
+      "ok": true,
+      "status": 200,
+      "hasEmail": true,
+      "tenantPresent": true
+    },
+    "wrongTenant": {
+      "ok": true,
+      "status": 200,
+      "hasEmail": true,
+      "tenantPresent": true
+    },
+    "noTenant": {
+      "ok": false,
+      "status": 403,
+      "hasEmail": true,
+      "tenantPresent": false
+    },
+    "learner": {
+      "ok": true,
+      "status": 200,
+      "hasEmail": true,
+      "tenantPresent": true
+    }
+  },
+  "rbacProbes": {
+    "learnerDeniedStaffReports": true,
+    "managerAllowedStaffReports": true,
+    "learnerDeniedIdentityQueue": true,
+    "learnerIdentityQueueStatus": 404,
+    "managerIdentityQueueStatus": 404,
+    "directorIdentityQueueStatus": 404,
+    "identityQueueApiMounted": false
+  }
+}

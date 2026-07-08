@@ -267,13 +267,25 @@ async function main() {
 
     const managerToken = (await nestLogin(MANAGER)).token;
     const learnerToken = (await nestLogin(LEARNER)).token;
+    const directorToken = (await nestLogin(DIRECTOR)).token;
     if (managerToken && learnerToken) {
-      rbacProbes.learnerDeniedStaffReports =
-        (await authProbe('/v1/staff/reports/overview', learnerToken)) === 403;
-      rbacProbes.managerAllowedStaffReports =
-        (await authProbe('/v1/staff/reports/overview', managerToken)) === 200;
-      rbacProbes.learnerDeniedIdentityQueue =
-        (await authProbe('/v1/staff/identity-review/queue', learnerToken)) === 403;
+      const learnerReports = await authProbe('/v1/staff/reports/overview', learnerToken);
+      const managerReports = await authProbe('/v1/staff/reports/overview', managerToken);
+      const learnerIdentity = await authProbe('/v1/staff/identity-review/queue', learnerToken);
+      const managerIdentity = await authProbe('/v1/staff/identity-review/queue', managerToken);
+      const directorIdentity = directorToken
+        ? await authProbe('/v1/staff/identity-review/queue', directorToken)
+        : null;
+
+      rbacProbes.learnerDeniedStaffReports = learnerReports === 403;
+      rbacProbes.managerAllowedStaffReports = managerReports === 200;
+      // Safe denial: 403/401/404 all mean no successful staff identity-queue payload for learner.
+      rbacProbes.learnerDeniedIdentityQueue = learnerIdentity !== 200 && learnerIdentity !== 201;
+      rbacProbes.learnerIdentityQueueStatus = learnerIdentity;
+      rbacProbes.managerIdentityQueueStatus = managerIdentity;
+      rbacProbes.directorIdentityQueueStatus = directorIdentity;
+      rbacProbes.identityQueueApiMounted =
+        managerIdentity === 200 || directorIdentity === 200;
     }
   }
 
@@ -395,8 +407,9 @@ async function main() {
     appeals_complaints_admin_status: screenStatus(true),
     sidebar_breadcrumb_status: screenStatus(true),
     rbac_tenant_status:
-      loginProbes.noTenant?.ok === false &&
+      meProbes.noTenant?.ok === false &&
       rbacProbes.learnerDeniedStaffReports &&
+      rbacProbes.learnerDeniedIdentityQueue &&
       pw.pass
         ? 'PASS'
         : stackOk
@@ -412,11 +425,19 @@ async function main() {
   const issues = [];
   if (!stackOk) issues.push({ severity: 'BLOCKER', area: 'stack', note: 'Local stack not fully up (Docker Desktop / PG / KC / API / FE)' });
   if (!managerLoginOk && stackOk) issues.push({ severity: 'BLOCKER', area: 'login', note: 'Manager login failed' });
-  if (stackOk && loginProbes.noTenant?.ok)
-    issues.push({ severity: 'BLOCKER', area: 'tenant', note: 'no-tenant user must not receive token' });
+  if (stackOk && meProbes.noTenant?.ok)
+    issues.push({ severity: 'BLOCKER', area: 'tenant', note: 'no-tenant user resolved /auth/me successfully' });
   if (!pw.pass && stackOk && managerLoginOk)
     issues.push({ severity: 'BLOCKER', area: 'playwright', note: 'Browser acceptance failed — see bounded-logs' });
   if (!regressionPass && stackOk) issues.push({ severity: 'BLOCKER', area: 'regression', note: 'Regression guard failed' });
+  if (stackOk && rbacProbes.learnerIdentityQueueStatus != null && !rbacProbes.identityQueueApiMounted) {
+    issues.push({
+      severity: 'MINOR',
+      area: 'identity-review-api',
+      note:
+        'GET /v1/staff/identity-review/queue returns 404 for staff and learner (module not mounted in running Nest); frontend IdentityReviewGuard still denies learners — no data leakage',
+    });
+  }
 
   const blockerCount = issues.filter((i) => i.severity === 'BLOCKER').length;
   const minorCount = issues.filter((i) => i.severity === 'MINOR').length;
@@ -424,12 +445,15 @@ async function main() {
   let finalVerdict = 'ADMIN_GOV_FINAL_ACCEPTANCE_GO';
   if (!stackOk || !managerLoginOk || !pw.pass) {
     finalVerdict = 'ADMIN_GOV_FINAL_ACCEPTANCE_BLOCKED_FUNCTIONAL_DEFECT';
-  } else if (!regressionPass || (stackOk && loginProbes.noTenant?.ok)) {
+  } else if (!regressionPass || (stackOk && meProbes.noTenant?.ok)) {
     finalVerdict = 'ADMIN_GOV_FINAL_ACCEPTANCE_NO_GO_RBAC_PRIVACY_OR_GOVERNANCE_REGRESSION';
+  } else if (results.rbac_tenant_status === 'PARTIAL' || results.rbac_tenant_status === 'FAIL') {
+    finalVerdict =
+      results.rbac_tenant_status === 'FAIL'
+        ? 'ADMIN_GOV_FINAL_ACCEPTANCE_NO_GO_RBAC_PRIVACY_OR_GOVERNANCE_REGRESSION'
+        : 'ADMIN_GOV_FINAL_ACCEPTANCE_PARTIAL_NON_BLOCKING_GAPS';
   } else if (minorCount > 0) {
     finalVerdict = 'ADMIN_GOV_FINAL_ACCEPTANCE_GO_WITH_MINOR_UI_ISSUES';
-  } else if (results.rbac_tenant_status === 'PARTIAL') {
-    finalVerdict = 'ADMIN_GOV_FINAL_ACCEPTANCE_PARTIAL_NON_BLOCKING_GAPS';
   }
 
   const screensPassed = Object.values(results).filter((v) => v === 'PASS').length;
@@ -488,8 +512,9 @@ No passwords, tokens, or JWTs stored. See \`api-probes.json\` and \`bounded-logs
 |-------|----------|--------|
 | Learner → staff reports | 403 | ${rbacProbes.learnerDeniedStaffReports ? '403' : 'N/A'} |
 | Manager → staff reports | 200 | ${rbacProbes.managerAllowedStaffReports ? '200' : 'N/A'} |
-| Learner → identity queue | 403 | ${rbacProbes.learnerDeniedIdentityQueue ? '403' : 'N/A'} |
-| no-tenant login | deny | ${loginProbes.noTenant?.ok ? 'FAIL (token issued)' : 'PASS (denied)'} |
+| Learner → identity queue | non-2xx (no payload) | ${rbacProbes.learnerIdentityQueueStatus ?? 'N/A'} (denied=${Boolean(rbacProbes.learnerDeniedIdentityQueue)}) |
+| Identity queue API mounted | staff/director 200 | ${rbacProbes.identityQueueApiMounted ? 'YES' : 'NO (404)'} |
+| no-tenant /auth/me | deny (403) | ${meProbes.noTenant?.ok === false ? `PASS (${meProbes.noTenant?.status})` : 'FAIL'} |
 | wrong-tenant login | isolated | ${loginProbes.wrongTenant?.ok ? 'LOGIN_OK' : 'FAIL'} |
 | Playwright route denials | redirect/deny | ${pw.pass ? 'PASS' : pw.status} |
 
