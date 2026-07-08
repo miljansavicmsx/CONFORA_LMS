@@ -1,0 +1,12 @@
+{
+  "dockerComposeAttempted": true,
+  "stack": {
+    "pg": false,
+    "kc": false,
+    "api": false,
+    "fe": false
+  },
+  "apiHealth": false,
+  "stackOk": false,
+  "note": "Docker Desktop returned 500 or services not listening on 15432/18080/4000/3001"
+}

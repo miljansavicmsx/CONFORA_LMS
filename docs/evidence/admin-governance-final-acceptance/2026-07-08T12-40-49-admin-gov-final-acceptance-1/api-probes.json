@@ -1,0 +1,14 @@
+{
+  "stack": {
+    "pg": false,
+    "kc": false,
+    "api": false,
+    "fe": false
+  },
+  "stackOk": false,
+  "kcReachable": false,
+  "apiHealth": false,
+  "loginProbes": {},
+  "meProbes": {},
+  "rbacProbes": {}
+}
