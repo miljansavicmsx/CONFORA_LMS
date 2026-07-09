@@ -9,6 +9,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import net from 'node:net';
 
+import {
+  PRECONDITION_FAILED_FIXTURE_MISSING,
+  resolvePublicVerifyHash,
+} from './public-verify-hash.mjs';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, '..', '..');
 const NEST_API = (process.env.NEST_API_URL ?? 'http://localhost:4000').replace(/\/$/, '');
@@ -68,15 +73,16 @@ function runPsql(sql) {
   return (result.stdout ?? '').trim();
 }
 
-function discoverLiveVerifyHash() {
-  const envHash = process.env.PLAYWRIGHT_PUBLIC_UX_1_VERIFY_HASH?.trim();
-  if (envHash) return envHash;
-  const raw = runPsql(
-    `SELECT verification_hash FROM cert.certificates WHERE verification_hash IS NOT NULL AND status IN ('ACTIVE','ISSUED','VALID') ORDER BY CASE status WHEN 'ACTIVE' THEN 0 WHEN 'VALID' THEN 1 ELSE 2 END, issued_at DESC NULLS LAST LIMIT 1;`,
-  );
-  if (!raw) return null;
-  const line = raw.split('\n').find(Boolean);
-  return line?.split('|')[0]?.trim() ?? null;
+async function discoverLiveVerifyHash() {
+  const resolved = await resolvePublicVerifyHash({
+    nestApiUrl: NEST_API,
+    envHash: process.env.PLAYWRIGHT_PUBLIC_UX_1_VERIFY_HASH,
+    runPsql,
+  });
+  if (resolved.error) {
+    return { hash: null, precondition: resolved };
+  }
+  return { hash: resolved.hash, source: resolved.source, precondition: null };
 }
 
 function runCmd(label, cmd, args, env = {}, timeoutMs = 600_000, cwd = REPO_ROOT) {
@@ -147,7 +153,9 @@ async function main() {
     }
   }
 
-  const verifyHash = discoverLiveVerifyHash();
+  const verifyDiscovery = await discoverLiveVerifyHash();
+  const verifyHash = verifyDiscovery.hash;
+  const hashPrecondition = verifyDiscovery.precondition;
   const frontendReachable = feUp;
   let publicRouteNoAuth = false;
   if (feUp) {
@@ -178,8 +186,11 @@ async function main() {
     invalidLookup.pass = safe && invalidLookup.privateHits.length === 0;
   }
 
-  const verifyHashEnv = verifyHash ?? 'e4c6865bbd0addb0b3bac26389ce96b2e0b2002fee5a1f261d3610c5aa07db04';
-  const pw = frontendReachable
+  const verifyHashEnv = verifyHash;
+  if (!verifyHashEnv) {
+    console.error(JSON.stringify(hashPrecondition, null, 2));
+  }
+  const pw = frontendReachable && verifyHashEnv
     ? runCmd(
         'playwright-public-ux-1',
         'pnpm',
@@ -193,9 +204,9 @@ async function main() {
         420_000,
         join(REPO_ROOT, 'frontend-app'),
       )
-    : { label: 'playwright-public-ux-1', pass: false, exitCode: null, note: 'frontend down' };
+    : { label: 'playwright-public-ux-1', pass: false, exitCode: null, note: verifyHashEnv ? 'frontend down' : 'verify hash missing' };
 
-  const pwScreens = frontendReachable
+  const pwScreens = frontendReachable && verifyHashEnv
     ? runCmd(
         'playwright-s17-screenshots',
         'pnpm',
@@ -210,7 +221,7 @@ async function main() {
         180_000,
         join(REPO_ROOT, 'frontend-app'),
       )
-    : { label: 'playwright-s17-screenshots', pass: false, exitCode: null, note: 'frontend down' };
+    : { label: 'playwright-s17-screenshots', pass: false, exitCode: null, note: verifyHashEnv ? 'frontend down' : 'verify hash missing' };
 
   const pubUx = runCmd('ops:public-ux-1r3', 'npm', ['run', 'ops:public-ux-1r3'], {
     PLAYWRIGHT_PUBLIC_UX_1_VERIFY_HASH: verifyHashEnv,
@@ -236,7 +247,9 @@ async function main() {
   const regressionPass = auditF4.pass && f53.pass && f55.pass && f49.pass;
 
   let finalVerdict = 'S17_PUBLIC_VERIFY_BROWSER_BLOCKED_FRONTEND_OR_FIXTURE_GAP';
-  if (!frontendReachable || !verifyHash) {
+  if (hashPrecondition?.error === PRECONDITION_FAILED_FIXTURE_MISSING) {
+    finalVerdict = 'S17_PUBLIC_VERIFY_BROWSER_BLOCKED_FRONTEND_OR_FIXTURE_GAP';
+  } else if (!frontendReachable || !verifyHash) {
     finalVerdict = 'S17_PUBLIC_VERIFY_BROWSER_BLOCKED_FRONTEND_OR_FIXTURE_GAP';
   } else if (!piiPass || validLookup.privateHits.length > 0) {
     finalVerdict = 'S17_PUBLIC_VERIFY_BROWSER_NO_GO_PRIVACY_OR_GOVERNANCE_REGRESSION';
@@ -423,6 +436,9 @@ No production deployment, staging approval, legal approval, or external pilot ap
     external_pilot_approved: false,
     legal_approval_claimed: false,
     verify_hash_used: verifyHash,
+    verify_hash_source: verifyDiscovery.source ?? null,
+    fixture_precondition_error: hashPrecondition?.error ?? null,
+    fixture_precondition_detail: hashPrecondition?.detail ?? null,
     final_verdict: finalVerdict,
   };
 

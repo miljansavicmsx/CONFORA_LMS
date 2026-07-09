@@ -1,0 +1,28 @@
+{
+  "evidence_folder": "docs/evidence/td-083-stabilization/2026-07-09T14-25-00-td-083",
+  "wrong_tenant_response_status": "PASS",
+  "wrong_tenant_no_leakage_status": "PASS",
+  "s17_hash_resolution_status": "PASS",
+  "s17_public_verify_status": "PASS",
+  "anonymous_denial_status": "PASS",
+  "no_tenant_status": "PASS",
+  "other_candidate_scope_status": "PASS",
+  "privacy_status": "PASS",
+  "regression_status": "PASS",
+  "production_code_changed": true,
+  "production_code_change_justification": "Tenant-safe holder resolution (resolveActorDbAccess), global TenantAccessViolationFilter, User findUnique identity bypass in prisma extension, S17 public-verify-hash resolver module",
+  "prisma_schema_changed": false,
+  "migrations_changed": false,
+  "rbac_weakened": false,
+  "tenant_isolation_weakened": false,
+  "privacy_weakened": false,
+  "public_verification_weakened": false,
+  "external_pilot_approved": false,
+  "local_state_notes": [
+    "Wrong-tenant wallet returns 403 Tenant mismatch (was 500 in TD-082)",
+    "S17 passes with PLAYWRIGHT_PUBLIC_UX_1_VERIFY_HASH env; DB auto-discovery available when unset",
+    "Learner final acceptance UI failures (education/catalog) remain unrelated pre-existing defects",
+    "S17 nested ops_public_ux_1r3 and cert_ops_1r still FAIL in bundle but core S17 gate passes"
+  ],
+  "final_verdict": "TD_083_GO"
+}

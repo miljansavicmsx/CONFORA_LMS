@@ -72,6 +72,7 @@
     "ops:ca-h01-frontend-f4-cutover": "node scripts/ops/run-ca-h01-frontend-f4-cutover.mjs",
     "ops:f5-7-recheck-after-ca-h01": "node scripts/ops/run-f5-7-recheck-after-ca-h01.mjs",
     "ops:s17-public-verify-browser": "node scripts/ops/run-s17-public-verify-browser.mjs",
+    "ops:td-083-tenant-negative-api": "node scripts/ops/run-td-083-tenant-negative-api.mjs",
     "ops:staff-mfa-2-pre-external-cutover": "node scripts/ops/run-staff-mfa-2-pre-external-cutover.mjs",
     "ops:staff-mfa-3-enforcement-closure": "node scripts/ops/run-staff-mfa-3-enforcement-closure.mjs",
     "ops:dpo-legal-1-external-pilot-review-package": "node scripts/ops/run-dpo-legal-1-external-pilot-review-package.mjs",

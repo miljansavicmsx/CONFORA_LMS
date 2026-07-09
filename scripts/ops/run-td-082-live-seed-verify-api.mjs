@@ -97,7 +97,8 @@ async function main() {
   const wrongLeak = wrongItems.some((i) => i.certificateId === 'CON-PILOT-000082');
   record(
     'wrong_tenant_scope',
-    wrongWallet.status === 403 || !wrongLeak,
+    (wrongWallet.status === 403 || wrongWallet.status === 404 || (wrongWallet.status === 200 && !wrongLeak)) &&
+      wrongWallet.status !== 500,
     `status=${wrongWallet.status} items=${wrongItems.length} leak=${wrongLeak}`,
   );
 
