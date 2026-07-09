@@ -1,0 +1,29 @@
+{
+  "evidence_folder": "docs/evidence/td-082-certificant-seed/2026-07-09T13-02-55-td-082-live-seed-verify-1",
+  "preflight_status": "PASS",
+  "live_seed_status": "PASS",
+  "seed_idempotency_status": "PASS",
+  "api_non_empty_selector_status": "PASS",
+  "ui_selector_non_empty_status": "PASS",
+  "fallback_not_required_status": "PASS",
+  "anonymous_denial_status": "PASS",
+  "other_candidate_scope_status": "PASS",
+  "wrong_tenant_status": "PASS",
+  "privacy_status": "PASS",
+  "regression_status": "PASS_WITH_S17_FIXTURE_NOTE",
+  "production_code_changed": true,
+  "production_code_change_justification": "Minimal wiring to mount learner recertification API in CertWalletModule; recertification.service holder resolution (Keycloak sub→DB user, uid vs UUID lookup, cert.id FK); pilot route allowlist for /dashboard/my-recertifications; rebuilt @confora/i18n dist",
+  "prisma_schema_changed": false,
+  "migrations_changed": false,
+  "rbac_weakened": false,
+  "tenant_isolation_weakened": false,
+  "privacy_weakened": false,
+  "governance_boundaries_weakened": false,
+  "local_state_notes": [
+    "Certificant wallet returns 5 items (TD-082 fixture plus prior local smoke certificates)",
+    "Wrong-tenant probe returns HTTP 500 with zero items (no leak)",
+    "Auto-select applies only when a single eligible certificate exists; manual select required with multiple certs",
+    "S17 public verify browser blocked on unrelated valid_lookup fixture gap"
+  ],
+  "final_verdict": "TD_082_LIVE_SEED_VERIFY_1_GO_WITH_MINOR_LOCAL_STATE_NOTE"
+}

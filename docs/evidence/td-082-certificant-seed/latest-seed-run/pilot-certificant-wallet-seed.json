@@ -1,0 +1,10 @@
+{
+  "seededAt": "2026-07-09T11:03:11.454Z",
+  "certificateId": "b8200001-0000-4000-8000-000000000001",
+  "certificateUid": "CON-PILOT-000082",
+  "userId": "b2000000-0000-4000-8000-000000000002",
+  "userEmail": "pilot.learner2@confora.test",
+  "role": "USR_CERT",
+  "recertificationCaseId": "a8200001-0000-4000-8000-000000000002",
+  "validUntil": "2026-09-07"
+}

@@ -1,0 +1,174 @@
+{
+  "results": [
+    {
+      "id": "anonymous_denied",
+      "pass": true,
+      "detail": "status=401"
+    },
+    {
+      "id": "certificant_login",
+      "pass": true,
+      "detail": "status=201"
+    },
+    {
+      "id": "certificant_non_empty_wallet",
+      "pass": true,
+      "detail": "items=5"
+    },
+    {
+      "id": "seed_certificate_present",
+      "pass": true,
+      "detail": "uid=CON-PILOT-000082"
+    },
+    {
+      "id": "selector_fields",
+      "pass": true,
+      "detail": "schemeTitle=Sample certification scheme cpdEligible=true recertEligible=true"
+    },
+    {
+      "id": "cpd_eligible",
+      "pass": true,
+      "detail": "cpd=true recert=true"
+    },
+    {
+      "id": "privacy_no_forbidden_keys",
+      "pass": true,
+      "detail": "forbidden pattern absent"
+    },
+    {
+      "id": "other_candidate_scope",
+      "pass": true,
+      "detail": "learner items=0 leak=false"
+    },
+    {
+      "id": "wrong_tenant_scope",
+      "pass": true,
+      "detail": "status=500 items=0 leak=false"
+    }
+  ],
+  "certWallet": {
+    "contractVersion": "1.1.0",
+    "items": [
+      {
+        "certificateId": "CON-2026-000016",
+        "certificateKind": "PERSON_CERTIFICATION",
+        "credentialWalletCategory": "certification",
+        "documentTypeLabel": "Certifikat o certifikaciji osobe (ISO/IEC 17024) — izdan nakon odluke komiteta",
+        "title": "Workshop safety inspection (demo)",
+        "courseName": "Workshop safety inspection (demo)",
+        "certificationLevel": "1",
+        "certificateNumber": "CON-2026-000016",
+        "issueDate": "2026-08-18",
+        "expiryDate": "2029-08-18",
+        "lifecycleStatus": "ISSUED",
+        "qrHash": null,
+        "pdfUrl": null,
+        "learnerVerifyPath": "/verify/CON-2026-000016",
+        "publicVerificationUrl": null,
+        "supersededByCertificateId": null,
+        "schemeTitle": "Sample certification scheme",
+        "issuedAt": "2026-08-18",
+        "validUntil": "2029-08-18",
+        "publicNumber": "CON-2026-000016",
+        "recertificationEligible": true,
+        "cpdEligible": true
+      },
+      {
+        "certificateId": "CON-2026-000334",
+        "certificateKind": "PERSON_CERTIFICATION",
+        "credentialWalletCategory": "certification",
+        "documentTypeLabel": "Certifikat o certifikaciji osobe (ISO/IEC 17024) — izdan nakon odluke komiteta",
+        "title": "Workshop safety inspection (demo)",
+        "courseName": "Workshop safety inspection (demo)",
+        "certificationLevel": "1",
+        "certificateNumber": "CON-2026-000334",
+        "issueDate": "2026-07-04",
+        "expiryDate": "2029-07-04",
+        "lifecycleStatus": "ISSUED",
+        "qrHash": null,
+        "pdfUrl": null,
+        "learnerVerifyPath": "/verify/CON-2026-000334",
+        "publicVerificationUrl": null,
+        "supersededByCertificateId": null,
+        "schemeTitle": "Sample certification scheme",
+        "issuedAt": "2026-07-04",
+        "validUntil": "2029-07-04",
+        "publicNumber": "CON-2026-000334",
+        "recertificationEligible": true,
+        "cpdEligible": true
+      },
+      {
+        "certificateId": "CON-2026-000294",
+        "certificateKind": "PERSON_CERTIFICATION",
+        "credentialWalletCategory": "certification",
+        "documentTypeLabel": "Certifikat o certifikaciji osobe (ISO/IEC 17024) — izdan nakon odluke komiteta",
+        "title": "Workshop safety inspection (demo)",
+        "courseName": "Workshop safety inspection (demo)",
+        "certificationLevel": "1",
+        "certificateNumber": "CON-2026-000294",
+        "issueDate": "2026-07-01",
+        "expiryDate": "2029-07-01",
+        "lifecycleStatus": "ISSUED",
+        "qrHash": null,
+        "pdfUrl": null,
+        "learnerVerifyPath": "/verify/CON-2026-000294",
+        "publicVerificationUrl": null,
+        "supersededByCertificateId": null,
+        "schemeTitle": "Sample certification scheme",
+        "issuedAt": "2026-07-01",
+        "validUntil": "2029-07-01",
+        "publicNumber": "CON-2026-000294",
+        "recertificationEligible": true,
+        "cpdEligible": true
+      },
+      {
+        "certificateId": "CON-2026-000015",
+        "certificateKind": "PERSON_CERTIFICATION",
+        "credentialWalletCategory": "certification",
+        "documentTypeLabel": "Certifikat o certifikaciji osobe (ISO/IEC 17024) — izdan nakon odluke komiteta",
+        "title": "Workshop safety inspection (demo)",
+        "courseName": "Workshop safety inspection (demo)",
+        "certificationLevel": "1",
+        "certificateNumber": "CON-2026-000015",
+        "issueDate": "2026-06-18",
+        "expiryDate": "2026-08-17",
+        "lifecycleStatus": "ACTIVE",
+        "qrHash": null,
+        "pdfUrl": null,
+        "learnerVerifyPath": "/verify/CON-2026-000015",
+        "publicVerificationUrl": null,
+        "supersededByCertificateId": null,
+        "schemeTitle": "Sample certification scheme",
+        "issuedAt": "2026-06-18",
+        "validUntil": "2026-08-17",
+        "publicNumber": "CON-2026-000015",
+        "recertificationEligible": true,
+        "cpdEligible": true
+      },
+      {
+        "certificateId": "CON-PILOT-000082",
+        "certificateKind": "PERSON_CERTIFICATION",
+        "credentialWalletCategory": "certification",
+        "documentTypeLabel": "Certifikat o certifikaciji osobe (ISO/IEC 17024) — izdan nakon odluke komiteta",
+        "title": "Workshop safety inspection (demo)",
+        "courseName": "Workshop safety inspection (demo)",
+        "certificationLevel": "1",
+        "certificateNumber": "CON-PILOT-000082",
+        "issueDate": "2025-06-04",
+        "expiryDate": "2026-09-07",
+        "lifecycleStatus": "ACTIVE",
+        "qrHash": null,
+        "pdfUrl": null,
+        "learnerVerifyPath": "/verify/CON-PILOT-000082",
+        "publicVerificationUrl": null,
+        "supersededByCertificateId": null,
+        "schemeTitle": "Sample certification scheme",
+        "issuedAt": "2025-06-04",
+        "validUntil": "2026-09-07",
+        "publicNumber": "CON-PILOT-000082",
+        "recertificationEligible": true,
+        "cpdEligible": true
+      }
+    ]
+  }
+}

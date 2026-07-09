@@ -69,6 +69,13 @@ export type MyCertificateItem = {
   readonly supersededByCertificateId: string | null;
   /** Backend (exam pass) — kratka napomena da nije certifikacija osobe. */
   readonly credentialScopeNote?: string | null;
+  /** TD-081 selector-safe fields */
+  readonly schemeTitle?: string;
+  readonly issuedAt?: string | null;
+  readonly validUntil?: string | null;
+  readonly publicNumber?: string;
+  readonly recertificationEligible?: boolean;
+  readonly cpdEligible?: boolean;
 };
 
 export type VerifiedCertificatePublic = {

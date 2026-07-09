@@ -79,7 +79,8 @@
     "ops:admin-gov-ux-polish-1": "node scripts/ops/run-admin-gov-ux-polish-1.mjs",
     "ops:admin-gov-final-acceptance-1": "node scripts/ops/run-admin-gov-final-acceptance-1.mjs",
     "ops:learner-final-acceptance-1": "node scripts/ops/run-learner-final-acceptance-1r.mjs",
-    "ops:learner-final-acceptance-1r": "node scripts/ops/run-learner-final-acceptance-1r.mjs"
+    "ops:learner-final-acceptance-1r": "node scripts/ops/run-learner-final-acceptance-1r.mjs",
+    "ops:seed-pilot-cert-wallet": "pnpm exec tsx scripts/ops/seed-pilot-certificant-wallet.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,cjs,js,json,md,yml,yaml}": [

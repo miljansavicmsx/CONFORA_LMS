@@ -68,6 +68,7 @@ export const NEST_AUTH_PILOT_LEARNER_DASHBOARD_PREFIXES: readonly string[] = [
   "/dashboard/exams",
   "/dashboard/certification/applications",
   "/dashboard/my-certificates",
+  "/dashboard/my-recertifications",
   "/dashboard/support",
 ] as const;
 
@@ -120,7 +121,6 @@ export const NEST_AUTH_PILOT_BLOCKED_DASHBOARD_PREFIXES: readonly string[] = [
   "/dashboard/sys-admin",
   "/dashboard/knowledge",
   "/dashboard/ai-tutor",
-  "/dashboard/my-recertifications",
   "/dashboard/statistics",
   "/dashboard/courses",
   "/dashboard/certification",

@@ -74,6 +74,7 @@ describe("nest-auth-pilot route whitelist", () => {
     expect(isPilotDashboardPathAllowed("/dashboard/exams/register")).toBe(true);
     expect(isPilotDashboardPathAllowed("/dashboard/certification/applications")).toBe(true);
     expect(isPilotDashboardPathAllowed("/dashboard/my-certificates")).toBe(true);
+    expect(isPilotDashboardPathAllowed("/dashboard/my-recertifications")).toBe(true);
     expect(isPilotDashboardPathAllowed("/dashboard/support")).toBe(true);
   });
 
@@ -93,6 +94,7 @@ describe("nest-auth-pilot route whitelist", () => {
     expect(shouldRedirectPilotDashboardPath("/dashboard/exams/register")).toBe(false);
     expect(shouldRedirectPilotDashboardPath("/dashboard/certification/applications")).toBe(false);
     expect(shouldRedirectPilotDashboardPath("/dashboard/learner/education")).toBe(false);
+    expect(shouldRedirectPilotDashboardPath("/dashboard/my-recertifications")).toBe(false);
   });
 
   it("does not redirect staff governance dashboard paths during pilot", () => {
