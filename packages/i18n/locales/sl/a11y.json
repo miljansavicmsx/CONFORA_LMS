@@ -7,5 +7,15 @@
   "user_menu": "Uporabniški meni",
   "loading": "Nalaganje",
   "error_occurred": "Prišlo je do napake",
-  "nest_auth_pilot_registry_unavailable": "Urejanje razširjenega registra profila med Nest auth pilotom ni na voljo. Osnovni podatki zgoraj so samo za branje iz vaše seje."
+  "nest_auth_pilot_registry_unavailable": "Urejanje razširjenega registra profila med Nest auth pilotom ni na voljo. Osnovni podatki zgoraj so samo za branje iz vaše seje.",
+  "dashboard_home": "CONFORA — dashboard",
+  "main_navigation": "Main navigation",
+  "expand_sidebar": "Expand sidebar",
+  "collapse_sidebar": "Collapse sidebar",
+  "workspace_picker": "CONFORA workspace picker",
+  "breadcrumb": "Breadcrumb",
+  "quick_actions": "Quick actions",
+  "mobile_navigation": "Mobile navigation",
+  "workspace_loading": "Loading workspace",
+  "wallet_filter": "Document filter"
 }

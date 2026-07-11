@@ -1,0 +1,10 @@
+{
+  "actions": {
+    "retry": "Try again",
+    "refresh": "Refresh",
+    "loading": "Loading…"
+  },
+  "placeholder": {
+    "pagePreparing": "Page is being prepared."
+  }
+}

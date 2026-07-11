@@ -45,5 +45,49 @@
     "IN_PROGRESS": "U tijeku",
     "COMPLETED": "Završeno",
     "WITHDRAWN": "Povučeno"
+  },
+  "wallet": {
+    "filters": {
+      "all": "Sve",
+      "examPass": "Potvrde o položenom ispitu",
+      "certification": "Certifikati osobe",
+      "active": "Aktivni",
+      "expired": "Istekli",
+      "suspended": "Suspendovani",
+      "revoked": "Opozvani"
+    },
+    "hero": {
+      "eyebrow": "Trust registar dokumenata",
+      "title": "Moji certifikati i potvrde",
+      "description": "Pregled potvrda o ispitu i profesionalnih certifikata osobe — s jasnom granicom između edukacije, ispita i certifikacije."
+    },
+    "loading": "Učitavanje dokumenata…",
+    "refresh": "Osvježi",
+    "publicVerify": "Javna provjera",
+    "downloadPdf": "Preuzmi PDF",
+    "documentTypes": {
+      "EXAM_PASS_CERTIFICATE": "Potvrda o položenom ispitu",
+      "COURSE_COMPLETION_CERTIFICATE": "Potvrda o završenoj edukaciji",
+      "PERSON_CERTIFICATION": "Profesionalni certifikat osobe",
+      "default": "Dokument"
+    },
+    "status": {
+      "ISSUED": "Izdat",
+      "ACTIVE": "Aktivan",
+      "SUSPENDED": "Suspendovan",
+      "REVOKED": "Opozvan",
+      "EXPIRED": "Istekao",
+      "PENDING_ISSUANCE": "Izdavanje u toku",
+      "DRAFT": "Nacrt",
+      "default": "—"
+    },
+    "notices": {
+      "confirmationSection": "Ova potvrda nije ISO/IEC 17024 certifikat osobe.",
+      "professionalSection": "Profesionalni certifikat osobe izdaje se tek nakon odvojenog postupka certifikacije, odluke nadležne certifikacione strukture i izdavanja certifikata.",
+      "confirmationEmpty": "Trenutno nemate dostupnih potvrda. Potvrde će se prikazati nakon evidentiranog završetka edukacije ili položenog ispita.",
+      "professionalEmpty": "Trenutno nemate izdat profesionalni certifikat osobe. Certifikat se prikazuje nakon završetka odvojenog postupka certifikacije i izdavanja.",
+      "pdfPending": "PDF će biti dostupan nakon izdavanja dokumenta.",
+      "digitalSignatureLocal": "Digitalni potpis nije aktiviran u lokalnom MVP okruženju."
+    }
   }
 }

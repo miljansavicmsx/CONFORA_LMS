@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Settings } from "lucide-react";
+import { A11Y_NS, SHELL_NS } from "@confora/i18n";
 import { useMemo, type JSX } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ConforaLogo } from "@/components/ui/ConforaLogo";
@@ -12,7 +14,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { buildSidebarSections } from "@/components/layout/sidebar-sections";
+import { buildSidebarSectionDefs } from "@/components/layout/sidebar-sections";
+import { localizeSidebarSections } from "@/components/layout/localize-sidebar-sections";
 import type { SidebarNavItem, SidebarUser } from "@/components/layout/sidebar-nav-types";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { MePermissionsPayload } from "@/lib/permissions";
@@ -171,6 +174,8 @@ export function Sidebar({
   onToggleCollapse,
   effectivePermissions,
 }: SidebarProps): JSX.Element {
+  const { t: tA11y } = useTranslation(A11Y_NS);
+  const { t: tShell } = useTranslation(SHELL_NS);
   const narrow = collapsed;
   const profileUser = useAuthStore((s) => s.user);
   const cognitoGroups = useAuthStore((s) => s.cognitoGroups);
@@ -189,17 +194,17 @@ export function Sidebar({
 
   const jwtRoles = useMemo(() => extractRealmRolesFromToken(accessToken), [accessToken]);
 
+  const { t: tNav } = useTranslation("navigation");
+
   const sections = useMemo(() => {
-    if (isNestAuthPilotActive()) {
-      return [
-        ...buildRoleAwarePilotSidebarSections(isoCtx, workspace, {
+    const defs = isNestAuthPilotActive()
+      ? buildRoleAwarePilotSidebarSections(isoCtx, workspace, {
           roleFromProfile: profileUser?.role ?? user.role ?? "learner",
           jwtRoles,
-        }),
-      ];
-    }
-    return buildSidebarSections(isoCtx, workspace);
-  }, [isoCtx, workspace, profileUser?.role, user.role, jwtRoles]);
+        })
+      : buildSidebarSectionDefs(isoCtx, workspace);
+    return localizeSidebarSections(defs, tNav);
+  }, [isoCtx, workspace, profileUser?.role, user.role, jwtRoles, tNav]);
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -218,7 +223,7 @@ export function Sidebar({
                 "flex min-w-0 items-center rounded-lg outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-brand/50",
                 narrow ? "justify-center p-1" : "px-0.5 py-1",
               )}
-              aria-label="CONFORA — nadzorna ploča"
+              aria-label={tA11y("dashboard_home")}
             >
               <ConforaLogo
                 mode={narrow ? "icon" : "full"}
@@ -231,7 +236,7 @@ export function Sidebar({
           {!narrow ? (
             <div className="border-t border-border/30 px-3 py-2">
               <span className="inline-flex max-w-full rounded-full border border-brand/25 bg-brand/10 px-2.5 py-1 text-[10px] font-medium text-brand backdrop-blur-sm">
-                ISO 17024 Certified Platform
+                {tShell("sidebar.badge")}
               </span>
             </div>
           ) : null}
@@ -239,7 +244,7 @@ export function Sidebar({
 
         <nav
           className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden p-2"
-          aria-label="Glavna navigacija"
+          aria-label={tA11y("main_navigation")}
         >
           {sections.map((sec, secIdx) => (
             <section key={`sidebar-sec-${secIdx}`}>
@@ -272,7 +277,7 @@ export function Sidebar({
                     size="icon"
                     onClick={onToggleCollapse}
                     className="h-9 w-9 border border-border/50 bg-surface-secondary/80 text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                    aria-label={narrow ? "Proširi izbornik" : "Sažmi izbornik"}
+                    aria-label={narrow ? tA11y("expand_sidebar") : tA11y("collapse_sidebar")}
                   >
                     {narrow ? (
                       <ChevronRight className="h-4 w-4" aria-hidden />
@@ -281,7 +286,7 @@ export function Sidebar({
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">{narrow ? "Proširi" : "Sažmi"}</TooltipContent>
+                <TooltipContent side="right">{narrow ? tShell("sidebar.expand") : tShell("sidebar.collapse")}</TooltipContent>
               </Tooltip>
             </div>
           ) : null}
@@ -325,12 +330,12 @@ export function Sidebar({
                   "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface-secondary hover:text-brand",
                   narrow && "mt-1",
                 )}
-                aria-label="Postavke"
+                aria-label={tShell("sidebar.settings")}
               >
                 <Settings className="h-5 w-5" />
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Postavke</TooltipContent>
+            <TooltipContent side="right">{tShell("sidebar.settings")}</TooltipContent>
           </Tooltip>
         </div>
       </div>

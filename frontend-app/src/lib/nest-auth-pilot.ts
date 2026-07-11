@@ -10,10 +10,10 @@ import {
 } from "lucide-react";
 
 import {
-  buildSidebarSections,
-  buildSidebarSectionsAllWorkspacesMerged,
+  buildSidebarSectionDefs,
+  buildSidebarSectionDefsAllWorkspacesMerged,
 } from "@/components/layout/sidebar-sections";
-import type { SidebarSection } from "@/components/layout/sidebar-sections";
+import type { SidebarSectionDef } from "@/components/layout/sidebar-nav-types";
 import type { AppWorkspaceId } from "@/lib/app-workspace";
 import { filterPilotSidebarSections } from "@/lib/inactive-feature-visibility";
 import type { IsoNavContext } from "@/lib/iso-navigation-access";
@@ -305,23 +305,23 @@ export function buildNestAuthPilotMobileNav(): readonly NestAuthPilotMobileNavIt
 }
 
 /** Minimal learner sidebar for Nest auth pilot (learner acceptance surfaces). */
-export function buildNestAuthPilotLearnerSidebarSections(): readonly SidebarSection[] {
+export function buildNestAuthPilotLearnerSidebarSections(): readonly SidebarSectionDef[] {
   return [
     {
-      title: "Polaznik",
+      titleKey: "learner",
       items: [
-        { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
-        { to: "/dashboard/learner/education", label: "Moje edukacije", icon: BookOpen, end: true },
-        { to: "/courses", label: "Katalog", icon: BookOpen, end: true },
-        { to: "/dashboard/exams/register", label: "Prijava za ispit", icon: BookOpenCheck, end: true },
+        { to: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard, end: true },
+        { to: "/dashboard/learner/education", labelKey: "myEducation", icon: BookOpen, end: true },
+        { to: "/courses", labelKey: "catalog", icon: BookOpen, end: true },
+        { to: "/dashboard/exams/register", labelKey: "exams", icon: BookOpenCheck, end: true },
         {
           to: "/dashboard/certification/applications",
-          label: "Prijave za certifikaciju",
+          labelKey: "certApplications",
           icon: ClipboardList,
           end: false,
         },
-        { to: "/dashboard/my-certificates", label: "Moji certifikati i potvrde", icon: Medal, end: false },
-        { to: "/dashboard/support", label: "Podrška / kontakt", icon: LifeBuoy, end: false },
+        { to: "/dashboard/my-certificates", labelKey: "myCertificates", icon: Medal, end: false },
+        { to: "/dashboard/support", labelKey: "supportContact", icon: LifeBuoy, end: false },
       ],
     },
   ];
@@ -332,7 +332,7 @@ export function buildRoleAwarePilotSidebarSections(
   isoCtx: IsoNavContext,
   workspace: AppWorkspaceId,
   navCtx: PilotNavContext = {},
-): readonly SidebarSection[] {
+): readonly SidebarSectionDef[] {
   const persona = resolvePilotNavPersona({
     ...navCtx,
     roleFromProfile: navCtx.roleFromProfile ?? isoCtx.role,
@@ -348,13 +348,13 @@ export function buildRoleAwarePilotSidebarSections(
     persona === "sysadmin" ||
     persona === "cert_staff"
   ) {
-    return filterPilotSidebarSections(buildSidebarSectionsAllWorkspacesMerged(isoCtx));
+    return filterPilotSidebarSections(buildSidebarSectionDefsAllWorkspacesMerged(isoCtx));
   }
 
-  return filterPilotSidebarSections(buildSidebarSections(isoCtx, workspace));
+  return filterPilotSidebarSections(buildSidebarSectionDefs(isoCtx, workspace));
 }
 
 /** Minimal learner sidebar for Nest auth pilot (wave 1 legacy alias). */
-export function buildNestAuthPilotSidebarSections(): readonly SidebarSection[] {
+export function buildNestAuthPilotSidebarSections(): readonly SidebarSectionDef[] {
   return buildNestAuthPilotLearnerSidebarSections();
 }

@@ -6,5 +6,31 @@
     "sr": "Srbščina",
     "hr": "Hrvaščina",
     "sl": "Slovenščina"
+  },
+  "sidebar": {
+    "badge": "ISO 17024 certificirana platforma",
+    "settings": "Nastavitve",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "workspace": {
+    "label": "Workspace",
+    "learning": "Learning Portal",
+    "governance": "Governance Portal",
+    "knowledge": "Standards Intelligence",
+    "system": "System Administration"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Sign out",
+    "anonymous": "User"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No new notifications."
+  },
+  "search": {
+    "placeholder": "Search…"
   }
 }

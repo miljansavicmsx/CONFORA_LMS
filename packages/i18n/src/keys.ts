@@ -13,6 +13,15 @@ export const AUTH_NS = 'auth' as const;
 /** Authenticated shell chrome — language switcher labels (TD-070-F1). */
 export const SHELL_NS = 'shell' as const;
 
+/** Sidebar, breadcrumbs, mobile nav (TD-070-F2). */
+export const NAVIGATION_NS = 'navigation' as const;
+
+/** Dashboard home, role workspace, empty states (TD-070-F2). */
+export const DASHBOARD_NS = 'dashboard' as const;
+
+/** Shared loading/retry copy in F2 surfaces (TD-070-F2). */
+export const COMMON_NS = 'common' as const;
+
 export const SUPPORTED_LOCALES = ['en', 'bs', 'sr', 'hr', 'sl'] as const;
 
 /** Browser localStorage key for UI locale preference (display only; no API/auth impact). */
@@ -31,6 +40,16 @@ export const A11Y_KEYS = [
   'loading',
   'error_occurred',
   'nest_auth_pilot_registry_unavailable',
+  'dashboard_home',
+  'main_navigation',
+  'expand_sidebar',
+  'collapse_sidebar',
+  'workspace_picker',
+  'breadcrumb',
+  'quick_actions',
+  'mobile_navigation',
+  'workspace_loading',
+  'wallet_filter',
 ] as const;
 
 export type A11yKey = (typeof A11Y_KEYS)[number];

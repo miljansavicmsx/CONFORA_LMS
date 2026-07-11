@@ -7,5 +7,15 @@
   "user_menu": "User menu",
   "loading": "Loading",
   "error_occurred": "An error occurred",
-  "nest_auth_pilot_registry_unavailable": "Extended registry profile editing is unavailable during the Nest auth pilot. Basic profile fields above are read-only from your session."
+  "nest_auth_pilot_registry_unavailable": "Extended registry profile editing is unavailable during the Nest auth pilot. Basic profile fields above are read-only from your session.",
+  "dashboard_home": "CONFORA — dashboard",
+  "main_navigation": "Main navigation",
+  "expand_sidebar": "Expand sidebar",
+  "collapse_sidebar": "Collapse sidebar",
+  "workspace_picker": "CONFORA workspace picker",
+  "breadcrumb": "Breadcrumb",
+  "quick_actions": "Quick actions",
+  "mobile_navigation": "Mobile navigation",
+  "workspace_loading": "Loading workspace",
+  "wallet_filter": "Document filter"
 }

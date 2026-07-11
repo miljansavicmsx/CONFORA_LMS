@@ -34,7 +34,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import type { SidebarNavItem } from "@/components/layout/sidebar-nav-types";
+import type { SidebarNavItemDef, SidebarSectionDef } from "@/components/layout/sidebar-nav-types";
 import type { AppWorkspaceId } from "@/lib/app-workspace";
 import { evaluateCourseCreatorAccess } from "@/lib/course-creator-access";
 import { evaluateUserRegistryAccess } from "@/lib/user-registry-access";
@@ -68,14 +68,11 @@ import { evaluateAdminReportsAccess } from "@/lib/admin-reports-access";
 import { canPerformStaffIdentityReview, canReadStaffIdentityQueue } from "@/lib/staff-identity-review-access";
 import { resolveActorNestRoles } from "@/lib/certification-assignment-access";
 
-export type SidebarSection = {
-  readonly title: string;
-  readonly items: readonly SidebarNavItem[];
-};
+export type { SidebarSection, SidebarSectionDef } from "@/components/layout/sidebar-nav-types";
 
 export type TaggedSidebarSection = {
   readonly workspace: AppWorkspaceId;
-  readonly section: SidebarSection;
+  readonly section: SidebarSectionDef;
 };
 
 function norm(ctx: IsoNavContext): string {
@@ -138,7 +135,7 @@ function hasCourseCreator(ctx: IsoNavContext): boolean {
   return evaluateCourseCreatorAccess({ roleFromProfile: ctx.role });
 }
 
-function addWs(out: TaggedSidebarSection[], workspace: AppWorkspaceId, section: SidebarSection): void {
+function addWs(out: TaggedSidebarSection[], workspace: AppWorkspaceId, section: SidebarSectionDef): void {
   out.push({ workspace, section });
 }
 
@@ -150,58 +147,58 @@ export function collectTaggedSidebarSections(isoCtx: IsoNavContext): TaggedSideb
 
   if (!isLearnerPortalRole(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "Pregled",
-      items: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true }],
+      titleKey: "overview",
+      items: [{ to: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard, end: true }],
     });
   }
 
   if (evaluateSysAdminAccess({ roleFromProfile: isoCtx.role })) {
     addWs(tagged, "system", {
-      title: "Pregled",
-      items: [{ to: "/dashboard", label: "Sistemski pregled", icon: LayoutDashboard, end: true }],
+      titleKey: "overview",
+      items: [{ to: "/dashboard", labelKey: "systemOverview", icon: LayoutDashboard, end: true }],
     });
   }
 
   if (isLearnerPortalRole(isoCtx)) {
     addWs(tagged, "learning", {
-      title: "Polaznik",
+      titleKey: "learner",
       items: [
-        { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
-        { to: "/dashboard/learner/education", label: "Moje edukacije", icon: BookOpen, end: true },
-        { to: "/courses", label: "Katalog", icon: BookOpen, end: true },
-        { to: "/dashboard/statistics", label: "Statistika", icon: BarChart3, end: true },
-        { to: "/dashboard/exams", label: "Ispiti", icon: BookOpenCheck, end: false },
+        { to: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard, end: true },
+        { to: "/dashboard/learner/education", labelKey: "myEducation", icon: BookOpen, end: true },
+        { to: "/courses", labelKey: "catalog", icon: BookOpen, end: true },
+        { to: "/dashboard/statistics", labelKey: "statistics", icon: BarChart3, end: true },
+        { to: "/dashboard/exams", labelKey: "exams", icon: BookOpenCheck, end: false },
       ],
     });
     addWs(tagged, "learning", {
-      title: "Certifikacija osobe",
+      titleKey: "personCertification",
       items: [
-        { to: "/dashboard/certification", label: "Pregled", icon: Route, end: true },
-        { to: "/dashboard/certification/applications", label: "Prijave za certifikaciju", icon: ClipboardList, end: false },
-        { to: "/dashboard/certification/status", label: "Status certifikacije", icon: ListChecks, end: false },
-        { to: "/dashboard/my-certificates", label: "Moji certifikati i potvrde", icon: Medal, end: false },
-        { to: "/dashboard/my-recertifications", label: "Recertifikacija", icon: ClipboardCheck, end: false },
+        { to: "/dashboard/certification", labelKey: "certOverview", icon: Route, end: true },
+        { to: "/dashboard/certification/applications", labelKey: "certApplications", icon: ClipboardList, end: false },
+        { to: "/dashboard/certification/status", labelKey: "certStatus", icon: ListChecks, end: false },
+        { to: "/dashboard/my-certificates", labelKey: "myCertificates", icon: Medal, end: false },
+        { to: "/dashboard/my-recertifications", labelKey: "recertification", icon: ClipboardCheck, end: false },
       ],
     });
     addWs(tagged, "learning", {
-      title: "Servis",
+      titleKey: "service",
       items: [
-        { to: "/dashboard/finance", label: "Finansije", icon: Wallet, end: false },
-        { to: "/dashboard/support", label: "Podrška / kontakt", icon: LifeBuoy, end: false },
-        { to: "/dashboard/ai-tutor", label: "AI Tutor", icon: Bot, end: false, ai: true },
+        { to: "/dashboard/finance", labelKey: "finance", icon: Wallet, end: false },
+        { to: "/dashboard/support", labelKey: "supportContact", icon: LifeBuoy, end: false },
+        { to: "/dashboard/ai-tutor", labelKey: "aiTutor", icon: Bot, end: false, ai: true },
       ],
     });
   }
 
   if (showTrainingOperationsSidebar(isoCtx)) {
-    const ops: SidebarNavItem[] = [];
+    const ops: SidebarNavItemDef[] = [];
     if (
       evaluateAdminEducationAccess({
         roleFromProfile: isoCtx.role,
         jwtRoles: resolveActorNestRoles({ roleFromProfile: isoCtx.role }),
       })
     ) {
-      ops.push({ to: "/dashboard/admin/education", label: "Upravljanje edukacijama", icon: BookOpen, end: true });
+      ops.push({ to: "/dashboard/admin/education", labelKey: "adminEducation", icon: BookOpen, end: true });
     }
     if (
       evaluateAdminReportsAccess({
@@ -209,123 +206,123 @@ export function collectTaggedSidebarSections(isoCtx: IsoNavContext): TaggedSideb
         jwtRoles: resolveActorNestRoles({ roleFromProfile: isoCtx.role }),
       })
     ) {
-      ops.push({ to: "/dashboard/admin/reports", label: "Izvještaji i audit", icon: BarChart3, end: true });
+      ops.push({ to: "/dashboard/admin/reports", labelKey: "reportsAudit", icon: BarChart3, end: true });
     }
     if (hasCourseCreator(isoCtx)) {
-      ops.push({ to: "/dashboard/admin/kreiraj-kurs", label: "Kreiranje obuke", icon: PlusCircle, end: false });
+      ops.push({ to: "/dashboard/admin/kreiraj-kurs", labelKey: "createCourse", icon: PlusCircle, end: false });
     }
     if (hasCurriculum(isoCtx)) {
       ops.push(
-        { to: "/dashboard/admin/sadrzaj", label: "Sadržaj", icon: PenLine, end: false },
-        { to: "/dashboard/admin/item-bank", label: "Baza pitanja", icon: ListChecks, end: false },
+        { to: "/dashboard/admin/sadrzaj", labelKey: "content", icon: PenLine, end: false },
+        { to: "/dashboard/admin/item-bank", labelKey: "itemBank", icon: ListChecks, end: false },
       );
     }
     if (isSysAdmin(isoCtx) || isPlatformAdmin(isoCtx)) {
-      ops.push({ to: "/dashboard/admin/analytics", label: "Polaznici", icon: Users, end: false });
+      ops.push({ to: "/dashboard/admin/analytics", labelKey: "learners", icon: Users, end: false });
     } else if (canAccessReportsDomain(isoCtx)) {
-      ops.push({ to: "/dashboard/iso/reports", label: "Polaznici", icon: Users2, end: false });
+      ops.push({ to: "/dashboard/iso/reports", labelKey: "learners", icon: Users2, end: false });
     }
     if (canAccessReportsDomain(isoCtx)) {
-      ops.push({ to: "/dashboard/iso/reports", label: "Izvještaji obuke", icon: BarChart3, end: true });
+      ops.push({ to: "/dashboard/iso/reports", labelKey: "trainingReports", icon: BarChart3, end: true });
     }
     if (norm(isoCtx) === "training_admin" || isSysAdmin(isoCtx) || norm(isoCtx) === "admin") {
-      ops.push({ to: "/dashboard/billing", label: "Finansije (obuka)", icon: Wallet, end: false });
+      ops.push({ to: "/dashboard/billing", labelKey: "trainingFinance", icon: Wallet, end: false });
     }
     if (ops.length > 0) {
-      addWs(tagged, "learning", { title: "Administracija obuke", items: ops });
+      addWs(tagged, "learning", { titleKey: "trainingAdmin", items: ops });
     }
   }
 
   if (showTechnicalCommitteeSidebar(isoCtx)) {
     addWs(tagged, "learning", {
-      title: "Tehnička validacija",
+      titleKey: "technicalValidation",
       items: [
-        { to: "/dashboard/admin/sadrzaj", label: "Obuke za validaciju", icon: FolderKanban, end: false },
-        { to: "/dashboard/admin/item-bank", label: "Ispitna pitanja", icon: ListChecks, end: false },
-        { to: "/dashboard/admin/roleplay", label: "AI prijedlozi", icon: Mic2, end: false },
-        { to: "/dashboard/iso/reports", label: "Izvještaji pitanja", icon: BarChart3, end: false },
+        { to: "/dashboard/admin/sadrzaj", labelKey: "validationCourses", icon: FolderKanban, end: false },
+        { to: "/dashboard/admin/item-bank", labelKey: "examQuestions", icon: ListChecks, end: false },
+        { to: "/dashboard/admin/roleplay", labelKey: "aiSuggestions", icon: Mic2, end: false },
+        { to: "/dashboard/iso/reports", labelKey: "questionReports", icon: BarChart3, end: false },
       ],
     });
   }
 
   if (isQualityManager(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "ISO referenca",
-      items: [{ to: "/dashboard/iso/schemes", label: "Certifikacijske sheme", icon: ScrollText, end: false }],
+      titleKey: "isoReference",
+      items: [{ to: "/dashboard/iso/schemes", labelKey: "certSchemes", icon: ScrollText, end: false }],
     });
   }
 
   if (showCertificationOpsSidebar(isoCtx)) {
-    const title = isCertificationCommitteeMember(isoCtx) ? "Certifikacijski odbor" : "Certifikacija (operativa)";
-    const certItems: SidebarNavItem[] = [
-      { to: "/dashboard/committee/pilot-applications", label: "Prijave", icon: ClipboardCheck, end: true },
-      { to: "/dashboard/committee/pilot-applications", label: "Pregled dokaza", icon: FolderKanban, end: false },
+    const titleKey = isCertificationCommitteeMember(isoCtx) ? "certificationCommittee" : "certificationOps";
+    const certItems: SidebarNavItemDef[] = [
+      { to: "/dashboard/committee/pilot-applications", labelKey: "applications", icon: ClipboardCheck, end: true },
+      { to: "/dashboard/committee/pilot-applications", labelKey: "evidenceReview", icon: FolderKanban, end: false },
     ];
     if (canAccessCertificationDecisions(isoCtx)) {
       certItems.push(
-        { to: "/dashboard/committee/decisions", label: "Provjera nepristranosti", icon: ClipboardList, end: false },
-        { to: "/dashboard/iso/decisions", label: "Odluke odbora", icon: Gavel, end: false },
+        { to: "/dashboard/committee/decisions", labelKey: "impartialityCheck", icon: ClipboardList, end: false },
+        { to: "/dashboard/iso/decisions", labelKey: "committeeDecisions", icon: Gavel, end: false },
       );
     }
     if (canAccessCertificatesRegistry(isoCtx)) {
-      certItems.push({ to: "/dashboard/iso/certificates", label: "Izdati certifikati", icon: FileStack, end: false });
+      certItems.push({ to: "/dashboard/iso/certificates", labelKey: "issuedCertificates", icon: FileStack, end: false });
     }
-    certItems.push({ to: "/dashboard/admin/recertification", label: "Recertifikacije", icon: ClipboardCheck, end: true });
+    certItems.push({ to: "/dashboard/admin/recertification", labelKey: "recertificationsAdmin", icon: ClipboardCheck, end: true });
     if (canAccessReportsDomain(isoCtx)) {
-      certItems.push({ to: "/dashboard/iso/reports", label: "Recertifikacija (pregled)", icon: ScrollText, end: false });
+      certItems.push({ to: "/dashboard/iso/reports", labelKey: "recertificationOverview", icon: ScrollText, end: false });
     }
-    addWs(tagged, "governance", { title, items: certItems });
+    addWs(tagged, "governance", { titleKey, items: certItems });
   }
 
   if (showAppealsCommitteeSidebar(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "Žalbena komisija",
+      titleKey: "appealsCommittee",
       items: [
-        { to: "/dashboard/iso/appeals", label: "Žalbe", icon: Inbox, end: false },
-        { to: "/dashboard/iso/complaints", label: "Prigovori", icon: MessageSquareWarning, end: false },
-        { to: "/dashboard/admin/support", label: "Odgovori", icon: ClipboardList, end: false },
-        { to: "/dashboard/iso/governance", label: "Rokovi", icon: ClipboardCheck, end: false },
+        { to: "/dashboard/iso/appeals", labelKey: "appeals", icon: Inbox, end: false },
+        { to: "/dashboard/iso/complaints", labelKey: "complaints", icon: MessageSquareWarning, end: false },
+        { to: "/dashboard/admin/support", labelKey: "responses", icon: ClipboardList, end: false },
+        { to: "/dashboard/iso/governance", labelKey: "deadlines", icon: ClipboardCheck, end: false },
       ],
     });
   }
 
   if (showDirectorSidebar(isoCtx)) {
-    const exec: SidebarNavItem[] = [
-      { to: "/dashboard/admin/reports", label: "Objedinjeni izvještaji", icon: BarChart3, end: true },
-      { to: "/dashboard/iso/reports", label: "ISO izvještaji", icon: ScrollText, end: false },
-      { to: "/dashboard/iso/governance", label: "Governance", icon: Scale, end: false },
-      { to: "/dashboard/iso/governance", label: "Management review", icon: Users2, end: false },
-      { to: "/dashboard/iso/governance", label: "Korektivne mjere", icon: ClipboardCheck, end: false },
-      { to: "/dashboard/iso/governance", label: "Komiteti", icon: Building2, end: false },
-      { to: "/dashboard/billing", label: "Finansije", icon: Wallet, end: false },
+    const exec: SidebarNavItemDef[] = [
+      { to: "/dashboard/admin/reports", labelKey: "unifiedReports", icon: BarChart3, end: true },
+      { to: "/dashboard/iso/reports", labelKey: "isoReports", icon: ScrollText, end: false },
+      { to: "/dashboard/iso/governance", labelKey: "governance", icon: Scale, end: false },
+      { to: "/dashboard/iso/governance", labelKey: "managementReview", icon: Users2, end: false },
+      { to: "/dashboard/iso/governance", labelKey: "correctiveActions", icon: ClipboardCheck, end: false },
+      { to: "/dashboard/iso/governance", labelKey: "committees", icon: Building2, end: false },
+      { to: "/dashboard/billing", labelKey: "finance", icon: Wallet, end: false },
     ];
     if (canAccessCertificationDecisions(isoCtx)) {
-      exec.push({ to: "/dashboard/iso/decisions", label: "Odluke o certifikaciji", icon: Gavel, end: false });
+      exec.push({ to: "/dashboard/iso/decisions", labelKey: "certDecisions", icon: Gavel, end: false });
     }
     if (canAccessCertificatesRegistry(isoCtx)) {
-      exec.push({ to: "/dashboard/iso/certificates", label: "Registar certifikata", icon: FileStack, end: false });
+      exec.push({ to: "/dashboard/iso/certificates", labelKey: "certRegistry", icon: FileStack, end: false });
     }
     if (showIdentityReviewNav(isoCtx)) {
       exec.push({
         to: "/dashboard/admin/identity-review",
-        label: showIdentityReviewPerformNav(isoCtx) ? "Ručna provjera identiteta" : "Pregled ID (nadzor)",
+        labelKey: showIdentityReviewPerformNav(isoCtx) ? "identityReviewManual" : "identityReviewOversight",
         icon: ShieldCheck,
         end: false,
       });
     }
     if (canAccessAppealsDomain(isoCtx)) {
-      exec.push({ to: "/dashboard/iso/appeals", label: "Žalbe (nadzor)", icon: Inbox, end: false });
+      exec.push({ to: "/dashboard/iso/appeals", labelKey: "appealsOversight", icon: Inbox, end: false });
     }
-    addWs(tagged, "governance", { title: "Uprava", items: exec });
+    addWs(tagged, "governance", { titleKey: "directorExecutive", items: exec });
   }
 
   if (showIdentityReviewPerformNav(isoCtx) && !showDirectorSidebar(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "Provjera identiteta",
+      titleKey: "identityReview",
       items: [
         {
           to: "/dashboard/admin/identity-review",
-          label: "Ručna provjera identiteta",
+          labelKey: "identityReviewManual",
           icon: ShieldCheck,
           end: false,
         },
@@ -335,122 +332,131 @@ export function collectTaggedSidebarSections(isoCtx: IsoNavContext): TaggedSideb
 
   if (canAccessKnowledgeWorkspace(isoCtx)) {
     addWs(tagged, "knowledge", {
-      title: "Standards Intelligence",
-      items: [{ to: "/dashboard/knowledge", label: "Knowledge centar", icon: ScrollText, end: false }],
+      titleKey: "standardsIntelligence",
+      items: [{ to: "/dashboard/knowledge", labelKey: "knowledgeCenter", icon: ScrollText, end: false }],
     });
   }
 
   if (canAccessComplianceWorkspace(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "Compliance",
-      items: [{ to: "/dashboard/iso/compliance", label: "Compliance OS", icon: ShieldCheck, end: false }],
+      titleKey: "compliance",
+      items: [{ to: "/dashboard/iso/compliance", labelKey: "complianceOs", icon: ShieldCheck, end: false }],
     });
   }
 
   if (canAccessCapaManagement(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "CAPA (ISO 17024)",
-      items: [{ to: "/dashboard/iso/capa", label: "Neusaglašenosti i CAPA", icon: ClipboardCheck, end: false }],
+      titleKey: "capaIso",
+      items: [{ to: "/dashboard/iso/capa", labelKey: "capa", icon: ClipboardCheck, end: false }],
     });
   }
 
   if (canAccessRiskManagement(isoCtx)) {
-    const riskItems: SidebarNavItem[] = [
-      { to: "/dashboard/iso/risks", label: "Registar rizika", icon: AlertOctagon, end: false },
-      { to: "/dashboard/iso/impartiality", label: "Nepristranost", icon: Scale, end: false },
+    const riskItems: SidebarNavItemDef[] = [
+      { to: "/dashboard/iso/risks", labelKey: "riskRegister", icon: AlertOctagon, end: false },
+      { to: "/dashboard/iso/impartiality", labelKey: "impartiality", icon: Scale, end: false },
     ];
     if (canAccessGovernanceDomain(isoCtx)) {
       riskItems.push({
         to: "/dashboard/iso/management-review",
-        label: "Pregled rukovodstva",
+        labelKey: "managementReviewPage",
         icon: ClipboardList,
         end: false,
       });
     }
     addWs(tagged, "governance", {
-      title: "Rizici (ISO 17024)",
+      titleKey: "risksIso",
       items: riskItems,
     });
   }
 
   if (canAccessCompetenceManagement(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "Kompetencija (ISO 17024)",
-      items: [{ to: "/dashboard/iso/competence", label: "Upravljanje kompetencijama", icon: BadgeCheck, end: false }],
+      titleKey: "competenceIso",
+      items: [{ to: "/dashboard/iso/competence", labelKey: "competence", icon: BadgeCheck, end: false }],
     });
   }
 
   if (canAccessIsoAudit(isoCtx)) {
     addWs(tagged, "governance", {
-      title: "Audit (ISO 17024)",
-      items: [{ to: "/dashboard/iso/audit", label: "Strukturirani audit trail", icon: ListChecks, end: false }],
+      titleKey: "auditIso",
+      items: [{ to: "/dashboard/iso/audit", labelKey: "auditTrail", icon: ListChecks, end: false }],
     });
   }
 
   if (evaluateSysAdminAccess({ roleFromProfile: isoCtx.role })) {
     addWs(tagged, "system", {
-      title: "Sistem administracija",
+      titleKey: "systemAdministration",
       items: [
-        { to: "/dashboard/admin/reports", label: "Objedinjeni izvještaji", icon: BarChart3, end: true },
-        { to: "/dashboard/admin/education", label: "Upravljanje edukacijama", icon: BookOpen, end: true },
-        { to: "/dashboard/admin/users", label: "Korisnici", icon: Users, end: false },
-        { to: "/dashboard/admin/tenants", label: "Organizacije", icon: FolderKanban, end: false },
-        { to: "/dashboard/admin/roles", label: "Uloge i ovlasti", icon: KeyRound, end: false },
-        { to: "/dashboard/admin/audit-logs", label: "Sigurnosni trag", icon: ScrollText, end: false },
-        { to: "/dashboard/admin/system-health", label: "Status sustava", icon: LayoutGrid, end: false },
-        { to: "/dashboard/admin/jobs", label: "Pozadinski poslovi", icon: ClipboardCheck, end: false },
-        { to: "/dashboard/admin/billing", label: "Naplata (admin)", icon: Wallet, end: false },
-        { to: "/dashboard/admin/launch", label: "Launch mode", icon: Rocket, end: false },
-        { to: "/dashboard/admin/backups", label: "Rezerve", icon: FileStack, end: false },
-        { to: "/dashboard/admin/security", label: "Sigurnost", icon: Lock, end: false },
+        { to: "/dashboard/admin/reports", labelKey: "unifiedReports", icon: BarChart3, end: true },
+        { to: "/dashboard/admin/education", labelKey: "adminEducation", icon: BookOpen, end: true },
+        { to: "/dashboard/admin/users", labelKey: "users", icon: Users, end: false },
+        { to: "/dashboard/admin/tenants", labelKey: "tenants", icon: FolderKanban, end: false },
+        { to: "/dashboard/admin/roles", labelKey: "roles", icon: KeyRound, end: false },
+        { to: "/dashboard/admin/audit-logs", labelKey: "securityTrail", icon: ScrollText, end: false },
+        { to: "/dashboard/admin/system-health", labelKey: "systemHealth", icon: LayoutGrid, end: false },
+        { to: "/dashboard/admin/jobs", labelKey: "jobs", icon: ClipboardCheck, end: false },
+        { to: "/dashboard/admin/billing", labelKey: "adminBilling", icon: Wallet, end: false },
+        { to: "/dashboard/admin/launch", labelKey: "launchMode", icon: Rocket, end: false },
+        { to: "/dashboard/admin/backups", labelKey: "backups", icon: FileStack, end: false },
+        { to: "/dashboard/admin/security", labelKey: "security", icon: Lock, end: false },
       ],
     });
 
     addWs(tagged, "system", {
-      title: "Platforma (napredno)",
+      titleKey: "platformAdvanced",
       items: [
-        { to: "/dashboard/iso/schemes", label: "ISO sheme", icon: ScrollText, end: false },
-        { to: "/dashboard/admin/console", label: "Sys admin konzola", icon: LayoutGrid, end: false },
-        { to: "/dashboard/admin/committees", label: "Komiteti (CRUD)", icon: Users2, end: false },
-        { to: "/dashboard/admin/analytics", label: "Platform analytics", icon: BarChart3, end: false },
-        { to: "/dashboard/admin/customers", label: "Customer success", icon: BriefcaseBusiness, end: false },
-        { to: "/dashboard/admin/leads", label: "Leads", icon: Inbox, end: false },
-        { to: "/dashboard/admin/feedback", label: "Feedback", icon: MessageSquareWarning, end: false },
+        { to: "/dashboard/iso/schemes", labelKey: "isoSchemes", icon: ScrollText, end: false },
+        { to: "/dashboard/admin/console", labelKey: "sysConsole", icon: LayoutGrid, end: false },
+        { to: "/dashboard/admin/committees", labelKey: "committeesCrud", icon: Users2, end: false },
+        { to: "/dashboard/admin/analytics", labelKey: "platformAnalytics", icon: BarChart3, end: false },
+        { to: "/dashboard/admin/customers", labelKey: "customerSuccess", icon: BriefcaseBusiness, end: false },
+        { to: "/dashboard/admin/leads", labelKey: "leads", icon: Inbox, end: false },
+        { to: "/dashboard/admin/feedback", labelKey: "feedback", icon: MessageSquareWarning, end: false },
       ],
     });
   }
 
   if (!evaluateSysAdminAccess({ roleFromProfile: isoCtx.role })) {
-    const tenantItems: SidebarNavItem[] = [];
+    const tenantItems: SidebarNavItemDef[] = [];
     if (evaluateUserRegistryAccess({ roleFromProfile: isoCtx.role })) {
-      tenantItems.push({ to: "/dashboard/admin/users", label: "Korisnici", icon: Users, end: false });
+      tenantItems.push({ to: "/dashboard/admin/users", labelKey: "users", icon: Users, end: false });
     }
     if (showIdentityReviewPerformNav(isoCtx)) {
       tenantItems.push({
         to: "/dashboard/admin/identity-review",
-        label: "Ručna provjera identiteta",
+        labelKey: "identityReviewManual",
         icon: ShieldCheck,
         end: false,
       });
     }
     if (evaluateTenantDirectoryAccess({ roleFromProfile: isoCtx.role })) {
-      tenantItems.push({ to: "/dashboard/admin/tenants", label: "Organizacije", icon: FolderKanban, end: false });
+      tenantItems.push({ to: "/dashboard/admin/tenants", labelKey: "tenants", icon: FolderKanban, end: false });
     }
     if (tenantItems.length > 0) {
-      addWs(tagged, "system", { title: "Operativa tenanta", items: tenantItems });
+      addWs(tagged, "system", { titleKey: "tenantOperations", items: tenantItems });
     }
   }
 
   return tagged;
 }
 
-export function buildSidebarSections(isoCtx: IsoNavContext, workspace: AppWorkspaceId): SidebarSection[] {
+export function buildSidebarSectionDefs(isoCtx: IsoNavContext, workspace: AppWorkspaceId): SidebarSectionDef[] {
   return collectTaggedSidebarSections(isoCtx)
     .filter((t) => t.workspace === workspace)
     .map((t) => t.section);
 }
 
 /** Kompatibilnost: svi blokovi kao prije konsolidacije (za migracijske ili privremene alate). */
-export function buildSidebarSectionsAllWorkspacesMerged(isoCtx: IsoNavContext): SidebarSection[] {
+export function buildSidebarSectionDefsAllWorkspacesMerged(isoCtx: IsoNavContext): SidebarSectionDef[] {
   return collectTaggedSidebarSections(isoCtx).map((t) => t.section);
+}
+
+
+/** @deprecated Use buildSidebarSectionDefs + localizeSidebarSections in UI. */
+export function buildSidebarSections(
+  isoCtx: IsoNavContext,
+  workspace: AppWorkspaceId,
+): SidebarSectionDef[] {
+  return buildSidebarSectionDefs(isoCtx, workspace);
 }

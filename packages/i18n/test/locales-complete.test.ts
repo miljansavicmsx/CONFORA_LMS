@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { A11Y_KEYS, SUPPORTED_LOCALES } from '../src/keys';
 
 const localesDir = join(__dirname, '..', 'locales');
-const NAMESPACES = ['a11y', 'auth', 'shell', 'candidatePortal', 'certificationStaff'] as const;
+const NAMESPACES = ['a11y', 'auth', 'shell', 'candidatePortal', 'certificationStaff', 'navigation', 'dashboard', 'common'] as const;
 
 function flattenKeys(value: unknown, prefix = ''): string[] {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {

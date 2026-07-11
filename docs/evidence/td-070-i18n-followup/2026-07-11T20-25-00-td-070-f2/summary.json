@@ -1,0 +1,37 @@
+{
+  "evidence_folder": "docs/evidence/td-070-i18n-followup/2026-07-11T20-25-00-td-070-f2/",
+  "supported_locales": ["en", "bs", "sr", "hr", "sl"],
+  "new_namespaces": ["navigation", "dashboard", "common"],
+  "updated_namespaces": ["shell", "a11y", "candidatePortal"],
+  "dashboard_i18n_status": "PARTIAL",
+  "navigation_i18n_status": "PASS",
+  "learner_wallet_i18n_status": "PARTIAL",
+  "hardcoded_strings_remaining_in_scope": [
+    "LearnerDashboardEnterprise.tsx detailed dashboard cards",
+    "DashboardHome legacy role workspace headers and fallback action cards",
+    "FinancePage learner finance workspace",
+    "dashboard-breadcrumbs.ts segment labels at runtime",
+    "DashboardLayout mobile nav + nest-auth-pilot mobile labels"
+  ],
+  "hardcoded_strings_deferred_out_of_scope": [
+    "Committee portal full extraction",
+    "Public landing/marketing copy",
+    "admin-gov-ux-labels.ts Serbian staff labels",
+    "DashboardRolePanels staff cockpits",
+    "API error catalog"
+  ],
+  "raw_enum_status": "PASS",
+  "locale_parity_status": "PASS",
+  "targeted_tests_status": "PASS",
+  "sequential_regression_status": "BLOCKED",
+  "production_code_changed": true,
+  "prisma_schema_changed": false,
+  "migrations_changed": false,
+  "api_contracts_changed": false,
+  "rbac_weakened": false,
+  "tenant_isolation_weakened": false,
+  "privacy_weakened": false,
+  "governance_boundaries_weakened": false,
+  "external_pilot_approved": false,
+  "final_verdict": "TD_070_F2_GO_WITH_REMAINING_DEFERRED_LOW_RISK_STRINGS"
+}

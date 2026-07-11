@@ -9,7 +9,7 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react";
-import { A11Y_NS } from "@confora/i18n";
+import { A11Y_NS, SHELL_NS } from "@confora/i18n";
 import { Fragment, useCallback, useEffect, useState, type JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
@@ -29,7 +29,7 @@ import { ConforaLogo } from "@/components/ui/ConforaLogo";
 import { GlobalCommandCenter } from "@/components/command-center/GlobalCommandCenter";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useOptionalWorkspaceContext } from "@/contexts/WorkspaceContext";
-import { APP_WORKSPACE_LABELS } from "@/lib/app-workspace";
+import type { AppWorkspaceId } from "@/lib/app-workspace";
 import { cn } from "@/lib/utils";
 
 export type HeaderBreadcrumbItem = {
@@ -110,6 +110,7 @@ export function Header({
   quickActions = [],
 }: HeaderProps): JSX.Element {
   const { t } = useTranslation(A11Y_NS);
+  const { t: tShell } = useTranslation(SHELL_NS);
   const navigate = useNavigate();
   const wsCtx = useOptionalWorkspaceContext();
   const commandWorkspace = wsCtx?.workspace ?? "learning";
@@ -127,6 +128,11 @@ export function Header({
   const isApple =
     typeof navigator !== "undefined" &&
     /Mac|iPhone|iPad|iPod/u.test(navigator.platform ?? navigator.userAgent);
+
+  const workspaceLabel = useCallback(
+    (id: AppWorkspaceId) => tShell(`workspace.${id}`),
+    [tShell],
+  );
 
   return (
     <>
@@ -159,14 +165,14 @@ export function Header({
                   variant="ghost"
                   className="h-9 shrink-0 gap-1 rounded-lg px-2 text-text-primary hover:bg-surface-secondary"
                   aria-haspopup="menu"
-                  aria-label="Odabir radnog prostora CONFORA"
+                  aria-label={t("workspace_picker")}
                 >
                   <span className="max-w-[10rem] truncate text-sm font-semibold tracking-tight">CONFORA</span>
                   <ChevronDown className="h-4 w-4 shrink-0 text-text-muted" aria-hidden />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 border-border/50 bg-surface-secondary text-text-primary">
-                <DropdownMenuLabel className="text-xs text-text-muted">Radni prostor</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs text-text-muted">{tShell("workspace.label")}</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border/50" />
                 {wsCtx.available.map((id) => (
                   <DropdownMenuItem
@@ -174,7 +180,7 @@ export function Header({
                     className={cn("cursor-pointer focus:bg-brand/10", wsCtx.workspace === id && "bg-brand/10")}
                     onSelect={() => wsCtx.setWorkspace(id)}
                   >
-                    {APP_WORKSPACE_LABELS[id]}
+                    {workspaceLabel(id)}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -182,7 +188,7 @@ export function Header({
           ) : (
             <Link
               to="/dashboard"
-              aria-label="CONFORA — nadzorna ploča"
+              aria-label={t("dashboard_home")}
               className="shrink-0 rounded-md opacity-95 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
             >
               <ConforaLogo size="sm" presentational />
@@ -191,7 +197,7 @@ export function Header({
 
           <nav
             className="hidden min-w-0 flex-1 items-center gap-2 text-sm text-text-secondary sm:flex"
-            aria-label="Putanja"
+            aria-label={t("breadcrumb")}
           >
             {breadcrumbItems.map((item, i) => (
               <Fragment key={`${item.label}-${i}`}>
@@ -241,7 +247,7 @@ export function Header({
           ) : null}
 
           {quickActions.length > 0 ? (
-            <div className="hidden gap-0.5 lg:flex" aria-label="Brze akcije">
+            <div className="hidden gap-0.5 lg:flex" aria-label={t("quick_actions")}>
               {quickActions.map((a) => {
                 const Icon = a.icon;
                 return (
@@ -274,7 +280,7 @@ export function Header({
               aria-label={t("search")}
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden />
-              <span className="hidden text-sm md:inline">Pretraži…</span>
+              <span className="hidden text-sm md:inline">{tShell("search.placeholder")}</span>
               <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-border/50 bg-surface-primary px-1.5 font-mono text-[10px] font-medium text-text-muted md:inline-flex">
                 {isApple ? (
                   <>
@@ -305,7 +311,7 @@ export function Header({
                 variant="ghost"
                 size="icon"
                 className="relative h-9 w-9 text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
-                aria-label="Obavještenja"
+                aria-label={tShell("notifications.title")}
               >
                 <Bell className="h-5 w-5" />
                 {notificationCount > 0 ? (
@@ -324,11 +330,11 @@ export function Header({
               align="end"
               className="w-80 border-border/50 bg-surface-secondary text-text-primary"
             >
-              <DropdownMenuLabel>Obavještenja</DropdownMenuLabel>
+              <DropdownMenuLabel>{tShell("notifications.title")}</DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-border/50" />
               {notifications.length === 0 ? (
                 <p className="px-2 py-6 text-center text-sm text-text-secondary">
-                  Nema novih obavještenja.
+                  {tShell("notifications.empty")}
                 </p>
               ) : (
                 notifications.map((n) => (
@@ -375,13 +381,13 @@ export function Header({
               <DropdownMenuItem asChild className="focus:bg-brand/10">
                 <Link to="/dashboard/profil" className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />
-                  Profil
+                  {tShell("userMenu.profile")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="focus:bg-brand/10">
                 <Link to="/dashboard/postavke" className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
-                  Postavke
+                  {tShell("userMenu.settings")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border/50" />
@@ -390,7 +396,7 @@ export function Header({
                 onClick={handleLogout}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Odjava
+                {tShell("userMenu.logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

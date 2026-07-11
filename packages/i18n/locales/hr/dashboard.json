@@ -1,0 +1,121 @@
+{
+  "pilot": {
+    "title": "Nadzorna ploča (pilot)",
+    "unavailable": "Modul 1 widget nije dostupan. Provjerite Nest API i Keycloak sesiju.",
+    "openCatalog": "Otvori katalog"
+  },
+  "greeting": {
+    "morning": "Dobro jutro",
+    "afternoon": "Dobar dan",
+    "evening": "Dobra večer",
+    "anonymous": "Korisniku"
+  },
+  "workspace": {
+    "eyebrow": "Vaš radni prostor",
+    "isoRoleLabel": "Role (ISO/IEC 17024):",
+    "accessTitle": "Access",
+    "accessDescription": "You only see modules allowed for your role. Sensitive actions require additional server-side verification.",
+    "refreshData": "Osvježi podatke",
+    "defaultMission": "Role-based workspace for permitted actions."
+  },
+  "roles": {
+    "candidate": "Learner",
+    "training_admin": "Training administrator",
+    "technical_committee": "Technical committee",
+    "certification_committee": "Certification committee",
+    "appeals_committee": "Appeals committee",
+    "iso_governance": "ISO / oversight",
+    "director": "Executive",
+    "sys_admin": "System administrator",
+    "unknown": "Unknown role",
+    "user": "User"
+  },
+  "roleMission": {
+    "candidate": "Learning, exams, certification application, and your documents.",
+    "training_admin": "Training programs, enrolments, exam readiness, and learner support.",
+    "technical_committee": "Review content and item bank before activation in teaching.",
+    "certification_committee": "Formal certification decisions, impartiality, and quorum.",
+    "appeals_committee": "Appeals and complaints — separate from the certification committee.",
+    "iso_governance": "Certificates, appeals, complaints, and open oversight items (CAPA, risks, impartiality, audit).",
+    "director": "Strategic signal: certification, finance, and risk management.",
+    "sys_admin": "Platform stability, users, and security trail.",
+    "unknown": "Your role is not recognized. Contact an administrator to assign a valid role.",
+    "quality_manager": "Quality management: CAPA, risks, competence, impartiality, structured audit and management review — without certification committee business decisions."
+  },
+  "empty": {
+    "defaultTitle": "Summary for this role is currently empty",
+    "defaultDescription": "When the system collects data for your role, cards will appear automatically. Until then, continue in the modules below or refresh the view.",
+    "nextStepsHeading": "Common next steps",
+    "actions": {
+      "createEducation": "Create education",
+      "itemBank": "Item bank",
+      "content": "Content",
+      "committeeDecisions": "Committee decisions",
+      "applicationQueue": "Application queue",
+      "tickets": "Tickets",
+      "complaints": "Complaints",
+      "isoHub": "ISO hub",
+      "standardsIntelligence": "Standards Intelligence",
+      "governance": "Governance",
+      "reports": "Reports",
+      "console": "Console",
+      "auditTrail": "Audit trail",
+      "education": "Education",
+      "support": "Support"
+    },
+    "primary": {
+      "committeeQueue": "Committee application queue",
+      "systemHealth": "System status",
+      "governanceTrail": "Governance trail",
+      "continueModule": "Continue in module"
+    }
+  },
+  "idle": {
+    "candidateTitle": "You are not enrolled in any course.",
+    "candidateDescription": "Browse the education catalog, choose a scheme, and start a module your body allows. Without enrolment the LMS will not show individual program progress.",
+    "certCommitteeTitle": "No applications are currently assigned to your committee.",
+    "certCommitteeDescription": "Items appear when the system has formal steps or tasks in your queue. For SLA questions use the reports module or support.",
+    "qualityManagerTitle": "No open CAPA/risks for your tenant.",
+    "qualityManagerDescription": "Quick counters are empty — detailed records may still exist in ISO modules. Use structured pages for CAPA, risks, and management review.",
+    "auditorTitle": "No new audit events in the selected period.",
+    "auditorDescription": "Detailed trail and checklists are in the structured ISO module. Here you see only an aggregatable summary for quick cockpit scanning.",
+    "sysAdminTitle": "No active incidents.",
+    "sysAdminDescription": "KPI snapshot above remains technical: if trail or alarm is missing on the cockpit, services still run background jobs — use system health and audit for complex signals."
+  },
+  "fallback": {
+    "eyebrow": "Dashboard — limited view",
+    "title": "We cannot load all figures",
+    "description": "Summary for your role is currently unavailable. Other modules still work within your permissions — choose an action below or try reloading the dashboard.",
+    "actions": {
+      "systemHealth": "System status",
+      "systemHealthDetail": "Service availability and background jobs overview.",
+      "securityTrail": "Security trail",
+      "securityTrailDetail": "Significant events overview.",
+      "users": "Users",
+      "usersDetail": "Platform user registry.",
+      "committeeDecisions": "Committee decisions",
+      "committeeDecisionsDetail": "Work items and decision history.",
+      "reports": "Reports",
+      "reportsDetail": "Summaries tailored to your role.",
+      "support": "Support",
+      "supportDetail": "Contact the operations team.",
+      "courses": "Courses",
+      "coursesDetail": "Continue learning or find a program.",
+      "exams": "Exams",
+      "examsDetail": "Readiness and attempt checks.",
+      "certStatus": "Certification status",
+      "certStatusDetail": "Where your application stands.",
+      "finance": "Finance",
+      "financeDetail": "Invoices and payment status.",
+      "myDocuments": "My documents",
+      "myDocumentsDetail": "Exam confirmations and certificates.",
+      "aiTutor": "AI tutor",
+      "aiTutorDetail": "Learning help in program context."
+    }
+  },
+  "unknownRole": {
+    "title": "Your role is not recognized",
+    "description": "Contact an administrator to ensure your certification body role profile is configured correctly."
+  },
+  "loading": "Učitavanje nadzorne ploče"
+}
