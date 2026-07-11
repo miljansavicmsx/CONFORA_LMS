@@ -1,0 +1,49 @@
+{
+  "certificateSelector": {
+    "label": "Certificate",
+    "placeholder": "Select a certificate",
+    "loading": "Loading your certificates…",
+    "emptyTitle": "No certificates available",
+    "emptyDescription": "You need an issued person certification before starting CPD or recertification.",
+    "error": "Could not load certificates.",
+    "fallbackHint": "Using certificate from link (dev fallback).",
+    "status": "Status",
+    "validUntil": "Valid until",
+    "issuedAt": "Issued"
+  },
+  "recertification": {
+    "pageTitle": "Recertification & CPD",
+    "pageDescription": "Select a certificate to manage recertification evidence and CPD inputs.",
+    "cpdHoursLabel": "CPD hours recorded",
+    "submitCase": "Submit recertification",
+    "loadingCase": "Loading recertification case…",
+    "noCase": "Recertification is not open for this certificate yet.",
+    "listTitle": "My recertification requests",
+    "listLoading": "Loading requests…",
+    "listError": "Could not load recertification requests.",
+    "listEmpty": "No recertification requests yet.",
+    "tableId": "Request ID",
+    "tableCertificate": "Certificate",
+    "tableStatus": "Status",
+    "tableDue": "Due",
+    "tableActions": "Actions",
+    "submit": "Submit"
+  },
+  "statusLabels": {
+    "DRAFT": "Draft",
+    "SUBMITTED": "Submitted",
+    "IN_REVIEW": "In review",
+    "UNDER_REVIEW": "Under review",
+    "APPROVED": "Approved",
+    "DENIED": "Denied",
+    "ACTIVE": "Active",
+    "ISSUED": "Issued",
+    "EXPIRED": "Expired",
+    "SUSPENDED": "Suspended",
+    "REVOKED": "Revoked",
+    "NOT_STARTED": "Not started",
+    "IN_PROGRESS": "In progress",
+    "COMPLETED": "Completed",
+    "WITHDRAWN": "Withdrawn"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "assignment": {
+    "panelTitle": "Dodjela recenzenta",
+    "loading": "Učitavanje dodjele…",
+    "status": {
+      "unassigned": "Nedodijeljeno",
+      "assigned": "Dodijeljeno — čeka prihvat",
+      "accepted": "Prihvaćeno",
+      "inReview": "U recenziji",
+      "declined": "Odbijeno",
+      "reassigned": "Preusmjereno"
+    },
+    "labels": {
+      "assigneeReference": "Dodijeljeni recenzent",
+      "assignedAt": "Datum dodjele",
+      "declineReason": "Razlog odbijanja",
+      "history": "Historija dodjela",
+      "reviewerId": "ID korisnika recenzenta",
+      "rationale": "Obrazloženje (opcionalno)"
+    },
+    "actions": {
+      "assign": "Dodijeli recenzenta",
+      "accept": "Prihvati dodjelu",
+      "decline": "Odbij dodjelu",
+      "submitDecline": "Pošalji odbijanje"
+    },
+    "coi": {
+      "declaration": "Izjavljujem da nemam sukob interesa za ovu recenziju."
+    },
+    "success": {
+      "assigned": "Recenzent je dodijeljen.",
+      "accepted": "Dodjela je prihvaćena.",
+      "declined": "Dodjela je odbijena."
+    },
+    "errors": {
+      "forbidden": "Nemate ovlasti za ovu radnju dodjele.",
+      "notFound": "Prijava ili dodjela nije pronađena.",
+      "conflict": "Dodjela je blokirana zbog segregacije dužnosti ili sukoba interesa.",
+      "validation": "Provjerite unesene podatke i pokušajte ponovo.",
+      "declineReasonRequired": "Razlog odbijanja je obavezan (najmanje 3 znaka).",
+      "reviewerIdRequired": "Unesite valjani ID korisnika recenzenta.",
+      "network": "Mrežna greška. Pokušajte ponovo.",
+      "generic": "Radnja dodjele nije uspjela. Pokušajte ponovo."
+    }
+  },
+  "review": {
+    "panelTitle": "Recenzija prijave",
+    "loading": "Učitavanje statusa recenzije…",
+    "status": {
+      "notStarted": "Nije započeto",
+      "inProgress": "U toku"
+    },
+    "labels": {
+      "applicationStatus": "Status prijave",
+      "assignmentStatus": "Status dodjele",
+      "reviewStartedAt": "Recenzija započeta"
+    },
+    "actions": {
+      "start": "Započni recenziju"
+    },
+    "success": {
+      "started": "Recenzija je započeta. Prijava je sada u recenziji."
+    },
+    "errors": {
+      "forbidden": "Nemate ovlasti za započinjanje ove recenzije.",
+      "notFound": "Prijava ili status recenzije nije pronađen.",
+      "alreadyInReview": "Recenzija je već započeta za ovu prijavu.",
+      "precondition": "Recenzija se ne može započeti u trenutnom statusu prijave ili dodjele.",
+      "conflict": "Recenzija je blokirana zbog segregacije dužnosti ili sukoba interesa.",
+      "validation": "Provjerite unesene podatke i pokušajte ponovo.",
+      "network": "Mrežna greška. Pokušajte ponovo.",
+      "generic": "Započinjanje recenzije nije uspjelo. Pokušajte ponovo."
+    }
+  }
+}

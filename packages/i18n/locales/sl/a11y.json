@@ -1,0 +1,11 @@
+{
+  "skip_to_main": "Preskoči na glavno vsebino",
+  "skip_to_navigation": "Preskoči na navigacijo",
+  "open_menu": "Odpri meni",
+  "close_menu": "Zapri meni",
+  "search": "Iskanje",
+  "user_menu": "Uporabniški meni",
+  "loading": "Nalaganje",
+  "error_occurred": "Prišlo je do napake",
+  "nest_auth_pilot_registry_unavailable": "Urejanje razširjenega registra profila med Nest auth pilotom ni na voljo. Osnovni podatki zgoraj so samo za branje iz vaše seje."
+}

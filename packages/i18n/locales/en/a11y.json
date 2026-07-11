@@ -1,0 +1,11 @@
+{
+  "skip_to_main": "Skip to main content",
+  "skip_to_navigation": "Skip to navigation",
+  "open_menu": "Open menu",
+  "close_menu": "Close menu",
+  "search": "Search",
+  "user_menu": "User menu",
+  "loading": "Loading",
+  "error_occurred": "An error occurred",
+  "nest_auth_pilot_registry_unavailable": "Extended registry profile editing is unavailable during the Nest auth pilot. Basic profile fields above are read-only from your session."
+}

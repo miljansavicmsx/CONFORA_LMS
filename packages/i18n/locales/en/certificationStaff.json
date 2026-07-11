@@ -1,0 +1,75 @@
+{
+  "assignment": {
+    "panelTitle": "Reviewer assignment",
+    "loading": "Loading assignment…",
+    "status": {
+      "unassigned": "Unassigned",
+      "assigned": "Assigned — pending acceptance",
+      "accepted": "Accepted",
+      "inReview": "In review",
+      "declined": "Declined",
+      "reassigned": "Reassigned"
+    },
+    "labels": {
+      "assigneeReference": "Assigned reviewer",
+      "assignedAt": "Assigned on",
+      "declineReason": "Decline reason",
+      "history": "Assignment history",
+      "reviewerId": "Reviewer user ID",
+      "rationale": "Rationale (optional)"
+    },
+    "actions": {
+      "assign": "Assign reviewer",
+      "accept": "Accept assignment",
+      "decline": "Decline assignment",
+      "submitDecline": "Submit decline"
+    },
+    "coi": {
+      "declaration": "I declare no conflict of interest for this review assignment."
+    },
+    "success": {
+      "assigned": "Reviewer assigned.",
+      "accepted": "Assignment accepted.",
+      "declined": "Assignment declined."
+    },
+    "errors": {
+      "forbidden": "You do not have permission for this assignment action.",
+      "notFound": "Application or assignment was not found.",
+      "conflict": "Assignment blocked due to separation of duties or conflict of interest.",
+      "validation": "Please check the entered data and try again.",
+      "declineReasonRequired": "A decline reason is required (minimum 3 characters).",
+      "reviewerIdRequired": "Enter a valid reviewer user ID.",
+      "network": "Network error. Please try again.",
+      "generic": "Assignment action failed. Please try again."
+    }
+  },
+  "review": {
+    "panelTitle": "Application review",
+    "loading": "Loading review status…",
+    "status": {
+      "notStarted": "Not started",
+      "inProgress": "In progress"
+    },
+    "labels": {
+      "applicationStatus": "Application status",
+      "assignmentStatus": "Assignment status",
+      "reviewStartedAt": "Review started on"
+    },
+    "actions": {
+      "start": "Start review"
+    },
+    "success": {
+      "started": "Review started. Application is now under review."
+    },
+    "errors": {
+      "forbidden": "You do not have permission to start this review.",
+      "notFound": "Application or review status was not found.",
+      "alreadyInReview": "Review has already been started for this application.",
+      "precondition": "Review cannot be started in the current application or assignment state.",
+      "conflict": "Review blocked due to separation of duties or conflict of interest.",
+      "validation": "Please check the entered data and try again.",
+      "network": "Network error. Please try again.",
+      "generic": "Start review failed. Please try again."
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "certificateSelector": {
+    "label": "Sertifikat",
+    "placeholder": "Izaberite sertifikat",
+    "loading": "Učitavanje sertifikata…",
+    "emptyTitle": "Nema dostupnih sertifikata",
+    "emptyDescription": "Potrebna je izdata sertifikacija osobe pre CPD-a ili recertifikacije.",
+    "error": "Sertifikati se ne mogu učitati.",
+    "fallbackHint": "Korišćen sertifikat iz linka (dev fallback).",
+    "status": "Status",
+    "validUntil": "Važi do",
+    "issuedAt": "Izdato"
+  },
+  "recertification": {
+    "pageTitle": "Recertifikacija i CPD",
+    "pageDescription": "Izaberite sertifikat za evidenciju CPD-a i recertifikacije.",
+    "cpdHoursLabel": "Evidentirani CPD sati",
+    "submitCase": "Pošalji recertifikaciju",
+    "loadingCase": "Učitavanje recertifikacije…",
+    "noCase": "Prozor recertifikacije još nije otvoren za ovaj sertifikat.",
+    "listTitle": "Moji zahtevi za recertifikaciju",
+    "listLoading": "Učitavanje zahteva…",
+    "listError": "Zahtevi se ne mogu učitati.",
+    "listEmpty": "Još nema zahteva za recertifikaciju.",
+    "tableId": "ID zahteva",
+    "tableCertificate": "Sertifikat",
+    "tableStatus": "Status",
+    "tableDue": "Rok",
+    "tableActions": "Akcije",
+    "submit": "Pošalji"
+  },
+  "statusLabels": {
+    "DRAFT": "Nacrt",
+    "SUBMITTED": "Podneto",
+    "IN_REVIEW": "U pregledu",
+    "UNDER_REVIEW": "U pregledu",
+    "APPROVED": "Odobreno",
+    "DENIED": "Odbijeno",
+    "ACTIVE": "Aktivan",
+    "ISSUED": "Izdato",
+    "EXPIRED": "Isteklo",
+    "SUSPENDED": "Suspendovano",
+    "REVOKED": "Opozvano",
+    "NOT_STARTED": "Nije započeto",
+    "IN_PROGRESS": "U toku",
+    "COMPLETED": "Završeno",
+    "WITHDRAWN": "Povučeno"
+  }
+}

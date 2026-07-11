@@ -1,0 +1,11 @@
+{
+  "skip_to_main": "Preskoči na glavni sadržaj",
+  "skip_to_navigation": "Preskoči na navigaciju",
+  "open_menu": "Otvori meni",
+  "close_menu": "Zatvori meni",
+  "search": "Pretraži",
+  "user_menu": "Korisnički meni",
+  "loading": "Učitavanje",
+  "error_occurred": "Došlo je do greške",
+  "nest_auth_pilot_registry_unavailable": "Uređivanje proširenog registra profila nije dostupno tokom Nest auth pilota. Osnovni podaci iznad su samo za čitanje iz vaše sesije."
+}
