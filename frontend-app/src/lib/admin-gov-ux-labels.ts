@@ -90,6 +90,62 @@ export function adminAuditDomainLabel(domain: string): string {
   return adminReportStatusLabel(domain);
 }
 
+const ADMIN_AUDIT_ACTION_MAP: Record<string, string> = {
+  "education.report.read": "Pregled izvještaja edukacije",
+  "education.report.export": "Izvoz izvještaja edukacije",
+  "education.completion.recorded": "Zabilježen završetak edukacije",
+  "education.enrolment.confirmed": "Potvrđen upis na kurs",
+  "education.enrolment.created": "Kreiran upis na kurs",
+  "education.enrolment.completed": "Završen upis na kurs",
+  "education.enrolment.seeded_completed": "Sintetički završen upis",
+  "education.enrolment.progress_updated": "Ažuriran napredak upisa",
+  "education.enrolment.module_progress": "Napredak po modulu",
+  "education.enrolment.seeded_module_progress": "Sintetički napredak po modulu",
+  "education.completion_certificate.issued": "Izdana potvrda o završetku",
+  "education.completion_certificate.seeded": "Sintetička potvrda o završetku",
+  "education.completion_certificate.accessed": "Pristup potvrdi o završetku",
+};
+
+const ADMIN_AUDIT_RESOURCE_MAP: Record<string, string> = {
+  "education.report": "Izvještaj edukacije",
+  "education.enrolment": "Upis na kurs",
+  "education.course": "Program edukacije",
+  "education.completion_certificate": "Potvrda o završetku edukacije",
+};
+
+/** Maps audit action / notification event keys to Serbian labels (no raw dot-notation in UI). */
+export function adminAuditActionLabel(action: string | null | undefined): string {
+  const raw = String(action ?? "").trim();
+  if (!raw) return "—";
+  if (ADMIN_AUDIT_ACTION_MAP[raw]) return ADMIN_AUDIT_ACTION_MAP[raw];
+  const mapped = adminReportStatusLabel(raw);
+  if (mapped !== raw) return mapped;
+  if (raw.includes(".")) {
+    if (raw.startsWith("education.")) return "Događaj edukacije";
+    return "Audit događaj";
+  }
+  return raw;
+}
+
+/** Maps audit resource types to Serbian labels. */
+export function adminAuditResourceTypeLabel(resourceType: string | null | undefined): string {
+  const raw = String(resourceType ?? "").trim();
+  if (!raw) return "—";
+  if (ADMIN_AUDIT_RESOURCE_MAP[raw]) return ADMIN_AUDIT_RESOURCE_MAP[raw];
+  const mapped = adminReportStatusLabel(raw);
+  if (mapped !== raw) return mapped;
+  if (raw.includes(".")) {
+    if (raw.startsWith("education.")) return "Resurs edukacije";
+    return "Audit resurs";
+  }
+  return raw;
+}
+
+/** Alias for education notification event keys (same vocabulary as audit actions). */
+export function adminEducationEventKeyLabel(eventKey: string | null | undefined): string {
+  return adminAuditActionLabel(eventKey);
+}
+
 export type ChartRow = { readonly label: string; readonly value: number };
 
 export function mapAdminChartRows(rows: readonly ChartRow[]): ChartRow[] {

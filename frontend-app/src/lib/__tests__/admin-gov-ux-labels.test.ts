@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  adminAuditActionLabel,
+  adminAuditResourceTypeLabel,
   adminBodyMustNotExposeRawEnums,
+  adminEducationEventKeyLabel,
   adminReportStatusLabel,
   RAW_ADMIN_ENUM_DENY_LIST,
 } from "../admin-gov-ux-labels";
@@ -41,5 +44,26 @@ describe("admin-gov-ux-labels", () => {
       "Poslovni izvještaji",
     ].join(" ");
     expect(adminBodyMustNotExposeRawEnums(body)).toBe(true);
+  });
+
+  it.each([
+    ["education.report.read", "Pregled izvještaja edukacije"],
+    ["education.completion.recorded", "Zabilježen završetak edukacije"],
+    ["education.enrolment.confirmed", "Potvrđen upis na kurs"],
+  ] as const)("maps audit action %s", (raw, expected) => {
+    expect(adminAuditActionLabel(raw)).toBe(expected);
+    expect(adminEducationEventKeyLabel(raw)).toBe(expected);
+  });
+
+  it.each([
+    ["education.report", "Izvještaj edukacije"],
+    ["education.enrolment", "Upis na kurs"],
+  ] as const)("maps audit resource %s", (raw, expected) => {
+    expect(adminAuditResourceTypeLabel(raw)).toBe(expected);
+  });
+
+  it("audit labels do not expose raw dot-notation keys", () => {
+    expect(adminAuditActionLabel("education.report.read")).not.toContain("education.report");
+    expect(adminAuditResourceTypeLabel("education.report")).not.toBe("education.report");
   });
 });

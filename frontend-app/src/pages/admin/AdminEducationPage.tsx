@@ -4,9 +4,13 @@ import { useMemo, useState, type JSX } from "react";
 import { Button } from "@/components/ui/button";
 import { EducationCharts } from "@/components/education/EducationCharts";
 import {
+  adminAuditActionLabel,
+  adminAuditResourceTypeLabel,
+  adminEducationEventKeyLabel,
   adminReportStatusLabel,
   ADMIN_EDUCATION_READONLY_NOTICE,
   ADMIN_PILOT_SYNTHETIC_NOTICE,
+  mapAdminChartRows,
 } from "@/lib/admin-gov-ux-labels";
 import {
   archiveAdminCourse,
@@ -318,10 +322,18 @@ export default function AdminEducationPage(): JSX.Element {
           </div>
           {dashboardQ.data?.chartData ? (
             <EducationCharts
-              progressDistribution={dashboardQ.data.chartData.progressDistribution}
-              courseStatus={dashboardQ.data.chartData.courseStatus}
-              enrolmentByStatus={dashboardQ.data.chartData.enrolmentByStatus}
-              activity={dashboardQ.data.chartData.activity}
+              progressDistribution={mapAdminChartRows(dashboardQ.data.chartData.progressDistribution)}
+              courseStatus={mapAdminChartRows(dashboardQ.data.chartData.courseStatus)}
+              enrolmentByStatus={
+                dashboardQ.data.chartData.enrolmentByStatus
+                  ? mapAdminChartRows(dashboardQ.data.chartData.enrolmentByStatus)
+                  : undefined
+              }
+              activity={
+                dashboardQ.data.chartData.activity
+                  ? mapAdminChartRows(dashboardQ.data.chartData.activity)
+                  : undefined
+              }
             />
           ) : null}
           {progressReportQ.data ? (
@@ -629,7 +641,7 @@ export default function AdminEducationPage(): JSX.Element {
                           className="text-left underline-offset-2 hover:underline"
                           onClick={() => setSelectedEnrolmentId(selectedEnrolmentId === row.id ? null : row.id)}
                         >
-                          {row.learnerEmail} · {row.progressStatus} · {row.progressPct}%
+                          {row.learnerEmail} · {adminReportStatusLabel(row.progressStatus)} · {row.progressPct}%
                         </button>
                         {row.evidence ? ` · ${row.evidence.reference}` : ""}
                         {row.enrolmentStatus === "COMPLETED" ? (
@@ -737,7 +749,7 @@ export default function AdminEducationPage(): JSX.Element {
                     <td className="py-1 pr-2">{r.courseTitle}</td>
                     <td className="py-1 pr-2">{r.learnerEmail}</td>
                     <td className="py-1 pr-2">{r.progressPct}%</td>
-                    <td className="py-1">{r.progressStatus}</td>
+                    <td className="py-1">{adminReportStatusLabel(r.progressStatus)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -749,7 +761,7 @@ export default function AdminEducationPage(): JSX.Element {
               <ul className="mt-2 max-h-48 overflow-auto text-xs text-text-secondary">
                 {(reportQ.data?.items ?? []).slice(0, 20).map((r) => (
                   <li key={r.enrolmentId}>
-                    {r.courseTitle} — {r.learnerEmail} — {r.progressStatus}
+                    {r.courseTitle} — {r.learnerEmail} — {adminReportStatusLabel(r.progressStatus)}
                   </li>
                 ))}
               </ul>
@@ -790,7 +802,7 @@ export default function AdminEducationPage(): JSX.Element {
           <ul className="mt-3 max-h-48 space-y-1 overflow-auto text-xs text-text-secondary">
             {(notificationsQ.data?.items ?? []).slice(0, 20).map((n) => (
               <li key={n.id} data-testid={`admin-notification-row-${n.id}`}>
-                {n.occurredAt.slice(0, 19)} · {n.eventKey || n.action} · {n.recipientEmail} ·{" "}
+                {n.occurredAt.slice(0, 19)} · {adminEducationEventKeyLabel(n.eventKey || n.action)} · {n.recipientEmail} ·{" "}
                 <span data-testid={`admin-notification-status-${n.id}`}>{adminReportStatusLabel(n.status)}</span>
                 {n.mailSent ? " (Mailhog sent)" : " (audit only)"}
               </li>
@@ -801,11 +813,14 @@ export default function AdminEducationPage(): JSX.Element {
 
         <section className="rounded-xl border border-border/50 p-4" data-testid="admin-education-audit-viewer">
           <h2 className="text-sm font-semibold text-text-primary">Education audit viewer (read-only)</h2>
-          <p className="mt-1 text-xs text-text-muted">Recent education.report.*, enrolment, progress and notification events</p>
+          <p className="mt-1 text-xs text-text-muted">
+            Nedavni događaji izvještaja, upisa, napretka i obavijesti edukacije
+          </p>
           <ul className="mt-3 max-h-64 space-y-1 overflow-auto text-xs text-text-secondary">
             {(auditQ.data?.items ?? []).slice(0, 30).map((ev) => (
               <li key={ev.id} data-testid={`admin-audit-row-${ev.id}`}>
-                {ev.occurredAt.slice(0, 19)} · {ev.action} · {ev.resourceType}
+                {ev.occurredAt.slice(0, 19)} · {adminAuditActionLabel(ev.action)} ·{" "}
+                {adminAuditResourceTypeLabel(ev.resourceType)}
                 {ev.resourceId ? ` · ${ev.resourceId.slice(0, 8)}…` : ""}
               </li>
             ))}
