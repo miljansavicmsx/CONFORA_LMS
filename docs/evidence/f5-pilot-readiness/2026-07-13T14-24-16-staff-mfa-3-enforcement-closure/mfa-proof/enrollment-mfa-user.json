@@ -1,0 +1,9 @@
+{
+  "partialImportOk": true,
+  "partialImportStatus": 200,
+  "passwordOnlyBlocked": true,
+  "totpGrantOk": false,
+  "amrIncludesOtp": false,
+  "nestMfaVerifyOk": false,
+  "nestMfaClaimSummary": null
+}

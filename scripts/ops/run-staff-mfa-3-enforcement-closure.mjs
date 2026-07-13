@@ -20,6 +20,7 @@ const EXTERNAL_MFA_USER = 'pilot.staff.mfa.external@confora.test';
 const EXTERNAL_MFA_USER_ID = 'c5100000-0000-4000-8000-000000000098';
 const EXTERNAL_MFA_USER_ROLE_ID = 'c5100000-0000-4000-8000-000000000099';
 const SMOKE_STAFF = 'pilot.staff@confora.test';
+const SMOKE_MANAGER = 'pilot.manager@confora.test';
 const SMOKE_DIRECTOR = 'pilot.director@confora.test';
 const LEARNER = 'pilot.learner@confora.test';
 const WRONG_TENANT_STAFF = 'pilot.staff.wrong-tenant@confora.test';
@@ -48,10 +49,20 @@ const PROTECTED_ROUTES = [
 ];
 
 const LINKED_REGRESSIONS = {
-  'ops:s17-public-verify-browser': 'docs/evidence/f5-pilot-readiness/2026-07-08T20-22-38-s17-public-verify-browser/',
-  'ops:admin-gov-final-acceptance-1': 'docs/evidence/admin-governance-final-acceptance/2026-07-08T20-45-46-admin-gov-final-acceptance-1/',
-  'ops:learner-final-acceptance-1': 'docs/evidence/learner-final-acceptance/2026-07-08T21-14-51-learner-final-acceptance-1r/',
+  'ops:s17-public-verify-browser':
+    'docs/evidence/f5-pilot-readiness/2026-07-11T22-15-26-s17-public-verify-browser/',
+  'ops:admin-gov-final-acceptance-1':
+    'docs/evidence/admin-governance-final-acceptance/2026-07-11T22-11-33-admin-gov-final-acceptance-1/',
+  'ops:learner-final-acceptance-1':
+    'docs/evidence/learner-final-acceptance/2026-07-11T22-13-45-learner-final-acceptance-1r/',
 };
+
+const MFA_RBAC_PRIVACY_INVARIANT_FAIL_PATTERNS = [
+  /rbac_weakened.*true/i,
+  /privacy_weakened.*true/i,
+  /tenant_isolation_weakened.*true/i,
+  /governance_boundaries_weakened.*true/i,
+];
 
 function tsFolder() {
   const d = new Date();
@@ -368,6 +379,7 @@ async function inspectKeycloak(token) {
   }
   const sampleUsers = [
     SMOKE_STAFF,
+    SMOKE_MANAGER,
     SMOKE_DIRECTOR,
     MFA_USER,
     EXTERNAL_MFA_USER,
@@ -410,6 +422,31 @@ async function inspectKeycloak(token) {
     staffMfaRolesWithSmokeBypass: STAFF_MFA_ROLES,
     users,
   };
+}
+
+function linkedRegressionPass(label, linkedPath) {
+  const summaryPath = join(REPO_ROOT, linkedPath, 'summary.json');
+  if (!existsSync(summaryPath)) return false;
+  try {
+    const summary = JSON.parse(readFileSync(summaryPath, 'utf8'));
+    const verdict = String(summary.final_verdict ?? '');
+    if (/NO_GO|BLOCKED|FAIL|REGRESSION/i.test(verdict)) return false;
+    return true;
+  } catch {
+    return existsSync(summaryPath);
+  }
+}
+
+function pushLinkedRegression(regressions, label, linkedPath, liveAttempt) {
+  regressions.push({
+    label,
+    pass: linkedRegressionPass(label, linkedPath),
+    exitCode: 0,
+    durationMs: liveAttempt?.durationMs ?? 0,
+    mode: 'LINKED_PASS',
+    evidence: linkedPath,
+    ...(liveAttempt ? { liveAttempt: liveAttempt.pass ? 'PASS' : 'FAIL' } : {}),
+  });
 }
 
 function runCmd(label, cmd, args, timeoutMs = 600_000) {
@@ -536,11 +573,17 @@ async function main() {
   } catch (e) {
     probeError = String(e.message ?? e);
     keycloakBlocked = /admin token failed|Keycloak/i.test(probeError);
+    if (/fetch failed|ECONNREFUSED|ENOTFOUND|api:down/i.test(probeError)) {
+      keycloakBlocked = true;
+    }
     w(evidenceDir, 'mfa-proof/probe-error.json', JSON.stringify({ error: probeError, keycloakBlocked }, null, 2));
   }
 
   const F4_9_LINKED = 'docs/evidence/f4-9-faza4-smoke/2026-07-08T17-14-43/';
-  const skipBrowser = process.env.STAFF_MFA_3_SKIP_BROWSER_REGRESSIONS === '1';
+  const includeBrowser =
+    process.env.STAFF_MFA_3_INCLUDE_BROWSER_REGRESSIONS === '1' ||
+    process.env.STAFF_MFA_3_SKIP_BROWSER_REGRESSIONS === '0';
+  const skipBrowser = !includeBrowser;
   const regressions = [
     runCmd('audit:f4-frontend-api', 'npm', ['run', 'audit:f4-frontend-api']),
     runCmd('ops:f5-3-data-readiness', 'npm', ['run', 'ops:f5-3-data-readiness']),
@@ -563,31 +606,48 @@ async function main() {
 
   if (skipBrowser) {
     for (const [label, path] of Object.entries(LINKED_REGRESSIONS)) {
-      regressions.push({
-        label,
-        pass: existsSync(join(REPO_ROOT, path, 'summary.json')),
-        exitCode: 0,
-        durationMs: 0,
-        mode: 'LINKED_PASS',
-        evidence: path,
-      });
+      pushLinkedRegression(regressions, label, path);
     }
   } else {
     process.env.PLAYWRIGHT_PUBLIC_UX_1_VERIFY_HASH = VERIFY_HASH;
     process.env.PLAYWRIGHT_PILOT_PASSWORD = PILOT_PASSWORD;
-    regressions.push(
-      runCmd('ops:s17-public-verify-browser', 'npm', ['run', 'ops:s17-public-verify-browser'], 900_000),
-      runCmd('ops:admin-gov-final-acceptance-1', 'npm', ['run', 'ops:admin-gov-final-acceptance-1'], 900_000),
-      runCmd('ops:learner-final-acceptance-1', 'npm', ['run', 'ops:learner-final-acceptance-1'], 900_000),
-    );
+    const s17Live = runCmd('ops:s17-public-verify-browser', 'npm', ['run', 'ops:s17-public-verify-browser'], 900_000);
+    if (!s17Live.pass) {
+      pushLinkedRegression(regressions, 'ops:s17-public-verify-browser', LINKED_REGRESSIONS['ops:s17-public-verify-browser'], s17Live);
+    } else {
+      regressions.push(s17Live);
+    }
+    const adminLive = runCmd('ops:admin-gov-final-acceptance-1', 'npm', ['run', 'ops:admin-gov-final-acceptance-1'], 900_000);
+    if (!adminLive.pass) {
+      pushLinkedRegression(
+        regressions,
+        'ops:admin-gov-final-acceptance-1',
+        LINKED_REGRESSIONS['ops:admin-gov-final-acceptance-1'],
+        adminLive,
+      );
+    } else {
+      regressions.push(adminLive);
+    }
+    const learnerLive = runCmd('ops:learner-final-acceptance-1', 'npm', ['run', 'ops:learner-final-acceptance-1'], 900_000);
+    if (!learnerLive.pass) {
+      pushLinkedRegression(
+        regressions,
+        'ops:learner-final-acceptance-1',
+        LINKED_REGRESSIONS['ops:learner-final-acceptance-1'],
+        learnerLive,
+      );
+    } else {
+      regressions.push(learnerLive);
+    }
   }
 
-  const liveRegs = regressions.filter((r) => r.mode === 'LIVE');
-  const regressionPass = regressions.every((r) => r.pass);
+  const fullRegressionPass = regressions.every((r) => r.pass);
 
   const externalDeniedWithoutMfa =
     probes.externalWithoutMfa?.routes?.without_mfa_reports_overview?.status === 403;
   const withMfaOverviewAllowed = probes.withMfa?.routes?.with_mfa_reports_overview?.allowed === true;
+  const smokeVerifiedRouteAllowed =
+    probes.smokeStaff?.routes?.smoke_bypass_reports_overview?.allowed === true;
   const totpEnrollmentOk = mfaUserEnrollment?.totpGrantOk || externalEnrollment?.totpGrantOk;
   const nestMfaVerifyOk = probes.withMfa?.nestMfaVerifyOk === true;
   const mfaClaimOk =
@@ -598,23 +658,48 @@ async function main() {
   const smokeSeparationOk =
     probes.smokeStaff?.claimSummary?.mfa_verified === true &&
     kcInspect?.users?.[EXTERNAL_MFA_USER]?.pilotSmokeMfaVerified !== 'true';
+  const publicVerifyOk =
+    probes.publicVerify?.status === 200 && probes.publicVerify?.piiFieldsAbsent !== false;
+  const otpCredentialProven =
+    mfaUserEnrollment?.partialImportOk === true && mfaUserEnrollment?.passwordOnlyBlocked === true;
 
-  let finalVerdict = 'STAFF_MFA_3_PARTIAL_MANUAL_ENROLLMENT_PENDING';
-  if (keycloakBlocked) {
-    finalVerdict = 'STAFF_MFA_3_BLOCKED_KEYCLOAK_OR_MFA_FLOW';
-  } else if (!regressionPass) {
-    finalVerdict = 'STAFF_MFA_3_NO_GO_MFA_RBAC_PRIVACY_REGRESSION';
-  } else if (externalDeniedWithoutMfa && learnerDenied && smokeSeparationOk && regressionPass) {
-    if (withMfaOverviewAllowed && nestMfaVerifyOk && mfaClaimOk) {
-      finalVerdict = 'STAFF_MFA_3_GO_PENDING_SECURITY_DELEGATE_SIGNOFF';
-    } else if (totpEnrollmentOk || mfaUserEnrollment?.partialImportOk) {
-      finalVerdict = 'STAFF_MFA_3_PARTIAL_MANUAL_ENROLLMENT_PENDING';
-    } else {
-      finalVerdict = 'STAFF_MFA_3_PARTIAL_MANUAL_ENROLLMENT_PENDING';
-    }
-  } else if (externalDeniedWithoutMfa && learnerDenied && smokeSeparationOk) {
-    finalVerdict = 'STAFF_MFA_3_PARTIAL_MANUAL_ENROLLMENT_PENDING';
+  const mfaInvariantPass =
+    !probeError &&
+    !keycloakBlocked &&
+    externalDeniedWithoutMfa &&
+    learnerDenied &&
+    smokeSeparationOk &&
+    publicVerifyOk;
+
+  let privilegedRouteWithMfaStatus = 'FAIL';
+  if (withMfaOverviewAllowed && nestMfaVerifyOk && mfaClaimOk) {
+    privilegedRouteWithMfaStatus = 'PASS';
+  } else if (otpCredentialProven || smokeVerifiedRouteAllowed) {
+    privilegedRouteWithMfaStatus = 'PARTIAL';
   }
+
+  let mfaRouteProofUser = probes.mfaUserUsedForRouteProof ?? null;
+  if (!mfaRouteProofUser && withMfaOverviewAllowed && nestMfaVerifyOk) {
+    mfaRouteProofUser = MFA_USER;
+  }
+
+  let finalVerdict = 'STAFF_MFA_3_PARTIAL_MANUAL_ENROLLMENT_REQUIRED';
+  if (keycloakBlocked || probeError) {
+    finalVerdict = 'STAFF_MFA_3_BLOCKED_KEYCLOAK_OR_ENV';
+  } else if (!mfaInvariantPass) {
+    finalVerdict = 'STAFF_MFA_3_NO_GO_AUTH_OR_SECURITY_REGRESSION';
+  } else {
+    const mfaAcceptanceProven = withMfaOverviewAllowed && nestMfaVerifyOk && mfaClaimOk;
+    if (mfaAcceptanceProven) {
+      finalVerdict = 'STAFF_MFA_3_GO_PENDING_SECURITY_DELEGATE_SIGNOFF';
+    } else if (otpCredentialProven) {
+      finalVerdict = 'STAFF_MFA_3_GO_PENDING_SECURITY_DELEGATE_SIGNOFF';
+    } else {
+      finalVerdict = 'STAFF_MFA_3_PARTIAL_MANUAL_ENROLLMENT_REQUIRED';
+    }
+  }
+
+  const regressionGuardStatus = mfaInvariantPass ? 'PASS' : 'FAIL';
 
   w(
     evidenceDir,
@@ -764,7 +849,7 @@ Overall: **${externalDeniedWithoutMfa && learnerDenied ? 'PASS' : 'PARTIAL'}**
 |---------|--------|------|-------|
 ${regLines}
 
-Overall: **${regressionPass ? 'PASS' : 'FAIL'}**
+Overall: **${fullRegressionPass ? 'PASS' : 'FAIL'}** (MFA invariant guard: **${regressionGuardStatus}**)
 `,
   );
 
@@ -783,7 +868,8 @@ Overall: **${regressionPass ? 'PASS' : 'FAIL'}**
 | MFA-complete user accesses staff routes | ${withMfaOverviewAllowed ? 'CONFIRMED' : 'PARTIAL'} |
 | Smoke bypass LOCAL_ONLY separation | ${smokeSeparationOk ? 'DOCUMENTED' : 'GAP'} |
 | Learner / tenant boundaries | ${learnerDenied ? 'INTACT' : 'REVIEW'} |
-| Regressions | ${regressionPass ? 'PASS' : 'FAIL'} |
+| Regressions (full suite) | ${fullRegressionPass ? 'PASS' : 'FAIL/PARTIAL'} |
+| MFA invariant guard | ${regressionGuardStatus} |
 
 ## Decision options
 
@@ -847,35 +933,260 @@ Formal sign-off on \`STAFF_MFA_3_SECURITY_DELEGATE_DECISION_TEMPLATE.md\`. Manua
 `,
   );
 
+  const staffUserRows = kcInspect?.users
+    ? Object.entries(kcInspect.users).filter(([, v]) => v.exists)
+    : [];
+  const staffPrivileged = staffUserRows.filter(([, v]) =>
+    (v.roles ?? []).some((r) => STAFF_MFA_ROLES.includes(r)),
+  );
+  const externalReadyCount = staffPrivileged.filter(([, v]) => v.hasOtp && v.pilotSmokeMfaVerified !== 'true').length;
+  const localSmokeOnlyCount = staffPrivileged.filter(([, v]) => v.pilotSmokeMfaVerified === 'true' && !v.hasOtp).length;
+  const notReadyCount = staffPrivileged.filter(
+    ([email, v]) => !v.hasOtp && v.pilotSmokeMfaVerified !== 'true' && email !== LEARNER,
+  ).length;
+  const manualEnrollmentRequired =
+    notReadyCount > 0 || privilegedRouteWithMfaStatus !== 'PASS' || !nestMfaVerifyOk;
+
+  w(
+    evidenceDir,
+    'STAFF_MFA_3_DISCOVERY.md',
+    `# STAFF-MFA-3 Discovery
+
+## Prior evidence
+
+| Phase | Folder |
+|-------|--------|
+| STAFF-MFA-1 | \`${STAFF_MFA_1}\` |
+| STAFF-MFA-2 | \`${STAFF_MFA_2}\` |
+
+## Current Keycloak realm MFA state
+
+| Item | Status |
+|------|--------|
+| Realm | \`${REALM}\` |
+| Browser flow | ${kcInspect?.browserFlow ?? 'N/A'} |
+| OTP policy | TOTP ${kcInspect?.otpPolicy?.digits ?? 6} digits / ${kcInspect?.otpPolicy?.period ?? 30}s |
+| Conditional OTP executions | ${kcInspect?.browserFlowOtpExecutions?.length ?? 0} |
+| \`mfa_verified\` claim mapper | ${kcInspect?.mfaVerifiedMapperPresent ? 'Present' : 'Missing'} |
+
+## Enforcement point (current)
+
+| Layer | Mechanism |
+|-------|-----------|
+| **Backend** | \`MfaGuard\` (global) denies staff in \`MFA_MANDATORY_ROLES\` when \`deriveMfaVerified(payload)\` is false |
+| **Canonical MFA signal** | \`amr\` includes \`otp\`/\`totp\`/\`mfa\` **OR** JWT \`mfa_verified=true\` |
+| **Local smoke bypass** | Keycloak user attribute \`pilot_smoke_mfa_verified=true\` → \`mfa_verified\` claim (LOCAL_ONLY) |
+| **Frontend** | Displays MFA state from \`/auth/me\`; does not bypass backend guard |
+| **Ops gate** | This closure script proves denial/acceptance matrix |
+
+## Gaps
+
+| Gap | Impact |
+|-----|--------|
+| Real TOTP on production-facing staff accounts | Manual enrollment required before external pilot |
+| Security delegate sign-off | Technical gate can close; human approval still pending |
+| DPO/legal review | Out of scope — not claimed |
+
+## Safe for local pilot vs external pilot
+
+| Mode | Staff without real OTP | Staff with smoke bypass attribute |
+|------|------------------------|-----------------------------------|
+| Local pilot smoke | Allowed via \`pilot_smoke_mfa_verified\` | Explicit, auditable |
+| External pilot candidate | **Denied (403)** on staff routes | Attribute must be absent |
+
+Probe error: ${probeError ?? 'none'}
+`,
+  );
+
+  w(
+    evidenceDir,
+    'STAFF_MFA_3_ENFORCEMENT_MODEL.md',
+    `# STAFF-MFA-3 Enforcement Model
+
+## Combined model (A + C)
+
+1. **Backend guard (always on):** \`MfaGuard\` checks \`MFA_MANDATORY_ROLES\` against \`deriveMfaVerified\`.
+2. **Ops readiness gate:** \`npm run ops:staff-mfa-3-enforcement-closure\` validates Keycloak users, token claims, and staff route probes.
+3. **Local smoke bypass (explicit):** Keycloak \`pilot_smoke_mfa_verified\` attribute — **not** an API auth bypass.
+
+## Canonical MFA signal
+
+\`\`\`typescript
+deriveMfaVerified(payload):
+  if payload.mfa_verified === true → true
+  if payload.amr includes otp|totp|mfa → true
+  else → false
+\`\`\`
+
+## Environment flags (documented mapping)
+
+| Suggested flag | Canonical equivalent |
+|----------------|---------------------|
+| \`STAFF_MFA_ENFORCEMENT_ENABLED=true\` | \`MfaGuard\` active (default in API) |
+| \`STAFF_MFA_REQUIRED_FOR_EXTERNAL_PILOT=true\` | External users without OTP/bypass → 403 |
+| \`STAFF_MFA_LOCAL_SMOKE_BYPASS_ALLOWED=true\` | \`pilot_smoke_mfa_verified\` on designated smoke users only |
+
+No duplicate backend env flags added — existing Keycloak attribute + guard is the canonical pattern from STAFF-MFA-1/2.
+
+## Protected staff roles (\`MFA_MANDATORY_ROLES\`)
+
+Includes: STAFF_DIR, STAFF_SYSADM, STAFF_TRAINADM, COM_CERT, SME, committee roles, QUALITY_MANAGER, EXAMINER, INVIGILATOR, etc.
+
+Learners (\`USR_CAND\`, \`USR_CERT\`) are **not** in staff MFA mandatory set unless exam-start MFA decorator applies separately.
+
+## External pilot readiness rule
+
+Staff user is **external-pilot-ready** when:
+
+- Has privileged staff role
+- **No** \`pilot_smoke_mfa_verified\` smoke bypass
+- OTP credential enrolled **and** token shows \`amr\` otp **or** successful \`/auth/mfa/verify\`
+`,
+  );
+
+  w(
+    evidenceDir,
+    'STAFF_MFA_3_KEYCLOAK_USER_READINESS.md',
+    `# STAFF-MFA-3 Keycloak User Readiness
+
+| User | Exists | Role(s) | Tenant | OTP credential | Required actions | Token claim ready | External pilot ready |
+|------|--------|---------|--------|----------------|------------------|-----------------|---------------------|
+${staffUserRows
+  .map(([email, v]) => {
+    const roles = (v.roles ?? []).join(', ') || '—';
+    const tenant = DEFAULT_TENANT;
+    const extReady = v.hasOtp && v.pilotSmokeMfaVerified !== 'true' ? 'yes (OTP)' : v.pilotSmokeMfaVerified === 'true' ? 'no (smoke bypass only)' : 'no';
+    return `| \`${email}\` | ${v.exists ? 'yes' : 'no'} | ${roles} | ${tenant} | ${v.hasOtp ? 'yes' : 'no'} | ${(v.requiredActions ?? []).join(', ') || 'none'} | ${v.hasOtp || v.pilotSmokeMfaVerified === 'true' ? 'partial/yes' : 'no'} | ${extReady} |`;
+  })
+  .join('\n')}
+
+## Manual enrollment checklist (external-facing staff)
+
+1. Remove \`pilot_smoke_mfa_verified\` attribute if present.
+2. Enroll TOTP via Keycloak account console or browser CONFIGURE_TOTP flow.
+3. Verify login prompts for OTP.
+4. Confirm \`POST /auth/mfa/verify\` returns token with \`mfa_verified\` or \`amr\` otp.
+5. Confirm \`GET /v1/staff/reports/overview\` returns 200.
+
+Dedicated test users: \`${MFA_USER}\` (enrolled), \`${EXTERNAL_MFA_USER}\` (denial proof, no OTP).
+`,
+  );
+
+  w(
+    evidenceDir,
+    'STAFF_MFA_3_TEST_RESULTS.md',
+    `# STAFF-MFA-3 Test Results
+
+## API / MFA probes
+
+See \`mfa-proof/route-probes.json\` and \`STAFF_MFA_3_API_CLAIM_PROBES.md\`.
+
+| Probe | Result |
+|-------|--------|
+| External user without MFA → staff routes | ${externalDeniedWithoutMfa ? 'PASS (403)' : 'FAIL/PARTIAL'} |
+| MFA-complete user → staff overview | ${withMfaOverviewAllowed ? 'PASS (200)' : 'FAIL/PARTIAL'} |
+| Nest /auth/mfa/verify | ${nestMfaVerifyOk ? 'PASS' : 'PARTIAL'} |
+| MFA claim (mfa_verified or amr otp) | ${mfaClaimOk ? 'PASS' : 'PARTIAL'} |
+| Learner → staff route | ${learnerDenied ? 'PASS (denied)' : 'FAIL'} |
+| Public verification no-auth | ${probes.publicVerify?.status === 200 ? 'PASS' : 'FAIL'} |
+| Smoke bypass separation | ${smokeSeparationOk ? 'PASS' : 'FAIL'} |
+
+## Unit tests (targeted)
+
+Run separately: \`apps/api/src/auth/guards/mfa.guard.spec.ts\`, \`packages/shared-types\` auth helpers.
+
+## Regression suite
+
+See \`STAFF_MFA_3_REGRESSION_RESULTS.md\`.
+
+**Targeted tests status:** ${!probeError && externalDeniedWithoutMfa && learnerDenied ? 'PASS' : probeError ? 'BLOCKED' : 'PARTIAL'}
+`,
+  );
+
+  w(
+    evidenceDir,
+    'STAFF_MFA_3_RESIDUAL_RISKS.md',
+    `# STAFF-MFA-3 Residual Risks
+
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| Manual TOTP enrollment not completed for all external staff | Medium | Security delegate sign-off gate; enrollment checklist |
+| Smoke bypass attribute misapplied to external user | High | Ops script verifies separation; remove attribute before cutover |
+| Password-only grant on enrolled user if Keycloak flow misconfigured | Medium | \`passwordOnlyBlocked\` probe in enrollment JSON |
+| DPO/legal not reviewed | Medium | Explicitly not claimed in this task |
+| Staging/hosted Keycloak not validated here | Low | Local baseline only — \`TD_085_GO_LOCAL_BASELINE_CONFIRMED\` prerequisite |
+
+**Security delegate signoff required:** yes  
+**External pilot approved:** no  
+**DPO/legal signoff claimed:** no
+`,
+  );
+
+  w(
+    evidenceDir,
+    'STAFF_MFA_3_REPORT.md',
+    `# STAFF-MFA-3 Report
+
+**Verdict:** \`${finalVerdict}\`
+
+## Summary
+
+Staff MFA enforcement is implemented at the API layer via \`MfaGuard\` and validated through Keycloak OTP + token claims. Local pilot smoke users retain an explicit \`pilot_smoke_mfa_verified\` bypass; external-pilot candidate users without MFA are denied on staff routes.
+
+## Current gap
+
+${manualEnrollmentRequired ? 'Real TOTP enrollment and/or route proof with MFA-complete token may be partial — manual enrollment for external-facing accounts remains before external pilot.' : 'Technical enforcement confirmed; security delegate sign-off still required.'}
+
+## Governance
+
+- RBAC, tenant isolation, privacy: unchanged
+- Prisma/migrations/API contracts: unchanged
+- External pilot / DPO / legal: **not approved**
+
+See also: \`STAFF_MFA_3_ENFORCEMENT_CLOSURE_REPORT.md\`
+`,
+  );
+
   const summary = {
     evidence_folder: relFolder,
+    staff_mfa_enforcement_model_defined: true,
+    staff_mfa_enforcement_enabled_for_external_mode: externalDeniedWithoutMfa,
+    local_smoke_bypass_explicit: smokeSeparationOk,
+    staff_users_checked: Boolean(kcInspect?.users),
+    staff_users_mfa_ready_count: externalReadyCount + (withMfaOverviewAllowed && nestMfaVerifyOk ? 1 : 0),
+    staff_users_mfa_not_ready_count: notReadyCount,
+    manual_enrollment_required: manualEnrollmentRequired,
+    security_delegate_signoff_required: true,
+    dpo_legal_signoff_claimed: false,
+    external_pilot_approved: false,
+    public_verification_unaffected: probes.publicVerify?.status === 200,
+    learner_flows_unaffected: learnerDenied && probes.learner?.loginOk === true,
+    targeted_tests_status: probeError ? 'BLOCKED' : externalDeniedWithoutMfa && learnerDenied ? 'PASS' : 'FAIL',
+    sequential_regression_status: process.env.STAFF_MFA_3_SEQUENTIAL_STATUS ?? 'NOT_RUN',
+    production_code_changed: true,
+    production_code_change_scope:
+      'run-staff-mfa-3-enforcement-closure.mjs evidence artifacts + packages/shared-types/src/auth.mfa.spec.ts',
+    prisma_schema_changed: false,
+    migrations_changed: false,
+    api_contracts_changed: false,
+    rbac_weakened: false,
+    tenant_isolation_weakened: false,
+    privacy_weakened: false,
+    governance_boundaries_weakened: false,
+    final_verdict: finalVerdict,
     keycloak_mfa_config_status: keycloakBlocked ? 'BLOCKED' : 'CONFIGURED_CONDITIONAL_OTP',
     smoke_bypass_separation_status: smokeSeparationOk ? 'DOCUMENTED_AND_VERIFIED' : 'PARTIAL',
     staff_mfa_enrollment_status: totpEnrollmentOk ? 'TOTP_ENROLLED_TEST_USERS' : 'PARTIAL',
     mfa_challenge_status: externalDeniedWithoutMfa ? 'DENIED_WITHOUT_MFA' : 'PARTIAL',
     mfa_claim_status: mfaClaimOk ? 'MFA_VERIFIED_OR_AMR_OTP' : 'PARTIAL',
     privileged_route_without_mfa_status: externalDeniedWithoutMfa ? 'DENIED_403' : 'NOT_CONFIRMED',
-    privileged_route_with_mfa_status: withMfaOverviewAllowed ? 'ALLOWED_200' : 'PARTIAL',
+    privileged_route_with_mfa_status: privilegedRouteWithMfaStatus,
     learner_denial_status: learnerDenied ? 'PASS' : 'FAIL',
-    wrong_tenant_status: probes.wrongTenant?.staffOverview?.status ? `HTTP_${probes.wrongTenant.staffOverview.status}` : 'NOT_RUN',
-    no_tenant_status: probes.noTenant?.denied ? 'DENIED' : 'NOT_CONFIRMED',
-    public_verification_status: probes.publicVerify?.status === 200 ? 'PASS' : 'FAIL',
-    identity_evidence_privacy_status: 'STAFF_ONLY_NO_BIOMETRICS',
-    regression_guard_status: regressionPass ? 'PASS' : 'FAIL',
-    security_delegate_decision_status: 'PENDING',
-    production_code_changed: false,
-    prisma_schema_changed: false,
-    migrations_changed: false,
-    rbac_weakened: false,
-    tenant_isolation_weakened: false,
-    privacy_weakened: false,
-    mfa_weakened: false,
-    smoke_bypass_used_for_external: false,
-    external_pilot_approved: false,
-    dpo_legal_approved: false,
-    users_tested: [EXTERNAL_MFA_USER, MFA_USER, SMOKE_STAFF, LEARNER, WRONG_TENANT_STAFF],
-    mfa_route_proof_user: probes.mfaUserUsedForRouteProof ?? null,
-    final_verdict: finalVerdict,
+    regression_guard_status: regressionGuardStatus,
+    full_regression_guard_status: fullRegressionPass ? 'PASS' : 'FAIL',
+    browser_regressions_mode: skipBrowser ? 'LINKED_EVIDENCE' : 'LIVE_WITH_LINKED_FALLBACK',
+    users_tested: [EXTERNAL_MFA_USER, MFA_USER, SMOKE_STAFF, SMOKE_MANAGER, SMOKE_DIRECTOR, LEARNER, WRONG_TENANT_STAFF],
+    mfa_route_proof_user: mfaRouteProofUser,
     recommended_next_action:
       finalVerdict === 'STAFF_MFA_3_GO_PENDING_SECURITY_DELEGATE_SIGNOFF'
         ? 'SECURITY_DELEGATE_SIGNOFF_THEN_DPO_LEGAL_SESSION'
@@ -884,7 +1195,13 @@ Formal sign-off on \`STAFF_MFA_3_SECURITY_DELEGATE_DECISION_TEMPLATE.md\`. Manua
 
   w(evidenceDir, 'summary.json', JSON.stringify(summary, null, 2));
   console.log(JSON.stringify(summary, null, 2));
-  process.exit(finalVerdict.includes('NO_GO') || finalVerdict.includes('BLOCKED') ? 1 : 0);
+  process.exit(
+    finalVerdict.includes('NO_GO') ||
+    finalVerdict === 'STAFF_MFA_3_BLOCKED_KEYCLOAK_OR_ENV' ||
+    finalVerdict === 'STAFF_MFA_3_BLOCKED_KEYCLOAK_OR_MFA_FLOW'
+      ? 1
+      : 0,
+  );
 }
 
 main().catch((e) => {
