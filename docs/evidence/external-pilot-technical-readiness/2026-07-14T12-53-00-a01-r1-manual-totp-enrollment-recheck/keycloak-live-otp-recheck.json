@@ -1,0 +1,91 @@
+﻿{
+  "captured_at_utc": "2026-07-14T10:53:00Z",
+  "task": "A01_R1_MANUAL_TOTP_ENROLLMENT_RECHECK",
+  "previous_a01_evidence": "docs/evidence/external-pilot-technical-readiness/2026-07-14T10-46-00-a01-manual-totp-enrollment-closure/",
+  "keycloak_base_url": "http://localhost:8081",
+  "realm": "confora",
+  "otp_policy": {
+    "type": "totp",
+    "digits": 6,
+    "period": 30,
+    "algorithm": "HmacSHA1",
+    "brute_force_protected": true,
+    "browser_flow": "browser"
+  },
+  "delta_since_a01": {
+    "totp_enrolled_change": 0,
+    "missing_users_resolved": 0,
+    "smoke_only_converted": 0,
+    "status": "NO_CHANGE"
+  },
+  "users_checked": [
+    {
+      "email": "pilot.manager@confora.test",
+      "exists": true,
+      "enabled": true,
+      "external_facing": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "credential_types": ["password"],
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["STAFF_TRAINADM", "default-roles-confora"],
+      "tenant_id": "00000000-0000-4000-8000-000000000001",
+      "enrollment_status": "LOCAL_SMOKE_ONLY",
+      "external_pilot_mfa_ready": false
+    },
+    {
+      "email": "pilot.staff@confora.test",
+      "exists": true,
+      "enabled": true,
+      "external_facing": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "credential_types": ["password"],
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["COM_CERT", "default-roles-confora"],
+      "tenant_id": "00000000-0000-4000-8000-000000000001",
+      "enrollment_status": "LOCAL_SMOKE_ONLY",
+      "external_pilot_mfa_ready": false
+    },
+    {
+      "email": "pilot.director@confora.test",
+      "exists": true,
+      "enabled": true,
+      "external_facing": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "credential_types": ["password"],
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["STAFF_DIR", "default-roles-confora"],
+      "tenant_id": "00000000-0000-4000-8000-000000000001",
+      "enrollment_status": "LOCAL_SMOKE_ONLY",
+      "external_pilot_mfa_ready": false
+    },
+    {
+      "email": "pilot.staff.mfa.external@confora.test",
+      "exists": false,
+      "external_facing": true,
+      "has_otp_credential": false,
+      "enrollment_status": "MISSING_USER",
+      "external_pilot_mfa_ready": false,
+      "notes": "Still absent from live Keycloak realm"
+    },
+    {
+      "email": "pilot.mfa.staff@confora.test",
+      "exists": false,
+      "external_facing": true,
+      "has_otp_credential": false,
+      "enrollment_status": "MISSING_USER",
+      "external_pilot_mfa_ready": false,
+      "notes": "Still absent from live Keycloak realm"
+    }
+  ],
+  "secrets_committed": false,
+  "qr_codes_committed": false,
+  "tokens_committed": false,
+  "passwords_committed": false,
+  "credential_ids": "REDACTED_OR_ABSENT"
+}
