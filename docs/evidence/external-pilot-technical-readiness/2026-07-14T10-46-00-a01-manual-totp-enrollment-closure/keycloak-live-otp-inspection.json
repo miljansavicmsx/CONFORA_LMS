@@ -1,0 +1,86 @@
+﻿{
+  "captured_at_utc": "2026-07-14T08-46-00Z",
+  "keycloak_base_url": "http://localhost:8081",
+  "realm": "confora",
+  "otp_policy": {
+    "type": "totp",
+    "digits": 6,
+    "period": 30,
+    "algorithm": "HmacSHA1",
+    "brute_force_protected": true,
+    "browser_flow": "browser"
+  },
+  "total_users_in_realm": 16,
+  "users_checked": [
+    {
+      "email": "pilot.manager@confora.test",
+      "exists": true,
+      "enabled": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["STAFF_TRAINADM", "default-roles-confora"],
+      "tenant_id": "00000000-0000-4000-8000-000000000001",
+      "credential_types": ["password"]
+    },
+    {
+      "email": "pilot.staff@confora.test",
+      "exists": true,
+      "enabled": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["COM_CERT", "default-roles-confora"],
+      "tenant_id": "00000000-0000-4000-8000-000000000001",
+      "credential_types": ["password"]
+    },
+    {
+      "email": "pilot.director@confora.test",
+      "exists": true,
+      "enabled": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["STAFF_DIR", "default-roles-confora"],
+      "tenant_id": "00000000-0000-4000-8000-000000000001",
+      "credential_types": ["password"]
+    },
+    {
+      "email": "pilot.staff.mfa.external@confora.test",
+      "exists": false,
+      "has_otp_credential": false,
+      "notes": "User missing from current Keycloak realm (present in STAFF-MFA-3 evidence 2026-07-13)"
+    },
+    {
+      "email": "pilot.mfa.staff@confora.test",
+      "exists": false,
+      "has_otp_credential": false,
+      "notes": "User missing from current Keycloak realm (had OTP in STAFF-MFA-3 evidence 2026-07-13)"
+    },
+    {
+      "email": "pilot.staff.wrong-tenant@confora.test",
+      "exists": true,
+      "enabled": true,
+      "has_otp_credential": false,
+      "otp_credential_count": 0,
+      "pilot_smoke_mfa_verified": "true",
+      "required_actions": [],
+      "roles": ["COM_CERT", "default-roles-confora"],
+      "tenant_id": "11111111-1111-4111-8111-111111111111",
+      "credential_types": ["password"]
+    }
+  ],
+  "additional_privileged_users_local_smoke": [
+    {"email": "pilot.appeals@confora.test", "roles": ["COM_APP"], "has_otp": false, "smoke": "true"},
+    {"email": "pilot.comcert2@confora.test", "roles": ["COM_CERT"], "has_otp": false, "smoke": "true"},
+    {"email": "pilot.comcert3@confora.test", "roles": ["COM_CERT"], "has_otp": false, "smoke": "true"},
+    {"email": "pilot.reviewer@confora.test", "roles": ["SME"], "has_otp": false, "smoke": "true"},
+    {"email": "pilot.reviewer2@confora.test", "roles": ["STAFF_TRAINADM"], "has_otp": false, "smoke": "true"}
+  ],
+  "secrets_committed": false,
+  "qr_codes_committed": false,
+  "credential_ids": "REDACTED_OR_ABSENT"
+}
