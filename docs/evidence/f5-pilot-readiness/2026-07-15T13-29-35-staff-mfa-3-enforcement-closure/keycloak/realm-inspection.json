@@ -1,0 +1,212 @@
+{
+  "realm": "confora",
+  "browserFlow": "browser",
+  "otpPolicy": {
+    "type": "totp",
+    "digits": 6,
+    "period": 30,
+    "algorithm": "HmacSHA1"
+  },
+  "browserFlowOtpExecutions": [
+    {
+      "id": "facb55d3-42e7-4dd0-bfa0-fe56a222a2d4",
+      "requirement": "CONDITIONAL",
+      "displayName": "Browser - Conditional Organization",
+      "description": "Flow to determine if the organization identity-first login is to be used",
+      "requirementChoices": [
+        "REQUIRED",
+        "ALTERNATIVE",
+        "DISABLED",
+        "CONDITIONAL"
+      ],
+      "configurable": false,
+      "authenticationFlow": true,
+      "flowId": "57c8eea2-bbb6-4a98-a679-3b171dd26ed9",
+      "level": 1,
+      "index": 0,
+      "priority": 10
+    },
+    {
+      "id": "d44f63a7-68c0-43bc-8e4e-83c80b525d1e",
+      "requirement": "REQUIRED",
+      "displayName": "Condition - user configured",
+      "requirementChoices": [
+        "REQUIRED",
+        "DISABLED"
+      ],
+      "configurable": false,
+      "providerId": "conditional-user-configured",
+      "level": 2,
+      "index": 0,
+      "priority": 10
+    },
+    {
+      "id": "d0f4b448-333a-4d16-8d1f-067c41ab450c",
+      "requirement": "CONDITIONAL",
+      "displayName": "Browser - Conditional OTP",
+      "description": "Flow to determine if the OTP is required for the authentication",
+      "requirementChoices": [
+        "REQUIRED",
+        "ALTERNATIVE",
+        "DISABLED",
+        "CONDITIONAL"
+      ],
+      "configurable": false,
+      "authenticationFlow": true,
+      "flowId": "ec2f3f23-41af-4a26-bc0c-b9188fa99ac7",
+      "level": 1,
+      "index": 1,
+      "priority": 20
+    },
+    {
+      "id": "8e5d86aa-1ec4-4744-913b-2352ba8fe9ec",
+      "requirement": "REQUIRED",
+      "displayName": "Condition - user configured",
+      "requirementChoices": [
+        "REQUIRED",
+        "DISABLED"
+      ],
+      "configurable": false,
+      "providerId": "conditional-user-configured",
+      "level": 2,
+      "index": 0,
+      "priority": 10
+    },
+    {
+      "id": "e3d6ccdf-be12-4514-a513-88a704a3e75a",
+      "requirement": "REQUIRED",
+      "displayName": "OTP Form",
+      "requirementChoices": [
+        "REQUIRED",
+        "ALTERNATIVE",
+        "DISABLED"
+      ],
+      "configurable": false,
+      "providerId": "auth-otp-form",
+      "level": 2,
+      "index": 1,
+      "priority": 20
+    }
+  ],
+  "mfaVerifiedMapperPresent": true,
+  "staffMfaRolesWithSmokeBypass": [
+    "COM_CERT",
+    "STAFF_DIR",
+    "STAFF_SYSADM",
+    "STAFF_TRAINADM",
+    "SME"
+  ],
+  "users": {
+    "pilot.manager@confora.test": {
+      "exists": true,
+      "hasOtp": true,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [
+        "STAFF_TRAINADM",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": true,
+      "localOnlyFixture": false
+    },
+    "pilot.staff@confora.test": {
+      "exists": true,
+      "hasOtp": true,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [
+        "COM_CERT",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": true,
+      "localOnlyFixture": false
+    },
+    "pilot.director@confora.test": {
+      "exists": true,
+      "hasOtp": true,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [
+        "STAFF_DIR",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": true,
+      "localOnlyFixture": false
+    },
+    "pilot.mfa.staff@confora.test": {
+      "exists": true,
+      "hasOtp": true,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [],
+      "externalPilotCandidate": true,
+      "localOnlyFixture": false
+    },
+    "pilot.staff.mfa.external@confora.test": {
+      "exists": true,
+      "hasOtp": true,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [],
+      "externalPilotCandidate": true,
+      "localOnlyFixture": false
+    },
+    "pilot.staff.no-mfa@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [
+        "COM_CERT",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": false,
+      "localOnlyFixture": true
+    },
+    "pilot.staff.mfa.route-proof@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [
+        "COM_CERT",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": false,
+      "localOnlyFixture": true
+    },
+    "pilot.learner@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": null,
+      "smokeBypassPresent": false,
+      "roles": [
+        "USR_CAND",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": false,
+      "localOnlyFixture": false
+    },
+    "pilot.staff.wrong-tenant@confora.test": {
+      "exists": true,
+      "hasOtp": false,
+      "requiredActions": [],
+      "pilotSmokeMfaVerified": "true",
+      "smokeBypassPresent": true,
+      "roles": [
+        "COM_CERT",
+        "default-roles-confora"
+      ],
+      "externalPilotCandidate": false,
+      "localOnlyFixture": false
+    }
+  }
+}

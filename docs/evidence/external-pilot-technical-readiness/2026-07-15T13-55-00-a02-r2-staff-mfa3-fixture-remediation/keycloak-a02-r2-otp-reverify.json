@@ -1,0 +1,43 @@
+﻿{
+    "noMfaFixture":  {
+                         "email":  "pilot.staff.no-mfa@confora.test",
+                         "exists":  true,
+                         "otpPresent":  false,
+                         "smokeBypassPresent":  false
+                     },
+    "externalReady":  [
+                          {
+                              "email":  "pilot.manager@confora.test",
+                              "exists":  true,
+                              "otpPresent":  true,
+                              "smokeBypassPresent":  false
+                          },
+                          {
+                              "email":  "pilot.staff@confora.test",
+                              "exists":  true,
+                              "otpPresent":  true,
+                              "smokeBypassPresent":  false
+                          },
+                          {
+                              "email":  "pilot.director@confora.test",
+                              "exists":  true,
+                              "otpPresent":  true,
+                              "smokeBypassPresent":  false
+                          },
+                          {
+                              "email":  "pilot.mfa.staff@confora.test",
+                              "exists":  true,
+                              "otpPresent":  true,
+                              "smokeBypassPresent":  false
+                          },
+                          {
+                              "email":  "pilot.staff.mfa.external@confora.test",
+                              "exists":  true,
+                              "otpPresent":  true,
+                              "smokeBypassPresent":  false
+                          }
+                      ],
+    "smokeCount":  0,
+    "otpCount":  5,
+    "capturedAt":  "2026-07-15T11:55:39.9882253Z"
+}

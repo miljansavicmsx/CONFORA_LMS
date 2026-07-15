@@ -1,0 +1,45 @@
+{
+  "users": [
+    {
+      "email": "pilot.manager@confora.test",
+      "exists": true,
+      "hasOtp": true,
+      "smokeBypassPresent": false,
+      "requiredActions": []
+    },
+    {
+      "email": "pilot.staff@confora.test",
+      "exists": true,
+      "hasOtp": true,
+      "smokeBypassPresent": false,
+      "requiredActions": []
+    },
+    {
+      "email": "pilot.director@confora.test",
+      "exists": true,
+      "hasOtp": true,
+      "smokeBypassPresent": false,
+      "requiredActions": []
+    },
+    {
+      "email": "pilot.mfa.staff@confora.test",
+      "exists": true,
+      "hasOtp": true,
+      "smokeBypassPresent": false,
+      "requiredActions": []
+    },
+    {
+      "email": "pilot.staff.mfa.external@confora.test",
+      "exists": true,
+      "hasOtp": true,
+      "smokeBypassPresent": false,
+      "requiredActions": []
+    }
+  ],
+  "otpCount": 5,
+  "missingOtp": [],
+  "withSmoke": [],
+  "allExist": true,
+  "allHaveOtp": true,
+  "smokeAbsent": true
+}

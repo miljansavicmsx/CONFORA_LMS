@@ -1,0 +1,11 @@
+{
+  "note": "External-ready enrolled cohort is OTP read-only; without-MFA denial uses dedicated fixture",
+  "noMfaDenialUser": "pilot.staff.no-mfa@confora.test",
+  "externalReadyUsersProtected": [
+    "pilot.manager@confora.test",
+    "pilot.staff@confora.test",
+    "pilot.director@confora.test",
+    "pilot.mfa.staff@confora.test",
+    "pilot.staff.mfa.external@confora.test"
+  ]
+}

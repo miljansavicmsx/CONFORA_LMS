@@ -1,0 +1,157 @@
+{
+  "noMfaDenial": {
+    "fixtureUser": "pilot.staff.no-mfa@confora.test",
+    "loginOk": true,
+    "claimSummary": {
+      "hasToken": true,
+      "mfa_verified": false,
+      "amr_includes_otp": false,
+      "amr_length": 0,
+      "roles_present": true
+    },
+    "routes": {
+      "without_mfa_reports_overview": {
+        "path": "/v1/staff/reports/overview",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_reports_export_guidance": {
+        "path": "/v1/staff/reports/export",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_reports_export_post": {
+        "path": "/v1/staff/reports/export",
+        "method": "POST",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_identity_review_queue": {
+        "path": "/v1/staff/identity-review/queue",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_certification_applications": {
+        "path": "/v1/staff/certification/applications",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      }
+    }
+  },
+  "externalWithoutMfa": {
+    "fixtureUser": "pilot.staff.no-mfa@confora.test",
+    "loginOk": true,
+    "claimSummary": {
+      "hasToken": true,
+      "mfa_verified": false,
+      "amr_includes_otp": false,
+      "amr_length": 0,
+      "roles_present": true
+    },
+    "routes": {
+      "without_mfa_reports_overview": {
+        "path": "/v1/staff/reports/overview",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_reports_export_guidance": {
+        "path": "/v1/staff/reports/export",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_reports_export_post": {
+        "path": "/v1/staff/reports/export",
+        "method": "POST",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_identity_review_queue": {
+        "path": "/v1/staff/identity-review/queue",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      },
+      "without_mfa_certification_applications": {
+        "path": "/v1/staff/certification/applications",
+        "method": "GET",
+        "status": 403,
+        "allowed": false,
+        "denied": true
+      }
+    }
+  },
+  "withMfa": {
+    "nestMfaVerifyOk": false,
+    "claimSummary": null,
+    "routes": {},
+    "fixtureUser": "pilot.staff.mfa.route-proof@confora.test",
+    "keycloakDirectGrantTotpLimitation": true
+  },
+  "enrolledStaffNoSmoke": {
+    "loginOk": false,
+    "claimSummary": {
+      "hasToken": false
+    },
+    "routes": {},
+    "smokeBypassAbsent": true
+  },
+  "smokeStaff": {
+    "loginOk": false,
+    "claimSummary": {
+      "hasToken": false
+    },
+    "routes": {},
+    "smokeBypassAbsent": true
+  },
+  "learner": {
+    "loginOk": true,
+    "staffRoute": {
+      "status": 403,
+      "ok": false,
+      "message": "Insufficient role for this operation"
+    }
+  },
+  "wrongTenant": {
+    "loginOk": true,
+    "claimSummary": {
+      "hasToken": true,
+      "mfa_verified": true,
+      "amr_includes_otp": false,
+      "amr_length": 0,
+      "roles_present": true
+    },
+    "staffOverview": {
+      "status": 200,
+      "ok": true
+    }
+  },
+  "noTenant": {
+    "status": 401,
+    "denied": true
+  },
+  "publicVerify": {
+    "status": 200,
+    "noAuth": true,
+    "piiFieldsAbsent": true
+  },
+  "privacy": {
+    "learnerMeOk": true,
+    "publicVerifyReadOnly": true,
+    "identityQueueRequiresStaffRole": true
+  }
+}
