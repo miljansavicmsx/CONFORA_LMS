@@ -1,0 +1,167 @@
+﻿{
+    "smokePresentAfterCount":  0,
+    "otpEnrolledCount":  5,
+    "cleanup":  [
+                    {
+                        "email":  "pilot.manager@confora.test",
+                        "status":  "REMOVED",
+                        "removedKeys":  [
+                                            "pilot_smoke_mfa_verified"
+                                        ]
+                    },
+                    {
+                        "email":  "pilot.staff@confora.test",
+                        "status":  "REMOVED",
+                        "removedKeys":  [
+                                            "pilot_smoke_mfa_verified"
+                                        ]
+                    },
+                    {
+                        "email":  "pilot.director@confora.test",
+                        "status":  "REMOVED",
+                        "removedKeys":  [
+                                            "pilot_smoke_mfa_verified"
+                                        ]
+                    }
+                ],
+    "after":  [
+                  {
+                      "email":  "pilot.manager@confora.test",
+                      "exists":  true,
+                      "enabled":  true,
+                      "otpPresent":  true,
+                      "smokeBypassPresent":  false,
+                      "smokeKeysPresent":  [
+
+                                           ],
+                      "requiredActions":  [
+
+                                          ]
+                  },
+                  {
+                      "email":  "pilot.staff@confora.test",
+                      "exists":  true,
+                      "enabled":  true,
+                      "otpPresent":  true,
+                      "smokeBypassPresent":  false,
+                      "smokeKeysPresent":  [
+
+                                           ],
+                      "requiredActions":  [
+
+                                          ]
+                  },
+                  {
+                      "email":  "pilot.director@confora.test",
+                      "exists":  true,
+                      "enabled":  true,
+                      "otpPresent":  true,
+                      "smokeBypassPresent":  false,
+                      "smokeKeysPresent":  [
+
+                                           ],
+                      "requiredActions":  [
+
+                                          ]
+                  },
+                  {
+                      "email":  "pilot.mfa.staff@confora.test",
+                      "exists":  true,
+                      "enabled":  true,
+                      "otpPresent":  true,
+                      "smokeBypassPresent":  false,
+                      "smokeKeysPresent":  [
+
+                                           ],
+                      "requiredActions":  [
+                                              "CONFIGURE_TOTP"
+                                          ]
+                  },
+                  {
+                      "email":  "pilot.staff.mfa.external@confora.test",
+                      "exists":  true,
+                      "enabled":  true,
+                      "otpPresent":  true,
+                      "smokeBypassPresent":  false,
+                      "smokeKeysPresent":  [
+
+                                           ],
+                      "requiredActions":  [
+
+                                          ]
+                  }
+              ],
+    "capturedAt":  "2026-07-15T08:58:33.2326865Z",
+    "before":  [
+                   {
+                       "email":  "pilot.manager@confora.test",
+                       "exists":  true,
+                       "userId":  "607a0f3c-54c8-453a-91c4-6bf42481e5ce",
+                       "enabled":  true,
+                       "otpPresent":  true,
+                       "smokeBypassPresent":  true,
+                       "smokeKeysPresent":  [
+                                                "pilot_smoke_mfa_verified"
+                                            ],
+                       "requiredActions":  [
+
+                                           ]
+                   },
+                   {
+                       "email":  "pilot.staff@confora.test",
+                       "exists":  true,
+                       "userId":  "361f3a0f-ef72-4c57-a501-9a729865bb6e",
+                       "enabled":  true,
+                       "otpPresent":  true,
+                       "smokeBypassPresent":  true,
+                       "smokeKeysPresent":  [
+                                                "pilot_smoke_mfa_verified"
+                                            ],
+                       "requiredActions":  [
+
+                                           ]
+                   },
+                   {
+                       "email":  "pilot.director@confora.test",
+                       "exists":  true,
+                       "userId":  "1e35e8be-afee-4284-b1dc-0b837083405a",
+                       "enabled":  true,
+                       "otpPresent":  true,
+                       "smokeBypassPresent":  true,
+                       "smokeKeysPresent":  [
+                                                "pilot_smoke_mfa_verified"
+                                            ],
+                       "requiredActions":  [
+
+                                           ]
+                   },
+                   {
+                       "email":  "pilot.mfa.staff@confora.test",
+                       "exists":  true,
+                       "userId":  "0dec8b2d-c389-4ae7-8a79-33e22c72a353",
+                       "enabled":  true,
+                       "otpPresent":  true,
+                       "smokeBypassPresent":  false,
+                       "smokeKeysPresent":  [
+
+                                            ],
+                       "requiredActions":  [
+                                               "CONFIGURE_TOTP"
+                                           ]
+                   },
+                   {
+                       "email":  "pilot.staff.mfa.external@confora.test",
+                       "exists":  true,
+                       "userId":  "2e28305d-ed00-450e-bbad-b5e520526ccf",
+                       "enabled":  true,
+                       "otpPresent":  true,
+                       "smokeBypassPresent":  false,
+                       "smokeKeysPresent":  [
+
+                                            ],
+                       "requiredActions":  [
+
+                                           ]
+                   }
+               ]
+}
