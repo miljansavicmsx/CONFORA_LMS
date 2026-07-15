@@ -1,0 +1,95 @@
+[
+  {
+    "email": "pilot.learner@confora.test",
+    "resolvedUserId": "b2000000-0000-4000-8000-000000000001",
+    "expectedDbId": "b2000000-0000-4000-8000-000000000001",
+    "aligned": true,
+    "jwtSub": "2cfd2e35-f971-4b68-8de7-93fd25292019",
+    "negativeFixture": false,
+    "meStatus": 200
+  },
+  {
+    "email": "pilot.learner2@confora.test",
+    "resolvedUserId": "b2000000-0000-4000-8000-000000000002",
+    "expectedDbId": "b2000000-0000-4000-8000-000000000002",
+    "aligned": true,
+    "jwtSub": "2a3386cf-e1c8-4ba9-9c40-85aec706edb1",
+    "negativeFixture": false,
+    "meStatus": 200
+  },
+  {
+    "email": "pilot.director@confora.test",
+    "resolvedUserId": null,
+    "expectedDbId": "b5200000-0000-4000-8000-000000000040",
+    "aligned": true,
+    "jwtSub": null,
+    "negativeFixture": false,
+    "meStatus": null,
+    "skippedMfa": true
+  },
+  {
+    "email": "pilot.staff@confora.test",
+    "resolvedUserId": null,
+    "expectedDbId": "b5100000-0000-4000-8000-000000000099",
+    "aligned": true,
+    "jwtSub": null,
+    "negativeFixture": false,
+    "meStatus": null,
+    "skippedMfa": true
+  },
+  {
+    "email": "pilot.staff.wrong-tenant@confora.test",
+    "resolvedUserId": "b5100000-0000-4000-8000-000000000098",
+    "expectedDbId": "b5100000-0000-4000-8000-000000000098",
+    "aligned": true,
+    "jwtSub": "f00ae907-0d65-4527-aed0-d2bb413f7d6a",
+    "negativeFixture": false,
+    "meStatus": 200
+  },
+  {
+    "email": "pilot.reviewer@confora.test",
+    "resolvedUserId": "b5200000-0000-4000-8000-000000000020",
+    "expectedDbId": "b5200000-0000-4000-8000-000000000020",
+    "aligned": true,
+    "jwtSub": "12af500a-2aa9-4fc7-82b4-bfee36a777d2",
+    "negativeFixture": false,
+    "meStatus": 200
+  },
+  {
+    "email": "pilot.reviewer2@confora.test",
+    "resolvedUserId": "b5200000-0000-4000-8000-000000000030",
+    "expectedDbId": "b5200000-0000-4000-8000-000000000030",
+    "aligned": true,
+    "jwtSub": "4b49e884-3193-437e-9f78-8b60b3f2dad0",
+    "negativeFixture": false,
+    "meStatus": 200
+  },
+  {
+    "email": "pilot.manager@confora.test",
+    "resolvedUserId": null,
+    "expectedDbId": "b5200000-0000-4000-8000-000000000010",
+    "aligned": true,
+    "jwtSub": null,
+    "negativeFixture": false,
+    "meStatus": null,
+    "skippedMfa": true
+  },
+  {
+    "email": "pilot.no-tenant@confora.test",
+    "resolvedUserId": null,
+    "expectedDbId": "b2000000-0000-4000-8000-000000000003",
+    "aligned": true,
+    "jwtSub": "9d297c35-972f-4c8d-8dd9-ab40c53644a7",
+    "negativeFixture": true,
+    "meStatus": 403
+  },
+  {
+    "email": "pilot.wrong-tenant@confora.test",
+    "resolvedUserId": "b2000000-0000-4000-8000-000000000004",
+    "expectedDbId": "b2000000-0000-4000-8000-000000000004",
+    "aligned": true,
+    "jwtSub": "a5b851d7-7569-4869-8695-e2b2059a8f80",
+    "negativeFixture": false,
+    "meStatus": 200
+  }
+]

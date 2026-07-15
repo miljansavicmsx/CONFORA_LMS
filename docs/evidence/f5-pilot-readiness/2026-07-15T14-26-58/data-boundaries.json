@@ -1,0 +1,31 @@
+{
+  "maySeed": [
+    "Pilot users (Keycloak + auth.users via seed scripts)",
+    "Tenant records (default + wrong-tenant)",
+    "Reference scheme/course/exam config (prisma db seed)",
+    "Smoke-specific fixture rows when smoke prep scripts require them"
+  ],
+  "mustCreateViaApi": [
+    "Certification applications (learner draft/submit)",
+    "Staff workflow transitions (assign, review, eligibility, decision)",
+    "Exam sessions, attempts, results",
+    "Certificates and lifecycle events",
+    "Appeal and complaint cases",
+    "Contact requests",
+    "Report export requests"
+  ],
+  "forbiddenDirectDbMutations": [
+    "Certification decision outcome changes after DECIDED",
+    "Certificate issuance without decision chain",
+    "Appeal/complaint case creation from contact routing",
+    "Report/export source domain mutations",
+    "Audit event update/delete",
+    "Bypassing RBAC via manual role assignment without seed scripts"
+  ],
+  "resetExpectations": [
+    "Repeated pilot runs may accumulate contact requests, audit events, and smoke artifacts",
+    "Use scenario-specific learner (learner2) for parallel chains when submit conflicts occur",
+    "Do not truncate production-like cert tables without ops approval",
+    "F4 frozen evidence must never be modified"
+  ]
+}

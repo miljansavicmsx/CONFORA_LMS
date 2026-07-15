@@ -1,0 +1,167 @@
+[
+  {
+    "email": "pilot.learner@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "2cfd2e35-f971-4b68-8de7-93fd25292019",
+    "jwtTenant": "00000000-0000-4000-8000-000000000001",
+    "jwtRoles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-confora",
+      "USR_CAND"
+    ],
+    "dbId": "b2000000-0000-4000-8000-000000000001",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.learner2@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "2a3386cf-e1c8-4ba9-9c40-85aec706edb1",
+    "jwtTenant": "00000000-0000-4000-8000-000000000001",
+    "jwtRoles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-confora",
+      "USR_CERT"
+    ],
+    "dbId": "b2000000-0000-4000-8000-000000000002",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.director@confora.test",
+    "loginOk": false,
+    "passwordBlockedExpected": true,
+    "hasOtp": true,
+    "status": 401,
+    "mode": "password_failed",
+    "jwtSub": null,
+    "jwtTenant": null,
+    "jwtRoles": [],
+    "dbId": "b5200000-0000-4000-8000-000000000040",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.staff@confora.test",
+    "loginOk": false,
+    "passwordBlockedExpected": true,
+    "hasOtp": true,
+    "status": 401,
+    "mode": "password_failed",
+    "jwtSub": null,
+    "jwtTenant": null,
+    "jwtRoles": [],
+    "dbId": "b5100000-0000-4000-8000-000000000099",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.staff.wrong-tenant@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "f00ae907-0d65-4527-aed0-d2bb413f7d6a",
+    "jwtTenant": "11111111-1111-4111-8111-111111111111",
+    "jwtRoles": [
+      "offline_access",
+      "COM_CERT",
+      "uma_authorization",
+      "default-roles-confora"
+    ],
+    "dbId": "b5100000-0000-4000-8000-000000000098",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.reviewer@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "12af500a-2aa9-4fc7-82b4-bfee36a777d2",
+    "jwtTenant": "00000000-0000-4000-8000-000000000001",
+    "jwtRoles": [
+      "offline_access",
+      "SME",
+      "uma_authorization",
+      "default-roles-confora"
+    ],
+    "dbId": "b5200000-0000-4000-8000-000000000020",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.reviewer2@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "4b49e884-3193-437e-9f78-8b60b3f2dad0",
+    "jwtTenant": "00000000-0000-4000-8000-000000000001",
+    "jwtRoles": [
+      "offline_access",
+      "STAFF_TRAINADM",
+      "uma_authorization",
+      "default-roles-confora"
+    ],
+    "dbId": "b5200000-0000-4000-8000-000000000030",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.manager@confora.test",
+    "loginOk": false,
+    "passwordBlockedExpected": true,
+    "hasOtp": true,
+    "status": 401,
+    "mode": "password_failed",
+    "jwtSub": null,
+    "jwtTenant": null,
+    "jwtRoles": [],
+    "dbId": "b5200000-0000-4000-8000-000000000010",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.no-tenant@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "9d297c35-972f-4c8d-8dd9-ab40c53644a7",
+    "jwtTenant": null,
+    "jwtRoles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-confora",
+      "USR_CAND"
+    ],
+    "dbId": "b2000000-0000-4000-8000-000000000003",
+    "subMatchesDb": false
+  },
+  {
+    "email": "pilot.wrong-tenant@confora.test",
+    "loginOk": true,
+    "passwordBlockedExpected": false,
+    "hasOtp": false,
+    "status": 201,
+    "mode": "password",
+    "jwtSub": "a5b851d7-7569-4869-8695-e2b2059a8f80",
+    "jwtTenant": "11111111-1111-4111-8111-111111111111",
+    "jwtRoles": [
+      "offline_access",
+      "uma_authorization",
+      "default-roles-confora",
+      "USR_CAND"
+    ],
+    "dbId": "b2000000-0000-4000-8000-000000000004",
+    "subMatchesDb": false
+  }
+]

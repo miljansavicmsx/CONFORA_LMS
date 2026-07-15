@@ -1,0 +1,22 @@
+[
+  {
+    "id": "FIX-scheme",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000002|Sample certification scheme"
+  },
+  {
+    "id": "FIX-course",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000040"
+  },
+  {
+    "id": "FIX-exam-config",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000041"
+  },
+  {
+    "id": "FIX-scope",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000001"
+  }
+]

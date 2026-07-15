@@ -1,0 +1,29 @@
+{
+  "evidence_folder": "docs/evidence/td-085-sequential-regression/2026-07-15T14-31-08-td-085/",
+  "preflight_status": "PASS",
+  "f4_audit_status": "PASS",
+  "f5_3_status": "PASS",
+  "s17_status": "PASS",
+  "admin_gov_status": "FAIL",
+  "learner_status": "PASS",
+  "f4_9_status": "FAIL",
+  "commands_passed": 4,
+  "commands_failed": 2,
+  "commands_blocked": 0,
+  "commands_skipped": 0,
+  "total_duration_seconds": 387,
+  "parallel_execution_detected": false,
+  "production_code_changed": false,
+  "prisma_schema_changed": false,
+  "migrations_changed": false,
+  "rbac_weakened": false,
+  "tenant_isolation_weakened": false,
+  "privacy_weakened": false,
+  "governance_boundaries_weakened": false,
+  "external_pilot_approved": false,
+  "transient_notes": [
+    "ops:admin-gov-final-acceptance-1: transient infra signal in output",
+    "ops:f4-9-smoke: transient infra signal in output"
+  ],
+  "final_verdict": "TD_085_GO_WITH_TRANSIENT_INFRA_NOTE"
+}

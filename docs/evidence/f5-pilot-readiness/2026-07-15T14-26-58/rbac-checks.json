@@ -1,0 +1,52 @@
+[
+  {
+    "id": "RBAC-learner-reports-denied",
+    "pass": true,
+    "detail": "status=403"
+  },
+  {
+    "id": "RBAC-learner-export-denied",
+    "pass": true,
+    "detail": "status=403"
+  },
+  {
+    "id": "RBAC-learner-contact-read",
+    "pass": true,
+    "detail": "status=200"
+  },
+  {
+    "id": "RBAC-director-reports",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-director-export-policy",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-director-staff-queue",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-staff-queue",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-reviewer-queue-denied",
+    "pass": true,
+    "detail": "status=403 (SME not in queue roles)"
+  },
+  {
+    "id": "RBAC-wrong-tenant-staff-contact",
+    "pass": true,
+    "detail": "queue status=200 items=0"
+  },
+  {
+    "id": "RBAC-wrong-tenant-staff-cert-queue",
+    "pass": true,
+    "detail": "queue status=200 items=0"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "schemeId": "a1000000-0000-4000-8000-000000000002",
+  "scopeId": "a1000000-0000-4000-8000-000000000001",
+  "courseId": "a1000000-0000-4000-8000-000000000040",
+  "examConfigId": "a1000000-0000-4000-8000-000000000041",
+  "applicationStrategy": "Create via learner draft/submit APIs (S-01/S-02) or reuse smoke-seeded applications",
+  "examSessionStrategy": "Create via staff exam session APIs (B8 smokes) or smoke prep fixtures",
+  "resultStrategy": "Deliver via B9 smokes; validated result required before decision (S-10)",
+  "certificateStrategy": "Issuance via B11 smoke chain after APPROVED decision",
+  "verificationStrategy": "Public verification portal against issued certificate (S-18)",
+  "recertificationStrategy": "B13 smoke fixtures or window automation prep",
+  "appealStrategy": "B14 smoke creates appeal_cases from cert decision context",
+  "complaintStrategy": "B15 smoke creates complaint_cases via public/learner submit",
+  "contactStrategy": "F4-9 smoke creates ContactRequest via public/learner APIs",
+  "reportsStrategy": "Operational data from prior scenarios; export via POST /v1/staff/reports/export"
+}

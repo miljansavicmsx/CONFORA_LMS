@@ -1,0 +1,309 @@
+{
+  "userMatrix": [
+    {
+      "email": "pilot.learner@confora.test",
+      "expectedDbId": "b2000000-0000-4000-8000-000000000001",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b2000000-0000-4000-8000-000000000001",
+        "email": "pilot.learner@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "USR_CAND"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "2cfd2e35-f971-4b68-8de7-93fd25292019",
+        "jwtTenant": "00000000-0000-4000-8000-000000000001",
+        "jwtRoles": [
+          "offline_access",
+          "uma_authorization",
+          "default-roles-confora",
+          "USR_CAND"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": "b2000000-0000-4000-8000-000000000001",
+        "aligned": true
+      }
+    },
+    {
+      "email": "pilot.learner2@confora.test",
+      "expectedDbId": "b2000000-0000-4000-8000-000000000002",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b2000000-0000-4000-8000-000000000002",
+        "email": "pilot.learner2@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "USR_CERT"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "2a3386cf-e1c8-4ba9-9c40-85aec706edb1",
+        "jwtTenant": "00000000-0000-4000-8000-000000000001",
+        "jwtRoles": [
+          "offline_access",
+          "uma_authorization",
+          "default-roles-confora",
+          "USR_CERT"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": "b2000000-0000-4000-8000-000000000002",
+        "aligned": true
+      }
+    },
+    {
+      "email": "pilot.director@confora.test",
+      "expectedDbId": "b5200000-0000-4000-8000-000000000040",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b5200000-0000-4000-8000-000000000040",
+        "email": "pilot.director@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "STAFF_DIR"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": false,
+        "passwordBlockedExpected": true,
+        "hasOtp": true,
+        "jwtSub": null,
+        "jwtTenant": null,
+        "jwtRoles": [],
+        "subMatchesDb": false
+      }
+    },
+    {
+      "email": "pilot.staff@confora.test",
+      "expectedDbId": "b5100000-0000-4000-8000-000000000099",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b5100000-0000-4000-8000-000000000099",
+        "email": "pilot.staff@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "COM_CERT"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": false,
+        "passwordBlockedExpected": true,
+        "hasOtp": true,
+        "jwtSub": null,
+        "jwtTenant": null,
+        "jwtRoles": [],
+        "subMatchesDb": false
+      }
+    },
+    {
+      "email": "pilot.staff.wrong-tenant@confora.test",
+      "expectedDbId": "b5100000-0000-4000-8000-000000000098",
+      "tenant": "11111111-1111-4111-8111-111111111111",
+      "db": {
+        "id": "b5100000-0000-4000-8000-000000000098",
+        "email": "pilot.staff.wrong-tenant@confora.test",
+        "tenantId": "11111111-1111-4111-8111-111111111111",
+        "roles": [
+          "COM_CERT"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "f00ae907-0d65-4527-aed0-d2bb413f7d6a",
+        "jwtTenant": "11111111-1111-4111-8111-111111111111",
+        "jwtRoles": [
+          "offline_access",
+          "COM_CERT",
+          "uma_authorization",
+          "default-roles-confora"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": "b5100000-0000-4000-8000-000000000098",
+        "aligned": true
+      }
+    },
+    {
+      "email": "pilot.reviewer@confora.test",
+      "expectedDbId": "b5200000-0000-4000-8000-000000000020",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b5200000-0000-4000-8000-000000000020",
+        "email": "pilot.reviewer@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "SME"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "12af500a-2aa9-4fc7-82b4-bfee36a777d2",
+        "jwtTenant": "00000000-0000-4000-8000-000000000001",
+        "jwtRoles": [
+          "offline_access",
+          "SME",
+          "uma_authorization",
+          "default-roles-confora"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": "b5200000-0000-4000-8000-000000000020",
+        "aligned": true
+      }
+    },
+    {
+      "email": "pilot.reviewer2@confora.test",
+      "expectedDbId": "b5200000-0000-4000-8000-000000000030",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b5200000-0000-4000-8000-000000000030",
+        "email": "pilot.reviewer2@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "STAFF_TRAINADM"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "4b49e884-3193-437e-9f78-8b60b3f2dad0",
+        "jwtTenant": "00000000-0000-4000-8000-000000000001",
+        "jwtRoles": [
+          "offline_access",
+          "STAFF_TRAINADM",
+          "uma_authorization",
+          "default-roles-confora"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": "b5200000-0000-4000-8000-000000000030",
+        "aligned": true
+      }
+    },
+    {
+      "email": "pilot.manager@confora.test",
+      "expectedDbId": "b5200000-0000-4000-8000-000000000010",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b5200000-0000-4000-8000-000000000010",
+        "email": "pilot.manager@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "STAFF_TRAINADM"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": false,
+        "passwordBlockedExpected": true,
+        "hasOtp": true,
+        "jwtSub": null,
+        "jwtTenant": null,
+        "jwtRoles": [],
+        "subMatchesDb": false
+      }
+    },
+    {
+      "email": "pilot.no-tenant@confora.test",
+      "expectedDbId": "b2000000-0000-4000-8000-000000000003",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b2000000-0000-4000-8000-000000000003",
+        "email": "pilot.no-tenant@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "USR_CAND"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "9d297c35-972f-4c8d-8dd9-ab40c53644a7",
+        "jwtTenant": null,
+        "jwtRoles": [
+          "offline_access",
+          "uma_authorization",
+          "default-roles-confora",
+          "USR_CAND"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": null,
+        "aligned": true
+      }
+    },
+    {
+      "email": "pilot.wrong-tenant@confora.test",
+      "expectedDbId": "b2000000-0000-4000-8000-000000000004",
+      "tenant": "00000000-0000-4000-8000-000000000001",
+      "db": {
+        "id": "b2000000-0000-4000-8000-000000000004",
+        "email": "pilot.wrong-tenant@confora.test",
+        "tenantId": "00000000-0000-4000-8000-000000000001",
+        "roles": [
+          "USR_CAND"
+        ]
+      },
+      "dbAligned": true,
+      "login": {
+        "ok": true,
+        "passwordBlockedExpected": false,
+        "hasOtp": false,
+        "jwtSub": "a5b851d7-7569-4869-8695-e2b2059a8f80",
+        "jwtTenant": "11111111-1111-4111-8111-111111111111",
+        "jwtRoles": [
+          "offline_access",
+          "uma_authorization",
+          "default-roles-confora",
+          "USR_CAND"
+        ],
+        "subMatchesDb": false
+      },
+      "me": {
+        "resolvedUserId": "b2000000-0000-4000-8000-000000000004",
+        "aligned": true
+      }
+    }
+  ],
+  "tenants": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "slug": "default",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "slug": "pilot-wrong-tenant",
+      "status": "ACTIVE"
+    }
+  ]
+}

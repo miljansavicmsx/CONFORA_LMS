@@ -1,0 +1,252 @@
+[
+  {
+    "id": "D-01-default-tenant",
+    "pass": true,
+    "detail": "tenants=2"
+  },
+  {
+    "id": "D-06-wrong-tenant",
+    "pass": true,
+    "detail": "wrong-tenant slug=pilot-wrong-tenant"
+  },
+  {
+    "id": "D-03-db-pilot.learner@confora.test",
+    "pass": true,
+    "detail": "id=b2000000-0000-4000-8000-000000000001 tenant=00000000-0000-4000-8000-000000000001 roles=USR_CAND"
+  },
+  {
+    "id": "D-03-db-pilot.learner2@confora.test",
+    "pass": true,
+    "detail": "id=b2000000-0000-4000-8000-000000000002 tenant=00000000-0000-4000-8000-000000000001 roles=USR_CERT"
+  },
+  {
+    "id": "D-03-db-pilot.director@confora.test",
+    "pass": true,
+    "detail": "id=b5200000-0000-4000-8000-000000000040 tenant=00000000-0000-4000-8000-000000000001 roles=STAFF_DIR"
+  },
+  {
+    "id": "D-03-db-pilot.staff@confora.test",
+    "pass": true,
+    "detail": "id=b5100000-0000-4000-8000-000000000099 tenant=00000000-0000-4000-8000-000000000001 roles=COM_CERT"
+  },
+  {
+    "id": "D-03-db-pilot.staff.wrong-tenant@confora.test",
+    "pass": true,
+    "detail": "id=b5100000-0000-4000-8000-000000000098 tenant=11111111-1111-4111-8111-111111111111 roles=COM_CERT"
+  },
+  {
+    "id": "D-03-db-pilot.reviewer@confora.test",
+    "pass": true,
+    "detail": "id=b5200000-0000-4000-8000-000000000020 tenant=00000000-0000-4000-8000-000000000001 roles=SME"
+  },
+  {
+    "id": "D-03-db-pilot.reviewer2@confora.test",
+    "pass": true,
+    "detail": "id=b5200000-0000-4000-8000-000000000030 tenant=00000000-0000-4000-8000-000000000001 roles=STAFF_TRAINADM"
+  },
+  {
+    "id": "D-03-db-pilot.manager@confora.test",
+    "pass": true,
+    "detail": "id=b5200000-0000-4000-8000-000000000010 tenant=00000000-0000-4000-8000-000000000001 roles=STAFF_TRAINADM"
+  },
+  {
+    "id": "D-03-db-pilot.no-tenant@confora.test",
+    "pass": true,
+    "detail": "id=b2000000-0000-4000-8000-000000000003 tenant=00000000-0000-4000-8000-000000000001 roles=USR_CAND"
+  },
+  {
+    "id": "D-03-db-pilot.wrong-tenant@confora.test",
+    "pass": true,
+    "detail": "id=b2000000-0000-4000-8000-000000000004 tenant=00000000-0000-4000-8000-000000000001 roles=USR_CAND"
+  },
+  {
+    "id": "D-02-kc-login-pilot.learner@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=2cfd2e35-f971-4b68-8de7-93fd25292019"
+  },
+  {
+    "id": "D-02-kc-login-pilot.learner2@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=2a3386cf-e1c8-4ba9-9c40-85aec706edb1"
+  },
+  {
+    "id": "D-02-kc-login-pilot.director@confora.test",
+    "pass": true,
+    "detail": "status=401 mfa_enrolled_password_grant_blocked_expected"
+  },
+  {
+    "id": "D-02-kc-login-pilot.staff@confora.test",
+    "pass": true,
+    "detail": "status=401 mfa_enrolled_password_grant_blocked_expected"
+  },
+  {
+    "id": "D-02-kc-login-pilot.staff.wrong-tenant@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=f00ae907-0d65-4527-aed0-d2bb413f7d6a"
+  },
+  {
+    "id": "D-02-kc-login-pilot.reviewer@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=12af500a-2aa9-4fc7-82b4-bfee36a777d2"
+  },
+  {
+    "id": "D-02-kc-login-pilot.reviewer2@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=4b49e884-3193-437e-9f78-8b60b3f2dad0"
+  },
+  {
+    "id": "D-02-kc-login-pilot.manager@confora.test",
+    "pass": true,
+    "detail": "status=401 mfa_enrolled_password_grant_blocked_expected"
+  },
+  {
+    "id": "D-02-kc-login-pilot.no-tenant@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=9d297c35-972f-4c8d-8dd9-ab40c53644a7"
+  },
+  {
+    "id": "D-02-kc-login-pilot.wrong-tenant@confora.test",
+    "pass": true,
+    "detail": "status=201 mode=password sub=a5b851d7-7569-4869-8695-e2b2059a8f80"
+  },
+  {
+    "id": "D-04-me-pilot.learner@confora.test",
+    "pass": true,
+    "detail": "userId=b2000000-0000-4000-8000-000000000001"
+  },
+  {
+    "id": "D-04-me-pilot.learner2@confora.test",
+    "pass": true,
+    "detail": "userId=b2000000-0000-4000-8000-000000000002"
+  },
+  {
+    "id": "D-04-me-pilot.director@confora.test",
+    "pass": true,
+    "detail": "skipped_mfa_enrolled_password_grant_blocked — /auth/me requires MFA session"
+  },
+  {
+    "id": "D-04-me-pilot.staff@confora.test",
+    "pass": true,
+    "detail": "skipped_mfa_enrolled_password_grant_blocked — /auth/me requires MFA session"
+  },
+  {
+    "id": "D-04-me-pilot.staff.wrong-tenant@confora.test",
+    "pass": true,
+    "detail": "userId=b5100000-0000-4000-8000-000000000098"
+  },
+  {
+    "id": "D-04-me-pilot.reviewer@confora.test",
+    "pass": true,
+    "detail": "userId=b5200000-0000-4000-8000-000000000020"
+  },
+  {
+    "id": "D-04-me-pilot.reviewer2@confora.test",
+    "pass": true,
+    "detail": "userId=b5200000-0000-4000-8000-000000000030"
+  },
+  {
+    "id": "D-04-me-pilot.manager@confora.test",
+    "pass": true,
+    "detail": "skipped_mfa_enrolled_password_grant_blocked — /auth/me requires MFA session"
+  },
+  {
+    "id": "D-04-me-pilot.no-tenant@confora.test",
+    "pass": true,
+    "detail": "negative fixture status=403 (tenant claim absent by design)"
+  },
+  {
+    "id": "D-04-me-pilot.wrong-tenant@confora.test",
+    "pass": true,
+    "detail": "userId=b2000000-0000-4000-8000-000000000004"
+  },
+  {
+    "id": "D-04-db-user-alignment",
+    "pass": true,
+    "detail": "10/10 /auth/me userId aligned"
+  },
+  {
+    "id": "D-04-jwt-sub-note",
+    "pass": true,
+    "detail": "0/7 JWT sub match DB id; email resolution expected for Keycloak-managed subs"
+  },
+  {
+    "id": "RBAC-learner-reports-denied",
+    "pass": true,
+    "detail": "status=403"
+  },
+  {
+    "id": "RBAC-learner-export-denied",
+    "pass": true,
+    "detail": "status=403"
+  },
+  {
+    "id": "RBAC-learner-contact-read",
+    "pass": true,
+    "detail": "status=200"
+  },
+  {
+    "id": "RBAC-director-reports",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-director-export-policy",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-director-staff-queue",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-staff-queue",
+    "pass": true,
+    "detail": "skipped_positive_probe_mfa_enrolled_no_password_token"
+  },
+  {
+    "id": "RBAC-reviewer-queue-denied",
+    "pass": true,
+    "detail": "status=403 (SME not in queue roles)"
+  },
+  {
+    "id": "RBAC-wrong-tenant-staff-contact",
+    "pass": true,
+    "detail": "queue status=200 items=0"
+  },
+  {
+    "id": "RBAC-wrong-tenant-staff-cert-queue",
+    "pass": true,
+    "detail": "queue status=200 items=0"
+  },
+  {
+    "id": "FIX-scheme",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000002|Sample certification scheme"
+  },
+  {
+    "id": "FIX-course",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000040"
+  },
+  {
+    "id": "FIX-exam-config",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000041"
+  },
+  {
+    "id": "FIX-scope",
+    "pass": true,
+    "detail": "a1000000-0000-4000-8000-000000000001"
+  },
+  {
+    "id": "D-10-audit-actor-fk",
+    "pass": true,
+    "detail": "orphan_audit_actors=0"
+  },
+  {
+    "id": "D-07-synthetic-pilot-only",
+    "pass": true,
+    "detail": "pilot_users=23"
+  }
+]
