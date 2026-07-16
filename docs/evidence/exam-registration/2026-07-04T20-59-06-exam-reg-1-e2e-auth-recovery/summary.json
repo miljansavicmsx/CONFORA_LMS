@@ -1,0 +1,179 @@
+{
+  "timestamp": "2026-07-04T20:59:06.232Z",
+  "evidenceDir": "docs/evidence/exam-registration/2026-07-04T20-59-06-exam-reg-1-e2e-auth-recovery",
+  "priorSlice": "docs/evidence/exam-registration/2026-07-04T19-24-05-exam-reg-1",
+  "local_auth_root_cause": "frontend_vite_legacy_auth_without_env_local_playwright_no_web_server",
+  "keycloak_health_status": "HEALTHY",
+  "learner_auth_status": "PASS",
+  "frontend_auth_callback_status": "PASS",
+  "api_token_validation_status": "PASS",
+  "playwright_login_status": "PASS",
+  "exam_reg_playwright_status": "PASS",
+  "cert_eligibility_playwright_status": "PASS",
+  "exam_registration_live_flow_status": "CONFIRMED",
+  "duplicate_registration_protection_status": "CONFIRMED",
+  "rbac_privacy_status": "PASS",
+  "regression_guard_status": "PASS",
+  "business_logic_changed": false,
+  "exam_delivery_status": "DEFERRED",
+  "proctoring_status": "DEFERRED",
+  "grading_status": "DEFERRED",
+  "D08_status": "PENDING",
+  "STG001_status": "PENDING",
+  "AWS_actions_performed": false,
+  "terraform_actions_performed": false,
+  "staging_ready": false,
+  "production_ready": false,
+  "external_pilot_approved": false,
+  "legal_approval_claimed": false,
+  "biometric_processing": false,
+  "final_verdict": "EXAM_REG_1_E2E_CONFIRMED",
+  "readiness": {
+    "ready": true,
+    "stackOk": true,
+    "authOk": true,
+    "healthOk": true,
+    "frontendEnvOk": true,
+    "rootCause": null,
+    "stack": {
+      "pg": true,
+      "kc": true,
+      "api": true,
+      "fe": true
+    },
+    "health": {
+      "ok": true,
+      "status": 200
+    },
+    "frontend": {
+      "ok": true,
+      "status": 200
+    },
+    "keycloak": {
+      "ok": true,
+      "accessTokenPresent": true
+    },
+    "nestLogin": {
+      "ok": true,
+      "accessTokenPresent": true,
+      "refreshTokenPresent": true
+    },
+    "apiMe": {
+      "ok": true,
+      "profileValidated": true,
+      "rolePresent": true
+    },
+    "examReg": {
+      "ok": true,
+      "status": 200
+    },
+    "frontendEnv": {
+      "configured": true,
+      "path": "C:\\Users\\milja\\Desktop\\CONFORA_LMS\\frontend-app\\.env.local",
+      "nestAuth": true,
+      "pilot": true,
+      "detail": "nest pilot env present"
+    },
+    "attempts": 1
+  },
+  "seedOk": true,
+  "envWrite": {
+    "created": false,
+    "path": "C:\\Users\\milja\\Desktop\\CONFORA_LMS\\frontend-app\\.env.local",
+    "configured": true,
+    "needsViteRestart": false
+  },
+  "regression": [
+    {
+      "script": "ops:learner-polish-2",
+      "path": "docs/evidence/learner-polish/2026-07-04T07-42-03-learner-polish-2",
+      "pattern": {},
+      "pass": true,
+      "detail": "LEARNER_POLISH_2_GO_MANUAL_UX_FIXES_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:learner-polish-2-e2e",
+      "path": "docs/evidence/learner-polish/2026-07-04T12-26-08-learner-polish-2-e2e",
+      "pattern": {},
+      "pass": true,
+      "detail": "LEARNER_POLISH_2_E2E_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:cert-eligibility-ux-1",
+      "path": "docs/evidence/certification-eligibility/2026-07-04T13-57-59-cert-eligibility-ux-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "CERT_ELIGIBILITY_UX_1_GO_BACKEND_DRIVEN_FILTERING_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:documents-certificates-1",
+      "path": "docs/evidence/documents-certificates/2026-07-04T15-20-23-documents-certificates-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "DOCUMENTS_CERTIFICATES_1_GO_LEARNER_DOCUMENTS_TRUST_DETAILS_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:exam-reg-1",
+      "path": "docs/evidence/exam-registration/2026-07-04T19-24-05-exam-reg-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "EXAM_REG_1_GO_LEARNER_EXAM_REGISTRATION_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:learner-flow-1",
+      "path": "docs/evidence/learner-flow/2026-07-03T08-52-18-learner-flow-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "LEARNER_FLOW_1_GO_LEARNER_JOURNEY_READY",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:cert-ops-1r",
+      "path": "docs/evidence/cert-ops-live/2026-07-03T07-05-52-cert-ops-1r",
+      "pattern": {},
+      "pass": true,
+      "detail": "CERT_OPS_1R_GO_FULL_LIVE_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:public-ux-1r3",
+      "path": "docs/evidence/public-ux-live/2026-07-02T18-24-34-public-ux-1r3",
+      "pattern": {},
+      "pass": true,
+      "detail": "PUBLIC_UX_1R3_GO_PUBLIC_EXPERIENCE_LIVE_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:support-contact-1r",
+      "path": "docs/evidence/support-contact-live/2026-07-03T16-13-21-support-contact-1r",
+      "pattern": {},
+      "pass": true,
+      "detail": "SUPPORT_CONTACT_1R_GO_LIVE_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:mobile-nav-1",
+      "path": "docs/evidence/mobile-nav/2026-07-03T17-11-51-mobile-nav-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "MOBILE_NAV_1_GO_RESPONSIVE_UX_READY",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:local-uat-4b",
+      "path": "docs/evidence/local-uat/2026-07-02T20-07-48-uat4b-refresh",
+      "pattern": {},
+      "pass": true,
+      "detail": "LOCAL_UAT_4B_GO_REFRESHED_LOCAL_BASELINE_CONFIRMED",
+      "mode": "verify-evidence"
+    }
+  ],
+  "tokens_committed": false,
+  "passwords_committed": false,
+  "secrets_committed": false
+}
