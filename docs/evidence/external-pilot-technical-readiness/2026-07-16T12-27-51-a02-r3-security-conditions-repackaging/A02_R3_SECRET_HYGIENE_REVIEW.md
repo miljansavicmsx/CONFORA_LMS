@@ -14,8 +14,8 @@
 
 | Variable | Before | After |
 |----------|--------|-------|
-| `PILOT_USER_PASSWORD` | `?? 'PilotTest!2026'` | `requireEnv('PILOT_USER_PASSWORD')` |
-| `KEYCLOAK_ADMIN_PASSWORD` | `?? 'admin_dev_change_me'` | `requireEnv('KEYCLOAK_ADMIN_PASSWORD')` |
+| `PILOT_USER_PASSWORD` | `?? '<REDACTED_PASSWORD_FALLBACK_REMOVED>'` | `requireEnv('PILOT_USER_PASSWORD')` |
+| `KEYCLOAK_ADMIN_PASSWORD` | `?? '<REDACTED_ADMIN_PASSWORD_FALLBACK_REMOVED>'` | `requireEnv('KEYCLOAK_ADMIN_PASSWORD')` |
 
 ## Validation
 
