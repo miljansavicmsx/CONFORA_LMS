@@ -15,8 +15,18 @@ import { createHmac } from 'node:crypto';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, '..', '..');
+
+function requireEnv(name) {
+  const value = process.env[name];
+  if (!value || String(value).trim() === '') {
+    console.error(`Missing required environment variable: ${name}`);
+    process.exit(1);
+  }
+  return value;
+}
+
 const NEST_API = (process.env.NEST_API_URL ?? 'http://localhost:4000').replace(/\/$/, '');
-const PASSWORD = process.env.PILOT_USER_PASSWORD ?? 'PilotTest!2026';
+const PASSWORD = requireEnv('PILOT_USER_PASSWORD');
 const DEFAULT_TENANT_ID = '00000000-0000-4000-8000-000000000001';
 const WRONG_TENANT_ID = '11111111-1111-4111-8111-111111111111';
 const POSTGRES_CONTAINER = process.env.POSTGRES_DOCKER_CONTAINER ?? 'docker-postgres-1';
@@ -24,7 +34,7 @@ const POSTGRES_DB = process.env.POSTGRES_DB ?? 'confora';
 const KC_BASE = (process.env.KEYCLOAK_BASE_URL ?? 'http://localhost:18080').replace(/\/$/, '');
 const KC_REALM = process.env.KEYCLOAK_REALM ?? 'confora';
 const KC_ADMIN = process.env.KEYCLOAK_ADMIN ?? 'admin';
-const KC_ADMIN_PASS = process.env.KEYCLOAK_ADMIN_PASSWORD ?? 'admin_dev_change_me';
+const KC_ADMIN_PASS = requireEnv('KEYCLOAK_ADMIN_PASSWORD');
 const MFA_TOTP_SECRET = process.env.MFA_TEST_TOTP_SECRET ?? 'CONFORAMFATESTKEY1';
 /** External-ready enrolled staff expected to block password-only login after A-01/A-02 OTP. */
 const MFA_ENROLLED_EXPECTED = new Set([
