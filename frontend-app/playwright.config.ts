@@ -17,11 +17,13 @@ const pilotNestAuth =
   process.env.PLAYWRIGHT_EXAM_REG_1 === "1" ||
   process.env.PLAYWRIGHT_APPEALS_COMPLAINTS_1 === "1" ||
   process.env.PLAYWRIGHT_APPEALS_COMPLAINTS_1R === "1" ||
+  process.env.PLAYWRIGHT_APPEALS_COMPLAINTS_2R === "1" ||
   process.argv.some(
     (arg) =>
       arg.includes("exam-reg-1") ||
       arg.includes("appeals-complaints-1") ||
-      arg.includes("appeals-complaints-1r"),
+      arg.includes("appeals-complaints-1r") ||
+      arg.includes("appeals-complaints-2r"),
   );
 
 const forceFresh = process.env.PLAYWRIGHT_FORCE_FRESH_SERVER === "1";

@@ -2,6 +2,7 @@ import {
   BookOpen,
   BookOpenCheck,
   ClipboardList,
+  Gavel,
   LayoutDashboard,
   LifeBuoy,
   Medal,
@@ -70,6 +71,7 @@ export const NEST_AUTH_PILOT_LEARNER_DASHBOARD_PREFIXES: readonly string[] = [
   "/dashboard/my-certificates",
   "/dashboard/my-recertifications",
   "/dashboard/support",
+  "/dashboard/appeals-complaints",
 ] as const;
 
 /** Staff/governance dashboard prefixes allowed during Nest auth pilot. */
@@ -77,10 +79,14 @@ export const NEST_AUTH_PILOT_STAFF_DASHBOARD_PREFIXES: readonly string[] = [
   "/dashboard/admin/reports",
   "/dashboard/admin/education",
   "/dashboard/admin/identity-review",
+  "/dashboard/admin/appeals-complaints",
+  "/dashboard/admin/support",
   "/dashboard/iso/reports",
   "/dashboard/iso/applications",
   "/dashboard/iso/decisions",
   "/dashboard/iso/certificates",
+  "/dashboard/iso/appeals",
+  "/dashboard/iso/complaints",
   "/dashboard/admin/recertification",
   "/dashboard/committee/pilot-applications",
   "/dashboard/committee/decisions",
@@ -203,6 +209,7 @@ function buildLearnerPilotMobileNav(): readonly NestAuthPilotMobileNavItem[] {
       icon: ClipboardList,
       end: false,
     },
+    { to: "/dashboard/appeals-complaints", label: "Žalbe", short: "Žal.", icon: Gavel, end: false },
     { to: "/dashboard/support", label: "Podrška", short: "Pod.", icon: LifeBuoy, end: false },
   ];
 }
@@ -321,6 +328,7 @@ export function buildNestAuthPilotLearnerSidebarSections(): readonly SidebarSect
           end: false,
         },
         { to: "/dashboard/my-certificates", labelKey: "myCertificates", icon: Medal, end: false },
+        { to: "/dashboard/appeals-complaints", labelKey: "appeals", icon: Gavel, end: false },
         { to: "/dashboard/support", labelKey: "supportContact", icon: LifeBuoy, end: false },
       ],
     },

@@ -104,7 +104,11 @@ describe("nest-auth-pilot route whitelist", () => {
     }
     expect(shouldRedirectPilotDashboardPath("/dashboard/admin/reports")).toBe(false);
     expect(shouldRedirectPilotDashboardPath("/dashboard/admin/education")).toBe(false);
+    expect(shouldRedirectPilotDashboardPath("/dashboard/admin/appeals-complaints")).toBe(false);
+    expect(shouldRedirectPilotDashboardPath("/dashboard/admin/support")).toBe(false);
     expect(shouldRedirectPilotDashboardPath("/dashboard/iso/reports")).toBe(false);
+    expect(shouldRedirectPilotDashboardPath("/dashboard/iso/appeals")).toBe(false);
+    expect(shouldRedirectPilotDashboardPath("/dashboard/iso/complaints")).toBe(false);
   });
 
   it("resolvePilotNavPersona maps STAFF_TRAINADM to training_admin", () => {

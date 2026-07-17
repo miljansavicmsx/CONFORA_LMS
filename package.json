@@ -86,7 +86,8 @@
     "ops:seed-pilot-cert-wallet": "pnpm exec tsx scripts/ops/seed-pilot-certificant-wallet.ts",
     "ops:appeals-complaints-1": "node scripts/ops/run-appeals-complaints-1.mjs",
     "ops:appeals-complaints-1r-browser": "node scripts/ops/run-appeals-complaints-1r-browser.mjs",
-    "ops:appeals-complaints-2": "node scripts/ops/run-appeals-complaints-2.mjs"
+    "ops:appeals-complaints-2": "node scripts/ops/run-appeals-complaints-2.mjs",
+    "ops:appeals-complaints-2r-browser": "node scripts/ops/run-appeals-complaints-2r-browser.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,cjs,js,json,md,yml,yaml}": [
