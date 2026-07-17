@@ -87,3 +87,16 @@ export const FORBIDDEN_LEARNER_GRIEVANCE_ENUMS = [
   "ISSUED",
   "ACTIVE",
 ] as const;
+
+/** Staff resolution UX notices (APPEALS-COMPLAINTS-2). */
+export const STAFF_APPEAL_COMPLAINT_BOUNDARY_NOTICE =
+  "Žalbe i prigovori su odvojeni redovi. Obrada žalbe nije odluka o certifikaciji. Rješavanje prigovora ne izdaje niti aktivira certifikat. Kontakt / podrška ostaje na odvojenom modulu.";
+
+export const STAFF_RESOLUTION_DEFERRED_NOTICE =
+  "Pun B14/B15 tijek (dopustivost, dokazi, trijaža, istraga, remedy/action s domain poveznicama) ostaje na API-ju. Ovaj ekran podržava pregled redova, detalj, zaprimanje (acknowledge) i poništenje (void). Domain lifecycle radnje nisu dostupne ovdje.";
+
+/** Staff-facing labels reuse learner-safe maps (no raw enums in UI). */
+export const staffAppealStatusLabel = learnerAppealStatusLabel;
+export const staffComplaintStatusLabel = learnerComplaintStatusLabel;
+export const staffAppealTypeLabel = learnerAppealTypeLabel;
+export const staffComplaintCategoryLabel = learnerComplaintCategoryLabel;

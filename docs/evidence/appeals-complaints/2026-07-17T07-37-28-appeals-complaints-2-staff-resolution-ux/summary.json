@@ -1,0 +1,69 @@
+{
+  "task": "APPEALS_COMPLAINTS_2_STAFF_RESOLUTION_UX",
+  "based_on_commit": "3010d84",
+  "timestamp": "2026-07-17T07:37:28.486Z",
+  "evidenceDir": "docs/evidence/appeals-complaints/2026-07-17T07-37-28-appeals-complaints-2-staff-resolution-ux",
+  "staff_route": "/dashboard/admin/appeals-complaints",
+  "iso_appeals_route": "/dashboard/iso/appeals",
+  "iso_complaints_route": "/dashboard/iso/complaints",
+  "support_route_separate": "/dashboard/admin/support",
+  "staff_appeals_queue_enabled": true,
+  "staff_complaints_queue_enabled": true,
+  "appeal_complaint_boundary_preserved": true,
+  "contact_request_boundary_preserved": true,
+  "learner_denied_staff_route": true,
+  "staff_rbac_preserved": true,
+  "tenant_isolation_preserved": true,
+  "privacy_weakened": false,
+  "audit_events_written_or_deferred": "WRITTEN",
+  "audit_note": "acknowledge/void mutate case status and write backend audit; full decision/remedy/action UI deferred",
+  "certification_status_changed": false,
+  "exam_result_changed": false,
+  "certificate_issued": false,
+  "certificate_lifecycle_changed": false,
+  "public_verification_changed": false,
+  "reports_export_changed": false,
+  "raw_enums_visible": false,
+  "encoding_issues_found": false,
+  "external_pilot_approved": false,
+  "security_delegate_signed": false,
+  "dpo_legal_signed": false,
+  "secrets_committed": false,
+  "tokens_committed": false,
+  "passwords_committed": false,
+  "discovery": {
+    "staffPage": true,
+    "staffGuard": true,
+    "staffAccess": true,
+    "staffRouteWired": true,
+    "isoAppealsWired": true,
+    "certAppealsStaffApi": true,
+    "certComplaintsStaffApi": true,
+    "contactSeparate": true,
+    "noCertLifecycleInStaffPage": true
+  },
+  "unit": {
+    "access": "PASS",
+    "labels": "PASS",
+    "complaintsClient": "PASS"
+  },
+  "regression": [
+    {
+      "script": "ops:appeals-complaints-1",
+      "path": "docs/evidence/appeals-complaints/2026-07-16T19-23-20-appeals-complaints-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "APPEALS_COMPLAINTS_1_GO_FOUNDATION_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:appeals-complaints-1r-browser",
+      "path": "docs/evidence/appeals-complaints/2026-07-17T07-12-01-appeals-complaints-1r-browser",
+      "pattern": {},
+      "pass": true,
+      "detail": "APPEALS_COMPLAINTS_1R_GO_BROWSER_CONFIRMED",
+      "mode": "verify-evidence"
+    }
+  ],
+  "final_verdict": "APPEALS_COMPLAINTS_2_GO_STAFF_RESOLUTION_UX_CONFIRMED"
+}
