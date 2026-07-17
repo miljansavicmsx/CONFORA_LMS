@@ -1,0 +1,189 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import * as httpClient from "@/lib/api/http-client";
+import {
+  acknowledgeComplaint,
+  CANONICAL_LEARNER_COMPLAINTS_PATH,
+  CANONICAL_PUBLIC_COMPLAINTS_PATH,
+  CANONICAL_STAFF_COMPLAINTS_PATH,
+  getPublicComplaintStatus,
+  listLearnerComplaints,
+  submitPublicComplaint,
+} from "@/lib/api/complaints-client";
+import { caseCategoryToComplaintType } from "@/lib/api/complaints-category.util";
+
+const getMock = vi.fn();
+const postMock = vi.fn();
+
+describe("complaints-client (F4-8c)", () => {
+  beforeEach(() => {
+    vi.stubEnv("VITE_CONFORA_API_URL", "http://nest.example.test");
+    vi.stubEnv("VITE_COMPLAINTS_CANONICAL_ENABLED", "true");
+    getMock.mockReset();
+    postMock.mockReset();
+    vi.spyOn(httpClient, "getHttpClient").mockReturnValue({
+      get: getMock,
+      post: postMock,
+    } as ReturnType<typeof httpClient.getHttpClient>);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+    httpClient.resetHttpClientForTests();
+  });
+
+  it("maps legacy categories to B15 complaint types", () => {
+    expect(caseCategoryToComplaintType("complaint")).toBe("PROCESS_COMPLAINT");
+    expect(caseCategoryToComplaintType("technical_support")).toBe("TECHNICAL_SERVICE_COMPLAINT");
+  });
+
+  it("submitPublicComplaint posts JSON to canonical path", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ publicReference: "CMP-2026-abc", status: "SUBMITTED" }), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    const result = await submitPublicComplaint({
+      category: "complaint",
+      subject: "Subject",
+      description: "Body",
+      submitterName: "Ana",
+      submitterEmail: "ana@example.com",
+    });
+
+    expect(result.publicReference).toBe("CMP-2026-abc");
+    expect(result.status).toBe("SUBMITTED");
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`http://nest.example.test${CANONICAL_PUBLIC_COMPLAINTS_PATH}`);
+    expect(init.method).toBe("POST");
+    const payload = JSON.parse(String(init.body)) as Record<string, unknown>;
+    expect(payload.complaintType).toBe("PROCESS_COMPLAINT");
+    expect(payload).not.toHaveProperty("tenantId");
+    expect(payload).not.toHaveProperty("id");
+  });
+
+  it("getPublicComplaintStatus returns safe fields only", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          publicReference: "CMP-2026-xyz",
+          status: "ACKNOWLEDGED",
+          submittedAt: "2026-06-14T10:00:00.000Z",
+          nextStep: "Your complaint has been acknowledged.",
+          tenantId: "secret",
+          id: "uuid",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      ),
+    );
+
+    const result = await getPublicComplaintStatus("CMP-2026-xyz");
+    expect(result.publicReference).toBe("CMP-2026-xyz");
+    expect(result.status).toBe("ACKNOWLEDGED");
+    expect(result.submittedAt).toBe("2026-06-14T10:00:00.000Z");
+    expect(result.nextStep).toContain("acknowledged");
+    expect(result).not.toHaveProperty("tenantId");
+    expect(result).not.toHaveProperty("id");
+  });
+
+  it("listLearnerComplaints uses canonical learner path", async () => {
+    getMock.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: "uuid-1",
+            publicReference: "CMP-1",
+            complaintType: "PROCESS_COMPLAINT",
+            complaintTargetType: "CERTIFICATION_BODY",
+            status: "SUBMITTED",
+            submittedAt: "2026-06-14T10:00:00.000Z",
+            complaintSummary: "Line one\n\nDetails",
+          },
+        ],
+      },
+    });
+
+    const rows = await listLearnerComplaints();
+    expect(getMock).toHaveBeenCalledWith(CANONICAL_LEARNER_COMPLAINTS_PATH);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.complaintId).toBe("uuid-1");
+    expect(rows[0]?.publicReference).toBe("CMP-1");
+    expect(rows[0]?.subject).toBe("Line one");
+  });
+
+  it("listLearnerComplaints never uses raw complaintType as subject", async () => {
+    getMock.mockResolvedValue({
+      data: {
+        contractVersion: "1.5.0",
+        items: [
+          {
+            id: "uuid-3",
+            publicReference: "CMP-3",
+            complaintType: "PROCESS_COMPLAINT",
+            complaintTargetType: "CERTIFICATION_BODY",
+            status: "SUBMITTED",
+            submittedAt: "2026-06-14T10:00:00.000Z",
+          },
+        ],
+      },
+    });
+
+    const rows = await listLearnerComplaints();
+    expect(rows[0]?.subject).toBe("Prigovor CMP-3");
+    expect(rows[0]?.subject).not.toContain("PROCESS_COMPLAINT");
+  });
+
+  it("listLearnerComplaints ignores enum-like requestedAction and prefers summary", async () => {
+    getMock.mockResolvedValue({
+      data: {
+        items: [
+          {
+            id: "uuid-4",
+            publicReference: "CMP-4",
+            complaintType: "PROCESS_COMPLAINT",
+            complaintTargetType: "CERTIFICATION_BODY",
+            status: "SUBMITTED",
+            submittedAt: "2026-06-14T10:00:00.000Z",
+            requestedAction: "PROCESS_COMPLAINT",
+            complaintSummary: "1R browser prigovor\n\nDetalji",
+          },
+        ],
+      },
+    });
+
+    const rows = await listLearnerComplaints();
+    expect(rows[0]?.subject).toBe("1R browser prigovor");
+    expect(rows[0]?.subject).not.toContain("PROCESS_COMPLAINT");
+  });
+
+  it("listLearnerComplaints uses legacy alias when flag is false", async () => {
+    vi.stubEnv("VITE_COMPLAINTS_CANONICAL_ENABLED", "false");
+    getMock.mockResolvedValue({ data: { items: [] } });
+
+    await listLearnerComplaints();
+    expect(getMock).toHaveBeenCalledWith("/v1/me/complaints");
+  });
+
+  it("staff acknowledge path is canonical when enabled", async () => {
+    postMock.mockResolvedValue({
+      data: {
+        complaint: {
+          id: "uuid-2",
+          publicReference: "CMP-2",
+          complaintType: "PROCESS_COMPLAINT",
+          complaintTargetType: "CERTIFICATION_BODY",
+          status: "ACKNOWLEDGED",
+          submittedAt: "2026-06-14T10:00:00.000Z",
+        },
+      },
+    });
+
+    const detail = await acknowledgeComplaint("uuid-2");
+    expect(postMock).toHaveBeenCalledWith(`${CANONICAL_STAFF_COMPLAINTS_PATH}/uuid-2/acknowledge`, {});
+    expect(detail.status).toBe("ACKNOWLEDGED");
+  });
+});

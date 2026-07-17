@@ -1,0 +1,79 @@
+{
+  "task": "APPEALS_COMPLAINTS_1R_BROWSER_CONFIRMATION",
+  "based_on_commit": "74e133a",
+  "timestamp": "2026-07-17T07:12:01.208Z",
+  "evidenceDir": "docs/evidence/appeals-complaints/2026-07-17T07-12-01-appeals-complaints-1r-browser",
+  "prior_slice": "docs/evidence/appeals-complaints/2026-07-16T19-23-20-appeals-complaints-1",
+  "browser_status": "PASS",
+  "playwright_status": "PASS",
+  "browser_blocked_reason": null,
+  "learner_route_confirmed": true,
+  "appeals_tab_confirmed": true,
+  "complaints_tab_confirmed": true,
+  "contact_route_separate": true,
+  "appeal_complaint_boundary_preserved": true,
+  "contact_request_boundary_preserved": true,
+  "raw_enums_visible": false,
+  "encoding_issues_found": false,
+  "encoding_issues_fixed": true,
+  "certification_status_changed": false,
+  "exam_result_changed": false,
+  "certificate_issued": false,
+  "certificate_lifecycle_changed": false,
+  "public_verification_changed": false,
+  "reports_export_changed": false,
+  "tenant_isolation_preserved": true,
+  "rbac_preserved": true,
+  "privacy_weakened": false,
+  "audit_weakened": false,
+  "governance_boundaries_weakened": false,
+  "secrets_committed": false,
+  "tokens_committed": false,
+  "passwords_committed": false,
+  "external_pilot_approved": false,
+  "security_delegate_signed": false,
+  "dpo_legal_signed": false,
+  "stack_core_ok": true,
+  "auth_ok": true,
+  "password_env_present": true,
+  "frontend_env_write": "existing",
+  "pilot_learner_email": "pilot.learner@confora.test",
+  "encoding_scan": {
+    "ok": true,
+    "issues": []
+  },
+  "regression": [
+    {
+      "script": "ops:appeals-complaints-1",
+      "path": "docs/evidence/appeals-complaints/2026-07-16T19-23-20-appeals-complaints-1",
+      "pattern": {},
+      "pass": true,
+      "detail": "APPEALS_COMPLAINTS_1_GO_FOUNDATION_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:exam-reg-1-e2e-auth-recovery",
+      "path": "docs/evidence/exam-registration/2026-07-04T20-59-06-exam-reg-1-e2e-auth-recovery",
+      "pattern": {},
+      "pass": true,
+      "detail": "EXAM_REG_1_E2E_CONFIRMED",
+      "mode": "verify-evidence"
+    },
+    {
+      "script": "ops:support-contact-1r",
+      "path": "docs/evidence/support-contact-live/2026-07-03T16-13-21-support-contact-1r",
+      "pattern": {},
+      "pass": true,
+      "detail": "SUPPORT_CONTACT_1R_GO_LIVE_CONFIRMED",
+      "mode": "verify-evidence"
+    }
+  ],
+  "api_routes": {
+    "learner_appeals": "GET/POST /v1/learner/appeals",
+    "learner_complaints": "GET/POST /v1/learner/complaints",
+    "contact": "GET/POST /v1/learner/contact-requests"
+  },
+  "frontend_route": "/dashboard/appeals-complaints",
+  "support_route": "/dashboard/support",
+  "final_verdict": "APPEALS_COMPLAINTS_1R_GO_BROWSER_CONFIRMED"
+}

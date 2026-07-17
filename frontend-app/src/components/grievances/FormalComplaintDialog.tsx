@@ -42,6 +42,7 @@ export function FormalComplaintDialog({
   const [category, setCategory] = useState<Exclude<CaseCategory, "appeal">>("complaint");
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -74,12 +75,17 @@ export function FormalComplaintDialog({
       onOpenChange(false);
       setSubject("");
       setDescription("");
+      setFormError(null);
       onSuccess?.();
+    },
+    onError: () => {
+      setFormError("Prigovor nije zaprimljen. Pokušajte ponovo ili kontaktirajte podršku.");
     },
   });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!subject.trim() || !description.trim()) {
       return;
     }
@@ -124,6 +130,7 @@ export function FormalComplaintDialog({
               className="w-full rounded-md border border-border/60 bg-surface-secondary/80 px-3 py-2 text-sm text-text-primary"
               maxLength={500}
               required
+              data-testid="learner-complaint-subject"
             />
           </div>
           <div className="space-y-2">
@@ -137,8 +144,14 @@ export function FormalComplaintDialog({
               rows={6}
               className="w-full rounded-md border border-border/60 bg-surface-secondary/80 px-3 py-2 text-sm text-text-primary"
               required
+              data-testid="learner-complaint-description"
             />
           </div>
+          {formError ? (
+            <p className="text-sm text-red-200" role="alert" data-testid="learner-complaint-error">
+              {formError}
+            </p>
+          ) : null}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Odustani
