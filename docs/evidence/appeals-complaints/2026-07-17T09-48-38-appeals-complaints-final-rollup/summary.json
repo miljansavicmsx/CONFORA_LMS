@@ -1,0 +1,79 @@
+{
+  "task": "APPEALS_COMPLAINTS_FINAL_ROLLUP",
+  "based_on_commit": "4d64620",
+  "timestamp": "2026-07-17T09:48:38.000Z",
+  "evidenceDir": "docs/evidence/appeals-complaints/2026-07-17T09-48-38-appeals-complaints-final-rollup",
+  "slice_chain": [
+    {
+      "slice": "APPEALS-COMPLAINTS-1",
+      "commit": "74e133a",
+      "evidence": "docs/evidence/appeals-complaints/2026-07-16T19-23-20-appeals-complaints-1",
+      "verdict": "APPEALS_COMPLAINTS_1_GO_FOUNDATION_CONFIRMED"
+    },
+    {
+      "slice": "APPEALS-COMPLAINTS-1R",
+      "commit": "3010d84",
+      "evidence": "docs/evidence/appeals-complaints/2026-07-17T07-12-01-appeals-complaints-1r-browser",
+      "verdict": "APPEALS_COMPLAINTS_1R_GO_BROWSER_CONFIRMED"
+    },
+    {
+      "slice": "APPEALS-COMPLAINTS-2",
+      "commit": "22adee4",
+      "evidence": "docs/evidence/appeals-complaints/2026-07-17T07-37-28-appeals-complaints-2-staff-resolution-ux",
+      "verdict": "APPEALS_COMPLAINTS_2_GO_STAFF_RESOLUTION_UX_CONFIRMED"
+    },
+    {
+      "slice": "APPEALS-COMPLAINTS-2R",
+      "commit": "4d64620",
+      "evidence": "docs/evidence/appeals-complaints/2026-07-17T08-07-53-appeals-complaints-2r-browser",
+      "verdict": "APPEALS_COMPLAINTS_2R_GO_BROWSER_CONFIRMED"
+    }
+  ],
+  "learner_foundation_status": "GO",
+  "learner_browser_status": "GO",
+  "staff_resolution_ux_status": "GO",
+  "staff_browser_status": "GO",
+  "appeals_enabled": true,
+  "complaints_enabled": true,
+  "staff_routes_confirmed": true,
+  "learner_routes_confirmed": true,
+  "appeal_complaint_boundary_preserved": true,
+  "contact_request_boundary_preserved": true,
+  "learner_denied_staff_route": true,
+  "staff_rbac_preserved": true,
+  "tenant_isolation_preserved": true,
+  "privacy_weakened": false,
+  "audit_events_written_or_deferred": "WRITTEN_FOR_ACK_VOID_FULL_PIPELINE_DEFERRED",
+  "certification_status_changed": false,
+  "exam_result_changed": false,
+  "certificate_issued": false,
+  "certificate_lifecycle_changed": false,
+  "public_verification_changed": false,
+  "reports_export_changed": false,
+  "raw_enums_visible": false,
+  "encoding_issues_found": false,
+  "external_pilot_approved": false,
+  "security_delegate_signed": false,
+  "dpo_legal_signed": false,
+  "secrets_committed": false,
+  "tokens_committed": false,
+  "passwords_committed": false,
+  "production_ready_claimed": false,
+  "staging_ready_claimed": false,
+  "deferred": [
+    "full_B14_B15_resolution_UI",
+    "domain_remedy_action_wiring_in_staff_ux",
+    "external_pilot_approval",
+    "security_delegate_signoff",
+    "dpo_legal_signoff"
+  ],
+  "routes": {
+    "learner": "/dashboard/appeals-complaints",
+    "learner_support": "/dashboard/support",
+    "staff": "/dashboard/admin/appeals-complaints",
+    "iso_appeals": "/dashboard/iso/appeals",
+    "iso_complaints": "/dashboard/iso/complaints",
+    "staff_support_separate": "/dashboard/admin/support"
+  },
+  "final_verdict": "APPEALS_COMPLAINTS_FINAL_GO_MODULE_CONFIRMED"
+}
