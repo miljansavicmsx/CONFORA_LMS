@@ -1,0 +1,59 @@
+{
+  "task": "A03_SECURITY_DELEGATE_DECISION",
+  "based_on_commit": "21eb3ba",
+  "timestamp": "2026-07-18T13:43:35.000Z",
+  "evidenceDir": "docs/evidence/external-pilot-technical-readiness/2026-07-18T13-43-35-a03-security-delegate-decision",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "upstream_packages": {
+    "a02_r3": "docs/evidence/external-pilot-technical-readiness/2026-07-16T12-27-51-a02-r3-security-conditions-repackaging",
+    "staff_mfa_3": "docs/evidence/f5-pilot-readiness/2026-07-15T13-29-35-staff-mfa-3-enforcement-closure",
+    "td_085": "docs/evidence/td-085-sequential-regression/2026-07-15T14-31-08-td-085",
+    "td_085_s17_r1a": "docs/evidence/td-085-sequential-regression/2026-07-16T10-15-12-td-085-s17-r1a-secret-hygiene",
+    "a01_r4": "docs/evidence/external-pilot-technical-readiness/2026-07-15T10-30-00-a01-r4-manual-totp-enrollment-final-recheck"
+  },
+  "a02_r3_status": "A02_R3_SECURITY_CONDITIONS_READY_FOR_ACTUAL_SECURITY_DELEGATE_SIGNOFF",
+  "staff_mfa_status": "STAFF_MFA_3_GO_PENDING_SECURITY_DELEGATE_SIGNOFF",
+  "totp_external_staff_enrolled": true,
+  "td085_baseline_restored": true,
+  "secret_hygiene_restored": true,
+  "public_verification_privacy_preserved": true,
+  "security_delegate_package_created": true,
+  "security_delegate_signed": false,
+  "security_delegate_decision": "PENDING",
+  "signed_artifact_path": null,
+  "allowed_decisions": [
+    "ACCEPT_SECURITY_CONDITIONS_FOR_INTERNAL_PILOT_CONTINUATION_ONLY",
+    "ACCEPT_WITH_CONDITIONS_FOR_EXTERNAL_PILOT_GATE_REVIEW",
+    "DEFER_PENDING_DPO_LEGAL_SIGNOFF",
+    "DEFER_PENDING_ADDITIONAL_SECURITY_EVIDENCE",
+    "REJECT_PENDING_REMEDIATION"
+  ],
+  "external_pilot_approved": false,
+  "dpo_legal_signed": false,
+  "real_personal_data_approved": false,
+  "production_ready_claimed": false,
+  "staging_ready_claimed": false,
+  "remaining_blockers": [
+    "security_delegate_actual_signed_decision",
+    "dpo_legal_signoff",
+    "external_pilot_gate_decision",
+    "staging_or_production_validation_if_required"
+  ],
+  "secrets_committed": false,
+  "tokens_committed": false,
+  "passwords_committed": false,
+  "totp_secret_committed": false,
+  "qr_code_committed": false,
+  "artifacts_created": [
+    "A03_SECURITY_DELEGATE_EVIDENCE_INDEX.md",
+    "A03_SECURITY_DELEGATE_REVIEW_RECORD.md",
+    "A03_SECURITY_DELEGATE_DECISION.md",
+    "A03_SECURITY_DELEGATE_CONDITIONS.md",
+    "A03_REMAINING_EXTERNAL_PILOT_BLOCKERS.md",
+    "A03_SIGNED_DECISION_TEMPLATE.md",
+    "A03_REPORT.md",
+    "summary.json"
+  ],
+  "recommended_next_action": "AUTHORIZED_SECURITY_DELEGATE_COMPLETE_A03_SIGNED_DECISION_TEMPLATE",
+  "final_verdict": "A03_SECURITY_DELEGATE_DECISION_PENDING"
+}
