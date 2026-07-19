@@ -1,4 +1,4 @@
-import {
+﻿import {
   AlertOctagon,
   BarChart3,
   BookOpen,
@@ -140,7 +140,7 @@ function addWs(out: TaggedSidebarSection[], workspace: AppWorkspaceId, section: 
 }
 
 /**
- * Sve navigacijske grupe označene workspace-om (IA). Iste rute kao prije — samo raspodjela po portalu.
+ * Sve navigacijske grupe oznaÄene workspace-om (IA). Iste rute kao prije â€” samo raspodjela po portalu.
  */
 export function collectTaggedSidebarSections(isoCtx: IsoNavContext): TaggedSidebarSection[] {
   const tagged: TaggedSidebarSection[] = [];
@@ -278,7 +278,8 @@ export function collectTaggedSidebarSections(isoCtx: IsoNavContext): TaggedSideb
     addWs(tagged, "governance", {
       titleKey: "appealsCommittee",
       items: [
-        { to: "/dashboard/iso/appeals", labelKey: "appeals", icon: Inbox, end: false },
+        { to: "/dashboard/admin/appeals-complaints", labelKey: "appealsComplaints", icon: Inbox, end: false },
+        { to: "/dashboard/iso/appeals", labelKey: "appealsOversight", icon: Inbox, end: false },
         { to: "/dashboard/iso/complaints", labelKey: "complaints", icon: MessageSquareWarning, end: false },
         { to: "/dashboard/admin/support", labelKey: "responses", icon: ClipboardList, end: false },
         { to: "/dashboard/iso/governance", labelKey: "deadlines", icon: ClipboardCheck, end: false },
