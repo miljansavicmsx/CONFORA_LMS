@@ -1,0 +1,36 @@
+# PROPOSED .gitignore R2 — NOT APPLIED
+
+CONFORA-REPO-HEALTH-5 proposal. Append to root `.gitignore` only after explicit approval in a follow-up task.
+
+```gitignore
+# --- CONFORA-REPO-HEALTH-5 local/generated refinements (proposed) ---
+
+# npm lock stubs (repo is pnpm-only; see RH4)
+package-lock.json
+
+# Local API build logs
+apps/api/build-log*.txt
+
+# Temporary repo-health audit helpers (not product ops)
+scripts/ops/_tmp-repo-health-*.mjs
+
+# TypeScript incremental build info
+*.tsbuildinfo
+**/*.tsbuildinfo
+```
+
+## Apply checklist (future task — not this one)
+
+1. Human review of this patch.
+2. Append to `.gitignore` (or equivalent PR).
+3. Verify:
+   - `git check-ignore -v package-lock.json apps/api/build-log.txt scripts/ops/_tmp-repo-health-3-classify.mjs packages/shared-types/tsconfig.build.tsbuildinfo`
+   - `git check-ignore -v apps/api/src` → must **fail** (not ignored)
+   - `git check-ignore -v docs/evidence` → must **fail** (not ignored)
+4. Confirm `git status` drops only the ~9 local/generated paths.
+5. Commit as `chore(repo): refine gitignore for local generated artifacts` with explicit path to `.gitignore` only.
+
+## Not included
+
+- Deleting the local files (optional later cleanup with approval)
+- Ignoring `docs/evidence/_analysis.json` (evidence artifact; leave visible)

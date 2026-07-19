@@ -1,0 +1,64 @@
+{
+  "task": "CONFORA_REPO_HEALTH_5_LOCAL_GENERATED_IGNORE_REFINEMENT",
+  "based_on_commit": "a0b6d77",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "a0b6d77",
+  "timestamp": "2026-07-19T11:02:37.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-19T11-02-37-confora-repo-health-5-local-generated-ignore-refinement",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "cleanup_executed": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "git_add_dot_used": false,
+  "application_code_changed": false,
+  "gitignore_modified": false,
+  "gitignore_patch_proposed": true,
+  "docs_evidence_ignored": false,
+  "source_directories_ignored": false,
+  "secrets_committed": false,
+  "status_entries_count": 1656,
+  "untracked_entries_count": 1656,
+  "status_note": "1655 at audit start; 1656 after RH5 evidence package appeared in status",
+  "safe_ignore_candidates": [
+    "package-lock.json",
+    "frontend-app/package-lock.json",
+    "apps/api/build-log.txt",
+    "apps/api/build-log2.txt",
+    "scripts/ops/_tmp-repo-health-3-classify.mjs",
+    "scripts/ops/_tmp-repo-health-3-emit.mjs",
+    "scripts/ops/_tmp-repo-health-4-analyze.mjs",
+    "scripts/ops/_tmp-repo-health-4-emit.mjs",
+    "packages/shared-types/tsconfig.build.tsbuildinfo"
+  ],
+  "review_before_ignore": [
+    "broader_txt_logs_outside_apps_api_build-log_star",
+    "tmp_helpers_outside_scripts_ops_tmp_repo_health_prefix"
+  ],
+  "do_not_ignore_source_candidates": [
+    "apps/api/src",
+    "frontend-app/src",
+    "scripts/ops (except _tmp-repo-health-*)",
+    "packages (except *.tsbuildinfo)",
+    "docs/evidence"
+  ],
+  "proposed_patterns": [
+    "package-lock.json",
+    "apps/api/build-log*.txt",
+    "scripts/ops/_tmp-repo-health-*.mjs",
+    "*.tsbuildinfo",
+    "**/*.tsbuildinfo"
+  ],
+  "already_ignored_by_existing_gitignore_examples": [
+    "node_modules/",
+    "apps/**/dist/",
+    ".turbo/",
+    ".tools/",
+    ".local-backups/",
+    ".env",
+    ".env.local",
+    "tmp-keycloak-setup-output.txt"
+  ],
+  "recommended_next_action": "REVIEW_GITIGNORE_R2_PATCH_BEFORE_APPLYING",
+  "final_verdict": "CONFORA_REPO_HEALTH_5_AUDIT_ONLY_READY_FOR_REVIEW"
+}
