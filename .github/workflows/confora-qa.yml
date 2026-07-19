@@ -1,0 +1,38 @@
+name: CONFORA QA (API + compliance)
+
+on:
+  workflow_dispatch:
+    inputs:
+      zap_target:
+        description: "Public URL for OWASP ZAP baseline (optional)"
+        required: false
+        default: ""
+
+jobs:
+  unit-and-compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @confora/database run generate
+      - name: API unit tests
+        run: pnpm --filter @confora/api test
+      - name: API compliance suite
+        run: pnpm --filter @confora/api test:compliance
+      - name: Worker tests
+        run: pnpm --filter @confora/worker test
+
+  zap-baseline:
+    if: ${{ github.event.inputs.zap_target != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: ${{ github.event.inputs.zap_target }}

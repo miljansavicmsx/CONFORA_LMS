@@ -1,0 +1,11 @@
+backend
+frontend-app
+frontend-public
+node_modules
+.turbo
+.next
+dist
+coverage
+pnpm-lock.yaml
+**/__tests__/fixtures/**
+.mcps

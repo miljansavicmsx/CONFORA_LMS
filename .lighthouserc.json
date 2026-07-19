@@ -1,0 +1,12 @@
+{
+  "minAccessibilityScore": 95,
+  "urls": [
+    { "url": "http://127.0.0.1:5173/", "label": "Learner shell — landing" },
+    { "url": "http://127.0.0.1:5173/login", "label": "Learner shell — login" },
+    { "url": "http://127.0.0.1:5173/katalog", "label": "Learner shell — catalog" },
+    { "url": "http://127.0.0.1:5173/verify", "label": "Public verification" },
+    { "url": "http://127.0.0.1:5173/compliance", "label": "Compliance info" },
+    { "url": "http://127.0.0.1:3000/", "label": "Next public marketing" },
+    { "url": "http://127.0.0.1:3001/admin", "label": "Next admin shell" }
+  ]
+}

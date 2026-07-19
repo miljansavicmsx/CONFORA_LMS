@@ -1,0 +1,333 @@
+name: Accessibility CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # Nightly accessibility regression (Faza 92 R-H2)
+    - cron: "0 3 * * *"
+
+concurrency:
+  group: a11y-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  REPORTS_DIR: tests/e2e/reports
+  PLAYWRIGHT_APP_URL: http://127.0.0.1:5173
+  PLAYWRIGHT_API_URL: http://127.0.0.1:8000
+  PLAYWRIGHT_PUBLIC_URL: http://127.0.0.1:3000
+  A11Y_DEMO_PASSWORD: devlocal123
+  DEV_LOCAL_PASSWORD: devlocal123
+  VITE_API_URL: http://127.0.0.1:8000
+
+jobs:
+  compliance-iso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: confora
+          POSTGRES_PASSWORD: confora_dev_change_me
+          POSTGRES_DB: confora
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready -U confora -d confora
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://confora:confora_dev_change_me@127.0.0.1:5432/confora
+      INTEGRATION_DATABASE_URL: postgresql://confora:confora_dev_change_me@127.0.0.1:5432/confora
+      PLAYWRIGHT_NEST_API_URL: http://127.0.0.1:4000
+      PLAYWRIGHT_WEB_URL: http://127.0.0.1:3000
+      PLAYWRIGHT_APP_URL: http://127.0.0.1:5173
+      VITE_API_URL: http://127.0.0.1:4000
+      AUTH_JWT_MODE: hs256
+      AUTH_JWT_HS256_SECRET: e2e-test-hs256-secret-min-32-characters!!
+      KEYCLOAK_ISSUER: http://keycloak.test/realms/confora
+      E2E_EXAM_SANDBOX: "1"
+      API_PORT: "4000"
+      DISABLE_ERD: "true"
+      PUPPETEER_SKIP_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Prisma generate, migrate, seed
+        working-directory: packages/database
+        run: |
+          pnpm exec prisma generate
+          pnpm exec prisma migrate deploy
+          pnpm run seed
+
+      - name: Build Nest API and frontends (Nest as VITE_API_URL)
+        env:
+          VITE_API_URL: http://127.0.0.1:4000
+        run: |
+          pnpm --filter @confora/api build
+          pnpm --filter @confora/web build
+          cd frontend-app && npm ci && npm run build
+
+      - name: Start Nest API (exam sandbox + public routes)
+        run: (cd apps/api && node dist/main.js &)
+
+      - name: Wait for API ready
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://127.0.0.1:4000/health > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Start frontends (production mode)
+        run: |
+          (cd frontend-app && NODE_ENV=production npm exec vite preview -- --host 127.0.0.1 --port 5173 &)
+          (cd apps/web && pnpm start &)
+          npx wait-on@8.0.1 \
+            http://127.0.0.1:5173 \
+            http://127.0.0.1:3000 \
+            http://127.0.0.1:4000/openapi \
+            -t 180000
+
+      - name: Install e2e deps
+        working-directory: tests/e2e
+        run: npm ci
+
+      - name: Playwright browser
+        working-directory: tests/e2e
+        run: npx playwright install chromium --with-deps
+
+      - name: ISO §B–§F — Playwright compliance gates
+        working-directory: tests/e2e
+        run: |
+          npx playwright test \
+            compliance/iso17024_3_22_equitable_access.spec.ts \
+            compliance/iso17024_7_2_2_public_scheme_information_a11y.spec.ts \
+            compliance/iso17024_9_1_4_fair_valid_reliable_a11y.spec.ts \
+            compliance/iso17024_9_1_5_accommodation_workflow.spec.ts \
+            compliance/iso17024_9_2_2_e_accommodation_at_application.spec.ts \
+            --reporter=line
+
+      - name: API — §3.22 artefacts + §7.2.2 integration
+        working-directory: apps/api
+        run: |
+          pnpm exec jest --config ./jest.compliance.config.cjs \
+            iso17024_3_22_fairness_artifacts --runInBand
+          pnpm exec jest --config ./jest.integration.config.cjs \
+            scheme-public-722 --runInBand
+
+  accessibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Design token contrast (WCAG 1.4.3 / 1.4.11)
+        run: pnpm a11y:contrast
+
+      - name: Build apps (production)
+        env:
+          DISABLE_ERD: "true"
+          PUPPETEER_SKIP_DOWNLOAD: "1"
+          VITE_API_URL: http://127.0.0.1:8000
+        run: |
+          pnpm build
+          cd frontend-app && npm ci && npm run build
+
+      - name: Start backend stack (docker-compose)
+        run: |
+          docker compose -f docker-compose.a11y-ci.yml up -d --wait
+
+      - name: Seed role-access demo users
+        run: |
+          pip install -r backend/requirements.txt
+          AWS_ENDPOINT_URL_DYNAMODB=http://127.0.0.1:8001 \
+            AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test \
+            python scripts/seed_role_access_demo.py
+
+      - name: Install e2e deps
+        working-directory: tests/e2e
+        run: npm ci
+
+      - name: Playwright browser
+        working-directory: tests/e2e
+        run: npx playwright install chromium --with-deps
+
+      - name: Start frontends (production mode)
+        env:
+          CSP_MODE: report-only
+          NODE_ENV: production
+        run: |
+          set -euo pipefail
+          mkdir -p "$REPORTS_DIR"
+          (cd frontend-app && CSP_MODE=report-only NODE_ENV=production npm exec vite preview -- --host 127.0.0.1 --port 5173 &)
+          (cd apps/web && CSP_MODE=report-only pnpm start &)
+          (cd apps/admin && CSP_MODE=report-only pnpm start &)
+          npx wait-on@8.0.1 \
+            http://127.0.0.1:5173 \
+            http://127.0.0.1:8000/health \
+            http://127.0.0.1:3000 \
+            http://127.0.0.1:3001 \
+            -t 180000
+
+      - name: T2 — combined axe + CSP (report-only)
+        working-directory: tests/e2e
+        env:
+          CSP_MODE: report-only
+          PLAYWRIGHT_ADMIN_URL: http://127.0.0.1:3001
+        run: npx playwright test csp-vs-a11y.spec.ts --reporter=line
+
+      - name: T2 — combined axe + CSP (enforce)
+        working-directory: tests/e2e
+        env:
+          CSP_MODE: enforce
+          PLAYWRIGHT_ADMIN_URL: http://127.0.0.1:3001
+        run: |
+          pkill -f "next start" || true
+          pkill -f "vite preview" || true
+          sleep 2
+          (cd frontend-app && CSP_MODE=enforce NODE_ENV=production npm exec vite preview -- --host 127.0.0.1 --port 5173 &)
+          (cd apps/web && CSP_MODE=enforce pnpm start &)
+          (cd apps/admin && CSP_MODE=enforce pnpm start &)
+          npx wait-on@8.0.1 http://127.0.0.1:5173 http://127.0.0.1:3000 http://127.0.0.1:3001 -t 120000
+          npx playwright test csp-vs-a11y.spec.ts --reporter=line
+
+      - name: T1 — axe public paths
+        working-directory: tests/e2e
+        env:
+          A11Y_RESULTS_FILE: ${{ github.workspace }}/tests/e2e/reports/axe-public.json
+        run: npx playwright test a11y-axe-public.spec.ts --reporter=line
+
+      - name: T1 — axe authenticated paths (parallel by role)
+        working-directory: tests/e2e
+        run: |
+          set -euo pipefail
+          ROLES="learner candidate training_admin tech_committee director sys_admin cert_committee auditor"
+          FAILED=0
+          PIDS=""
+          for role in $ROLES; do
+            (
+              export A11Y_ROLE="$role"
+              export A11Y_RESULTS_FILE="${{ github.workspace }}/tests/e2e/reports/axe-${role}.json"
+              npx playwright test a11y-axe-authenticated.spec.ts --reporter=line
+            ) &
+            PIDS="$PIDS $!"
+          done
+          for pid in $PIDS; do
+            wait "$pid" || FAILED=1
+          done
+          exit $FAILED
+
+      - name: T5 — keyboard journeys
+        working-directory: tests/e2e
+        env:
+          A11Y_KEYBOARD_RESULTS: ${{ github.workspace }}/tests/e2e/reports/keyboard.json
+        run: npx playwright test a11y-keyboard.spec.ts --reporter=line
+
+      - name: T6 — screen reader (Level A + B)
+        working-directory: tests/e2e
+        run: npx playwright test a11y-screen-reader.spec.ts --reporter=line
+
+      - name: T7 — motion & cognitive (automated)
+        working-directory: tests/e2e
+        run: npx playwright test a11y-motion-cognitive.spec.ts --reporter=line
+
+      - name: T4 — Lighthouse accessibility gate
+        run: node scripts/a11y/run-lighthouse.mjs
+
+      - name: Compare axe vs baseline
+        if: always()
+        run: node scripts/a11y/compare-baseline.mjs
+
+      - name: Aggregate HTML report + coverage gate
+        if: always()
+        run: node scripts/a11y/aggregate-report.mjs
+
+      - name: Upload accessibility artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report
+          path: |
+            tests/e2e/reports/
+            tests/e2e/playwright-report/
+          retention-days: 14
+
+      - name: PR comment summary
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node scripts/a11y/pr-comment.mjs
+
+      - name: Notify on failure (#a11y + champion)
+        if: failure()
+        env:
+          SLACK_A11Y_WEBHOOK_URL: ${{ secrets.SLACK_A11Y_WEBHOOK_URL }}
+          A11Y_CHAMPION_EMAIL: ${{ secrets.A11Y_CHAMPION_EMAIL }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+        run: node scripts/a11y/notify-failure.mjs
+
+      - name: Publish report on main (keep last 30)
+        if: github.ref == 'refs/heads/main' && success()
+        run: |
+          node scripts/a11y/publish-reports.mjs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/accessibility/reports/
+          git diff --staged --quiet || git commit -m "chore(a11y): publish accessibility CI report [skip ci]"
+          git push || echo "Push skipped (fork or permissions)"
+
+      - name: Record a11y CI outcome (compliance.ci_pipeline_runs)
+        if: always()
+        env:
+          DATABASE_URL: ${{ secrets.COMPLIANCE_DATABASE_URL }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+          GITHUB_JOB_STATUS: ${{ job.status }}
+          A11Y_CI_CONCLUSION: ${{ job.status }}
+        run: |
+          if [ -z "${DATABASE_URL:-}" ]; then
+            echo "COMPLIANCE_DATABASE_URL not configured — skip CI ingest"
+            exit 0
+          fi
+          cd packages/database && pnpm exec prisma generate
+          node ../../scripts/record-a11y-ci-run.mjs

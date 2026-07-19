@@ -1,0 +1,49 @@
+name: F4 Frontend Cutover Gate
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - "frontend-app/**"
+      - "scripts/ops/audit-f4-frontend-api-usage.mjs"
+      - "scripts/ops/run-f4-8g-frontend-validation.mjs"
+      - ".github/workflows/f4-frontend-cutover-gate.yml"
+  pull_request:
+    paths:
+      - "frontend-app/**"
+      - "scripts/ops/audit-f4-frontend-api-usage.mjs"
+      - "scripts/ops/run-f4-8g-frontend-validation.mjs"
+      - ".github/workflows/f4-frontend-cutover-gate.yml"
+
+concurrency:
+  group: f4-frontend-cutover-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  f4-frontend-cutover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install frontend-app dependencies
+        working-directory: frontend-app
+        run: npm install
+
+      - name: Install Playwright Chromium
+        working-directory: frontend-app
+        run: npx playwright install chromium --with-deps
+
+      - name: F4-8g validation (audit + unit + e2e smoke)
+        run: node scripts/ops/run-f4-8g-frontend-validation.mjs
+
+      - name: Upload F4-8g evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: f4-8g-evidence
+          path: docs/evidence/f4-8g-frontend-build-e2e-validation/
+          if-no-files-found: warn
