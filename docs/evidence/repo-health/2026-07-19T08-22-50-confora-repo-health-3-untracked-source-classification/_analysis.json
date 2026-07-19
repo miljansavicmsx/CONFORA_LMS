@@ -1,0 +1,1320 @@
+{
+  "head": "e6ab85d",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "trackedCount": 718,
+  "statusEntries": 1674,
+  "modifiedCount": 8,
+  "untrackedCount": 1666,
+  "modified": [
+    {
+      "status": " M",
+      "path": "frontend-app/e2e/pilot-login.ts"
+    },
+    {
+      "status": " M",
+      "path": "frontend-app/src/components/layout/sidebar-sections.tsx"
+    },
+    {
+      "status": " M",
+      "path": "frontend-app/src/pages/dashboard/dashboard-breadcrumbs.ts"
+    },
+    {
+      "status": " M",
+      "path": "packages/i18n/locales/bs/navigation.json"
+    },
+    {
+      "status": " M",
+      "path": "packages/i18n/locales/sl/navigation.json"
+    },
+    {
+      "status": " M",
+      "path": "packages/i18n/locales/sr/navigation.json"
+    },
+    {
+      "status": " M",
+      "path": "scripts/ops/local-stack-readiness.mjs"
+    },
+    {
+      "status": " M",
+      "path": "scripts/ops/run-exam-reg-1-e2e-auth-recovery.mjs"
+    }
+  ],
+  "topGroups": [
+    [
+      "docs",
+      708
+    ],
+    [
+      "frontend-app",
+      460
+    ],
+    [
+      "scripts",
+      246
+    ],
+    [
+      "apps",
+      194
+    ],
+    [
+      "packages",
+      21
+    ],
+    [
+      ".cursorignore",
+      1
+    ],
+    [
+      ".editorconfig",
+      1
+    ],
+    [
+      ".env.example",
+      1
+    ],
+    [
+      ".github",
+      1
+    ],
+    [
+      ".husky",
+      1
+    ],
+    [
+      ".lighthouserc.json",
+      1
+    ],
+    [
+      ".prettierignore",
+      1
+    ],
+    [
+      "AGENTS.md",
+      1
+    ],
+    [
+      "CONFORA_Current_State_v1.md",
+      1
+    ],
+    [
+      "CONFORA_Design_System_Promptovi_v1.0.docx",
+      1
+    ],
+    [
+      "CONFORA_Development_Prompts_1.md",
+      1
+    ],
+    [
+      "CONFORA_LMS_Plan_Implementacije_v1.0_1.docx",
+      1
+    ],
+    [
+      "CONFORA_SCHEMES_CATALOG.md",
+      1
+    ],
+    [
+      "CONFORA_SPEC_ANALIZA.md",
+      1
+    ],
+    [
+      "CONFORA_Tehnicka_Specifikacija.docx",
+      1
+    ],
+    [
+      "CONFORA_WCAG22_Zahtjevi.docx",
+      1
+    ],
+    [
+      "Confora Ai Development Governance Framework V1.pdf",
+      1
+    ],
+    [
+      "README.md",
+      1
+    ],
+    [
+      "backend",
+      1
+    ],
+    [
+      "commitlint.config.cjs",
+      1
+    ],
+    [
+      "docker-compose.a11y-ci.yml",
+      1
+    ],
+    [
+      "docker-compose.yml",
+      1
+    ],
+    [
+      "eslint.config.mjs",
+      1
+    ],
+    [
+      "frontend-public",
+      1
+    ],
+    [
+      "infra",
+      1
+    ],
+    [
+      "infrastructure",
+      1
+    ],
+    [
+      "package-lock.json",
+      1
+    ],
+    [
+      "pnpm-lock.yaml",
+      1
+    ],
+    [
+      "pnpm-workspace.yaml",
+      1
+    ],
+    [
+      "prettier.config.cjs",
+      1
+    ],
+    [
+      "prisma",
+      1
+    ],
+    [
+      "terraform",
+      1
+    ],
+    [
+      "test-all.ps1",
+      1
+    ],
+    [
+      "test-all.sh",
+      1
+    ],
+    [
+      "tests",
+      1
+    ],
+    [
+      "tools",
+      1
+    ],
+    [
+      "turbo.json",
+      1
+    ]
+  ],
+  "byExt": [
+    [
+      "(dir-or-no-ext)",
+      577
+    ],
+    [
+      ".ts",
+      385
+    ],
+    [
+      ".md",
+      292
+    ],
+    [
+      ".mjs",
+      189
+    ],
+    [
+      ".tsx",
+      129
+    ],
+    [
+      ".py",
+      42
+    ],
+    [
+      ".json",
+      16
+    ],
+    [
+      ".cjs",
+      6
+    ],
+    [
+      ".example",
+      5
+    ],
+    [
+      ".ps1",
+      5
+    ],
+    [
+      ".docx",
+      4
+    ],
+    [
+      ".txt",
+      2
+    ],
+    [
+      ".yml",
+      2
+    ],
+    [
+      ".js",
+      2
+    ],
+    [
+      ".css",
+      2
+    ],
+    [
+      ".yaml",
+      2
+    ],
+    [
+      ".sh",
+      2
+    ],
+    [
+      ".pdf",
+      1
+    ],
+    [
+      ".svg",
+      1
+    ],
+    [
+      ".html",
+      1
+    ],
+    [
+      ".tsbuildinfo",
+      1
+    ]
+  ],
+  "domainCounts": {
+    "apps/api": 189,
+    "apps/api/src": 110,
+    "apps/api/test": 67,
+    "frontend-app/src": 394,
+    "frontend-app/e2e": 55,
+    "scripts/ops": 196,
+    "packages": 21,
+    "docs": 297,
+    "docs/evidence": 411,
+    "infrastructure": 3,
+    "root_config": 27
+  },
+  "domainExamples": {
+    "apps/api": [
+      "apps/api/build-log.txt",
+      "apps/api/build-log2.txt",
+      "apps/api/gov/",
+      "apps/api/jest-e2e.config.cjs",
+      "apps/api/jest.compliance.config.cjs",
+      "apps/api/jest.config.cjs",
+      "apps/api/jest.integration.config.cjs",
+      "apps/api/nest-cli.json"
+    ],
+    "apps/api/src": [
+      "apps/api/src/accommodations/",
+      "apps/api/src/admin-reports/",
+      "apps/api/src/admin/",
+      "apps/api/src/ai/",
+      "apps/api/src/app.controller.spec.ts",
+      "apps/api/src/app.controller.ts",
+      "apps/api/src/app.module.safe-wiring.spec.ts",
+      "apps/api/src/appeals-complaints/"
+    ],
+    "apps/api/test": [
+      "apps/api/test/auth-access-observability.e2e-spec.ts",
+      "apps/api/test/auth-contract.e2e-spec.ts",
+      "apps/api/test/auth.e2e-spec.ts",
+      "apps/api/test/b0-2-safe-wiring.e2e-spec.ts",
+      "apps/api/test/b1-public-verify-unification.e2e-spec.ts",
+      "apps/api/test/b10-1-staff-certification-decision-foundation.e2e-spec.ts",
+      "apps/api/test/b10-2-staff-certification-decision-recording.e2e-spec.ts",
+      "apps/api/test/b10-3-staff-certification-decision-validation.e2e-spec.ts"
+    ],
+    "frontend-app/src": [
+      "frontend-app/src/admin/",
+      "frontend-app/src/ai-governance/",
+      "frontend-app/src/architecture/",
+      "frontend-app/src/components/CourseCard.tsx",
+      "frontend-app/src/components/CourseTOC.tsx",
+      "frontend-app/src/components/EmbedHostedVideo.tsx",
+      "frontend-app/src/components/HtmlRenderer.tsx",
+      "frontend-app/src/components/LessonContent.tsx"
+    ],
+    "frontend-app/e2e": [
+      "frontend-app/e2e/admin-reports-1-audit-viewer.spec.ts",
+      "frontend-app/e2e/admin-reports-1-certification-reports-exports.spec.ts",
+      "frontend-app/e2e/admin-reports-1-dashboard.spec.ts",
+      "frontend-app/e2e/admin-reports-2-dashboard.spec.ts",
+      "frontend-app/e2e/appeals-complaints-1.spec.ts",
+      "frontend-app/e2e/b3-3d-draft-write-hybrid.spec.ts",
+      "frontend-app/e2e/b4-c-submit-hybrid.spec.ts",
+      "frontend-app/e2e/cert-eligibility-ux-1.spec.ts"
+    ],
+    "scripts/ops": [
+      "scripts/ops/_tmp-repo-health-3-classify.mjs",
+      "scripts/ops/audit-f4-frontend-api-usage.mjs",
+      "scripts/ops/audit-legacy-routes.mjs",
+      "scripts/ops/b10-4-certification-decision-smoke.helpers.mjs",
+      "scripts/ops/b10-4-certification-decision-smoke.helpers.test.mjs",
+      "scripts/ops/b11-4-certificate-issuance-smoke.helpers.mjs",
+      "scripts/ops/b11-4-certificate-issuance-smoke.helpers.test.mjs",
+      "scripts/ops/b12-5-certificate-lifecycle-smoke.helpers.mjs"
+    ],
+    "packages": [
+      "packages/ai-client/",
+      "packages/ai-governance/",
+      "packages/ai-prompts/",
+      "packages/audit-client/",
+      "packages/audit/",
+      "packages/auth/",
+      "packages/config/",
+      "packages/database/"
+    ],
+    "docs": [
+      "docs/30_DAY_COMMERCIAL_PLAN.md",
+      "docs/ABAC_MODEL.md",
+      "docs/ABAC_QUERY_ENDPOINT_AUDIT.md",
+      "docs/ABAC_QUERY_ENFORCEMENT.md",
+      "docs/ACCESSIBILITY_HARDENING_REPORT.md",
+      "docs/ACCREDITATION_READINESS_ARCHITECTURE.md",
+      "docs/ACCREDITATION_READINESS_MODEL.md",
+      "docs/ADMINISTRATIVNI_PRISTUP.md"
+    ],
+    "docs/evidence": [
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T14-28-23-admin-gov-final-acceptance-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T14-31-40-staff-identity-review-mount-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T17-17-55-admin-gov-final-acceptance-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T17-23-44-admin-gov-final-acceptance-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T19-37-02-admin-gov-final-acceptance-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T20-03-17-admin-gov-final-acceptance-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T20-35-14-admin-gov-final-acceptance-1/",
+      "docs/evidence/admin-governance-final-acceptance/2026-07-08T20-45-46-admin-gov-final-acceptance-1/"
+    ],
+    "infrastructure": [
+      "infra/",
+      "infrastructure/",
+      "terraform/"
+    ],
+    "root_config": [
+      ".cursorignore",
+      ".editorconfig",
+      ".env.example",
+      ".lighthouserc.json",
+      ".prettierignore",
+      "AGENTS.md",
+      "CONFORA_Current_State_v1.md",
+      "CONFORA_Design_System_Promptovi_v1.0.docx"
+    ]
+  },
+  "sourceSummary": {
+    "root_config": {
+      "count": 14,
+      "examples": [
+        ".editorconfig",
+        ".env.example",
+        ".lighthouserc.json",
+        ".prettierignore",
+        "AGENTS.md",
+        "README.md"
+      ]
+    },
+    ".github": {
+      "count": 1,
+      "examples": [
+        ".github/"
+      ]
+    },
+    ".husky": {
+      "count": 1,
+      "examples": [
+        ".husky/"
+      ]
+    },
+    "apps/api/src": {
+      "count": 54,
+      "examples": [
+        "apps/api/src/app.controller.spec.ts",
+        "apps/api/src/app.controller.ts",
+        "apps/api/src/app.module.safe-wiring.spec.ts",
+        "apps/api/src/auth/auth-api.controller.ts",
+        "apps/api/src/auth/auth-production-config.spec.ts",
+        "apps/api/src/auth/auth-production-config.ts"
+      ]
+    },
+    "apps/api/test": {
+      "count": 64,
+      "examples": [
+        "apps/api/test/auth-access-observability.e2e-spec.ts",
+        "apps/api/test/auth-contract.e2e-spec.ts",
+        "apps/api/test/auth.e2e-spec.ts",
+        "apps/api/test/b0-2-safe-wiring.e2e-spec.ts",
+        "apps/api/test/b1-public-verify-unification.e2e-spec.ts",
+        "apps/api/test/b10-1-staff-certification-decision-foundation.e2e-spec.ts"
+      ]
+    },
+    "frontend-app/e2e": {
+      "count": 55,
+      "examples": [
+        "frontend-app/e2e/admin-reports-1-audit-viewer.spec.ts",
+        "frontend-app/e2e/admin-reports-1-certification-reports-exports.spec.ts",
+        "frontend-app/e2e/admin-reports-1-dashboard.spec.ts",
+        "frontend-app/e2e/admin-reports-2-dashboard.spec.ts",
+        "frontend-app/e2e/appeals-complaints-1.spec.ts",
+        "frontend-app/e2e/b3-3d-draft-write-hybrid.spec.ts"
+      ]
+    },
+    "frontend-app/src": {
+      "count": 329,
+      "examples": [
+        "frontend-app/src/components/CourseCard.tsx",
+        "frontend-app/src/components/CourseTOC.tsx",
+        "frontend-app/src/components/EmbedHostedVideo.tsx",
+        "frontend-app/src/components/HtmlRenderer.tsx",
+        "frontend-app/src/components/LessonContent.tsx",
+        "frontend-app/src/components/OffCanvasPanel.tsx"
+      ]
+    },
+    "packages": {
+      "count": 7,
+      "examples": [
+        "packages/shared-types/package.json",
+        "packages/shared-types/src/auth.ts",
+        "packages/shared-types/src/health.test.ts",
+        "packages/shared-types/src/index.ts",
+        "packages/shared-types/src/roles.ts",
+        "packages/shared-types/tsconfig.build.json"
+      ]
+    },
+    "prisma": {
+      "count": 1,
+      "examples": [
+        "prisma/"
+      ]
+    },
+    "scripts/ops": {
+      "count": 193,
+      "examples": [
+        "scripts/ops/_tmp-repo-health-3-classify.mjs",
+        "scripts/ops/audit-f4-frontend-api-usage.mjs",
+        "scripts/ops/audit-legacy-routes.mjs",
+        "scripts/ops/b10-4-certification-decision-smoke.helpers.mjs",
+        "scripts/ops/b10-4-certification-decision-smoke.helpers.test.mjs",
+        "scripts/ops/b11-4-certificate-issuance-smoke.helpers.mjs"
+      ]
+    }
+  },
+  "genSummary": {
+    "count": 1,
+    "examples": [
+      "packages/shared-types/tsconfig.build.tsbuildinfo"
+    ]
+  },
+  "riskPaths": [
+    "apps/api/src/auth/jwt-hs256-secret.ts",
+    "frontend-app/e2e/local-demo-4-screenshots.spec.ts",
+    "frontend-app/e2e/local-uat-4-po-walkthrough-screenshots.spec.ts"
+  ],
+  "contentRisk": [
+    {
+      "path": "apps/api/build-log.txt",
+      "category": "token_field"
+    },
+    {
+      "path": "apps/api/src/auth/auth-refresh.spec.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "apps/api/src/auth/auth.controller.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "apps/api/src/auth/keycloak-token.service.ts",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "apps/api/test/auth-access-observability.e2e-spec.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/components/OffCanvasPanel.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/lib/api/auth-client.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/lib/api/auth-token-provider.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/lib/api/http-client.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/lib/auth-refresh.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/lib/auth-storage.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/lib/jwt-payload.ts",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/CatalogPage.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/CoursePlayer.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/admin/CertificationDashboard.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/admin/IdentityReviewPage.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/dashboard/AdminEducationGuard.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/dashboard/AdminReportsGuard.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/dashboard/DashboardLayoutRoute.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/dashboard/IdentityReviewGuard.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/dashboard/UserRegistryGuard.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/dashboard/__tests__/dashboard-pilot-legacy-network.test.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "frontend-app/src/pages/iso/CertificatesRegistryIsoPage.tsx",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/committee-quorum-1r-live-probes.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/keycloak-mfa-interactive-enrollment.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/keycloak-mfa-pkce-enrollment.mjs",
+      "category": "otpauth_uri"
+    },
+    {
+      "path": "scripts/ops/keycloak-mfa-readiness.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/keycloak-mfa-totp-enrollment.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/keycloak-setup-pilot.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/rbac-api-1r-live-probes.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-admin-reports-2-smoke.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-admin-reports-2.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-admin-reports-2r.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-b10-4-certification-decision-smoke.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-b14-7-appeals-smoke.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-b15-7-complaints-smoke.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-b3-3d-draft-write-smoke.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-b4-c-submit-smoke.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-b5-1c-staff-queue-smoke.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-cert-eligibility-ux-1.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-cert-ops-1.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-cert-ops-1r.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-committee-quorum-1r.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-documents-certificates-1.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-ep-tech-2-mfa-captcha-smoke.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-ep-tech-4-live-stack-evidence.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-ep-tech-5-verifier-training-mfa-gate.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-ep-tech-7-mfa-training-delivery.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-ep-tech-8-mfa-training-closure.mjs",
+      "category": "otpauth_uri"
+    },
+    {
+      "path": "scripts/ops/run-ep-tech-9-hosted-ingress-training-evidence.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-f5-5-security-gdpr-audit-hardening.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-f5-ui-6-synthetic-documents-registry-flag-sysadmin-queue.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-gng-validation.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-learner-flow-1.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-learner-polish-2-e2e.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-learner-polish-2.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-local-demo-3-demo-data-staff-workflow-decision-chain.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-local-demo-4-pdf-ui-evidence-demo-runbook.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-local-demo-5-ui-walkthrough-operator-demo-polish.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-local-uat-3-full-local-acceptance-rerun.mjs",
+      "category": "token_field"
+    },
+    {
+      "path": "scripts/ops/run-local-uat-4-product-owner-walkthrough.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-local-uat-4b.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-mobile-nav-1.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-public-ux-1r.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-public-ux-1r2.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-public-ux-1r3.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-rbac-api-1r.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/run-support-contact-1.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/run-support-contact-1r.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/seed-f5-ui-7-pilot-sysadmin.mjs",
+      "category": "client_secret_field"
+    },
+    {
+      "path": "scripts/ops/soak-daily-probes.test.mjs",
+      "category": "password_field"
+    },
+    {
+      "path": "scripts/ops/start-nest-pilot-api.ps1",
+      "category": "password_field"
+    }
+  ],
+  "contentRiskScannedFiles": 1026,
+  "opsUsedByPkg": [
+    {
+      "script": "dev:api:pilot",
+      "path": "scripts/ops/start-api-with-pilot-env.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:soak-summary",
+      "path": "scripts/ops/generate-soak-summary.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:soak-probes-test",
+      "path": "scripts/ops/soak-daily-probes.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:soak-reset",
+      "path": "scripts/ops/reset-soak-window.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b3-3d-smoke",
+      "path": "scripts/ops/run-b3-3d-draft-write-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b3-3d-smoke-test",
+      "path": "scripts/ops/b3-3d-draft-write-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b4-c-smoke",
+      "path": "scripts/ops/run-b4-c-submit-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b4-c-smoke-test",
+      "path": "scripts/ops/b4-c-submit-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b5-1c-smoke",
+      "path": "scripts/ops/run-b5-1c-staff-queue-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b5-1c-smoke-test",
+      "path": "scripts/ops/b5-1c-staff-queue-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b5-2c-smoke",
+      "path": "scripts/ops/run-b5-2c-assignment-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b5-2c-smoke-test",
+      "path": "scripts/ops/b5-2c-assignment-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b5-3c-smoke",
+      "path": "scripts/ops/run-b5-3c-begin-review-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b5-3c-smoke-test",
+      "path": "scripts/ops/b5-3c-begin-review-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b6-4-smoke",
+      "path": "scripts/ops/run-b6-4-eligibility-review-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b6-4-smoke-test",
+      "path": "scripts/ops/b6-4-eligibility-review-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b7-3-smoke",
+      "path": "scripts/ops/run-b7-3-exam-authorization-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b7-3-smoke-test",
+      "path": "scripts/ops/b7-3-exam-authorization-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b8-4-smoke",
+      "path": "scripts/ops/run-b8-4-exam-session-scheduling-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b8-4-smoke-test",
+      "path": "scripts/ops/b8-4-exam-session-scheduling-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b9-4-smoke",
+      "path": "scripts/ops/run-b9-4-exam-delivery-results-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b9-4-smoke-test",
+      "path": "scripts/ops/b9-4-exam-delivery-results-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b10-4-smoke",
+      "path": "scripts/ops/run-b10-4-certification-decision-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b10-4-smoke-test",
+      "path": "scripts/ops/b10-4-certification-decision-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b11-4-smoke-prep",
+      "path": "scripts/ops/ensure-b11-4-smoke-prerequisites.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b11-4-smoke",
+      "path": "scripts/ops/run-b11-4-certificate-issuance-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b11-4-smoke-test",
+      "path": "scripts/ops/b11-4-certificate-issuance-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b12-5-smoke",
+      "path": "scripts/ops/run-b12-5-certificate-lifecycle-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b12-5-smoke-test",
+      "path": "scripts/ops/b12-5-certificate-lifecycle-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b13-6-smoke",
+      "path": "scripts/ops/run-b13-6-recertification-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b13-6-smoke-test",
+      "path": "scripts/ops/b13-6-recertification-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b14-7-smoke",
+      "path": "scripts/ops/run-b14-7-appeals-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b14-7-smoke-test",
+      "path": "scripts/ops/b14-7-appeals-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b15-7-smoke",
+      "path": "scripts/ops/run-b15-7-complaints-smoke.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:b15-7-smoke-test",
+      "path": "scripts/ops/b15-7-complaints-smoke.helpers.test.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "audit:f4-frontend-api",
+      "path": "scripts/ops/audit-f4-frontend-api-usage.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "validate:f4-frontend-cutover",
+      "path": "scripts/ops/run-f4-8g-frontend-validation.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:f4-9-smoke",
+      "path": "scripts/ops/run-f4-9-faza4-smoke.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:f4-9-smoke-test",
+      "path": "scripts/ops/test-f4-9-smoke-helpers.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:f5-3-data-readiness",
+      "path": "scripts/ops/run-f5-3-data-readiness-check.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:f5-4-e2e-scenarios",
+      "path": "scripts/ops/run-f5-4-e2e-scenarios-readiness.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:f5-5-security-gdpr-audit",
+      "path": "scripts/ops/run-f5-5-security-gdpr-audit-hardening.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:public-ux-1r3",
+      "path": "scripts/ops/run-public-ux-1r3.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:cert-ops-1r",
+      "path": "scripts/ops/run-cert-ops-1r.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:support-contact-1r",
+      "path": "scripts/ops/run-support-contact-1r.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:f5-6-operational-runbooks",
+      "path": "scripts/ops/run-f5-6-operational-runbooks.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:f5-7-final-go-no-go",
+      "path": "scripts/ops/run-f5-7-final-go-no-go.mjs",
+      "status": "untracked"
+    },
+    {
+      "script": "ops:ca-h01-frontend-f4-cutover",
+      "path": "scripts/ops/run-ca-h01-frontend-f4-cutover.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:f5-7-recheck-after-ca-h01",
+      "path": "scripts/ops/run-f5-7-recheck-after-ca-h01.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:s17-public-verify-browser",
+      "path": "scripts/ops/run-s17-public-verify-browser.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:td-083-tenant-negative-api",
+      "path": "scripts/ops/run-td-083-tenant-negative-api.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:local-pilot-sequential-regression",
+      "path": "scripts/ops/run-local-pilot-sequential-regression.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:local-pilot-sequential-regression-test",
+      "path": "scripts/ops/run-local-pilot-sequential-regression.test.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:staff-mfa-2-pre-external-cutover",
+      "path": "scripts/ops/run-staff-mfa-2-pre-external-cutover.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:staff-mfa-3-enforcement-closure",
+      "path": "scripts/ops/run-staff-mfa-3-enforcement-closure.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:dpo-legal-1-external-pilot-review-package",
+      "path": "scripts/ops/run-dpo-legal-1-external-pilot-review-package.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:dpo-legal-2-decision-session",
+      "path": "scripts/ops/run-dpo-legal-2-decision-session.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:admin-gov-ux-polish-1",
+      "path": "scripts/ops/run-admin-gov-ux-polish-1.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:admin-gov-final-acceptance-1",
+      "path": "scripts/ops/run-admin-gov-final-acceptance-1.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:learner-final-acceptance-1",
+      "path": "scripts/ops/run-learner-final-acceptance-1r.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:learner-final-acceptance-1r",
+      "path": "scripts/ops/run-learner-final-acceptance-1r.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:seed-pilot-cert-wallet",
+      "path": "scripts/ops/seed-pilot-certificant-wallet.ts",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:appeals-complaints-1",
+      "path": "scripts/ops/run-appeals-complaints-1.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:appeals-complaints-1r-browser",
+      "path": "scripts/ops/run-appeals-complaints-1r-browser.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:appeals-complaints-2",
+      "path": "scripts/ops/run-appeals-complaints-2.mjs",
+      "status": "tracked"
+    },
+    {
+      "script": "ops:appeals-complaints-2r-browser",
+      "path": "scripts/ops/run-appeals-complaints-2r-browser.mjs",
+      "status": "tracked"
+    }
+  ],
+  "evidenceCount": 411,
+  "evidenceDomains": [
+    [
+      "f5-pilot-readiness",
+      240
+    ],
+    [
+      "admin-governance-final-acceptance",
+      31
+    ],
+    [
+      "external-pilot-technical-readiness",
+      29
+    ],
+    [
+      "learner-final-acceptance",
+      26
+    ],
+    [
+      "legal-gdpr",
+      14
+    ],
+    [
+      "appeals-complaints",
+      8
+    ],
+    [
+      "exam-registration",
+      6
+    ],
+    [
+      "admin-governance-ux",
+      2
+    ],
+    [
+      "admin-reports-live",
+      1
+    ],
+    [
+      "admin-reports",
+      1
+    ],
+    [
+      "cert-ops-live",
+      1
+    ],
+    [
+      "cert-ops",
+      1
+    ],
+    [
+      "certification-eligibility",
+      1
+    ],
+    [
+      "committee-quorum-live",
+      1
+    ],
+    [
+      "committee-quorum",
+      1
+    ],
+    [
+      "documents-certificates",
+      1
+    ],
+    [
+      "education-mvp",
+      1
+    ],
+    [
+      "f4-8a-frontend-api-inventory",
+      1
+    ],
+    [
+      "f4-8f-legacy-api-usage-audit",
+      1
+    ],
+    [
+      "f4-8g-frontend-build-e2e-validation",
+      1
+    ],
+    [
+      "f4-9-faza4-smoke",
+      1
+    ],
+    [
+      "f5-ui",
+      1
+    ],
+    [
+      "f6-local-backup-smoke",
+      1
+    ],
+    [
+      "f6-local-baseline-audit",
+      1
+    ],
+    [
+      "f6-local-final-closure",
+      1
+    ],
+    [
+      "f6-local-governance-sync",
+      1
+    ],
+    [
+      "f6-local-stabilization",
+      1
+    ],
+    [
+      "internal-demo",
+      1
+    ],
+    [
+      "learner-flow",
+      1
+    ],
+    [
+      "learner-polish",
+      1
+    ]
+  ],
+  "docsOtherCount": 297,
+  "docsOtherExt": [
+    [
+      ".md",
+      284
+    ],
+    [
+      "(none)",
+      11
+    ],
+    [
+      ".json",
+      1
+    ],
+    [
+      ".svg",
+      1
+    ]
+  ],
+  "rootUntracked": [
+    ".cursorignore",
+    ".editorconfig",
+    ".env.example",
+    ".lighthouserc.json",
+    ".prettierignore",
+    "AGENTS.md",
+    "CONFORA_Current_State_v1.md",
+    "CONFORA_Design_System_Promptovi_v1.0.docx",
+    "CONFORA_Development_Prompts_1.md",
+    "CONFORA_LMS_Plan_Implementacije_v1.0_1.docx",
+    "CONFORA_SCHEMES_CATALOG.md",
+    "CONFORA_SPEC_ANALIZA.md",
+    "CONFORA_Tehnicka_Specifikacija.docx",
+    "CONFORA_WCAG22_Zahtjevi.docx",
+    "Confora Ai Development Governance Framework V1.pdf",
+    "README.md",
+    "commitlint.config.cjs",
+    "docker-compose.a11y-ci.yml",
+    "docker-compose.yml",
+    "eslint.config.mjs",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "prettier.config.cjs",
+    "test-all.ps1",
+    "test-all.sh",
+    "turbo.json"
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "task": "CONFORA_REPO_HEALTH_3_UNTRACKED_SOURCE_CLASSIFICATION",
+  "based_on_commit": "e6ab85d",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "e6ab85d",
+  "timestamp": "2026-07-19T08:22:50.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-19T08-22-50-confora-repo-health-3-untracked-source-classification",
+  "audit_only": true,
+  "cleanup_executed": false,
+  "files_deleted": false,
+  "git_add_dot_used": false,
+  "application_code_changed": false,
+  "application_code_committed": false,
+  "secrets_committed": false,
+  "docs_evidence_ignored": false,
+  "tracked_files_count": 718,
+  "git_status_entries_count": 1674,
+  "modified_tracked_count": 8,
+  "untracked_entries_count": 1666,
+  "top_untracked_groups": [
+    {
+      "name": "docs",
+      "count": 708
+    },
+    {
+      "name": "frontend-app",
+      "count": 460
+    },
+    {
+      "name": "scripts",
+      "count": 246
+    },
+    {
+      "name": "apps",
+      "count": 194
+    },
+    {
+      "name": "packages",
+      "count": 21
+    },
+    {
+      "name": ".cursorignore",
+      "count": 1
+    },
+    {
+      "name": ".editorconfig",
+      "count": 1
+    },
+    {
+      "name": ".env.example",
+      "count": 1
+    },
+    {
+      "name": ".github",
+      "count": 1
+    },
+    {
+      "name": ".husky",
+      "count": 1
+    }
+  ],
+  "source_candidate_groups": [
+    {
+      "name": "root_config",
+      "count": 14
+    },
+    {
+      "name": ".github",
+      "count": 1
+    },
+    {
+      "name": ".husky",
+      "count": 1
+    },
+    {
+      "name": "apps/api/src",
+      "count": 54
+    },
+    {
+      "name": "apps/api/test",
+      "count": 64
+    },
+    {
+      "name": "frontend-app/e2e",
+      "count": 55
+    },
+    {
+      "name": "frontend-app/src",
+      "count": 329
+    },
+    {
+      "name": "packages",
+      "count": 7
+    },
+    {
+      "name": "prisma",
+      "count": 1
+    },
+    {
+      "name": "scripts/ops",
+      "count": 193
+    }
+  ],
+  "generated_local_groups": [
+    {
+      "name": "untracked_generated_pattern_matches",
+      "count": 1
+    },
+    {
+      "name": "ignored_by_health2_not_in_status",
+      "count": null,
+      "note": "node_modules/.tools/.local-backups/dist/env/QR"
+    }
+  ],
+  "domain_counts": {
+    "apps/api": 189,
+    "apps/api/src": 110,
+    "apps/api/test": 67,
+    "frontend-app/src": 394,
+    "frontend-app/e2e": 55,
+    "scripts/ops": 196,
+    "packages": 21,
+    "docs": 297,
+    "docs/evidence": 411,
+    "infrastructure": 3,
+    "root_config": 27
+  },
+  "risk_file_count": 75,
+  "risk_path_name_count": 3,
+  "risk_content_pattern_count": 72,
+  "risk_content_categories": {
+    "token_field": 36,
+    "client_secret_field": 15,
+    "otpauth_uri": 2,
+    "password_field": 19
+  },
+  "package_json_ops_untracked_refs": 43,
+  "package_json_ops_tracked_refs": 23,
+  "recommended_next_action": "REVIEW_CLASSIFICATION_BEFORE_TRACKING_OR_CLEANUP",
+  "final_verdict": "CONFORA_REPO_HEALTH_3_AUDIT_ONLY_READY_FOR_REVIEW"
+}
