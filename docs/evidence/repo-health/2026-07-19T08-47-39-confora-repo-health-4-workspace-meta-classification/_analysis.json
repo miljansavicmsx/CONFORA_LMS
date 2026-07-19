@@ -1,0 +1,385 @@
+{
+  "head": "101e008",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "dirtyTracked": 0,
+  "untrackedTotal": 1668,
+  "statusTotal": 1668,
+  "packageManagerField": "pnpm@9.14.2",
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=9.14.2"
+  },
+  "scriptsTouchingMeta": {
+    "prepare": "husky",
+    "format": "prettier --check .",
+    "dockerUp": "docker compose --env-file .env -f infra/docker/docker-compose.yml up -d",
+    "dockerDown": "docker compose --env-file .env -f infra/docker/docker-compose.yml down",
+    "a11yLighthouse": "node scripts/a11y/run-lighthouse.mjs"
+  },
+  "focusFileStatus": [
+    {
+      "path": ".cursorignore",
+      "exists": true,
+      "tracked": false,
+      "size": 160
+    },
+    {
+      "path": ".editorconfig",
+      "exists": true,
+      "tracked": false,
+      "size": 200
+    },
+    {
+      "path": ".env.example",
+      "exists": true,
+      "tracked": false,
+      "size": 2577
+    },
+    {
+      "path": ".lighthouserc.json",
+      "exists": true,
+      "tracked": false,
+      "size": 617
+    },
+    {
+      "path": ".prettierignore",
+      "exists": true,
+      "tracked": false,
+      "size": 134
+    },
+    {
+      "path": "README.md",
+      "exists": true,
+      "tracked": false,
+      "size": 1787
+    },
+    {
+      "path": "AGENTS.md",
+      "exists": true,
+      "tracked": false,
+      "size": 1913
+    },
+    {
+      "path": "package-lock.json",
+      "exists": true,
+      "tracked": false,
+      "size": 90
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "exists": true,
+      "tracked": false,
+      "size": 517269
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "exists": true,
+      "tracked": false,
+      "size": 43
+    },
+    {
+      "path": "turbo.json",
+      "exists": true,
+      "tracked": false,
+      "size": 423
+    },
+    {
+      "path": "eslint.config.mjs",
+      "exists": true,
+      "tracked": false,
+      "size": 260
+    },
+    {
+      "path": "prettier.config.cjs",
+      "exists": true,
+      "tracked": false,
+      "size": 55
+    },
+    {
+      "path": "commitlint.config.cjs",
+      "exists": true,
+      "tracked": false,
+      "size": 73
+    },
+    {
+      "path": "docker-compose.yml",
+      "exists": true,
+      "tracked": false,
+      "size": 5348
+    },
+    {
+      "path": "docker-compose.a11y-ci.yml",
+      "exists": true,
+      "tracked": false,
+      "size": 2556
+    },
+    {
+      "path": "test-all.ps1",
+      "exists": true,
+      "tracked": false,
+      "size": 5695
+    },
+    {
+      "path": "test-all.sh",
+      "exists": true,
+      "tracked": false,
+      "size": 5643
+    }
+  ],
+  "focusDirStatus": [
+    {
+      "path": ".github",
+      "exists": true,
+      "tracked": false,
+      "fileCount": 8
+    },
+    {
+      "path": ".husky",
+      "exists": true,
+      "tracked": false,
+      "fileCount": 2
+    }
+  ],
+  "githubFiles": [
+    ".github/workflows/accessibility.yml",
+    ".github/workflows/backend-nightly.yml",
+    ".github/workflows/backend-tests.yml",
+    ".github/workflows/ci.yml",
+    ".github/workflows/confora-qa.yml",
+    ".github/workflows/deploy-backend.yml",
+    ".github/workflows/f4-frontend-cutover-gate.yml",
+    ".github/workflows/release-candidate.yml"
+  ],
+  "huskyFiles": [
+    ".husky/commit-msg",
+    ".husky/pre-commit"
+  ],
+  "envExamples": [
+    {
+      "path": ".env.example",
+      "keyCount": 40,
+      "placeholderMentions": 22,
+      "patternHits": [],
+      "suspiciousLongValueKeys": []
+    },
+    {
+      "path": "frontend-app/.env.example",
+      "keyCount": 11,
+      "placeholderMentions": 9,
+      "patternHits": [],
+      "suspiciousLongValueKeys": []
+    }
+  ],
+  "githubSecretScan": [
+    {
+      "path": ".github/workflows/accessibility.yml",
+      "usesGithubSecretsContext": true,
+      "mentionsSecretWords": true,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/backend-nightly.yml",
+      "usesGithubSecretsContext": false,
+      "mentionsSecretWords": false,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/backend-tests.yml",
+      "usesGithubSecretsContext": false,
+      "mentionsSecretWords": false,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "usesGithubSecretsContext": false,
+      "mentionsSecretWords": true,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/confora-qa.yml",
+      "usesGithubSecretsContext": false,
+      "mentionsSecretWords": false,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/deploy-backend.yml",
+      "usesGithubSecretsContext": true,
+      "mentionsSecretWords": false,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/f4-frontend-cutover-gate.yml",
+      "usesGithubSecretsContext": false,
+      "mentionsSecretWords": false,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    },
+    {
+      "path": ".github/workflows/release-candidate.yml",
+      "usesGithubSecretsContext": false,
+      "mentionsSecretWords": false,
+      "jwtLikeLiterals": 0,
+      "hardcodedSecretAssignments": 0
+    }
+  ],
+  "compose": [
+    {
+      "path": "docker-compose.yml",
+      "serviceCount": 9,
+      "services": [
+        "dynamodb-local",
+        "dynamodb-admin",
+        "localstack",
+        "fastapi-backend",
+        "nextjs-public",
+        "react-app",
+        "localstack-data",
+        "nextjs-public-node-modules",
+        "react-app-node-modules"
+      ],
+      "portsSample": [],
+      "imagesSample": [
+        "amazon/dynamodb-local:latest",
+        "aaronshaf/dynamodb-admin:latest",
+        "localstack/localstack:3.8.1",
+        "python:3.12-slim",
+        "node:22-alpine"
+      ],
+      "usesDevPlaceholders": false,
+      "productionReadyClaimDetected": false
+    },
+    {
+      "path": "docker-compose.a11y-ci.yml",
+      "serviceCount": 4,
+      "services": [
+        "services",
+        "dynamodb-local",
+        "localstack",
+        "fastapi-backend"
+      ],
+      "portsSample": [
+        "8001->8000",
+        "4566->4566",
+        "8000->8000",
+        "1->8000"
+      ],
+      "imagesSample": [
+        "amazon/dynamodb-local:latest",
+        "localstack/localstack:3.8.1",
+        "python:3.12-slim"
+      ],
+      "usesDevPlaceholders": false,
+      "productionReadyClaimDetected": false
+    }
+  ],
+  "infraComposeExists": true,
+  "lockfiles": [
+    {
+      "path": "package-lock.json",
+      "exists": true,
+      "size": 90,
+      "tracked": false
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "exists": true,
+      "size": 517269,
+      "tracked": false
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "exists": true,
+      "size": 43,
+      "tracked": false
+    }
+  ],
+  "lintConfigs": {
+    "eslint": true,
+    "prettier": true,
+    "prettierIgnore": true,
+    "commitlint": true,
+    "lighthouse": true,
+    "editorconfig": true
+  },
+  "rootDocs": [
+    {
+      "name": "AGENTS.md",
+      "size": 1913,
+      "ext": ".md"
+    },
+    {
+      "name": "Confora Ai Development Governance Framework V1.pdf",
+      "size": 70168,
+      "ext": ".pdf"
+    },
+    {
+      "name": "CONFORA_Current_State_v1.md",
+      "size": 18883,
+      "ext": ".md"
+    },
+    {
+      "name": "CONFORA_Design_System_Promptovi_v1.0.docx",
+      "size": 43631,
+      "ext": ".docx"
+    },
+    {
+      "name": "CONFORA_Development_Prompts_1.md",
+      "size": 61424,
+      "ext": ".md"
+    },
+    {
+      "name": "CONFORA_LMS_Plan_Implementacije_v1.0_1.docx",
+      "size": 68683,
+      "ext": ".docx"
+    },
+    {
+      "name": "CONFORA_SCHEMES_CATALOG.md",
+      "size": 36125,
+      "ext": ".md"
+    },
+    {
+      "name": "CONFORA_SPEC_ANALIZA.md",
+      "size": 22456,
+      "ext": ".md"
+    },
+    {
+      "name": "CONFORA_Tehnicka_Specifikacija.docx",
+      "size": 52719,
+      "ext": ".docx"
+    },
+    {
+      "name": "CONFORA_WCAG22_Zahtjevi.docx",
+      "size": 53391,
+      "ext": ".docx"
+    },
+    {
+      "name": "README.md",
+      "size": 1787,
+      "ext": ".md"
+    }
+  ],
+  "readmeHeadings": [
+    "CONFORA",
+    "Governance",
+    "Repository layout (summary)",
+    "Local staging pilot"
+  ],
+  "agentsHeadings": [
+    "CONFORA AI Agent Instructions",
+    "Canonical Authority",
+    "Primary Standards",
+    "Architecture Principles",
+    "Mandatory Requirements",
+    "Never",
+    "AI Usage",
+    "Code Quality"
+  ],
+  "huskyPreCommit": "#!/usr/bin/env sh\r\npnpm exec lint-staged\r\npnpm typecheck\r\n",
+  "huskyCommitMsg": "#!/usr/bin/env sh\r\npnpm exec commitlint --edit \"$1\"\r\n"
+}
