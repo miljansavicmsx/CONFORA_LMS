@@ -1,0 +1,52 @@
+{
+  "task": "CONFORA_REPO_HEALTH_6_SOURCE_IMPORT_WAVE_PLANNING",
+  "based_on_commit": "6fc1152",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "6fc1152",
+  "timestamp": "2026-07-19T14:10:22.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-19T14-10-22-confora-repo-health-6-source-import-wave-planning",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "cleanup_executed": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "git_add_dot_used": false,
+  "application_code_changed": false,
+  "source_committed": false,
+  "gitignore_modified": false,
+  "secrets_committed": false,
+  "status_entries_count": 1646,
+  "expanded_untracked_files_count": 105561,
+  "source_candidate_count": 2003,
+  "source_candidate_note": "Approx apps/api(833)+frontend-app(796)+packages(158)+scripts/ops(195)+compose/cursorignore(~20); excludes docs/evidence bulk",
+  "docs_evidence_untracked_files_approx": 102258,
+  "recommended_waves": [
+    "W1_APP_AND_COMPOSE_CONFIG_MANIFESTS",
+    "W2_SHARED_PACKAGES",
+    "W3_API_CORE_AND_EDUCATION",
+    "W4_API_AUTH_SECURITY_TENANT_PRISMA",
+    "W5_API_CERTIFICATION_SOD_SPLIT",
+    "W6_FRONTEND_SHELL_THEN_DOMAINS",
+    "W7_TESTS_OPS_CURATED_EVIDENCE"
+  ],
+  "first_wave_candidate": "W1_APP_AND_COMPOSE_CONFIG_MANIFESTS",
+  "high_risk_review_required": [
+    "apps/api/src/auth/**",
+    "apps/api/src/auth/jwt-hs256-secret.ts",
+    "apps/api/src/security/**",
+    "apps/api/src/tenant/**",
+    "apps/api/src/prisma/**",
+    "frontend-app/.env.example",
+    "scripts/ops/keycloak-mfa-pkce-enrollment.mjs",
+    "scripts/ops/run-ep-tech-8-mfa-training-closure.mjs"
+  ],
+  "do_not_import_yet": [
+    "docs/evidence bulk smoke dumps",
+    "backend/**",
+    "root planning docx/pdf packs",
+    "MFA/Keycloak ops until reviewed",
+    "broad apps/api/src or frontend-app/src single-add"
+  ],
+  "recommended_next_action": "REVIEW_SOURCE_IMPORT_WAVES_BEFORE_TRACKING_SOURCE",
+  "final_verdict": "CONFORA_REPO_HEALTH_6_AUDIT_ONLY_READY_FOR_REVIEW"
+}
