@@ -1,0 +1,50 @@
+# PROPOSED .gitignore hardening (NOT APPLIED)
+
+This is a **proposal** for CONFORA-REPO-HEALTH-1. Do not treat as already committed.
+
+Append (or merge carefully) to root `.gitignore`, then **track** `.gitignore` in a dedicated follow-up commit.
+
+```gitignore
+# --- CONFORA-REPO-HEALTH-1 proposed additions ---
+
+# Local tooling & backups
+.tools/
+.local-backups/
+**/.venv/
+.venv/
+
+# Nested build outputs
+apps/**/dist/
+packages/**/dist/
+.cache/
+
+# Local auth / inventory dumps (never commit)
+tmp-keycloak-setup-output.txt
+repo-status-snapshot.txt
+repo-tracked-files.txt
+
+# Root screenshots / QR captures (local-only)
+/Screenshot*.png
+/*qr*.png
+/*QR*.png
+
+# Editor / agent local state (team may selectively force-add rules if desired)
+.cursor/
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+```
+
+## Notes
+
+- Keep committing `.env.example` and `*.env.example`.
+- Do **not** globally ignore `docs/evidence/`.
+- If `.cursor/rules` must be shared, use `git add -f` for specific rule files after ignore, or carve exceptions deliberately.
+- After applying, verify:
+
+```bash
+git check-ignore -v .tools .local-backups tmp-keycloak-setup-output.txt
+git ls-files --error-unmatch .gitignore
+```

@@ -1,0 +1,59 @@
+{
+  "task": "CONFORA_REPO_HEALTH_1",
+  "based_on_commit": "7e25072",
+  "timestamp": "2026-07-19T05:53:16.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-19T05-53-16-confora-repo-health-1",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "tracked_files_count": 705,
+  "git_status_entries_count": 1680,
+  "git_status_entries_count_measured": 1682,
+  "modified_tracked_count": 8,
+  "untracked_status_entries_count": 1674,
+  "local_folder_files_count_reported": 276800,
+  "local_folder_size_reported": "6.22 GB",
+  "git_loose_objects_size_reported": "518.60 MiB",
+  "biggest_untracked_groups": [
+    { "name": "docs", "count": 708 },
+    { "name": "frontend-app", "count": 460 },
+    { "name": "scripts", "count": 245 },
+    { "name": "apps", "count": 194 },
+    { "name": "packages", "count": 21 }
+  ],
+  "generated_heavy_paths": [
+    { "path": "node_modules", "files": 90621, "size_mb": 2005.9, "ignored": true },
+    { "path": "frontend-app/node_modules", "files": 30000, "size_mb": 352.5, "ignored": true },
+    { "path": ".tools", "files": 663, "size_mb": 602, "ignored": false },
+    { "path": "apps/api/dist", "files": 1681, "size_mb": 7.7, "ignored": "partial" },
+    { "path": ".turbo", "files": 492, "size_mb": 0.8, "ignored": true },
+    { "path": ".local-backups", "files": 1, "size_mb": 1.5, "ignored": false }
+  ],
+  "gitignore_tracked": false,
+  "gitignore_gaps": [
+    ".local-backups/",
+    ".tools/",
+    "tmp-keycloak-setup-output.txt",
+    "repo-status-snapshot.txt",
+    "repo-tracked-files.txt",
+    "root Screenshot/QR png",
+    ".cursor/",
+    "apps/**/dist/ (explicit)",
+    "**/.venv/"
+  ],
+  "local_only_risk_files_observed": [
+    "tmp-keycloak-setup-output.txt",
+    "Screenshot 2026-07-14 213452qr.png",
+    "repo-status-snapshot.txt",
+    "repo-tracked-files.txt"
+  ],
+  "evidence_top_level_domains_count": 70,
+  "tracked_docs_evidence_files": 511,
+  "untracked_docs_evidence_entries": 411,
+  "cleanup_executed": false,
+  "files_deleted": false,
+  "git_add_dot_used": false,
+  "application_code_changed": false,
+  "secrets_committed": false,
+  "proposed_gitignore_patch_path": "docs/evidence/repo-health/2026-07-19T05-53-16-confora-repo-health-1/PROPOSED_gitignore_hardening.patch.txt",
+  "recommended_next_action": "REVIEW_SAFE_CLEANUP_PLAN_BEFORE_EXECUTION",
+  "final_verdict": "CONFORA_REPO_HEALTH_1_AUDIT_ONLY_READY_FOR_REVIEW"
+}
