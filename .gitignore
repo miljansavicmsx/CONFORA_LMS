@@ -75,3 +75,9 @@ repo-tracked-files.txt
 # OS junk
 .DS_Store
 Thumbs.db
+
+# CONFORA repo-health R2 local/generated ignores
+package-lock.json
+apps/api/build-log*.txt
+scripts/ops/_tmp-repo-health-*.mjs
+*.tsbuildinfo
