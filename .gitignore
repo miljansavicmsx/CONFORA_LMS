@@ -1,0 +1,77 @@
+# CONFORA — build, cache, local secrets (cleanup baseline)
+node_modules/
+**/node_modules/
+
+dist/
+build/
+.next/
+**/.next/
+
+frontend-app/dist/
+frontend-app/.vite/
+frontend-public/dist/
+frontend-public/.next/
+
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+coverage/
+
+test-results/
+playwright-report/
+tests/e2e/playwright-report/
+tests/e2e/test-results/
+tests/e2e/blob-report/
+
+*.log
+logs/
+
+tmp/
+temp/
+
+.turbo/
+
+packages/config/dist/
+apps/api/src/schema.gql
+
+# Local configuration (use .env.example as template)
+.env
+backend/.env
+.env.local
+
+# Local dev signing material for smoke (never commit)
+scripts/ops/.dev/
+
+# --- CONFORA-REPO-HEALTH-2 local/generated exclusions ---
+
+# Local tooling & backups
+.tools/
+.local-backups/
+**/.venv/
+.venv/
+
+# Nested build outputs
+apps/**/dist/
+packages/**/dist/
+.cache/
+
+# Local auth / inventory dumps
+tmp-keycloak-setup-output.txt
+repo-status-snapshot.txt
+repo-tracked-files.txt
+
+# Root screenshots / QR captures
+/Screenshot*.png
+/*qr*.png
+/*QR*.png
+
+# Editor / agent local state
+.cursor/
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
