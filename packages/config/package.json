@@ -1,0 +1,31 @@
+{
+  "name": "@confora/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.config.mjs",
+    "./prettier": "./prettier.config.cjs",
+    "./typescript/base": "./typescript/base.json",
+    "./typescript/nextjs": "./typescript/nextjs.json",
+    "./typescript/nestjs": "./typescript/nestjs.json",
+    "./typescript/react-library": "./typescript/react-library.json",
+    "./typescript/node-library": "./typescript/node-library.json"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.15.0",
+    "typescript-eslint": "^8.15.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.15.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.15.0"
+  },
+  "scripts": {
+    "build": "node ./scripts/write-build-stamp.mjs",
+    "lint": "node -e \"console.log('config: lint via root')\"",
+    "typecheck": "node -e \"console.log('config: no typecheck')\"",
+    "test": "node -e \"console.log('config: no tests')\""
+  }
+}

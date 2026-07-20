@@ -1,0 +1,9 @@
+{
+  "extends": "@confora/config/typescript/react-library",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tailwind.config.ts"],
+  "exclude": ["dist", "node_modules"]
+}
