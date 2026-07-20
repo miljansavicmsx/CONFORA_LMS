@@ -1,0 +1,66 @@
+{
+  "task": "CONFORA_REPO_HEALTH_12_W2C_CONFIG_AUDIT_SDK_REVIEW",
+  "based_on_commit": "08c9103",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "08c9103",
+  "timestamp": "2026-07-20T22:19:53.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-20T22-19-53-confora-repo-health-12-w2c-config-audit-sdk-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "git_add_dot_used": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "source_committed": false,
+  "application_code_changed": false,
+  "gitignore_modified": false,
+  "secrets_committed": false,
+  "status_entries_count": 1624,
+  "w2c_candidate_count": 26,
+  "secret_pattern_hits_count": 0,
+  "package_classification": {
+    "packages/config": "W2C_safe_now_W2C1_tooling",
+    "packages/audit-client": "review_then_W2C2_source",
+    "packages/sdk": "review_then_W2C3_stub_schema",
+    "packages/ui": "defer",
+    "packages/notification-templates": "defer"
+  },
+  "w2c_split": [
+    "W2C-1_config_tooling",
+    "W2C-2_audit_client_source",
+    "W2C-3_sdk_source",
+    "defer_ui_and_notification_templates"
+  ],
+  "w2c_first_commit_candidate": [
+    "packages/config/csp/build-csp.mjs",
+    "packages/config/eslint-rules/index.mjs",
+    "packages/config/eslint-rules/no-inline-script-without-nonce.mjs",
+    "packages/config/eslint-rules/no-inline-script-without-nonce.test.mjs",
+    "packages/config/eslint.config.mjs",
+    "packages/config/prettier.config.cjs",
+    "packages/config/scripts/write-build-stamp.mjs"
+  ],
+  "review_before_import": [
+    "packages/audit-client/src/index.ts",
+    "packages/audit-client/src/append.test.ts",
+    "packages/sdk/src/index.ts",
+    "packages/sdk/src/generated/schema.ts"
+  ],
+  "defer": [
+    "packages/ui/src/**",
+    "packages/ui/tokens.ts",
+    "packages/notification-templates/src/**",
+    "packages/notification-templates/templates/**"
+  ],
+  "do_not_import": [
+    "packages/database/**",
+    "packages/auth/**",
+    "packages/ai-*/**",
+    "apps/api/src/**",
+    "frontend-app/src/**",
+    "scripts/ops/**",
+    "docs/evidence bulk",
+    "broad git add packages"
+  ],
+  "recommended_next_action": "REVIEW_W2C_FIRST_COMMIT_CANDIDATE_BEFORE_TRACKING_SOURCE",
+  "final_verdict": "CONFORA_REPO_HEALTH_12_AUDIT_ONLY_READY_FOR_REVIEW"
+}
