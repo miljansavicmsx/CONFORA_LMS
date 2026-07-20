@@ -1,0 +1,145 @@
+# LEGACY LOCAL STACK — DynamoDB/Cognito/FastAPI path (NOT F5/F6 canonical pilot).
+# Canonical pilot: docs/runbooks/f5-pilot/RB-01-local-pilot-startup.md (Postgres, Keycloak, Nest).
+# CONFORA LMS — lokalno okruženje (DynamoDB Local, LocalStack, FastAPI, Next, Vite).
+# Iz korijena: docker compose up -d
+# Backend pri startu kreira DynamoDB tablice (scripts/create_dynamodb_tables.py).
+# Prijava bez Cognita: dev@example.com / devlocal123 (DEV_LOCAL_*).
+# Ako je port 3001 zauzet na hostu: HOST_PORT_REACT=3011 u korijenskom .env.
+
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    hostname: dynamodb-local
+    ports:
+      - "${HOST_PORT_DYNAMODB:-8001}:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    ports:
+      - "${HOST_PORT_DYNAMODB_ADMIN:-8002}:8001"
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb-local:8000
+    depends_on:
+      dynamodb-local:
+        condition: service_started
+
+  localstack:
+    image: localstack/localstack:3.8.1
+    ports:
+      - "${HOST_PORT_LOCALSTACK:-4566}:4566"
+    environment:
+      SERVICES: s3,ses
+      DEBUG: ${LOCALSTACK_DEBUG:-0}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-eu-central-1}
+    volumes:
+      - localstack-data:/var/lib/localstack
+
+  fastapi-backend:
+    image: python:3.12-slim
+    working_dir: /workspace/backend
+    ports:
+      - "${HOST_PORT_API:-8000}:8000"
+    volumes:
+      # Cijeli repozitorij: init skripta za DynamoDB ostaje scripts/* s ispravnom putanjom backend/.env
+      - .:/workspace
+    environment:
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-eu-central-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
+      AWS_ENDPOINT_URL_DYNAMODB: http://dynamodb-local:8000
+      AWS_ENDPOINT_URL_S3: http://localstack:4566
+      S3_BUCKET_UPLOADS: ${S3_BUCKET_UPLOADS:-moj-test-bucket}
+      ENVIRONMENT: development
+      # Lokalna prijava (bez Cognita)
+      DEV_LOCAL_AUTH: "true"
+      DEV_LOCAL_JWT_SECRET: ${DEV_LOCAL_JWT_SECRET:-confora-local-dev-secret-key-min16}
+      DEV_LOCAL_EMAIL: ${DEV_LOCAL_EMAIL:-dev@example.com}
+      DEV_LOCAL_PASSWORD: ${DEV_LOCAL_PASSWORD:-devlocal123}
+      # U Compose-u koristi DynamoDB (tablice se kreiraju pri startu skriptom); nadjačava backend/.env ako je SKIP=true.
+      DEV_LOCAL_SKIP_DYNAMODB: "false"
+      COGNITO_USER_POOL_ID: ""
+      COGNITO_CLIENT_ID: ""
+      PIP_ROOT_USER_ACTION: ignore
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        cd /workspace/backend
+        pip install --no-cache-dir --root-user-action=ignore -r requirements.txt
+        echo "Čekam DynamoDB Local (TCP)..."
+        i=0
+        while [ "$$i" -lt 90 ]; do
+          if python -c "import socket; s=socket.socket(); s.settimeout(2); s.connect(('dynamodb-local',8000)); s.close()" 2>/dev/null; then
+            echo "DynamoDB Local spreman."
+            break
+          fi
+          i=$$((i + 1))
+          sleep 1
+        done
+        if [ "$$i" -eq 90 ]; then echo "Timeout: DynamoDB Local."; exit 1; fi
+        echo "Čekam LocalStack..."
+        i=0
+        while [ "$$i" -lt 120 ]; do
+          if python -c "import urllib.request; urllib.request.urlopen('http://localstack:4566/_localstack/health', timeout=3)" 2>/dev/null; then
+            echo "LocalStack spreman."
+            break
+          fi
+          i=$$((i + 1))
+          sleep 1
+        done
+        if [ "$$i" -eq 120 ]; then echo "Timeout: LocalStack."; exit 1; fi
+        echo "Idempotentno kreiram DynamoDB tablice (Compose → dynamodb-local)..."
+        AWS_ENDPOINT_URL_DYNAMODB=http://dynamodb-local:8000 \
+          AWS_ACCESS_KEY_ID=$${AWS_ACCESS_KEY_ID:-test} \
+          AWS_SECRET_ACCESS_KEY=$${AWS_SECRET_ACCESS_KEY:-test} \
+          python /workspace/scripts/create_dynamodb_tables.py
+        exec uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    depends_on:
+      dynamodb-local:
+        condition: service_started
+      localstack:
+        condition: service_started
+
+  nextjs-public:
+    image: node:22-alpine
+    working_dir: /app
+    ports:
+      - "${HOST_PORT_NEXT:-3000}:3000"
+    volumes:
+      - ./frontend-public:/app
+      - nextjs-public-node-modules:/app/node_modules
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-eu-central-1}
+      CONFORA_API_URL: http://fastapi-backend:8000
+      NEXT_PUBLIC_LEARNER_APP_URL: ${NEXT_PUBLIC_LEARNER_APP_URL:-http://localhost:3001}
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      fastapi-backend:
+        condition: service_started
+
+  react-app:
+    image: node:22-alpine
+    working_dir: /app
+    ports:
+      - "${HOST_PORT_REACT:-3001}:3001"
+    volumes:
+      - ./frontend-app:/app
+      - react-app-node-modules:/app/node_modules
+    environment:
+      NODE_ENV: development
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-eu-central-1}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 3001"
+    depends_on:
+      fastapi-backend:
+        condition: service_started
+
+volumes:
+  localstack-data:
+  nextjs-public-node-modules:
+  react-app-node-modules:
