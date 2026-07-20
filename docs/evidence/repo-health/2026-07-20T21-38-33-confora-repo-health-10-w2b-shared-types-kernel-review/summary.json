@@ -1,0 +1,58 @@
+{
+  "task": "CONFORA_REPO_HEALTH_10_W2B_SHARED_TYPES_KERNEL_REVIEW",
+  "based_on_commit": "95ca73b",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "95ca73b",
+  "timestamp": "2026-07-20T21:38:33.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-20T21-38-33-confora-repo-health-10-w2b-shared-types-kernel-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "git_add_dot_used": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "source_committed": false,
+  "application_code_changed": false,
+  "gitignore_modified": false,
+  "secrets_committed": false,
+  "status_entries_count": 1630,
+  "w2b_candidate_count": 10,
+  "secret_pattern_hits_count": 0,
+  "w2b_safe_now": [
+    "packages/shared-types/src/index.ts",
+    "packages/shared-types/src/health.test.ts",
+    "packages/shared-kernel/src/entities.ts",
+    "packages/shared-kernel/src/audit-context.ts",
+    "packages/shared-kernel/src/index.ts",
+    "packages/shared-kernel/src/tenant.test.ts",
+    "packages/shared-kernel/README.md"
+  ],
+  "w2b_first_commit_candidate": [
+    "packages/shared-types/src/auth.ts",
+    "packages/shared-types/src/roles.ts",
+    "packages/shared-types/src/index.ts",
+    "packages/shared-types/src/health.test.ts",
+    "packages/shared-kernel/src/tenant.ts",
+    "packages/shared-kernel/src/tenant.test.ts",
+    "packages/shared-kernel/src/audit-context.ts",
+    "packages/shared-kernel/src/entities.ts",
+    "packages/shared-kernel/src/index.ts",
+    "packages/shared-kernel/README.md"
+  ],
+  "review_before_import": [
+    "packages/shared-types/src/auth.ts",
+    "packages/shared-types/src/roles.ts",
+    "packages/shared-kernel/src/tenant.ts"
+  ],
+  "defer": [],
+  "do_not_import": [
+    "packages/database/**",
+    "packages/auth/**",
+    "packages/ai-*/**",
+    "apps/api/src/**",
+    "frontend-app/src/**",
+    "scripts/ops/**",
+    "docs/evidence bulk"
+  ],
+  "recommended_next_action": "REVIEW_W2B_FIRST_COMMIT_CANDIDATE_BEFORE_TRACKING_SOURCE",
+  "final_verdict": "CONFORA_REPO_HEALTH_10_AUDIT_ONLY_READY_FOR_REVIEW"
+}
