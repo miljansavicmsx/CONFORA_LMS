@@ -1,28 +1,17 @@
-import { z } from 'zod';
-
-import type { paths as ApiPaths } from './generated/schema.js';
+﻿import type { paths as ApiPaths } from './generated/schema.js';
 
 export type Paths = ApiPaths;
 
-/** Placeholder until OpenAPI code generation is wired in CI. */
-const configurationSchema = z.object({
-  baseUrl: z.string().url(),
-});
+export type SdkConfiguration = Record<string, never>;
 
-export type SdkConfiguration = z.infer<typeof configurationSchema>;
+export const CONFORA_SDK_STATUS = 'placeholder_no_runtime_transport' as const;
 
-export function createConforaSdk(config: unknown) {
-  const parsed = configurationSchema.parse(config);
-  return {
-    baseUrl: parsed.baseUrl,
-    /** Fetch OpenAPI spec (Nest serves JSON at this path in bootstrap). */
-    async getOpenApiJson(): Promise<unknown> {
-      const response = await fetch(`${parsed.baseUrl}/openapi/json`);
-      if (!response.ok) {
-        throw new Error(`OpenAPI fetch failed: ${String(response.status)}`);
-      }
-      const body: unknown = await response.json();
-      return body;
-    },
-  };
+/**
+ * Inert SDK entry point until the approved OpenAPI generation workflow is wired.
+ * This placeholder intentionally performs no network calls and no credential handling.
+ */
+export function createConforaSdk(_config: SdkConfiguration = {}) {
+  return Object.freeze({
+    status: CONFORA_SDK_STATUS,
+  });
 }
