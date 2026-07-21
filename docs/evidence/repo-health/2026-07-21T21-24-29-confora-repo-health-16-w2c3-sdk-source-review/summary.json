@@ -1,0 +1,52 @@
+{
+  "task": "CONFORA_REPO_HEALTH_16_W2C3_SDK_SOURCE_REVIEW",
+  "based_on_commit": "88fa8df7",
+  "based_on_commit_full": "88fa8df78b341d6703168aaa4212154ed1c08abd",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "88fa8df7",
+  "remote_contains_head": true,
+  "timestamp": "2026-07-21T21:24:29.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-21T21-24-29-confora-repo-health-16-w2c3-sdk-source-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "git_add_dot_used": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "source_committed": false,
+  "application_code_changed": false,
+  "gitignore_modified": false,
+  "secrets_committed": false,
+  "status_entries_count": 1618,
+  "sdk_candidate_count": 2,
+  "secret_pattern_hits_count": 0,
+  "large_binary_candidates": [],
+  "sdk_schema_is_empty_paths_stub": true,
+  "sdk_has_auth_header_or_token_provider": false,
+  "sdk_hardcoded_base_url": false,
+  "w2c3_first_commit_candidate": [
+    "packages/sdk/src/generated/schema.ts",
+    "packages/sdk/src/index.ts"
+  ],
+  "review_before_import": [
+    "packages/sdk/src/index.ts"
+  ],
+  "w2c3_safe_now": [
+    "packages/sdk/src/generated/schema.ts"
+  ],
+  "defer": [],
+  "do_not_import": [
+    "packages/ui/**",
+    "packages/notification-templates/**",
+    "packages/database/**",
+    "packages/auth/**",
+    "packages/ai-*/**",
+    "apps/**",
+    "frontend-app/**",
+    "scripts/ops/**",
+    "terraform/**",
+    "docs/evidence bulk",
+    "broad git add packages/sdk"
+  ],
+  "recommended_next_action": "REVIEW_W2C3_FIRST_COMMIT_CANDIDATE_BEFORE_TRACKING_SDK_SOURCE",
+  "final_verdict": "CONFORA_REPO_HEALTH_16_AUDIT_ONLY_READY_FOR_REVIEW"
+}
