@@ -1,0 +1,48 @@
+{
+  "task": "CONFORA_REPO_HEALTH_14_W2C2_AUDIT_CLIENT_REVIEW",
+  "based_on_commit": "75267a0c",
+  "based_on_commit_full": "75267a0c4003fb1b17dc3a3562e4e9e37dfdb76b",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "75267a0c",
+  "remote_contains_head": true,
+  "timestamp": "2026-07-21T20:48:08.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-21T20-48-08-confora-repo-health-14-w2c2-audit-client-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "git_add_dot_used": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "source_committed": false,
+  "application_code_changed": false,
+  "gitignore_modified": false,
+  "secrets_committed": false,
+  "status_entries_count": 1619,
+  "audit_client_candidate_count": 2,
+  "secret_pattern_hits_count": 0,
+  "large_binary_candidates": [],
+  "w2c2_first_commit_candidate": [
+    "packages/audit-client/src/index.ts",
+    "packages/audit-client/src/append.test.ts"
+  ],
+  "review_before_import": [
+    "packages/audit-client/src/index.ts",
+    "packages/audit-client/src/append.test.ts"
+  ],
+  "defer": [],
+  "do_not_import": [
+    "packages/sdk/**",
+    "packages/ui/**",
+    "packages/notification-templates/**",
+    "packages/database/**",
+    "packages/auth/**",
+    "packages/ai-*/**",
+    "apps/**",
+    "frontend-app/**",
+    "scripts/ops/**",
+    "terraform/**",
+    "docs/evidence bulk",
+    "broad git add packages/audit-client"
+  ],
+  "recommended_next_action": "REVIEW_W2C2_FIRST_COMMIT_CANDIDATE_BEFORE_TRACKING_AUDIT_CLIENT_SOURCE",
+  "final_verdict": "CONFORA_REPO_HEALTH_14_AUDIT_ONLY_READY_FOR_REVIEW"
+}
