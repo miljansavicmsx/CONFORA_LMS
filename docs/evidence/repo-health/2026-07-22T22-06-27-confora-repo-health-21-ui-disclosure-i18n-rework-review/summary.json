@@ -1,0 +1,118 @@
+{
+  "task": "CONFORA_REPO_HEALTH_21_UI_DISCLOSURE_I18N_REWORK_REVIEW",
+  "based_on_commit": "278d4af5",
+  "based_on_commit_full": "278d4af5a1a20c1de81aa39dbe39ea3218d9d3d1",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "278d4af5",
+  "remote_contains_head": true,
+  "timestamp": "2026-07-22T22:06:27.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-22T22-06-27-confora-repo-health-21-ui-disclosure-i18n-rework-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "source_committed": false,
+  "source_imported": false,
+  "git_add_dot_used": false,
+  "staged_count": 0,
+  "ai_disclosure_currently_untracked": true,
+  "ui_barrel_index_currently_untracked": true,
+  "notification_templates_deferred": true,
+  "notification_templates_untracked_count": 9,
+  "hardcoded_english_findings": [
+    {
+      "path": "packages/ui/src/ai-disclosure.tsx",
+      "variant": "pill",
+      "text": "AI-assisted",
+      "class": "PRODUCT_UI_ENGLISH_DEFAULT"
+    },
+    {
+      "path": "packages/ui/src/ai-disclosure.tsx",
+      "variant": "banner",
+      "text": "This feature uses artificial intelligence. Outputs are suggestions — verify before relying on them.",
+      "class": "PRODUCT_UI_ENGLISH_DEFAULT"
+    },
+    {
+      "path": "packages/ui/src/ai-disclosure.tsx",
+      "variant": "decorative_mark",
+      "text": "AI",
+      "class": "ARIA_HIDDEN_ENGLISH_MARK"
+    }
+  ],
+  "ai_governance_findings": [
+    {
+      "id": "AG-01",
+      "severity": "info",
+      "summary": "Presentational disclosure only; no certification mutation"
+    },
+    {
+      "id": "AG-02",
+      "severity": "info",
+      "summary": "Does not claim AI makes final certification decisions"
+    },
+    {
+      "id": "AG-03",
+      "severity": "info",
+      "summary": "Does not claim AI replaces human review"
+    },
+    {
+      "id": "AG-05",
+      "severity": "medium",
+      "summary": "Missing explicit human-oversight mandatory wording in component contract"
+    },
+    {
+      "id": "AG-06",
+      "severity": "medium",
+      "summary": "Missing explicit AI-does-not-decide-certification constraint in recommended copy"
+    },
+    {
+      "id": "AG-07",
+      "severity": "high",
+      "summary": "Hardcoded English disclosure weakens multilingual transparency"
+    }
+  ],
+  "barrel_export_risk": "BLOCKING_REEXPORTS_UNREWORKED_AI_DISCLOSURE",
+  "secret_pattern_hits": 0,
+  "url_or_network_hits": 0,
+  "browser_runtime_blocking_findings": 0,
+  "auth_rbac_tenant_findings": 0,
+  "required_disclosure_rework": [
+    "remove_mandatory_product_english_defaults",
+    "require_visible_text_via_props_or_translation_keys",
+    "safe_defaults_only_if_non_product_demo",
+    "preserve_no_auto_certification_implication",
+    "require_human_oversight_meaning_in_product_copy",
+    "no_tenant_auth_business_decision_behavior"
+  ],
+  "required_index_rework": [
+    "keep_excluded_until_disclosure_passes",
+    "or_split_safe_primitive_exports_from_disclosure_export",
+    "do_not_approve_barrel_import_exporting_unreworked_disclosure"
+  ],
+  "future_import_candidate": [],
+  "future_import_go_recommendation": "NO-GO",
+  "ui_file_hashes": {
+    "packages/ui/src/ai-disclosure.tsx": {
+      "bytes": 1238,
+      "sha256": "7dda3a96d72fd138d84fe7669ec51bb6f91a84126684383110e45b53e30379b0",
+      "tracked": false,
+      "untracked": true
+    },
+    "packages/ui/src/index.ts": {
+      "bytes": 217,
+      "sha256": "c1608f02fd273f9ad87bac2fa15d935a3aec19998188a26b2db12b876af0e884",
+      "tracked": false,
+      "untracked": true
+    }
+  },
+  "prior_w2d1_imported_still_excluded_from_this_wave": [
+    "packages/ui/tokens.ts",
+    "packages/ui/src/button.tsx",
+    "packages/ui/src/skip-to-main-link.tsx",
+    "packages/ui/src/styles.css"
+  ],
+  "rh20_evidence": "docs/evidence/repo-health/2026-07-22T21-51-49-confora-repo-health-20-w2d1-ui-import-verification",
+  "recommended_next_action": "IMPLEMENT_W2D1R_DISCLOSURE_I18N_REWORK_THEN_REVERIFY_BEFORE_IMPORT",
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "final_verdict": "CONFORA_REPO_HEALTH_21_AUDIT_ONLY_READY_FOR_REVIEW"
+}
