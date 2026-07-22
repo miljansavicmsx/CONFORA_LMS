@@ -1,0 +1,112 @@
+{
+  "task": "CONFORA_REPO_HEALTH_19_W2D1_UI_PACKAGE_SOURCE_REVIEW",
+  "based_on_commit": "b08fafb7",
+  "based_on_commit_full": "b08fafb78479e05413fb73da0e10c8449d95baf0",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "b08fafb7",
+  "remote_contains_head": true,
+  "timestamp": "2026-07-22T20:16:05.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-22T20-16-05-confora-repo-health-19-w2d1-ui-package-source-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": false,
+  "tracked_working_tree_clean_note": "Porcelain shows M packages/sdk/src/index.ts with empty content diff; out of W2D-1 scope. No UI files modified or staged.",
+  "status_entries_count": 1618,
+  "git_add_dot_used": false,
+  "files_deleted": false,
+  "files_moved": false,
+  "source_committed": false,
+  "source_imported": false,
+  "application_code_changed": false,
+  "package_json_modified": false,
+  "lockfile_modified": false,
+  "gitignore_modified": false,
+  "ui_candidate_count": 6,
+  "ui_manifest_closed": true,
+  "secret_pattern_hits_count": 0,
+  "url_or_network_hits_count": 0,
+  "browser_runtime_findings_count": 0,
+  "frontend_coupling_findings_count": 4,
+  "auth_rbac_tenant_findings_count": 0,
+  "large_binary_candidates": [],
+  "notification_templates_included": false,
+  "notification_templates_deferred": true,
+  "import_candidates": [
+    "packages/ui/tokens.ts",
+    "packages/ui/src/button.tsx",
+    "packages/ui/src/skip-to-main-link.tsx",
+    "packages/ui/src/styles.css"
+  ],
+  "rework_required": [
+    "packages/ui/src/ai-disclosure.tsx",
+    "packages/ui/src/index.ts"
+  ],
+  "defer": [],
+  "do_not_import": [
+    "packages/notification-templates/**",
+    "packages/database/**",
+    "packages/auth/**",
+    "packages/ai-*/**",
+    "packages/audit/**",
+    "packages/types/**",
+    "packages/sdk/**",
+    "apps/**",
+    "frontend-app/**",
+    "scripts/**",
+    "terraform/**",
+    "docs/evidence bulk",
+    "package.json",
+    "lockfile",
+    "workspace config",
+    "broad git add packages",
+    "broad git add packages/ui"
+  ],
+  "minimal_first_import_candidate": [
+    "packages/ui/tokens.ts",
+    "packages/ui/src/button.tsx",
+    "packages/ui/src/skip-to-main-link.tsx",
+    "packages/ui/src/styles.css"
+  ],
+  "ui_manifest": [
+    {
+      "path": "packages/ui/tokens.ts",
+      "bytes": 6078,
+      "sha256": "73cf8c5d95dda904a59dd3b594b9b7f3f1fd1f0da8db2632351421fd93f08bed",
+      "class": "IMPORT_CANDIDATE"
+    },
+    {
+      "path": "packages/ui/src/ai-disclosure.tsx",
+      "bytes": 1238,
+      "sha256": "7dda3a96d72fd138d84fe7669ec51bb6f91a84126684383110e45b53e30379b0",
+      "class": "REWORK_REQUIRED"
+    },
+    {
+      "path": "packages/ui/src/button.tsx",
+      "bytes": 589,
+      "sha256": "a04e168fb422f5d84dee953c33aaa0e763b0c6bacc31f4e5ba44e14f3ab126d9",
+      "class": "IMPORT_CANDIDATE"
+    },
+    {
+      "path": "packages/ui/src/index.ts",
+      "bytes": 217,
+      "sha256": "c1608f02fd273f9ad87bac2fa15d935a3aec19998188a26b2db12b876af0e884",
+      "class": "REWORK_REQUIRED"
+    },
+    {
+      "path": "packages/ui/src/skip-to-main-link.tsx",
+      "bytes": 1331,
+      "sha256": "156c2ca091516df18373d79c452809e20cf010d5042c254a33282e15e6602402",
+      "class": "IMPORT_CANDIDATE"
+    },
+    {
+      "path": "packages/ui/src/styles.css",
+      "bytes": 62,
+      "sha256": "7a8b07838661bed82405f51991a10179ba7782d7c2acaff54777b49f020bae77",
+      "class": "IMPORT_CANDIDATE"
+    }
+  ],
+  "recommended_next_action": "REVIEW_W2D1_UI_FINDINGS_BEFORE_ANY_UI_IMPORT",
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "final_verdict": "CONFORA_REPO_HEALTH_19_AUDIT_ONLY_READY_FOR_REVIEW"
+}
