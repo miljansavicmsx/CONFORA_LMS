@@ -1,0 +1,110 @@
+{
+  "task": "CONFORA_REPO_HEALTH_25_W2D2_NOTIFICATION_TEMPLATES_SOURCE_REVIEW",
+  "based_on_commit": "ed3d09b2",
+  "based_on_commit_full": "ed3d09b25f470663b1fc2f20fd3bf08453aa91de",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "head_at_audit": "ed3d09b2",
+  "remote_contains_head": true,
+  "timestamp": "2026-07-24T15:06:42.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-24T15-06-42-confora-repo-health-25-w2d2-notification-templates-source-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "packages_ui_clean": true,
+  "notification_templates_source_untracked": true,
+  "staged_count": 0,
+  "source_committed": false,
+  "source_imported": false,
+  "git_add_dot_used": false,
+  "emails_sent": false,
+  "external_providers_called": false,
+  "candidate_count": 9,
+  "manifest_closed": true,
+  "secret_pattern_hits": 0,
+  "url_or_network_hits": 0,
+  "pii_tenant_findings_count": 2,
+  "recipient_delivery_findings_count": 0,
+  "workflow_boundary_findings_count": 1,
+  "injection_rendering_findings_count": 2,
+  "i18n_localization_findings_count": 4,
+  "auditability_findings_count": 0,
+  "node_fs_runtime_in_events_ts": true,
+  "large_binary_candidates": [],
+  "compiled_artifacts_present": false,
+  "import_candidates": [
+    "packages/notification-templates/src/event-keys.ts"
+  ],
+  "rework_required": [
+    "packages/notification-templates/src/events.ts",
+    "packages/notification-templates/src/index.ts"
+  ],
+  "defer": [
+    "packages/notification-templates/templates/events/audit.integrity.failed/v1/en.mjml",
+    "packages/notification-templates/templates/events/audit.integrity.failed/v1/hr.mjml",
+    "packages/notification-templates/templates/events/report.mr_monthly_digest/v1/en.mjml",
+    "packages/notification-templates/templates/events/report.mr_monthly_digest/v1/hr.mjml",
+    "packages/notification-templates/templates/standard/v1/en.mjml",
+    "packages/notification-templates/templates/standard/v1/hr.mjml"
+  ],
+  "do_not_import": [
+    "packages/ui/**",
+    "packages/database/**",
+    "packages/auth/**",
+    "packages/ai-*/**",
+    "apps/**",
+    "frontend-app/**",
+    "scripts/**",
+    "terraform/**",
+    "package.json",
+    "lockfile",
+    "workspace config",
+    "broad git add packages",
+    "broad git add packages/notification-templates"
+  ],
+  "minimal_first_import_candidate": [
+    "packages/notification-templates/src/event-keys.ts"
+  ],
+  "classification": [
+    {
+      "path": "packages/notification-templates/src/event-keys.ts",
+      "class": "IMPORT_CANDIDATE"
+    },
+    {
+      "path": "packages/notification-templates/src/events.ts",
+      "class": "REWORK_REQUIRED"
+    },
+    {
+      "path": "packages/notification-templates/src/index.ts",
+      "class": "REWORK_REQUIRED"
+    },
+    {
+      "path": "packages/notification-templates/templates/events/audit.integrity.failed/v1/en.mjml",
+      "class": "DEFER"
+    },
+    {
+      "path": "packages/notification-templates/templates/events/audit.integrity.failed/v1/hr.mjml",
+      "class": "DEFER"
+    },
+    {
+      "path": "packages/notification-templates/templates/events/report.mr_monthly_digest/v1/en.mjml",
+      "class": "DEFER"
+    },
+    {
+      "path": "packages/notification-templates/templates/events/report.mr_monthly_digest/v1/hr.mjml",
+      "class": "DEFER"
+    },
+    {
+      "path": "packages/notification-templates/templates/standard/v1/en.mjml",
+      "class": "DEFER"
+    },
+    {
+      "path": "packages/notification-templates/templates/standard/v1/hr.mjml",
+      "class": "DEFER"
+    }
+  ],
+  "rh24_evidence": "docs/evidence/repo-health/2026-07-24T14-51-53-confora-repo-health-24-full-ui-package-integrity-review",
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "recommended_next_action": "REVIEW_W2D2_FINDINGS_BEFORE_ANY_NOTIFICATION_TEMPLATE_IMPORT",
+  "final_verdict": "CONFORA_REPO_HEALTH_25_AUDIT_ONLY_READY_FOR_REVIEW"
+}
