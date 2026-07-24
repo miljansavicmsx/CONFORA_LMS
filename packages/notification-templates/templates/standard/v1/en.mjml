@@ -1,0 +1,19 @@
+<mjml>
+  <mj-head>
+    <mj-title>CONFORA</mj-title>
+    <mj-attributes>
+      <mj-all font-family="Segoe UI, Arial, sans-serif" />
+      <mj-text font-size="16px" color="#1e293b" line-height="1.5" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#f1f5f9">
+    <mj-section background-color="#ffffff" padding="24px">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="700" color="#4f46e5">CONFORA</mj-text>
+        <mj-text padding-top="8px">{{heading}}</mj-text>
+        <mj-text padding-top="12px">{{bodyText}}</mj-text>
+        <mj-text padding-top="16px" font-size="13px" color="#64748b">{{footer}}</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
