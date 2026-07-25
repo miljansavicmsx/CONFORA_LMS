@@ -48,46 +48,46 @@
   },
   "wallet": {
     "filters": {
-      "all": "All",
-      "examPass": "Exam pass confirmations",
-      "certification": "Person certificates",
-      "active": "Active",
-      "expired": "Expired",
-      "suspended": "Suspended",
-      "revoked": "Revoked"
+      "all": "Sve",
+      "examPass": "Potvrde o položenom ispitu",
+      "certification": "Certifikati osobe",
+      "active": "Aktivni",
+      "expired": "Istekli",
+      "suspended": "Suspendovani",
+      "revoked": "Opozvani"
     },
     "hero": {
-      "eyebrow": "Document trust registry",
-      "title": "My certificates and confirmations",
-      "description": "Overview of exam confirmations and person certificates — with a clear boundary between education, exams, and certification."
+      "eyebrow": "Trust registar dokumenata",
+      "title": "Moji certifikati i potvrde",
+      "description": "Pregled potvrda o ispitu i profesionalnih certifikata osobe — s jasnom granicom između edukacije, ispita i certifikacije."
     },
-    "loading": "Loading documents…",
-    "refresh": "Refresh",
-    "publicVerify": "Public verification",
-    "downloadPdf": "Download PDF",
+    "loading": "Učitavanje dokumenata…",
+    "refresh": "Osvježi",
+    "publicVerify": "Javna provjera",
+    "downloadPdf": "Preuzmi PDF",
     "documentTypes": {
-      "EXAM_PASS_CERTIFICATE": "Exam pass confirmation",
-      "COURSE_COMPLETION_CERTIFICATE": "Education completion confirmation",
-      "PERSON_CERTIFICATION": "Person professional certificate",
-      "default": "Document"
+      "EXAM_PASS_CERTIFICATE": "Potvrda o položenom ispitu",
+      "COURSE_COMPLETION_CERTIFICATE": "Potvrda o završenoj edukaciji",
+      "PERSON_CERTIFICATION": "Profesionalni certifikat osobe",
+      "default": "Dokument"
     },
     "status": {
-      "ISSUED": "Issued",
-      "ACTIVE": "Active",
-      "SUSPENDED": "Suspended",
-      "REVOKED": "Revoked",
-      "EXPIRED": "Expired",
-      "PENDING_ISSUANCE": "Pending issuance",
-      "DRAFT": "Draft",
+      "ISSUED": "Izdat",
+      "ACTIVE": "Aktivan",
+      "SUSPENDED": "Suspendovan",
+      "REVOKED": "Opozvan",
+      "EXPIRED": "Istekao",
+      "PENDING_ISSUANCE": "Izdavanje u toku",
+      "DRAFT": "Nacrt",
       "default": "—"
     },
     "notices": {
-      "confirmationSection": "This confirmation is not an ISO/IEC 17024 person certificate.",
-      "professionalSection": "A person professional certificate is issued only after a separate certification process, competent body decision, and certificate issuance.",
-      "confirmationEmpty": "You have no confirmations yet. They appear after recorded education completion or a passed exam.",
-      "professionalEmpty": "You have no issued person certificate yet. It appears after certification completion and issuance.",
-      "pdfPending": "PDF will be available after document issuance.",
-      "digitalSignatureLocal": "Digital signature is not enabled in the local MVP environment."
+      "confirmationSection": "Ova potvrda nije ISO/IEC 17024 certifikat osobe.",
+      "professionalSection": "Profesionalni certifikat osobe izdaje se tek nakon odvojenog postupka certifikacije, odluke nadležne certifikacione strukture i izdavanja certifikata.",
+      "confirmationEmpty": "Trenutno nemate dostupnih potvrda. Potvrde će se prikazati nakon evidentiranog završetka edukacije ili položenog ispita.",
+      "professionalEmpty": "Trenutno nemate izdat profesionalni certifikat osobe. Certifikat se prikazuje nakon završetka odvojenog postupka certifikacije i izdavanja.",
+      "pdfPending": "PDF će biti dostupan nakon izdavanja dokumenta.",
+      "digitalSignatureLocal": "Digitalni potpis nije aktiviran u lokalnom MVP okruženju."
     }
   }
 }

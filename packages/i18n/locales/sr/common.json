@@ -1,10 +1,10 @@
 {
   "actions": {
-    "retry": "Try again",
-    "refresh": "Refresh",
-    "loading": "Loading…"
+    "retry": "Pokušaj ponovo",
+    "refresh": "Osvježi",
+    "loading": "Učitavanje…"
   },
   "placeholder": {
-    "pagePreparing": "Page is being prepared."
+    "pagePreparing": "Stranica se priprema."
   }
 }
