@@ -1,0 +1,87 @@
+{
+  "task": "CONFORA_REPO_HEALTH_42_APPS_API_AI_PROMPTS_COMPATIBILITY_AUDIT_REVIEW",
+  "based_on_commit": "d15bd2d3",
+  "based_on_commit_full": "d15bd2d3a2c67e3f37af09b883046547610a8928",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "timestamp": "2026-07-25T20:59:10.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-25T20-59-10-confora-repo-health-42-apps-api-ai-prompts-compatibility-audit-review",
+  "audit_only": true,
+  "tracked_working_tree_clean": false,
+  "tracked_working_tree_dirty_note": "Porcelain M on prior RH37–RH41 docs/evidence (line-ending/stat), packages/ai-prompts src (content hash identical to HEAD), packages/i18n/locales/sl/navigation.json (line-ending). No RH42 source edits. Staged empty.",
+  "packages_ai_prompts_clean": false,
+  "packages_ai_prompts_content_matches_head": true,
+  "apps_api_clean": true,
+  "apps_api_tracked_file_count": 20,
+  "apps_api_ai_module_untracked": true,
+  "packages_i18n_clean": false,
+  "packages_ui_clean": true,
+  "notification_templates_closed": true,
+  "hr_mjml_deferred": true,
+  "caller_inventory_closed": true,
+  "get_prompt_bundle_callers": [
+    "apps/api/src/ai/ai-gateway.service.ts#buildMessages"
+  ],
+  "fill_prompt_user_template_callers": [],
+  "fill_template_callers": [
+    "apps/api/src/ai/ai-gateway.service.ts#buildMessages"
+  ],
+  "ai_purpose_values_found": [
+    "chat.educational",
+    "chat.support",
+    "question.generate",
+    "question.explain",
+    "proctoring.video",
+    "proctoring.audio",
+    "risk.suggest",
+    "analysis.exam_result",
+    "content.draft",
+    "translate.i18n"
+  ],
+  "closed_prompt_ids": [
+    "chat.educational",
+    "chat.support",
+    "question.generate",
+    "risk.suggest",
+    "default"
+  ],
+  "non_closed_purpose_values_found": [
+    "question.explain",
+    "proctoring.video",
+    "proctoring.audio",
+    "analysis.exam_result",
+    "content.draft",
+    "translate.i18n"
+  ],
+  "messages_empty_path_exists": true,
+  "compatibility_risk_findings": [
+    "POST /v1/ai/invoke accepts any AiPurpose with optional messages; empty messages calls getPromptBundleV1(purpose) — non-closed IDs throw Error (likely Nest 500)",
+    "course-authoring.service.ts aiDraftLesson/draftTranscriptFromVideo invoke content.draft with input only (no messages) — REWORK_REQUIRED, user-visible failure",
+    "exam-engine.service.ts invokes analysis.exam_result without messages — throws, caught and logged (feature soft-skipped)",
+    "Closed-ID empty-messages path still requires correct fillTemplate placeholders (e.g. chat.educational needs context) or fillTemplate throws"
+  ],
+  "rework_required_files": [
+    "apps/api/src/ai/ai-gateway.service.ts",
+    "apps/api/src/course-authoring/course-authoring.service.ts",
+    "apps/api/src/exam/exam-engine.service.ts"
+  ],
+  "optional_followup_files": [
+    "packages/ai-client/src/index.ts"
+  ],
+  "package_import_remains_valid": true,
+  "packages_ai_prompts_revert_required": false,
+  "requires_package_json_change": false,
+  "requires_lockfile_change": false,
+  "requires_workspace_change": false,
+  "requires_database_or_migration_change": false,
+  "requires_auth_rbac_change": false,
+  "workflow_boundary_blocking_findings": 0,
+  "security_privacy_findings": 0,
+  "secret_pattern_hits": 0,
+  "pii_tenant_findings": 0,
+  "source_staged_after_audit": false,
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "recommended_next_action": "RH43_APPS_API_AI_PROMPTS_COMPATIBILITY_REWORK_EMPTY_MESSAGES_AND_NON_CLOSED_PURPOSES",
+  "final_verdict": "CONFORA_REPO_HEALTH_42_APPS_API_COMPATIBILITY_AUDIT_READY_FOR_REVIEW"
+}
