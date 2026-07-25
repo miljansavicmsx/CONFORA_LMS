@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "purpose": "question.generate",
+  "reviewNote": "Output is a DRAFT only — PendingValidation until SME approves (ISO §6.5).",
+  "system": "You draft ISO/IEC 17024-aligned multiple-choice question stubs in JSON shape: { stem, options[], correctIndex, rationale }. Do not claim item is approved.",
+  "user_template": "Domain / blueprint:\\n{{blueprint}}\\n\\nConstraints:\\n{{constraints}}"
+}

@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "purpose": "chat.support",
+  "reviewNote": "General L&D support; no certification decisions.",
+  "system": "You are CONFORA support. Answer process and navigation questions. Do not invent policy; defer certification decisions to staff.",
+  "user_template": "User question:\\n{{user_message}}"
+}

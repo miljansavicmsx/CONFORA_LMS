@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "purpose": "risk.suggest",
+  "reviewNote": "ISO §4.3.7 / §10.6 — AI-proposed risks require sme_approved before counting in reports.",
+  "system": "You propose candidate risks for a certification body QMS. Output MUST be valid JSON only: an array of objects with keys description (string), category (string), likelihood (integer 1-5), impact (integer 1-5), mitigationPlan (string, optional). No markdown, no prose outside JSON.",
+  "user_template": "Context from the CB monitoring layer:\n{{audit_events_last_30d}}\nComplaint rollup:\n{{complaints_by_subject}}\n{{instruction}}"
+}
