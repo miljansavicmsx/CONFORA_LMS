@@ -1,0 +1,78 @@
+{
+  "task": "CONFORA_REPO_HEALTH_44_REMAINING_SOURCE_PACKAGE_REBASELINE",
+  "based_on_commit": "68f099e0",
+  "based_on_commit_full": "68f099e099c62a93f8fd76aa889e8268baedf87e",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "timestamp": "2026-07-25T22:15:27.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-25T22-15-27-confora-repo-health-44-remaining-source-package-rebaseline",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "source_staged_after_audit": false,
+  "packages_ai_prompts_clean": true,
+  "apps_api_clean": true,
+  "packages_i18n_clean": true,
+  "packages_ui_clean": true,
+  "hr_mjml_deferred": true,
+  "closed_packages": [
+    "packages/config",
+    "packages/shared-types",
+    "packages/shared-kernel",
+    "packages/audit-client",
+    "packages/sdk",
+    "packages/ui",
+    "packages/notification-templates",
+    "packages/i18n",
+    "packages/ai-prompts"
+  ],
+  "remaining_packages": [
+    "packages/ai-client",
+    "packages/ai-governance",
+    "packages/audit",
+    "packages/auth",
+    "packages/database",
+    "packages/types"
+  ],
+  "safe_audit_next": [
+    "packages/ai-client"
+  ],
+  "review_required": [
+    "packages/database",
+    "apps/api (canonical AI source import/restore before RH43)"
+  ],
+  "rework_required": [],
+  "defer": [
+    "packages/notification-templates HR MJML (3 files)",
+    "packages/ai-governance (README stub)",
+    "packages/audit (README stub)",
+    "packages/auth (README stub)",
+    "packages/types (README stub)",
+    "RH43 apps/api AI prompts compatibility rework"
+  ],
+  "do_not_import": [
+    "apps/api/dist/**",
+    "apps/api/coverage/**",
+    "**/node_modules/**",
+    "**/.turbo/**",
+    "packages/**/dist/**",
+    "untracked apps/* wholesale without controlled import evidence",
+    "terraform/** / infra/** / backend/** without architecture review"
+  ],
+  "apps_api_tracked_src_file_count": 10,
+  "apps_api_ai_source_present": false,
+  "rh43_rework_currently_blocked": true,
+  "generated_or_stale_artifacts_present": true,
+  "packages_ai_prompts_revert_required": false,
+  "secret_pattern_hits": 0,
+  "url_or_network_hits": 0,
+  "pii_tenant_findings": 0,
+  "large_binary_or_vendor_risks": [
+    "apps/api/dist and coverage (ignored, untracked, stale AI mirrors)",
+    "packages/*/node_modules and dist on disk (ignored)",
+    "packages/database node_modules/.turbo present on disk"
+  ],
+  "recommended_next_action": "SAFE_AUDIT_NEXT_PACKAGES_AI_CLIENT_KEEP_RH43_BLOCKED_UNTIL_APPS_API_AI_SOURCE_IMPORT",
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "final_verdict": "CONFORA_REPO_HEALTH_44_REBASELINE_READY_FOR_REVIEW"
+}
