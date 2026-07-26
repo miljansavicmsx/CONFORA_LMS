@@ -1,0 +1,38 @@
+{
+  "task": "R0-1B2.1",
+  "branch": "governance/r0-1b2-1-architecture-sot",
+  "integration_base": "fb90ddd9e3bcdca3f266e9a9b09097d6c9da74dc",
+  "planning_commit": "76cc7e3dd6d87865b09dd669dc2df0515f35308b",
+  "normative_commit": "d9f979598976417ad44eeab9ae3dd23efeb6e020",
+  "evidence_commit": "PENDING_SEE_FINAL_REPORT",
+  "normative_files": [
+    "docs/architecture/ARCHITECTURE.md",
+    "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+    "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+    "docs/architecture/MULTI_TENANCY_STANDARD.md",
+    "docs/architecture/SHARED_KERNEL_STANDARD.md",
+    "docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+    "docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md"
+  ],
+  "oq": {
+    "OQ-3": "OPEN",
+    "OQ-4": "OPEN",
+    "OQ-5": "DIRECTIONAL",
+    "OQ-6": "MERGED_WITH_CONDITIONS",
+    "OQ-7": "OPEN"
+  },
+  "c03": "OPEN",
+  "attribution": {
+    "author": "miljansavic13 <miljan.savic13@gmail.com>",
+    "github_actor": "miljansavicmsx",
+    "independent_reviewer": "PENDING"
+  },
+  "link_validation": {
+    "md_checked": 0,
+    "md_broken": 0,
+    "path_checked": 0,
+    "path_issues": 0,
+    "path_issue_list": []
+  },
+  "verdict_expected": "READY FOR INDEPENDENT REVIEW"
+}

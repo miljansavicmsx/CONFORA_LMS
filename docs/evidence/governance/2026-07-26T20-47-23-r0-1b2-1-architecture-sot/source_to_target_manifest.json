@@ -1,0 +1,38 @@
+{
+  "transformations": [
+    {
+      "source": "docs/architecture/STRUCTURE.md",
+      "target": "docs/architecture/ARCHITECTURE.md",
+      "source_left_untracked": true
+    },
+    {
+      "source": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "target": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "in_place_rebaseline": true
+    },
+    {
+      "source": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "target": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "in_place_rebaseline": true
+    },
+    {
+      "source": "docs/MULTI_TENANCY_STANDARD.md",
+      "target": "docs/architecture/MULTI_TENANCY_STANDARD.md",
+      "source_left_untracked": true
+    },
+    {
+      "source": "docs/SHARED_KERNEL_STANDARD.md",
+      "target": "docs/architecture/SHARED_KERNEL_STANDARD.md",
+      "source_left_untracked": true
+    },
+    {
+      "source": "docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "target": "docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "source_left_untracked": true
+    },
+    {
+      "source": "new",
+      "target": "docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md"
+    }
+  ]
+}
