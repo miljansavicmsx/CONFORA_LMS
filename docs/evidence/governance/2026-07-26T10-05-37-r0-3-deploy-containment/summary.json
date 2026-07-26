@@ -1,0 +1,89 @@
+{
+  "task": "R0-3_DEPLOYMENT_SAFETY_CONTAINMENT",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T10-05-37-r0-3-deploy-containment",
+  "based_on_commit": "e27cdc05",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "changed_files": [
+    ".github/workflows/deploy-backend.yml"
+  ],
+  "workflows_inspected": [
+    "accessibility.yml",
+    "backend-nightly.yml",
+    "backend-tests.yml",
+    "ci.yml",
+    "confora-qa.yml",
+    "deploy-backend.yml",
+    "f4-frontend-cutover-gate.yml",
+    "release-candidate.yml"
+  ],
+  "workflows_modified": [
+    "deploy-backend.yml"
+  ],
+  "automatic_production_deploy_on_push_main_removed": true,
+  "automatic_production_deploy_on_tags_removed": true,
+  "manual_dispatch_only": true,
+  "confirm_production_input_required": true,
+  "confirm_token": "DEPLOY_PRODUCTION",
+  "github_environment_gate": "production",
+  "tracked_path_preflight": true,
+  "backend_tracked_file_count_at_validation": 0,
+  "gate_fail_closed_with_untracked_backend": true,
+  "redirected_to_other_backend": false,
+  "application_code_modified": false,
+  "schemas_modified": false,
+  "migrations_modified": false,
+  "runtime_configuration_modified": false,
+  "yaml_syntax_valid": true,
+  "actionlint_available": false,
+  "rollback_documented": true,
+  "other_ci_untracked_path_issues_deferred_to": "R0-7",
+  "github_environment_reviewers_configured_in_ui": true,
+  "github_environment_required_reviewer_count": 1,
+  "github_environment_prevent_self_review": true,
+  "github_environment_verification_files": [
+    "GITHUB_ENVIRONMENT_VERIFICATION.md",
+    "github_environment_verification.json"
+  ],
+  "pr_number": 1,
+  "pr_draft": true,
+  "pr_merged": false,
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "independent_review": {
+    "completed": true,
+    "date_utc": "2026-07-26",
+    "verdict": "GO_WITH_CONDITIONS",
+    "critical_findings": 0,
+    "high_findings": 2,
+    "medium_findings": 4,
+    "low_findings": 3,
+    "observations": 3,
+    "report": "INDEPENDENT_REVIEW.md"
+  },
+  "owner_decisions": {
+    "recorded": true,
+    "register": "OWNER_DECISIONS.md",
+    "OD-R03-1": "Admin bypass accepted as temporary residual risk (RA-R03-1); can_admins_bypass remains true; settings change not authorized in recording task; exit: independent release reviewer + can_admins_bypass=false before production deployment enabled",
+    "OD-R03-2": "Empty custom deployment-branch allowlist kept as intentional temporary deny-all; not populated; exit tied to OQ-3 + approved tracked source + decided pattern + independent policy review",
+    "OD-R03-3": "OQ-3 remains open; no canonical backend selected, no backend/ approval, no apps/api redirect, no deployment authorized",
+    "OD-R03-4": "R0-7 remains approved task for repairing other CI workflows referencing untracked paths",
+    "OD-R03-5": "PR #1 mergeable only as deployment-safety containment control; merge is not production readiness, go-live, OQ-3 closure, backend approval, or accreditation/DPO/legal/security approval"
+  },
+  "risk_acceptance": {
+    "register": "RISK_ACCEPTANCE.md",
+    "accepted_risks": ["RA-R03-1 admin bypass (temporary)"],
+    "RA-R03-1_review_date": "2026-08-26",
+    "permanent_acceptances": 0
+  },
+  "can_admins_bypass_at_recording": true,
+  "branch_allowlist_deny_all_documented": true,
+  "final_verdict": "GO_WITH_CONDITIONS",
+  "conditions": [
+    "Execute OD-R03-1 exit: independent release reviewer + can_admins_bypass=false before enabling production deployment",
+    "OD-R03-2 allowlist stays empty (deny-all) until OQ-3 + approved tracked source + independent policy review",
+    "R0-7 must still reconstruct non-deploy CI jobs that reference untracked paths",
+    "Production Lambda deploy remains blocked until backend/ is tracked per OQ-3",
+    "Merge of PR #1 interpreted strictly per OD-R03-5 (containment only)"
+  ]
+}
