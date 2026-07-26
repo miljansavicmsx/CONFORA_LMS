@@ -36,9 +36,9 @@ Production auto-deploy from untracked `backend/` is contained. Remaining non-dep
 
 ## Conditions (explicit)
 
-1. **GitHub Environment `production`:** Required reviewers — **VERIFIED** after UI configuration (see `GITHUB_ENVIRONMENT_VERIFICATION.md` / `github_environment_verification.json`). Remaining: empty named branch-policy allowlist (PARTIALLY VERIFIED), `can_admins_bypass=true`, independent reviewer GO.  
-2. **R0-7:** Other workflows (`ci.yml`, `accessibility.yml`, `backend-tests.yml`, etc.) still reference untracked paths; they do **not** deploy Lambda/production API but remain broken on fresh clone.  
-3. **Deploy remains impossible today** until `backend/` is tracked (OQ-3) — by design (workflow fail-closed + empty branch allowlist).
+1. **GitHub Environment `production`:** Required reviewers — **VERIFIED** after UI configuration (see `GITHUB_ENVIRONMENT_VERIFICATION.md` / `github_environment_verification.json`). Empty named branch-policy allowlist is now recorded as an **intentional temporary deny-all control** (OD-R03-2); `can_admins_bypass=true` is a **temporarily accepted residual risk** (OD-R03-1 / RA-R03-1).  
+2. **R0-7:** Other workflows (`ci.yml`, `accessibility.yml`, `backend-tests.yml`, etc.) still reference untracked paths; they do **not** deploy Lambda/production API but remain broken on fresh clone (OD-R03-4).  
+3. **Deploy remains impossible today** until `backend/` is tracked (OQ-3) — by design (workflow fail-closed + empty branch allowlist; OD-R03-3).
 
 ## Acceptance checklist
 
@@ -60,8 +60,18 @@ See:
 - `GITHUB_ENVIRONMENT_VERIFICATION.md`
 - `github_environment_verification.json`
 
-Draft PR #1 remains open for **independent review**; this evidence does not merge or mark the PR ready.
+## Independent review and owner decisions (addendum)
+
+The independent review of Draft PR #1 concluded **GO WITH CONDITIONS**. Owner decisions OD-R03-1 through OD-R03-5 are recorded; the sole accepted residual risk (admin bypass, temporary) is registered with a review date.
+
+See:
+
+- `INDEPENDENT_REVIEW.md` — full review, severity findings, acceptance table, verdict
+- `OWNER_DECISIONS.md` — OD-R03-1 … OD-R03-5 (decision, rationale, owner, date, residual risk, exit criteria)
+- `RISK_ACCEPTANCE.md` — RA-R03-1 (admin bypass; temporary, expires 2026-08-26)
+
+PR #1 remains a Draft; merging it is authorized **only** as a deployment-safety containment control (OD-R03-5).
 
 ## Claims not made
 
-No production readiness, external pilot, DPO/legal, security-delegate, or accreditation approval is claimed. R0-3 is **not** fully closed without independent reviewer GO.
+No production readiness, external pilot, DPO/legal, security-delegate, or accreditation approval is claimed. Merge of PR #1 does not close OQ-3, approve any backend as canonical, or authorize production deployment.

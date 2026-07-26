@@ -50,12 +50,40 @@
   "external_pilot_claimed": false,
   "security_delegate_claimed": false,
   "dpo_legal_claimed": false,
-  "final_verdict": "READY_FOR_INDEPENDENT_REVIEW",
+  "independent_review": {
+    "completed": true,
+    "date_utc": "2026-07-26",
+    "verdict": "GO_WITH_CONDITIONS",
+    "critical_findings": 0,
+    "high_findings": 2,
+    "medium_findings": 4,
+    "low_findings": 3,
+    "observations": 3,
+    "report": "INDEPENDENT_REVIEW.md"
+  },
+  "owner_decisions": {
+    "recorded": true,
+    "register": "OWNER_DECISIONS.md",
+    "OD-R03-1": "Admin bypass accepted as temporary residual risk (RA-R03-1); can_admins_bypass remains true; settings change not authorized in recording task; exit: independent release reviewer + can_admins_bypass=false before production deployment enabled",
+    "OD-R03-2": "Empty custom deployment-branch allowlist kept as intentional temporary deny-all; not populated; exit tied to OQ-3 + approved tracked source + decided pattern + independent policy review",
+    "OD-R03-3": "OQ-3 remains open; no canonical backend selected, no backend/ approval, no apps/api redirect, no deployment authorized",
+    "OD-R03-4": "R0-7 remains approved task for repairing other CI workflows referencing untracked paths",
+    "OD-R03-5": "PR #1 mergeable only as deployment-safety containment control; merge is not production readiness, go-live, OQ-3 closure, backend approval, or accreditation/DPO/legal/security approval"
+  },
+  "risk_acceptance": {
+    "register": "RISK_ACCEPTANCE.md",
+    "accepted_risks": ["RA-R03-1 admin bypass (temporary)"],
+    "RA-R03-1_review_date": "2026-08-26",
+    "permanent_acceptances": 0
+  },
+  "can_admins_bypass_at_recording": true,
+  "branch_allowlist_deny_all_documented": true,
+  "final_verdict": "GO_WITH_CONDITIONS",
   "conditions": [
-    "Independent reviewer GO on Draft PR #1",
-    "Document or populate intended deployment-branch allowlist (custom mode on; named entries count 0)",
-    "Optionally disable or justify can_admins_bypass=true",
+    "Execute OD-R03-1 exit: independent release reviewer + can_admins_bypass=false before enabling production deployment",
+    "OD-R03-2 allowlist stays empty (deny-all) until OQ-3 + approved tracked source + independent policy review",
     "R0-7 must still reconstruct non-deploy CI jobs that reference untracked paths",
-    "Production Lambda deploy remains blocked until backend/ is tracked per OQ-3"
+    "Production Lambda deploy remains blocked until backend/ is tracked per OQ-3",
+    "Merge of PR #1 interpreted strictly per OD-R03-5 (containment only)"
   ]
 }
