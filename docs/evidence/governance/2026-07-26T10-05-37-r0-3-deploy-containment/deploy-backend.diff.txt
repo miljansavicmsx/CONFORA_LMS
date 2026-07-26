@@ -1,0 +1,120 @@
+﻿diff --git a/.github/workflows/deploy-backend.yml b/.github/workflows/deploy-backend.yml
+index 063d2f00..aa1ad0f4 100644
+--- a/.github/workflows/deploy-backend.yml
++++ b/.github/workflows/deploy-backend.yml
+@@ -1,11 +1,41 @@
++# CONFORA R0-3 ΓÇö Deployment Safety Containment
++#
++# BEFORE (unsafe):
++#   - Triggered automatically on push to `main` and on tags `v*.*.*`
++#   - Bundled and deployed `backend/` even though that tree is not tracked in git
++#   - Updated AWS Lambda `confora-lms-api` and smoked https://api.confora.io
++#
++# AFTER (contained):
++#   - No automatic production deployment on push or tag
++#   - Explicit workflow_dispatch only
++#   - GitHub Environment `production` approval gate (configure required reviewers in repo settings)
++#   - Fail-closed preflight: refuses to deploy unless `backend/` has tracked files
++#   - Does NOT redirect deployment to Nest/apps/api or any other backend
++#
++# Rollback:
++#   - Revert this file to the previous commit (copy also in evidence before/)
++#   - Or restore from git history: git show <pre-r0-3-sha>:.github/workflows/deploy-backend.yml
++#
++# Related: docs/evidence/governance/*-r0-3-deploy-containment/
++
+ name: Deploy backend (Lambda)
+ 
+ on:
+-  push:
+-    branches:
+-      - main
+-    tags:
+-      - "v*.*.*"
++  workflow_dispatch:
++    inputs:
++      confirm_production:
++        description: "Type exactly DEPLOY_PRODUCTION to proceed"
++        required: true
++        type: string
++      deploy_reason:
++        description: "Change ticket / reason for production deploy"
++        required: true
++        type: string
++      ref_note:
++        description: "Optional note (release tag, commit intent)"
++        required: false
++        type: string
++        default: ""
+ 
+ concurrency:
+   group: deploy-backend-${{ github.ref }}
+@@ -21,10 +51,68 @@ env:
+ jobs:
+   deploy:
+     runs-on: ubuntu-latest
++    # Manual production gate: configure Environment "production" in GitHub
++    # Settings ΓåÆ Environments ΓåÆ Required reviewers / wait timer / deployment branches.
++    environment:
++      name: production
++      url: https://api.confora.io
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+ 
++      - name: Verify explicit production confirmation
++        env:
++          CONFIRM: ${{ inputs.confirm_production }}
++          REASON: ${{ inputs.deploy_reason }}
++        run: |
++          set -euo pipefail
++          if [ "${CONFIRM}" != "DEPLOY_PRODUCTION" ]; then
++            echo "::error::Refusing deploy: confirm_production must be exactly DEPLOY_PRODUCTION (got: '${CONFIRM}')"
++            exit 1
++          fi
++          if [ -z "${REASON// }" ]; then
++            echo "::error::Refusing deploy: deploy_reason is required"
++            exit 1
++          fi
++          echo "Confirmation accepted. Reason: ${REASON}"
++          if [ -n "${{ inputs.ref_note }}" ]; then
++            echo "Ref note: ${{ inputs.ref_note }}"
++          fi
++
++      - name: Fail-closed ΓÇö backend must be tracked and present
++        id: backend_gate
++        run: |
++          set -euo pipefail
++          if [ ! -d backend ]; then
++            echo "::error::Refusing deploy: directory backend/ is missing from the checkout"
++            exit 1
++          fi
++          TRACKED_COUNT="$(git ls-files -- backend | wc -l | tr -d ' ')"
++          echo "tracked_backend_files=${TRACKED_COUNT}" >> "$GITHUB_OUTPUT"
++          echo "Tracked files under backend/: ${TRACKED_COUNT}"
++          if [ "${TRACKED_COUNT}" = "0" ]; then
++            echo "::error::Refusing deploy: backend/ has zero tracked files in git."
++            echo "::error::Production deployment of untracked paths is prohibited (R0-3)."
++            echo "::error::Do not redirect this workflow to another backend; restore/track backend/ first or use a separate approved pipeline."
++            exit 1
++          fi
++          for required in \
++            backend/requirements.txt \
++            backend/lambda_handler.py \
++            backend/main.py \
++            backend/config.py
++          do
++            if [ ! -f "${required}" ]; then
++              echo "::error::Refusing deploy: required file missing: ${required}"
++              exit 1
++            fi
++            if ! git ls-files --error-unmatch "${required}" >/dev/null 2>&1; then
++              echo "::error::Refusing deploy: required file is not tracked: ${required}"
++              exit 1
++            fi
++          done
++          echo "Backend tracked-path gate passed."
++
+       - name: Set up Python 3.12
+         uses: actions/setup-python@v5
+         with:

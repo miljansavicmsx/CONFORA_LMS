@@ -1,0 +1,50 @@
+{
+  "task": "R0-3_DEPLOYMENT_SAFETY_CONTAINMENT",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T10-05-37-r0-3-deploy-containment",
+  "based_on_commit": "e27cdc05",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "changed_files": [
+    ".github/workflows/deploy-backend.yml"
+  ],
+  "workflows_inspected": [
+    "accessibility.yml",
+    "backend-nightly.yml",
+    "backend-tests.yml",
+    "ci.yml",
+    "confora-qa.yml",
+    "deploy-backend.yml",
+    "f4-frontend-cutover-gate.yml",
+    "release-candidate.yml"
+  ],
+  "workflows_modified": [
+    "deploy-backend.yml"
+  ],
+  "automatic_production_deploy_on_push_main_removed": true,
+  "automatic_production_deploy_on_tags_removed": true,
+  "manual_dispatch_only": true,
+  "confirm_production_input_required": true,
+  "confirm_token": "DEPLOY_PRODUCTION",
+  "github_environment_gate": "production",
+  "tracked_path_preflight": true,
+  "backend_tracked_file_count_at_validation": 0,
+  "gate_fail_closed_with_untracked_backend": true,
+  "redirected_to_other_backend": false,
+  "application_code_modified": false,
+  "schemas_modified": false,
+  "migrations_modified": false,
+  "runtime_configuration_modified": false,
+  "yaml_syntax_valid": true,
+  "actionlint_available": false,
+  "rollback_documented": true,
+  "other_ci_untracked_path_issues_deferred_to": "R0-7",
+  "github_environment_reviewers_configured_in_ui": null,
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "final_verdict": "GO_WITH_CONDITIONS",
+  "conditions": [
+    "Configure GitHub Environment 'production' with required reviewers in repo Settings",
+    "R0-7 must still reconstruct non-deploy CI jobs that reference untracked paths",
+    "Production Lambda deploy remains blocked until backend/ is tracked per OQ-3"
+  ]
+}

@@ -1,0 +1,96 @@
+name: Deploy backend (Lambda)
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+
+concurrency:
+  group: deploy-backend-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
+  LAMBDA_FUNCTION_NAME: ${{ vars.LAMBDA_FUNCTION_NAME || 'confora-lms-api' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies and bundle app
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          rm -rf build
+          mkdir -p build
+          pip install --upgrade pip
+          pip install -r requirements.txt -t build/
+          cp lambda_handler.py main.py config.py build/
+          cp -r routers services build/
+          cd build
+          zip -r ../function.zip . -q
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update Lambda function code
+        working-directory: backend
+        run: |
+          aws lambda update-function-code \
+            --function-name "${LAMBDA_FUNCTION_NAME}" \
+            --zip-file fileb://function.zip \
+            --publish
+
+      - name: Wait for Lambda update
+        run: |
+          aws lambda wait function-updated-v2 \
+            --function-name "${LAMBDA_FUNCTION_NAME}"
+
+      - name: Smoke test (health)
+        id: smoke
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: |
+          set -euo pipefail
+          BASE="${API_BASE_URL:-https://api.confora.io}"
+          BASE="${BASE%/}"
+          echo "Checking ${BASE}/health"
+          curl -sS -f --max-time 30 "${BASE}/health" | grep -q '"status"'
+
+      - name: Notify Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ -z "${SLACK_WEBHOOK_URL}" ]; then
+            echo "SLACK_WEBHOOK_URL not set; skipping Slack."
+            exit 0
+          fi
+          if [ "${JOB_STATUS}" = "success" ]; then
+            MSG=":white_check_mark: CONFORA LMS API deploy succeeded (${{ github.ref_name }} @ ${{ github.sha }})"
+          else
+            MSG=":x: CONFORA LMS API deploy FAILED (${{ github.ref_name }} @ ${{ github.sha }}, status=${JOB_STATUS})"
+          fi
+          curl -sS -X POST -H 'Content-type: application/json' \
+            -d "{\"text\":$(printf '%s' "$MSG" | jq -Rs .)}" \
+            "${SLACK_WEBHOOK_URL}"
