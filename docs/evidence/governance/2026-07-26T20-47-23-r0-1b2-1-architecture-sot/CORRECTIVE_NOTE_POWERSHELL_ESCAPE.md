@@ -5,3 +5,6 @@ Initial normative commit `d9f97959` was authored via PowerShell here-strings tha
 - interpreted `\a` / `\f` escapes (corrupting `apps/` and `frontend-app`).
 
 Corrective commit(s) rewrite the seven normative files using a Python file writer (no PowerShell string escaping). Independent review should treat the tip after corrective commits as the review target.
+
+Additional fix: LEGACY_DEPRECATION_MATRIX.md rewritten after partial rewrite failure.
+
