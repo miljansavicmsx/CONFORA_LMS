@@ -1,0 +1,101 @@
+{
+  "task": "CONFORA_REPO_HEALTH_47_POST_W2G_REMAINING_DEFERRED_ITEMS_REBASELINE",
+  "based_on_commit": "40f80e97",
+  "based_on_commit_full": "40f80e97f476ff100707ef2adbf97752452f7f4d",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "timestamp": "2026-07-26T07:37:22.000Z",
+  "evidenceDir": "docs/evidence/repo-health/2026-07-26T07-37-22-confora-repo-health-47-post-w2g-remaining-deferred-items-rebaseline",
+  "audit_only": true,
+  "tracked_working_tree_clean": true,
+  "tracked_working_tree_note": "git status --porcelain -uno on packages/ai-prompts, apps/api, packages/i18n, packages/ui, packages/ai-client shows no tracked modifications. Prior docs/evidence packs remain porcelain-noise M (line-ending/stat) with content identical to HEAD; nothing staged.",
+  "source_staged_after_audit": false,
+  "packages_ai_client_tracked_file_count": 5,
+  "packages_ai_client_generated_deferred": true,
+  "packages_ai_client_generated_untracked": [
+    "packages/ai-client/src/index.d.ts",
+    "packages/ai-client/src/index.js",
+    "packages/ai-client/src/index.js.map"
+  ],
+  "hr_mjml_deferred": true,
+  "hr_mjml_files": [
+    "packages/notification-templates/templates/events/audit.integrity.failed/v1/hr.mjml",
+    "packages/notification-templates/templates/events/report.mr_monthly_digest/v1/hr.mjml",
+    "packages/notification-templates/templates/standard/v1/hr.mjml"
+  ],
+  "packages_ai_prompts_clean": true,
+  "apps_api_clean": true,
+  "packages_i18n_clean": true,
+  "packages_ui_clean": true,
+  "rh43_apps_api_rework_still_blocked": true,
+  "closed_packages": [
+    "packages/config",
+    "packages/shared-types",
+    "packages/shared-kernel",
+    "packages/audit-client",
+    "packages/sdk",
+    "packages/ui",
+    "packages/notification-templates (source + EN MJML)",
+    "packages/i18n",
+    "packages/ai-prompts",
+    "packages/ai-client (source subset)"
+  ],
+  "tracked_package_roots": [
+    "ai-client",
+    "ai-prompts",
+    "audit-client",
+    "config",
+    "i18n",
+    "notification-templates",
+    "sdk",
+    "shared-kernel",
+    "shared-types",
+    "ui"
+  ],
+  "deferred_items": [
+    "packages/ai-client/src/index.d.ts",
+    "packages/ai-client/src/index.js",
+    "packages/ai-client/src/index.js.map",
+    "packages/notification-templates/templates/events/audit.integrity.failed/v1/hr.mjml",
+    "packages/notification-templates/templates/events/report.mr_monthly_digest/v1/hr.mjml",
+    "packages/notification-templates/templates/standard/v1/hr.mjml",
+    "packages/ai-governance/README.md (stub)",
+    "packages/audit/README.md (stub)",
+    "packages/auth/README.md (stub)",
+    "packages/types/README.md (stub)"
+  ],
+  "do_not_import": [
+    "packages/ai-client/src/index.d.ts",
+    "packages/ai-client/src/index.js",
+    "packages/ai-client/src/index.js.map",
+    "packages/*/node_modules/**",
+    "packages/*/dist/**",
+    "**/.turbo/**"
+  ],
+  "safe_audit_next": [
+    "packages/notification-templates HR MJML localization rework (small, bounded)"
+  ],
+  "review_required": [
+    "packages/database (75 untracked files: package.json + src + prisma + node_modules) — DB/migration high-risk",
+    "apps/** (74 untracked)",
+    "backend/** (338 untracked)",
+    "frontend-app/** (787 untracked)",
+    "frontend-public/** (72 untracked)",
+    "infra/** (33 untracked)",
+    "infrastructure/** (39 untracked)",
+    "tests/** (58 untracked)",
+    "tools/** (5 untracked)",
+    "prisma/** (1 untracked)"
+  ],
+  "thin_stub_roots": [
+    "packages/ai-governance (README.md only)",
+    "packages/audit (README.md only)",
+    "packages/auth (README.md only)",
+    "packages/types (README.md only)"
+  ],
+  "accidental_staging_risk": "HIGH",
+  "recommended_next_action": "RH48_NOTIFICATION_TEMPLATES_HR_MJML_LOCALIZATION_AUDIT_THEN_REWORK_OR_GENERATED_ARTIFACT_GITIGNORE_HYGIENE",
+  "external_pilot_claimed": false,
+  "security_delegate_claimed": false,
+  "dpo_legal_claimed": false,
+  "final_verdict": "CONFORA_REPO_HEALTH_47_REBASELINE_READY_FOR_REVIEW"
+}
