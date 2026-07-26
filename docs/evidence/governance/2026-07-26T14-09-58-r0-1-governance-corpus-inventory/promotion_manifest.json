@@ -1,0 +1,285 @@
+{
+  "task": "R0-1A_PROMOTION_MANIFEST",
+  "status": "PROPOSED — awaiting owner approval before R0-1B execution",
+  "do_not_execute_in_r0_1a": true,
+  "exclude_from_r0_1": [
+    ".cursor/rules/**",
+    "application code",
+    "workflows",
+    "schemas",
+    "migrations"
+  ],
+  "waves": [
+    {
+      "wave": "A_AUTHORITY_CHAIN",
+      "description": "Minimum tracked authority chain to close C-01 under OQ-1",
+      "items": [
+        {
+          "id": "GOV-001",
+          "from": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+          "to": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "GOV-002",
+          "from": "docs/governance/GOVERNANCE_HIERARCHY.md",
+          "to": "docs/governance/GOVERNANCE_HIERARCHY.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-003",
+          "from": "docs/governance/CONFORA_ROLE_FUNCTION_PERMISSION_MATRIX.md",
+          "to": "docs/governance/ROLE_AND_SOD_MATRIX.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "GOV-004",
+          "from": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+          "to": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-005",
+          "from": "docs/governance/ADR_ALIGNMENT_NOTE.md",
+          "to": "docs/governance/ADR_ALIGNMENT_NOTE.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-006",
+          "from": "docs/governance/CONFLICT_ANALYSIS_REPORT.md",
+          "to": "docs/governance/CONFLICT_ANALYSIS_REPORT.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-007",
+          "from": "docs/governance/GOVERNANCE_INTEGRATION_REPORT.md",
+          "to": "docs/governance/GOVERNANCE_INTEGRATION_REPORT.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-008",
+          "from": "docs/governance/TECH_DEBT.md",
+          "to": "docs/governance/TECH_DEBT.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-009",
+          "from": "docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+          "to": "docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-010",
+          "from": "docs/governance/LEGAL_PRIVACY_PRECONDITIONS.md",
+          "to": "docs/governance/LEGAL_PRIVACY_PRECONDITIONS.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-011",
+          "from": "docs/governance/CLOUD_STAGING_PRECONDITIONS.md",
+          "to": "docs/governance/CLOUD_STAGING_PRECONDITIONS.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "GOV-012",
+          "from": "docs/governance/LOCAL_RELEASE_CANDIDATE_LOCK.md",
+          "to": "docs/governance/LOCAL_RELEASE_CANDIDATE_LOCK.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "ARCH-001",
+          "from": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+          "to": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ARCH-002",
+          "from": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+          "to": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ARCH-003",
+          "from": "docs/architecture/STRUCTURE.md",
+          "to": "docs/architecture/ARCHITECTURE.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ADR-001",
+          "from": "docs/architecture/decisions/ADR-001-frontend.md",
+          "to": "docs/architecture/adrs/ADR-001-frontend.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ADR-002",
+          "from": "docs/architecture/decisions/ADR-002-backend.md",
+          "to": "docs/architecture/adrs/ADR-002-backend.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ADR-003",
+          "from": "docs/architecture/decisions/ADR-003-database.md",
+          "to": "docs/architecture/adrs/ADR-003-database.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "ADR-004",
+          "from": "docs/architecture/decisions/ADR-004-vector-search.md",
+          "to": "docs/architecture/adrs/ADR-004-vector-search.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "ADR-005",
+          "from": "docs/architecture/decisions/ADR-005-authentication.md",
+          "to": "docs/architecture/adrs/ADR-005-authentication.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ADR-006",
+          "from": "docs/architecture/decisions/ADR-006-ai-governance.md",
+          "to": "docs/architecture/adrs/ADR-006-ai-governance.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "ADR-007",
+          "from": "docs/architecture/decisions/ADR-007-audit-architecture.md",
+          "to": "docs/architecture/adrs/ADR-007-audit-architecture.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        },
+        {
+          "id": "ADR-README",
+          "from": "docs/architecture/decisions/README.md",
+          "to": "docs/architecture/adrs/README.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "STD-001",
+          "from": "docs/MULTI_TENANCY_STANDARD.md",
+          "to": "docs/architecture/MULTI_TENANCY_STANDARD.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "STD-003",
+          "from": "docs/SHARED_KERNEL_STANDARD.md",
+          "to": "docs/architecture/SHARED_KERNEL_STANDARD.md",
+          "classification": "PROMOTE_AS_IS"
+        },
+        {
+          "id": "STD-004",
+          "from": "docs/AI_GOVERNANCE_MODEL.md",
+          "to": "docs/governance/AI_GOVERNANCE.md",
+          "classification": "PROMOTE_WITH_REBASELINE"
+        }
+      ]
+    },
+    {
+      "wave": "B_EVIDENCE_PACKAGES",
+      "description": "Track previously untracked governance evidence packages",
+      "items": [
+        {
+          "id": "EV-REBASELINE",
+          "from": "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline/",
+          "to": "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline/",
+          "classification": "RETAIN_AS_EVIDENCE_ONLY"
+        },
+        {
+          "id": "EV-OWNERPKG",
+          "from": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/",
+          "to": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/",
+          "classification": "RETAIN_AS_EVIDENCE_ONLY"
+        }
+      ]
+    },
+    {
+      "wave": "C_COMPLIANCE_AND_SECURITY_MERGE",
+      "description": "Owner-approved merges into compliance/ and SECURITY_ARCHITECTURE",
+      "depends_on_owner_decisions": [
+        "OD-R01-ISO17024-MERGE",
+        "OD-R01-TRACEABILITY-MERGE",
+        "OD-R01-SECURITY-ARCHITECTURE",
+        "OD-R01-AI-COMPANIONS"
+      ],
+      "items": [
+        "STD-002",
+        "STD-005",
+        "STD-006",
+        "STD-007",
+        "STD-008",
+        "CMP-001",
+        "CMP-002",
+        "CMP-003",
+        "CMP-004",
+        "CMP-005",
+        "CMP-006",
+        "CMP-007",
+        "CMP-008",
+        "CMP-009",
+        "CMP-010",
+        "CMP-011",
+        "SEC-001"
+      ]
+    },
+    {
+      "wave": "D_AUTHOR_MISSING",
+      "description": "Author missing constitution/change-control/templates/mappings in R0-1B",
+      "items": [
+        "CMP-010",
+        "CMP-011",
+        "MISS-001",
+        "MISS-002",
+        "MISS-003",
+        "MISS-004",
+        "MISS-005",
+        "MISS-006",
+        "MISS-007"
+      ]
+    },
+    {
+      "wave": "E_OPTIONAL_GSERIES",
+      "description": "Optional promote of G3–G6 analysis docs if owner upgrades from evidence-only",
+      "default": "RETAIN_AS_EVIDENCE_ONLY / leave untracked until decided",
+      "items": [
+        "GSERIES-01",
+        "GSERIES-02",
+        "GSERIES-03",
+        "GSERIES-04",
+        "GSERIES-05",
+        "GSERIES-06",
+        "GSERIES-07",
+        "GSERIES-08",
+        "GSERIES-09",
+        "GSERIES-10",
+        "GSERIES-11",
+        "GSERIES-12",
+        "GSERIES-13",
+        "GSERIES-14",
+        "GSERIES-15",
+        "GSERIES-16",
+        "GSERIES-17",
+        "GSERIES-18",
+        "GSERIES-19",
+        "GSERIES-20",
+        "GSERIES-21",
+        "GSERIES-22",
+        "GSERIES-23",
+        "GSERIES-24",
+        "GSERIES-25",
+        "GSERIES-26",
+        "GSERIES-27",
+        "GSERIES-28",
+        "GSERIES-29",
+        "GSERIES-30"
+      ]
+    }
+  ],
+  "explicit_non_claims_for_any_promoted_text": [
+    "Do not claim NestJS apps/api currently complete or buildable",
+    "Do not claim frontend-app is frozen/deprecated",
+    "Do not claim OQ-3 closed",
+    "Do not claim production readiness or go-live",
+    "Do not claim R0-7 closed",
+    "Do not claim tenant/audit fully verified (OQ-7)",
+    "Do not include .cursor/rules in R0-1 commit",
+    "Do not commit full copyrighted ISO/BAS PDFs"
+  ]
+}

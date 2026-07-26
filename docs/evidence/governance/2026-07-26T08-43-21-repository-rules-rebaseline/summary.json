@@ -1,0 +1,303 @@
+{
+  "task": "CONFORA_GOVERNANCE_REPOSITORY_EVIDENCE_BASELINE",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline",
+  "generated_at": "2026-07-26T08:43:21+02:00",
+  "audit_only": true,
+
+  "repository_identity": {
+    "absolute_path": "C:\\Users\\milja\\Desktop\\CONFORA_LMS",
+    "branch": "fix/ca-h01-frontend-f4-cutover",
+    "head_short": "e27cdc05",
+    "head_full": "e27cdc0501bbd9f931d0e71f653ffc5f0d88d1bb",
+    "head_subject": "docs(repo): add post-w2g remaining deferred rebaseline",
+    "remote_name": "origin",
+    "remote_url": "https://github.com/miljansavicmsx/CONFORA_LMS.git",
+    "upstream": "origin/fix/ca-h01-frontend-f4-cutover",
+    "in_sync_with_remote": true
+  },
+
+  "git_status": {
+    "staged_count": 0,
+    "tracked_modified_diff_count": 0,
+    "tracked_modified_diff_head_count": 0,
+    "deleted_count": 0,
+    "porcelain_uno_entry_count": 74,
+    "porcelain_uno_content_identical_to_head": 74,
+    "porcelain_uno_content_differs": 0,
+    "porcelain_uno_cause": "core.autocrlf=true with no .gitattributes; stat-cache noise only, no content change",
+    "untracked_entry_count": 1439,
+    "tracked_file_total": 1404,
+    "core_autocrlf": "true",
+    "gitattributes_present": false
+  },
+
+  "structure": {
+    "tracked_by_top_level": {
+      "docs": 1087,
+      "packages": 131,
+      "frontend-app": 108,
+      "scripts": 31,
+      "apps": 20,
+      ".github": 8,
+      ".husky": 2
+    },
+    "tracked_docs_all_under_evidence": true,
+    "tracked_docs_outside_evidence": 0,
+    "pnpm_workspace_globs": ["apps/*", "packages/*"],
+    "frontend_app_in_workspace": false,
+    "apps_tracked_counts": {
+      "api": 20, "web": 0, "admin": 0, "worker": 0, "examiner": 0, "ai-service": 0
+    },
+    "packages_tracked_counts": {
+      "i18n": 50, "notification-templates": 15, "config": 13, "ui": 11,
+      "ai-prompts": 10, "shared-kernel": 9, "shared-types": 8, "sdk": 5,
+      "audit-client": 5, "ai-client": 5,
+      "database": 0, "ai-governance": 0, "audit": 0, "auth": 0, "types": 0
+    },
+    "fully_untracked_roots": [
+      "backend/", "frontend-public/", "infra/", "infrastructure/",
+      "terraform/", "tests/", "tools/", "prisma/", "services/ (empty on disk)"
+    ]
+  },
+
+  "canonical_legacy": {
+    "canonical_backend": { "path": "apps/api", "stack": "NestJS", "classification": "PARTIALLY VERIFIED", "note": "designated canonical; app.module.ts imports ~30 modules absent from disk and git" },
+    "canonical_frontend_de_jure": { "path": "apps/web", "tracked_files": 0, "classification": "CONTRADICTED" },
+    "canonical_frontend_de_facto": { "path": "frontend-app", "tracked_files": 108, "classification": "PARTIALLY VERIFIED", "note": "CI-gated and acceptance-signed; outside pnpm workspace" },
+    "admin_frontend": { "de_jure": "apps/admin", "de_facto": "frontend-app admin routes", "classification": "PARTIALLY VERIFIED" },
+    "legacy_backend": { "path": "backend/", "stack": "FastAPI", "tracked_files": 0, "classification": "VERIFIED" },
+    "legacy_frontend": { "path": "frontend-public/", "classification": "PARTIALLY VERIFIED" },
+    "public_verification_implementations": 3,
+    "public_catalog_implementations": 3,
+    "services_dir_empty_on_disk": true
+  },
+
+  "database": {
+    "canonical_prisma_schema": "packages/database/prisma/schema.prisma",
+    "canonical_prisma_schema_tracked": false,
+    "canonical_model_count": 109,
+    "deprecated_root_schema": "prisma/schema.prisma",
+    "deprecated_model_count": 40,
+    "migration_count": 62,
+    "migrations_tracked": false,
+    "datasource_provider": "postgresql",
+    "extensions": ["vector"],
+    "schemas": ["auth", "lms", "exam", "cert", "gov", "audit", "compliance"],
+    "models_with_tenant_id": 74,
+    "models_without_tenant_id": 35,
+    "runtime_tenant_scoped_models": 63,
+    "models_with_tenant_column_not_enforced": 11,
+    "governance_models_without_tenant_column": [
+      "Risk", "InternalAudit", "CorrectiveAction", "AuditFinding",
+      "ConflictOfInterestDeclaration", "IdentityVerification", "Consent", "VerificationAuditTrail"
+    ],
+    "dynamodb_tables_terraform": 22,
+    "sqlalchemy_present": false,
+    "competing_stacks": ["Prisma/PostgreSQL", "boto3/DynamoDB"],
+    "classification": "PARTIALLY VERIFIED"
+  },
+
+  "identity_rbac_sod": {
+    "keycloak": "PARTIALLY VERIFIED",
+    "cognito": "VERIFIED on disk / NOT FOUND in git",
+    "nest_auth_guards": "NOT FOUND",
+    "fastapi_auth_guards": "VERIFIED (untracked)",
+    "role_vocabularies": 2,
+    "role_vocabulary_mapping_exists": false,
+    "sod_enforced_in_canonical_stack": false,
+    "sod_enforced_in_legacy_stack": true,
+    "iso_forbidden_role_combinations_enforced": false,
+    "platform_scope_type_exists": true,
+    "platform_scope_guard_exists": false,
+    "packages_auth_is_readme_stub": true,
+    "classification": "PARTIALLY VERIFIED"
+  },
+
+  "tenant_isolation": {
+    "standard_documented": true,
+    "standard_document_tracked": false,
+    "nest_extension_tracked": true,
+    "nest_extension_executable": false,
+    "nest_extension_missing_imports": ["./tenant-prisma.util", "../tenant/tenant-context.store"],
+    "known_bypasses": [
+      "Prisma update/delete skip tenant WHERE merge (TRACKED code)",
+      "Extension fail-open when ALS tenant context unset (TRACKED code)",
+      "FastAPI allows when resource tenant is null (UNTRACKED code)",
+      "FastAPI sys_admin cross-tenant access (UNTRACKED code)"
+    ],
+    "rls_defined_in_migration": true,
+    "rls_on_audit_event": false,
+    "tracked_tests_cover_known_bypasses": false,
+    "classification": "PARTIALLY VERIFIED"
+  },
+
+  "audit": {
+    "canonical_ledger": "PostgreSQL audit.AuditEvent via Nest AuditLedgerService",
+    "nest_audit_source_present": false,
+    "nest_audit_dist_present": true,
+    "tracked_code_imports_missing_audit_module": true,
+    "append_only_triggers_defined": true,
+    "rls_on_audit_event": false,
+    "migration_name_overstates_delivery": "20260218100001_audit_append_only_and_rls",
+    "hash_chain_algorithm_canonical": "sha256(prevHash + canonicalJson)",
+    "hash_chain_algorithm_legacy": "sha256(prev + '|' + payloadHash)",
+    "hash_chain_formats_compatible": false,
+    "write_path_pii_redaction": false,
+    "audit_client_package_tracked": true,
+    "create_audit_client_callers": 0,
+    "registry_vs_g5_conflict": true,
+    "classification": "PARTIALLY VERIFIED"
+  },
+
+  "evidence_corpus": {
+    "tracked_files_under_docs_evidence": 1087,
+    "top_level_categories_on_disk": 72,
+    "repo_health_waves": 48,
+    "latest_wave": "48a",
+    "latest_wave_tracked": false,
+    "classification": "VERIFIED"
+  },
+
+  "testing_ci": {
+    "ci_workflow_count": 8,
+    "ci_workflows_tracked": 8,
+    "ci_workflows_executable_on_fresh_clone": 0,
+    "broken_workflows": [
+      "ci.yml", "backend-tests.yml", "backend-nightly.yml", "confora-qa.yml",
+      "accessibility.yml", "deploy-backend.yml", "f4-frontend-cutover-gate.yml",
+      "release-candidate.yml"
+    ],
+    "highest_risk_workflow": "deploy-backend.yml (production deploy on push to main from untracked backend/)",
+    "pytest_files_on_disk": 115,
+    "pytest_files_tracked": 0,
+    "nest_unit_specs_tracked": 3,
+    "nest_e2e_specs_tracked": 2,
+    "frontend_vitest_on_disk": 123,
+    "frontend_vitest_tracked": 14,
+    "playwright_frontend_app_on_disk": 62,
+    "playwright_frontend_app_tracked": 8,
+    "playwright_tests_e2e_tracked": 0,
+    "orphan_tracked_tests_without_test_script": ["packages/ai-prompts", "packages/notification-templates"],
+    "jest_configs_targeting_missing_dirs": ["jest.integration.config.cjs", "jest.compliance.config.cjs"],
+    "dependabot_present": false,
+    "codeql_present": false,
+    "secret_scanning_ci_present": false,
+    "lint_typecheck_chain_complete": true,
+    "classification": "PARTIALLY VERIFIED"
+  },
+
+  "existing_governance": {
+    "agents_md_tracked": true,
+    "cursor_rules_count": 9,
+    "cursor_rules_tracked": false,
+    "cursor_rules_gitignored": true,
+    "cursor_rules_ignore_source": ".gitignore:72 (.cursor/)",
+    "cursorrules_legacy_file_present": false,
+    "cursorignore_tracked": true,
+    "cursorignore_excludes_prisma_migrations": true,
+    "baseline_path": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+    "baseline_exists_on_disk": true,
+    "baseline_tracked": false,
+    "adr_count": 7,
+    "adrs_tracked": false,
+    "architecture_docs_count": 41,
+    "architecture_docs_tracked": false,
+    "canonical_component_registry_tracked": false,
+    "legacy_deprecation_matrix_tracked": false,
+    "multi_tenancy_standard_tracked": false,
+    "shared_kernel_standard_tracked": false,
+    "ai_governance_docs_tracked": false,
+    "generated_files_manifest_present": false,
+    "authority_chain_intact_in_git": false,
+    "classification": "CONTRADICTED"
+  },
+
+  "generated_files": {
+    "tracked_generated_artifacts": 0,
+    "ignore_gaps": [
+      "packages/ai-client/src/index.js",
+      "packages/ai-client/src/index.d.ts",
+      "packages/ai-client/src/index.js.map",
+      "infra/aws/staging/.terraform/ (incl. provider .exe)"
+    ],
+    "package_lock_ignored_but_required_by_ci": true,
+    "gitattributes_missing": true,
+    "recommended_patch_targets_not_applied": [
+      "packages/ai-client/.gitignore",
+      ".gitignore (.terraform/, *.tfstate*)",
+      ".gitattributes",
+      "docs/GENERATED_FILES.md"
+    ],
+    "classification": "PARTIALLY VERIFIED"
+  },
+
+  "contradictions": {
+    "count": 19,
+    "critical": [
+      "C-01 governance authority chain broken in git (AGENTS.md cites untracked Baseline; .cursor/rules gitignored)",
+      "C-02 canonical backend apps/api cannot build from tracked tree (~30 missing module imports)",
+      "C-03 all 8 CI workflows broken on fresh clone; deploy-backend.yml armed against untracked backend/",
+      "C-04 security and compliance controls live outside version control"
+    ],
+    "open_questions": [
+      "OQ-1 should .cursor/rules and docs/governance be tracked?",
+      "OQ-2 is the missing apps/api source recoverable?",
+      "OQ-3 disable broken workflows or restore sources first?",
+      "OQ-4 is backend/ to be imported, archived, or deleted?",
+      "OQ-5 which frontend is canonical (ADR-001 vs gap note)?",
+      "OQ-6 is the Prisma update/delete tenant gap accepted risk or open defect?",
+      "OQ-7 audit-client vs packages/audit; GDPR erasure vs append-only triggers?"
+    ]
+  },
+
+  "controls_assessment": {
+    "note": "No control is marked implemented on the basis of documentation alone.",
+    "tenant_isolation": "PARTIALLY VERIFIED",
+    "segregation_of_duties": "PARTIALLY VERIFIED (legacy stack only)",
+    "rbac_enforcement": "PARTIALLY VERIFIED (legacy stack only)",
+    "immutable_audit_trail": "PARTIALLY VERIFIED",
+    "audit_pii_redaction": "NOT FOUND (canonical write path)",
+    "rls_on_audit_event": "NOT FOUND",
+    "evidence_preservation": "VERIFIED",
+    "lint_typecheck_quality_chain": "VERIFIED",
+    "no_tracked_generated_artifacts": "VERIFIED",
+    "ai_governance_package_properties": "VERIFIED (fail-closed prompts, inert client, disclosure required)",
+    "ci_enforcement": "NOT FOUND (no workflow passes on fresh clone)"
+  },
+
+  "no_modifications": {
+    "application_code_modified": false,
+    "database_schemas_modified": false,
+    "migrations_modified": false,
+    "configuration_modified": false,
+    "generated_files_modified": false,
+    "ci_workflows_modified": false,
+    "cursor_rules_modified": false,
+    "governance_documents_modified": false,
+    "gitignore_modified": false,
+    "files_staged": false,
+    "files_committed": false,
+    "findings_repaired": false,
+    "files_created": "only the 17 artifacts inside the evidence folder"
+  },
+
+  "claims_not_made": {
+    "production_readiness_claimed": false,
+    "external_pilot_claimed": false,
+    "dpo_legal_signoff_claimed": false,
+    "security_delegate_signoff_claimed": false,
+    "accreditation_claimed": false,
+    "ai_governance_approval_claimed": false
+  },
+
+  "final_verdict": "READY WITH CONDITIONS",
+  "verdict_rationale": "The evidence baseline is complete, internally consistent, and sufficient for an independent reviewer to produce a repository-specific governance package. Conditions apply because the repository exhibits a systemic tracked-versus-on-disk divergence: the authoritative governance corpus, the canonical backend source, the database layer, and the entire runtime authorization stack are absent from git, and no CI workflow can pass on a fresh clone. Rules written against documentation alone would govern code that does not exist in the repository.",
+  "conditions": [
+    "Rules must state explicitly whether they bind the tracked tree, the working tree, or both",
+    "Nothing classified PARTIALLY VERIFIED, ASSUMED or NOT FOUND may be asserted as an implemented control",
+    "OQ-1 through OQ-7 require owner decisions before rules are finalised",
+    "C-05 (canonical frontend) must be resolved before any frontend rule glob is written",
+    "C-03 (armed production deploy against a non-existent directory) is a standalone remediation item",
+    "The governance corpus must be tracked, or the rebaselined rules inherit the defect they are meant to fix"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "task": "R0-1B1_AUTHORITY_CHAIN",
+  "branch": "governance/r0-1b1-authority-chain",
+  "base_commit": "1f141fe18aafafd0405b1539788234d253f40f4b",
+  "normative_targets": [
+    {
+      "source": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+      "target": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "transformation": "Added section 0 Repository State Rebaseline Addendum with verified state and non-claims"
+    },
+    {
+      "source": "docs/governance/GOVERNANCE_HIERARCHY.md",
+      "target": "docs/governance/GOVERNANCE_HIERARCHY.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "transformation": "Rewritten to 7-level authority order; links limited to tracked B1 files"
+    },
+    {
+      "source": null,
+      "target": "docs/governance/ENGINEERING_CONSTITUTION.md",
+      "classification": "AUTHORED",
+      "transformation": "New document (16 mandatory principles)"
+    },
+    {
+      "source": null,
+      "target": "docs/governance/OWNER_DECISION_REGISTER.md",
+      "classification": "AUTHORED",
+      "transformation": "New document (OQ-1..7, OD-R03-1..5, OD-R01-1..10)"
+    },
+    {
+      "source": null,
+      "target": "docs/governance/OWNER_DECISION_PACKAGE.md",
+      "classification": "AUTHORED",
+      "transformation": "New owner-facing index with mandatory non-claims"
+    },
+    {
+      "source": null,
+      "target": "docs/governance/CHANGE_CONTROL.md",
+      "classification": "AUTHORED",
+      "transformation": "New document (ownership, approvals, waivers, roles)"
+    },
+    {
+      "source": null,
+      "target": "docs/governance/STANDARDS_REFERENCE_POLICY.md",
+      "classification": "AUTHORED",
+      "transformation": "New copyright-safe standards policy"
+    },
+    {
+      "source": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+      "target": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+      "classification": "PROMOTE_AS_IS",
+      "transformation": "Tracked unchanged"
+    }
+  ],
+  "agents_md_modified": false,
+  "evidence_packages_tracked": [
+    "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline/",
+    "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/",
+    "docs/evidence/governance/2026-07-26T14-09-58-r0-1-governance-corpus-inventory/",
+    "docs/evidence/governance/2026-07-26T16-09-54-r0-1b1-authority-chain/"
+  ]
+}

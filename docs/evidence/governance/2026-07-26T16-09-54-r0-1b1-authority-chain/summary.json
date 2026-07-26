@@ -1,0 +1,50 @@
+{
+  "task": "R0-1B1_AUTHORITY_CHAIN",
+  "branch": "governance/r0-1b1-authority-chain",
+  "base_commit": "1f141fe18aafafd0405b1539788234d253f40f4b",
+  "integration_branch": "fix/ca-h01-frontend-f4-cutover",
+  "pr_1_state": "MERGED",
+  "tracked_working_tree_clean_at_start": true,
+  "commit_1": {
+    "message": "docs(governance): establish confora authority chain",
+    "sha": "4fd42eab1f5c508bae373abe6a80d301be060e9b",
+    "files": 8,
+    "scope": "docs/governance/**"
+  },
+  "commit_2": {
+    "message": "docs(repo): add r0-1 governance promotion evidence",
+    "sha": "PENDING_SEE_FINAL_REPORT",
+    "scope": "docs/evidence/governance/**"
+  },
+  "agents_md_modified": false,
+  "agents_md_reason": "Already references docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md (correct tracked path)",
+  "normative_files": [
+    "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+    "docs/governance/GOVERNANCE_HIERARCHY.md",
+    "docs/governance/ENGINEERING_CONSTITUTION.md",
+    "docs/governance/OWNER_DECISION_REGISTER.md",
+    "docs/governance/OWNER_DECISION_PACKAGE.md",
+    "docs/governance/CHANGE_CONTROL.md",
+    "docs/governance/STANDARDS_REFERENCE_POLICY.md",
+    "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md"
+  ],
+  "evidence_packages_tracked": [
+    "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline/",
+    "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/",
+    "docs/evidence/governance/2026-07-26T14-09-58-r0-1-governance-corpus-inventory/",
+    "docs/evidence/governance/2026-07-26T16-09-54-r0-1b1-authority-chain/"
+  ],
+  "validation": {
+    "normative_broken_markdown_links": 0,
+    "json_parse": "PASS",
+    "pdf_or_binary_staged": false,
+    "substantial_standards_text_copied": false,
+    "cursor_rules_modified": false,
+    "architecture_or_app_modified": false,
+    "c01_closed": true
+  },
+  "oq_visible": ["OQ-3", "OQ-4", "OQ-6", "OQ-7"],
+  "requested_string_corrections_applied": false,
+  "requested_string_corrections_reason": "Strings not found verbatim in any tracked R0-1A evidence file; no phantom edit made",
+  "final_verdict": "READY_FOR_INDEPENDENT_REVIEW"
+}

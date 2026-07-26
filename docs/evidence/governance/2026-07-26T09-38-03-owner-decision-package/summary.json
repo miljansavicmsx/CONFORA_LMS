@@ -1,0 +1,103 @@
+{
+  "task": "CONFORA_GOVERNANCE_REBASELINE_OWNER_DECISION_PACKAGE",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package",
+  "based_on_evidence": "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline",
+  "based_on_commit": "e27cdc05",
+  "based_on_commit_full": "e27cdc0501bbd9f931d0e71f653ffc5f0d88d1bb",
+  "branch": "fix/ca-h01-frontend-f4-cutover",
+  "audit_only": true,
+  "owner_decisions_executed": false,
+  "application_code_modified": false,
+  "ci_workflows_modified": false,
+  "git_config_modified": false,
+  "governance_documents_modified": false,
+  "cursor_rules_modified": false,
+  "proposed_targets_not_written_to_docs_governance": true,
+  "proposed_deliverables": [
+    "PROPOSED_OWNER_DECISION_PACKAGE.md",
+    "PROPOSED_OWNER_DECISION_REGISTER.md",
+    "PROPOSED_REPOSITORY_REMEDIATION_SEQUENCE.md",
+    "PROPOSED_GOVERNANCE_REBASELINE_EXIT_CRITERIA.md"
+  ],
+  "intended_promotion_paths_after_oq1": [
+    "docs/governance/OWNER_DECISION_PACKAGE.md",
+    "docs/governance/OWNER_DECISION_REGISTER.md",
+    "docs/governance/REPOSITORY_REMEDIATION_SEQUENCE.md",
+    "docs/governance/GOVERNANCE_REBASELINE_EXIT_CRITERIA.md"
+  ],
+  "open_questions": [
+    {
+      "id": "OQ-1",
+      "topic": "Governance corpus",
+      "recommended_option": "A",
+      "recommended_summary": "Track full authoritative corpus under docs/governance, docs/architecture, and named standards",
+      "required_approvers": ["Repository Owner", "Architecture Lead", "Compliance Lead (recommended)"],
+      "unblocks": ["R0-1", "R0-2", "R2"]
+    },
+    {
+      "id": "OQ-2",
+      "topic": "Cursor rules",
+      "recommended_option": "A",
+      "recommended_summary": "Track .cursor/rules/*.mdc; narrow .gitignore exception",
+      "required_approvers": ["Repository Owner", "AI Governance Lead (recommended)"],
+      "unblocks": ["R0-2", "R2"]
+    },
+    {
+      "id": "OQ-3",
+      "topic": "Canonical backend",
+      "recommended_option": "A+D or B+D",
+      "recommended_summary": "Nest remains canonical (recover or reconstruct); track FastAPI as frozen legacy for reviewability",
+      "required_approvers": ["Repository Owner", "Architecture Lead", "Security Lead", "Compliance Lead (recommended)"],
+      "unblocks": ["R0-4", "R0-6", "R0-7"]
+    },
+    {
+      "id": "OQ-4",
+      "topic": "Canonical frontend",
+      "recommended_option": "A",
+      "recommended_summary": "frontend-app operational canonical; supersede ADR-001; apps/web and apps/admin remain targets",
+      "required_approvers": ["Repository Owner", "Architecture Lead", "Product/Pilot Owner (recommended)"],
+      "unblocks": ["R0-5", "frontend rule globs"]
+    },
+    {
+      "id": "OQ-5",
+      "topic": "Identity, RBAC and SoD",
+      "recommended_option": "End-state A; transitional B+D with parity gate",
+      "recommended_summary": "Nest+Keycloak end-state; FastAPI auth/SoD freeze-tracked interim; packages/auth contracts; parity gate before Nest cert routes",
+      "required_approvers": ["Repository Owner", "Security Lead", "Compliance/CB Lead", "Architecture Lead"],
+      "unblocks": ["R0-6"]
+    },
+    {
+      "id": "OQ-6",
+      "topic": "CI and deployment",
+      "recommended_option": "A",
+      "recommended_summary": "Immediate containment of deploy-backend.yml; tracked-only CI; manual prod gates",
+      "required_approvers": ["Repository Owner", "Security Lead", "Ops/Release Manager"],
+      "unblocks": ["R0-3", "R0-7"],
+      "priority": "FIRST"
+    },
+    {
+      "id": "OQ-7",
+      "topic": "Data, tenant and audit controls",
+      "recommended_option": "A with time-boxed B waivers only where blocked",
+      "recommended_summary": "Fail-closed tenancy; update/delete gap is defect; mandatory write-path redaction; explicit audit RLS decision; resolve audit-client vs packages/audit",
+      "required_approvers": ["Repository Owner", "Security Lead", "DPO/Privacy", "Compliance Lead", "Architecture Lead (recommended)"],
+      "unblocks": ["R1-1", "R1-2"]
+    }
+  ],
+  "remediation_tasks": [
+    "R0-1", "R0-2", "R0-3", "R0-4", "R0-5", "R0-6", "R0-7",
+    "R1-1", "R1-2", "R1-3", "R2"
+  ],
+  "recommended_decision_order": ["OQ-6", "OQ-1", "OQ-2", "OQ-3", "OQ-5", "OQ-4", "OQ-7"],
+  "recommended_first_remediation": "R0-3",
+  "claims_not_made": {
+    "production_readiness_claimed": false,
+    "external_pilot_claimed": false,
+    "dpo_legal_signoff_claimed": false,
+    "security_delegate_signoff_claimed": false,
+    "accreditation_claimed": false,
+    "ai_governance_approval_claimed": false
+  },
+  "final_verdict": "READY FOR OWNER DECISIONS",
+  "verdict_rationale": "All seven open questions are analysed with options, impacts, recommendations, approvers, follow-ups and acceptance criteria. Remediation sequence and exit criteria are defined. No owner decision was executed; proposed governance files were not written into docs/governance/ so as not to prejudge OQ-1 or modify governance documents during this task."
+}

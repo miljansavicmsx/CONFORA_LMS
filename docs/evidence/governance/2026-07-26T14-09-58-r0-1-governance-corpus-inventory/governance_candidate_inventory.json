@@ -1,0 +1,2263 @@
+{
+  "task": "R0-1A_GOVERNANCE_CORPUS_INVENTORY",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T14-09-58-r0-1-governance-corpus-inventory",
+  "integration_branch": "fix/ca-h01-frontend-f4-cutover",
+  "integration_tip": "1f141fe18aafafd0405b1539788234d253f40f4b",
+  "r0_3_status": "MERGED — CONTAINMENT ACTIVE WITH CONDITIONS",
+  "preserved_owner_decisions": {
+    "OQ-1": "Authoritative governance/architecture corpus will be tracked in Git",
+    "OQ-2": "Cursor rules tracked later under R0-2; exclude from R0-1",
+    "OQ-3": "NestJS intended canonical backend; recovery/reconstruction required; FastAPI later frozen legacy after approved task; do not claim Nest currently complete",
+    "OQ-4": "frontend-app current operational canonical frontend pending ADR superseding ADR-001",
+    "OQ-5": "Canonical identity/RBAC/SoD end-state in canonical stack with transitional parity gate",
+    "OQ-6": "R0-3 deployment containment merged and active with conditions",
+    "OQ-7": "Tenant isolation and audit controls partially verified; separate remediation required"
+  },
+  "candidate_count": 98,
+  "classification_counts": {
+    "PROMOTE_WITH_REBASELINE": 14,
+    "PROMOTE_AS_IS": 19,
+    "MERGE_WITH_OTHER": 12,
+    "SUPERSEDE": 1,
+    "UNRESOLVED": 13,
+    "RETAIN_AS_EVIDENCE_ONLY": 33,
+    "DO_NOT_TRACK": 6
+  },
+  "candidates": [
+    {
+      "id": "GOV-001",
+      "current_path": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+      "proposed_tracked_path": "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+      "document_title": "CONFORA Canonical Development Baseline",
+      "apparent_owner": "Architecture / Repository Owner",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked; exists on disk; not gitignored",
+      "authoritative_or_provisional": "authoritative (cited by tracked AGENTS.md)",
+      "repository_facts_referenced": [
+        "Cited as highest authority by AGENTS.md",
+        "Claims Nest/Next canonical stack",
+        "References ADRs, multi-tenancy, AI governance"
+      ],
+      "contradictions": [
+        "C-01: AGENTS.md tracked but Baseline untracked",
+        "C-02/OQ-3: must not claim Nest apps/api currently complete/buildable",
+        "C-05/OQ-4: frontend-app operational vs apps/web ADR"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "AGENTS.md",
+        "ADRs",
+        "CANONICAL_COMPONENT_REGISTRY"
+      ],
+      "required_owner_decision": "OD-R01-PROMOTE-BASELINE (approve promote with OQ annotations)",
+      "copyright_or_licensing_concern": "none material (internal CONFORA doc)",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Must be tracked to close C-01; rebaseline notes required so Nest completeness and frontend ADR contradictions are not silently falsified."
+    },
+    {
+      "id": "GOV-002",
+      "current_path": "docs/governance/GOVERNANCE_HIERARCHY.md",
+      "proposed_tracked_path": "docs/governance/GOVERNANCE_HIERARCHY.md",
+      "document_title": "CONFORA Governance Hierarchy",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative companion to Baseline",
+      "repository_facts_referenced": [
+        "Defines Baseline > AGENTS > architecture order"
+      ],
+      "contradictions": [
+        "Depends on Baseline becoming tracked"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "GOV-001"
+      ],
+      "required_owner_decision": "Approve with Baseline",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Short hierarchy doc; consistent with AGENTS.md authority chain."
+    },
+    {
+      "id": "GOV-003",
+      "current_path": "docs/governance/CONFORA_ROLE_FUNCTION_PERMISSION_MATRIX.md",
+      "proposed_tracked_path": "docs/governance/ROLE_AND_SOD_MATRIX.md",
+      "document_title": "CONFORA Role, Function and Permission Master Matrix",
+      "apparent_owner": "Security / Compliance",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked; large (~81KB)",
+      "authoritative_or_provisional": "authoritative for RBAC/SoD mapping (pending OQ-5 transitional note)",
+      "repository_facts_referenced": [
+        "Role/function/permission model; SoD"
+      ],
+      "contradictions": [
+        "OQ-5 transitional FastAPI vs Nest parity not reflected as live gate"
+      ],
+      "duplicate_or_superseded": [
+        "Near-miss docs/ISO_ROLE_MODEL.md, docs/ISO_SOD_ENFORCEMENT.md"
+      ],
+      "dependencies": [
+        "OQ-5"
+      ],
+      "required_owner_decision": "Approve rename to ROLE_AND_SOD_MATRIX.md or keep original filename",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Core SoD artefact; rename optional; add OQ-5 transitional parity note before treating as sole live enforcement claim."
+    },
+    {
+      "id": "GOV-004",
+      "current_path": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+      "proposed_tracked_path": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+      "document_title": "Frontend Canonicalization Gap Note",
+      "apparent_owner": "Architecture + Frontend",
+      "source_package": "local docs/governance; synced from f6-local-stabilization evidence",
+      "current_status": "untracked; Status CANONICAL (synced F6-LOCAL-2)",
+      "authoritative_or_provisional": "authoritative for operational frontend truth (OQ-4)",
+      "repository_facts_referenced": [
+        "frontend-app = operational pilot UI",
+        "apps/web not sole pilot UI",
+        "Baseline §4.1 drift"
+      ],
+      "contradictions": [
+        "Contradicts ADR-001 Accepted status claiming frontend-app frozen"
+      ],
+      "duplicate_or_superseded": [
+        "docs/evidence/f6-local-stabilization/2026-06-18T15-16-10/FRONTEND_CANONICALIZATION_GAP_NOTE.md"
+      ],
+      "dependencies": [
+        "ADR-001",
+        "OQ-4"
+      ],
+      "required_owner_decision": "Preserve contradiction until superseding ADR (OQ-4)",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Must be tracked so OQ-4 contradiction is not omitted; do not silently rewrite."
+    },
+    {
+      "id": "GOV-005",
+      "current_path": "docs/governance/ADR_ALIGNMENT_NOTE.md",
+      "proposed_tracked_path": "docs/governance/ADR_ALIGNMENT_NOTE.md",
+      "document_title": "ADR & Architecture Documentation Alignment",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative alignment note",
+      "repository_facts_referenced": [
+        "Canonical ADR path docs/architecture/decisions/",
+        "RabbitMQ vs Kafka drift"
+      ],
+      "contradictions": [
+        "Messaging: Baseline RabbitMQ MVP vs ADR-002 Kafka"
+      ],
+      "duplicate_or_superseded": [
+        "docs/evidence/f6-local-stabilization/2026-06-18T15-16-10/ADR_ALIGNMENT_NOTE.md"
+      ],
+      "dependencies": [
+        "ADRs",
+        "Baseline"
+      ],
+      "required_owner_decision": "None beyond promote",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Documents known ADR drifts; useful during rebaseline."
+    },
+    {
+      "id": "GOV-006",
+      "current_path": "docs/governance/CONFLICT_ANALYSIS_REPORT.md",
+      "proposed_tracked_path": "docs/governance/CONFLICT_ANALYSIS_REPORT.md",
+      "document_title": "CONFORA Governance Conflict Analysis Report",
+      "apparent_owner": "Architecture / Compliance",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative analysis",
+      "repository_facts_referenced": [
+        "Conflict inventory across governance"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Promote as historical analysis (status date may need stamp)",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Conflict analysis supports rebaseline; keep with dated status."
+    },
+    {
+      "id": "GOV-007",
+      "current_path": "docs/governance/GOVERNANCE_INTEGRATION_REPORT.md",
+      "proposed_tracked_path": "docs/governance/GOVERNANCE_INTEGRATION_REPORT.md",
+      "document_title": "CONFORA Governance Integration Report",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "provisional/report",
+      "repository_facts_referenced": [
+        "Integration of governance packages"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as report or retain evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Companion report to conflict analysis; low risk to track."
+    },
+    {
+      "id": "GOV-008",
+      "current_path": "docs/governance/TECH_DEBT.md",
+      "proposed_tracked_path": "docs/governance/TECH_DEBT.md",
+      "document_title": "CONFORA Technical Debt Register",
+      "apparent_owner": "Engineering",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative living register (needs update discipline)",
+      "repository_facts_referenced": [
+        "TD items including frontend/backend gaps"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline hierarchy"
+      ],
+      "required_owner_decision": "Approve as living tracked register",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Referenced in governance hierarchy; should be versioned."
+    },
+    {
+      "id": "GOV-009",
+      "current_path": "docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "proposed_tracked_path": "docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "document_title": "Legacy Strangler Retirement Criteria",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative criteria",
+      "repository_facts_referenced": [
+        "Strangler retirement gates"
+      ],
+      "contradictions": [
+        "OQ-3 FastAPI disposition timing"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "LEGACY_DEPRECATION_MATRIX",
+        "OQ-3"
+      ],
+      "required_owner_decision": "Approve path under architecture/",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Fits architecture/legacy control set better than governance root."
+    },
+    {
+      "id": "GOV-010",
+      "current_path": "docs/governance/LEGAL_PRIVACY_PRECONDITIONS.md",
+      "proposed_tracked_path": "docs/governance/LEGAL_PRIVACY_PRECONDITIONS.md",
+      "document_title": "Legal & Privacy Preconditions Register",
+      "apparent_owner": "Legal / DPO (when appointed)",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "preconditions register — not DPO approval",
+      "repository_facts_referenced": [
+        "Legal/privacy gates"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote with explicit non-claim of DPO approval",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Useful gate register; must not be misread as legal sign-off."
+    },
+    {
+      "id": "GOV-011",
+      "current_path": "docs/governance/CLOUD_STAGING_PRECONDITIONS.md",
+      "proposed_tracked_path": "docs/governance/CLOUD_STAGING_PRECONDITIONS.md",
+      "document_title": "Cloud & Staging Preconditions Register",
+      "apparent_owner": "Platform / Security",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "preconditions register",
+      "repository_facts_referenced": [
+        "Cloud/staging gates"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as gate register",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Operational preconditions should be versioned."
+    },
+    {
+      "id": "GOV-012",
+      "current_path": "docs/governance/LOCAL_RELEASE_CANDIDATE_LOCK.md",
+      "proposed_tracked_path": "docs/governance/LOCAL_RELEASE_CANDIDATE_LOCK.md",
+      "document_title": "Local Release Candidate Lock",
+      "apparent_owner": "Release / Architecture",
+      "source_package": "local docs/governance (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "historical lock record",
+      "repository_facts_referenced": [
+        "CLRC local RC lock"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as historical lock or evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Documents locked local RC; track for auditability."
+    },
+    {
+      "id": "ARCH-001",
+      "current_path": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "proposed_tracked_path": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "document_title": "CONFORA Canonical Component Registry",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative registry with known drifts",
+      "repository_facts_referenced": [
+        "Nest apps/api Canonical",
+        "Next apps/web Canonical",
+        "Vite frontends Transitional",
+        "FastAPI Legacy"
+      ],
+      "contradictions": [
+        "OQ-3: Nest not currently complete/buildable in tracked tree",
+        "OQ-4: frontend-app operational vs registry transitional claim"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "ADRs",
+        "Baseline",
+        "OQ-3",
+        "OQ-4"
+      ],
+      "required_owner_decision": "Approve promote with status annotations for OQ-3/OQ-4",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Central registry must be tracked but must not falsely claim Nest completeness or freeze frontend-app."
+    },
+    {
+      "id": "ARCH-002",
+      "current_path": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "proposed_tracked_path": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "document_title": "CONFORA Legacy Deprecation Matrix",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative matrix (phasing subject to OQ-3)",
+      "repository_facts_referenced": [
+        "Target Nest/Postgres/Keycloak; FastAPI→Nest Phase 4"
+      ],
+      "contradictions": [
+        "OQ-3 FastAPI track-as-frozen deferred to approved later task"
+      ],
+      "duplicate_or_superseded": [
+        "docs/LEGACY_DEPRECATION_PLAN.md (overlap)"
+      ],
+      "dependencies": [
+        "OQ-3"
+      ],
+      "required_owner_decision": "Approve promote; reconcile with LEGACY_DEPRECATION_PLAN",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Keep as matrix SoR; annotate FastAPI disposition per OQ-3."
+    },
+    {
+      "id": "ARCH-003",
+      "current_path": "docs/architecture/STRUCTURE.md",
+      "proposed_tracked_path": "docs/architecture/ARCHITECTURE.md",
+      "document_title": "CONFORA Enterprise Monorepo Structure",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative structure overview",
+      "repository_facts_referenced": [
+        "Monorepo layout"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Approve rename STRUCTURE.md → ARCHITECTURE.md or keep both",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Maps to proposed ARCHITECTURE.md; content may need expansion beyond structure."
+    },
+    {
+      "id": "ADR-001",
+      "current_path": "docs/architecture/decisions/ADR-001-frontend.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-001-frontend.md",
+      "document_title": "ADR-001: Frontend Architecture",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "OQ-4: frontend-app operational pending superseding ADR; do not omit contradiction"
+      ],
+      "contradictions": [
+        "OQ-4: frontend-app operational pending superseding ADR; do not omit contradiction"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "OQ-4: frontend-app operational pending superseding ADR; do not omit contradiction"
+    },
+    {
+      "id": "ADR-002",
+      "current_path": "docs/architecture/decisions/ADR-002-backend.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-002-backend.md",
+      "document_title": "ADR-002: Backend Architecture",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "OQ-3: Nest intended canonical but incomplete; FastAPI not yet approved tracked frozen legacy; Kafka vs RabbitMQ drift"
+      ],
+      "contradictions": [
+        "OQ-3: Nest intended canonical but incomplete; FastAPI not yet approved tracked frozen legacy; Kafka vs RabbitMQ drift"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "OQ-3: Nest intended canonical but incomplete; FastAPI not yet approved tracked frozen legacy; Kafka vs RabbitMQ drift"
+    },
+    {
+      "id": "ADR-003",
+      "current_path": "docs/architecture/decisions/ADR-003-database.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-003-database.md",
+      "document_title": "ADR-003: Database Strategy",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "PostgreSQL/Prisma direction"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "PostgreSQL/Prisma direction"
+    },
+    {
+      "id": "ADR-004",
+      "current_path": "docs/architecture/decisions/ADR-004-vector-search.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-004-vector-search.md",
+      "document_title": "ADR-004: Vector Search and RAG",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "pgvector direction"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "pgvector direction"
+    },
+    {
+      "id": "ADR-005",
+      "current_path": "docs/architecture/decisions/ADR-005-authentication.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-005-authentication.md",
+      "document_title": "ADR-005: Authentication and Authorization",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "OQ-5 transitional parity gate"
+      ],
+      "contradictions": [
+        "OQ-5 transitional parity gate"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "OQ-5 transitional parity gate"
+    },
+    {
+      "id": "ADR-006",
+      "current_path": "docs/architecture/decisions/ADR-006-ai-governance.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-006-ai-governance.md",
+      "document_title": "ADR-006: AI Governance",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "Aligns with AI assistive-only policy"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Aligns with AI assistive-only policy"
+    },
+    {
+      "id": "ADR-007",
+      "current_path": "docs/architecture/decisions/ADR-007-audit-architecture.md",
+      "proposed_tracked_path": "docs/architecture/adrs/ADR-007-audit-architecture.md",
+      "document_title": "ADR-007: Audit Architecture",
+      "apparent_owner": "Architecture Board",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked; Status Accepted (2026-05-20 for most)",
+      "authoritative_or_provisional": "accepted ADR — some require supersession notes",
+      "repository_facts_referenced": [
+        "OQ-7 audit controls partially verified"
+      ],
+      "contradictions": [
+        "OQ-7 audit controls partially verified"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Baseline"
+      ],
+      "required_owner_decision": "Approve path move decisions/ → adrs/ and any supersession drafting in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "OQ-7 audit controls partially verified"
+    },
+    {
+      "id": "ADR-README",
+      "current_path": "docs/architecture/decisions/README.md",
+      "proposed_tracked_path": "docs/architecture/adrs/README.md",
+      "document_title": "Architecture Decision Records",
+      "apparent_owner": "Architecture",
+      "source_package": "local docs/architecture/decisions (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "index",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Approve with ADR path move",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "ADR index accompanies ADRs."
+    },
+    {
+      "id": "STD-001",
+      "current_path": "docs/MULTI_TENANCY_STANDARD.md",
+      "proposed_tracked_path": "docs/architecture/MULTI_TENANCY_STANDARD.md",
+      "document_title": "Multi-Tenancy Standard",
+      "apparent_owner": "Architecture / Security",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative standard",
+      "repository_facts_referenced": [
+        "Tenant isolation requirements"
+      ],
+      "contradictions": [
+        "OQ-7 isolation partially verified"
+      ],
+      "duplicate_or_superseded": [
+        "docs/MULTI_TENANT.md (short duplicate)"
+      ],
+      "dependencies": [
+        "OQ-7"
+      ],
+      "required_owner_decision": "Approve move under architecture/; merge MULTI_TENANT.md",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Named OQ-1 standard; move into architecture tree."
+    },
+    {
+      "id": "STD-002",
+      "current_path": "docs/MULTI_TENANT.md",
+      "proposed_tracked_path": null,
+      "document_title": "MULTI_TENANT (short)",
+      "apparent_owner": "Architecture",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; 545 bytes",
+      "authoritative_or_provisional": "provisional stub",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "Superseded by MULTI_TENANCY_STANDARD.md"
+      ],
+      "dependencies": [
+        "STD-001"
+      ],
+      "required_owner_decision": "Confirm SUPERSEDE / merge into STD-001",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Tiny stub; merge content if any unique lines then drop."
+    },
+    {
+      "id": "STD-003",
+      "current_path": "docs/SHARED_KERNEL_STANDARD.md",
+      "proposed_tracked_path": "docs/architecture/SHARED_KERNEL_STANDARD.md",
+      "document_title": "Shared Kernel Standard",
+      "apparent_owner": "Architecture",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative standard",
+      "repository_facts_referenced": [
+        "packages/shared-kernel tracked package exists"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "packages/shared-kernel"
+      ],
+      "required_owner_decision": "Approve move under architecture/",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Named standard; package already tracked."
+    },
+    {
+      "id": "STD-004",
+      "current_path": "docs/AI_GOVERNANCE_MODEL.md",
+      "proposed_tracked_path": "docs/governance/AI_GOVERNANCE.md",
+      "document_title": "AI Governance Model",
+      "apparent_owner": "AI Governance Lead",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "authoritative model (thin)",
+      "repository_facts_referenced": [
+        "AI assistive-only principles"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "docs/AI_CONFIDENCE_STANDARD.md",
+        "docs/AI_GUIDANCE_PRINCIPLES.md",
+        "docs/AI_RECOMMENDATION_TAXONOMY.md",
+        "ADR-006"
+      ],
+      "dependencies": [
+        "ADR-006"
+      ],
+      "required_owner_decision": "Approve merge of AI companion docs into AI_GOVERNANCE.md vs keep separate",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Promote as AI_GOVERNANCE.md; consider merging thin companion standards."
+    },
+    {
+      "id": "STD-005",
+      "current_path": "docs/AI_CONFIDENCE_STANDARD.md",
+      "proposed_tracked_path": "docs/governance/AI_CONFIDENCE_STANDARD.md",
+      "document_title": "AI CONFIDENCE STANDARD",
+      "apparent_owner": "AI Governance Lead",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; short companion",
+      "authoritative_or_provisional": "provisional companion",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "MERGE candidate into AI_GOVERNANCE.md"
+      ],
+      "dependencies": [
+        "STD-004"
+      ],
+      "required_owner_decision": "Merge into AI_GOVERNANCE.md or promote separately",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Thin companions; prefer single AI_GOVERNANCE.md unless owner wants separate files."
+    },
+    {
+      "id": "STD-006",
+      "current_path": "docs/AI_GUIDANCE_PRINCIPLES.md",
+      "proposed_tracked_path": "docs/governance/AI_GUIDANCE_PRINCIPLES.md",
+      "document_title": "AI GUIDANCE PRINCIPLES",
+      "apparent_owner": "AI Governance Lead",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; short companion",
+      "authoritative_or_provisional": "provisional companion",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "MERGE candidate into AI_GOVERNANCE.md"
+      ],
+      "dependencies": [
+        "STD-004"
+      ],
+      "required_owner_decision": "Merge into AI_GOVERNANCE.md or promote separately",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Thin companions; prefer single AI_GOVERNANCE.md unless owner wants separate files."
+    },
+    {
+      "id": "STD-007",
+      "current_path": "docs/AI_RECOMMENDATION_TAXONOMY.md",
+      "proposed_tracked_path": "docs/governance/AI_RECOMMENDATION_TAXONOMY.md",
+      "document_title": "AI RECOMMENDATION TAXONOMY",
+      "apparent_owner": "AI Governance Lead",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; short companion",
+      "authoritative_or_provisional": "provisional companion",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "MERGE candidate into AI_GOVERNANCE.md"
+      ],
+      "dependencies": [
+        "STD-004"
+      ],
+      "required_owner_decision": "Merge into AI_GOVERNANCE.md or promote separately",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Thin companions; prefer single AI_GOVERNANCE.md unless owner wants separate files."
+    },
+    {
+      "id": "STD-008",
+      "current_path": "docs/LEGACY_DEPRECATION_PLAN.md",
+      "proposed_tracked_path": null,
+      "document_title": "CONFORA Legacy Deprecation Plan",
+      "apparent_owner": "Architecture",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; overlaps matrix",
+      "authoritative_or_provisional": "plan overlapping LEGACY_DEPRECATION_MATRIX",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "docs/architecture/LEGACY_DEPRECATION_MATRIX.md"
+      ],
+      "dependencies": [
+        "ARCH-002"
+      ],
+      "required_owner_decision": "Merge unique content into matrix then SUPERSEDE plan, or keep plan as history",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Duplicate conceptual SoR with architecture matrix."
+    },
+    {
+      "id": "CMP-001",
+      "current_path": "docs/ISO_17024_MAPPING.md",
+      "proposed_tracked_path": "docs/compliance/ISO_17024_CONTROL_MAPPING.md",
+      "document_title": "ISO 17024 Mapping",
+      "apparent_owner": "Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "control mapping (clause refs only expected)",
+      "repository_facts_referenced": [
+        "ISO/IEC 17024 designations"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "docs/iso17024-mapping.md"
+      ],
+      "dependencies": [
+        "standards_reference_policy"
+      ],
+      "required_owner_decision": "Approve merge with iso17024-mapping.md; confirm no substantial copyrighted text",
+      "copyright_or_licensing_concern": "Must not contain substantial ISO copyrighted text",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Two ISO 17024 mapping files; merge into compliance mapping."
+    },
+    {
+      "id": "CMP-002",
+      "current_path": "docs/iso17024-mapping.md",
+      "proposed_tracked_path": null,
+      "document_title": "iso17024-mapping",
+      "apparent_owner": "Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "duplicate mapping",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "docs/ISO_17024_MAPPING.md"
+      ],
+      "dependencies": [
+        "CMP-001"
+      ],
+      "required_owner_decision": "Merge then SUPERSEDE",
+      "copyright_or_licensing_concern": "Must not contain substantial ISO copyrighted text",
+      "recommended_classification": "SUPERSEDE",
+      "rationale": "Duplicate of ISO_17024_MAPPING.md family."
+    },
+    {
+      "id": "CMP-003",
+      "current_path": "docs/ISO17024_PRISMA_MIGRATION_NOTES.md",
+      "proposed_tracked_path": "docs/compliance/ISO17024_PRISMA_MIGRATION_NOTES.md",
+      "document_title": "ISO17024 Prisma Migration Notes",
+      "apparent_owner": "Engineering",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "implementation notes",
+      "repository_facts_referenced": [
+        "Prisma migration notes"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote under compliance or retain as engineering note",
+      "copyright_or_licensing_concern": "clause refs only",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Implementation notes, not standard text."
+    },
+    {
+      "id": "CMP-004",
+      "current_path": "docs/ISO17024_SEED_ADJUSTMENTS.md",
+      "proposed_tracked_path": "docs/compliance/ISO17024_SEED_ADJUSTMENTS.md",
+      "document_title": "ISO17024 Seed Adjustments",
+      "apparent_owner": "Engineering",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "implementation notes",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote or evidence-only",
+      "copyright_or_licensing_concern": "clause refs only",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Seed adjustment notes."
+    },
+    {
+      "id": "CMP-005",
+      "current_path": "docs/ISO_SOD_ENFORCEMENT.md",
+      "proposed_tracked_path": "docs/compliance/ISO_SOD_ENFORCEMENT.md",
+      "document_title": "ISO SoD Enforcement",
+      "apparent_owner": "Security / Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "enforcement notes",
+      "repository_facts_referenced": [
+        "SoD"
+      ],
+      "contradictions": [
+        "Overlap with ROLE matrix"
+      ],
+      "duplicate_or_superseded": [
+        "Near GOV-003"
+      ],
+      "dependencies": [
+        "GOV-003"
+      ],
+      "required_owner_decision": "Merge unique SoD content into ROLE_AND_SOD_MATRIX or promote separately",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "SoD content should not fork from master matrix."
+    },
+    {
+      "id": "CMP-006",
+      "current_path": "docs/ISO_ROLE_MODEL.md",
+      "proposed_tracked_path": "docs/compliance/ISO_ROLE_MODEL.md",
+      "document_title": "ISO Role Model",
+      "apparent_owner": "Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "role model notes",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "Near GOV-003"
+      ],
+      "dependencies": [
+        "GOV-003"
+      ],
+      "required_owner_decision": "Merge into ROLE_AND_SOD_MATRIX or promote separately",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Overlaps master role matrix."
+    },
+    {
+      "id": "CMP-007",
+      "current_path": "docs/CLAUSE_TRACEABILITY_MODEL.md",
+      "proposed_tracked_path": "docs/compliance/STANDARDS_TRACEABILITY_MATRIX.md",
+      "document_title": "Clause Traceability Model",
+      "apparent_owner": "Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; no exact STANDARDS_TRACEABILITY_MATRIX.md exists",
+      "authoritative_or_provisional": "model — candidate seed for traceability matrix",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "docs/COMPLIANCE_TRACEABILITY_MODEL.md",
+        "docs/GOVERNANCE_TRACEABILITY_MODEL.md"
+      ],
+      "dependencies": [],
+      "required_owner_decision": "Choose canonical traceability artefact; merge companions",
+      "copyright_or_licensing_concern": "clause designations only; no full standard text",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Three overlapping traceability models; need one STANDARDS_TRACEABILITY_MATRIX.md."
+    },
+    {
+      "id": "CMP-008",
+      "current_path": "docs/COMPLIANCE_TRACEABILITY_MODEL.md",
+      "proposed_tracked_path": null,
+      "document_title": "Compliance Traceability Model",
+      "apparent_owner": "Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "duplicate family",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "CMP-007"
+      ],
+      "dependencies": [
+        "CMP-007"
+      ],
+      "required_owner_decision": "Merge into STANDARDS_TRACEABILITY_MATRIX",
+      "copyright_or_licensing_concern": "clause refs only",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Overlap with CLAUSE_TRACEABILITY_MODEL."
+    },
+    {
+      "id": "CMP-009",
+      "current_path": "docs/GOVERNANCE_TRACEABILITY_MODEL.md",
+      "proposed_tracked_path": null,
+      "document_title": "Governance Traceability Model",
+      "apparent_owner": "Compliance",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked",
+      "authoritative_or_provisional": "duplicate family",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "CMP-007"
+      ],
+      "dependencies": [
+        "CMP-007"
+      ],
+      "required_owner_decision": "Merge into STANDARDS_TRACEABILITY_MATRIX",
+      "copyright_or_licensing_concern": "clause refs only",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Overlap with other traceability models."
+    },
+    {
+      "id": "CMP-010",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/compliance/ISO_21001_CONTROL_MAPPING.md",
+      "document_title": "ISO 21001 Control Mapping (to be authored)",
+      "apparent_owner": "Compliance",
+      "source_package": "not found in repo",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [
+        "ISO 21001 required by Baseline/AGENTS"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "standards_reference_policy"
+      ],
+      "required_owner_decision": "Authorize R0-1B authoring of mapping (clause refs only)",
+      "copyright_or_licensing_concern": "Do not paste copyrighted standard text",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed structure; file does not exist."
+    },
+    {
+      "id": "CMP-011",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/compliance/ISO_27001_CONTROL_MAPPING.md",
+      "document_title": "ISO 27001 Control Mapping (to be authored)",
+      "apparent_owner": "Security / Compliance",
+      "source_package": "not found in repo",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [
+        "ISO/IEC 27001 required by Baseline/AGENTS"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "standards_reference_policy"
+      ],
+      "required_owner_decision": "Authorize R0-1B authoring of mapping (clause refs only)",
+      "copyright_or_licensing_concern": "Do not paste copyrighted standard text",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed structure; file does not exist."
+    },
+    {
+      "id": "SEC-001",
+      "current_path": "docs/SECURITY.md",
+      "proposed_tracked_path": "docs/architecture/SECURITY_ARCHITECTURE.md",
+      "document_title": "SECURITY",
+      "apparent_owner": "Security",
+      "source_package": "docs/ root (untracked)",
+      "current_status": "untracked; no SECURITY_ARCHITECTURE.md filename exists",
+      "authoritative_or_provisional": "provisional seed",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "docs/SECURITY_HARDENING.md",
+        "docs/SECURITY_CLOSURE.md",
+        "docs/PRODUCTION_SECURITY_CHECKLIST.md",
+        "docs/FRONTEND_SECURITY_AND_TRUST_REVIEW.md",
+        "docs/SECURITY_HARDENING_OUTPUT.md"
+      ],
+      "dependencies": [],
+      "required_owner_decision": "Select canonical SECURITY_ARCHITECTURE.md content source and supersede companions",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "MERGE_WITH_OTHER",
+      "rationale": "Multiple security docs; need one architecture SoR."
+    },
+    {
+      "id": "GSERIES-01",
+      "current_path": "docs/architecture/G3_API_TENANT_ENFORCEMENT_MATRIX.md",
+      "proposed_tracked_path": "docs/architecture/G3_API_TENANT_ENFORCEMENT_MATRIX.md",
+      "document_title": "G3_API_TENANT_ENFORCEMENT_MATRIX.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-02",
+      "current_path": "docs/architecture/G3_R_P0_REMEDIATION_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G3_R_P0_REMEDIATION_REPORT.md",
+      "document_title": "G3_R_P0_REMEDIATION_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-03",
+      "current_path": "docs/architecture/G3_SEED_TENANT_VALIDATION.md",
+      "proposed_tracked_path": "docs/architecture/G3_SEED_TENANT_VALIDATION.md",
+      "document_title": "G3_SEED_TENANT_VALIDATION.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-04",
+      "current_path": "docs/architecture/G3_TENANT_ISOLATION_GAP_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G3_TENANT_ISOLATION_GAP_REPORT.md",
+      "document_title": "G3_TENANT_ISOLATION_GAP_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-05",
+      "current_path": "docs/architecture/G3_TENANT_ISOLATION_VALIDATION_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G3_TENANT_ISOLATION_VALIDATION_REPORT.md",
+      "document_title": "G3_TENANT_ISOLATION_VALIDATION_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-06",
+      "current_path": "docs/architecture/G3_TENANT_MODEL_CLASSIFICATION.md",
+      "proposed_tracked_path": "docs/architecture/G3_TENANT_MODEL_CLASSIFICATION.md",
+      "document_title": "G3_TENANT_MODEL_CLASSIFICATION.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-07",
+      "current_path": "docs/architecture/G3_TENANT_REMEDIATION_ROADMAP.md",
+      "proposed_tracked_path": "docs/architecture/G3_TENANT_REMEDIATION_ROADMAP.md",
+      "document_title": "G3_TENANT_REMEDIATION_ROADMAP.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-08",
+      "current_path": "docs/architecture/G3_TENANT_TEST_COVERAGE_PLAN.md",
+      "proposed_tracked_path": "docs/architecture/G3_TENANT_TEST_COVERAGE_PLAN.md",
+      "document_title": "G3_TENANT_TEST_COVERAGE_PLAN.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-09",
+      "current_path": "docs/architecture/G4_AUTH_BYPASS_VALIDATION.md",
+      "proposed_tracked_path": "docs/architecture/G4_AUTH_BYPASS_VALIDATION.md",
+      "document_title": "G4_AUTH_BYPASS_VALIDATION.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-10",
+      "current_path": "docs/architecture/G4_AUTH_CANONICALIZATION_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G4_AUTH_CANONICALIZATION_REPORT.md",
+      "document_title": "G4_AUTH_CANONICALIZATION_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-11",
+      "current_path": "docs/architecture/G4_AUTH_CONFLICT_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G4_AUTH_CONFLICT_REPORT.md",
+      "document_title": "G4_AUTH_CONFLICT_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-12",
+      "current_path": "docs/architecture/G4_AUTH_REMEDIATION_ROADMAP.md",
+      "proposed_tracked_path": "docs/architecture/G4_AUTH_REMEDIATION_ROADMAP.md",
+      "document_title": "G4_AUTH_REMEDIATION_ROADMAP.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-13",
+      "current_path": "docs/architecture/G4_AUTH_SURFACE_INVENTORY.md",
+      "proposed_tracked_path": "docs/architecture/G4_AUTH_SURFACE_INVENTORY.md",
+      "document_title": "G4_AUTH_SURFACE_INVENTORY.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-14",
+      "current_path": "docs/architecture/G4_MFA_ENFORCEMENT_MATRIX.md",
+      "proposed_tracked_path": "docs/architecture/G4_MFA_ENFORCEMENT_MATRIX.md",
+      "document_title": "G4_MFA_ENFORCEMENT_MATRIX.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-15",
+      "current_path": "docs/architecture/G4_ROLE_MODEL_ALIGNMENT.md",
+      "proposed_tracked_path": "docs/architecture/G4_ROLE_MODEL_ALIGNMENT.md",
+      "document_title": "G4_ROLE_MODEL_ALIGNMENT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-16",
+      "current_path": "docs/architecture/G4_TENANT_CLAIM_VALIDATION.md",
+      "proposed_tracked_path": "docs/architecture/G4_TENANT_CLAIM_VALIDATION.md",
+      "document_title": "G4_TENANT_CLAIM_VALIDATION.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-17",
+      "current_path": "docs/architecture/G5_AUDIT_CONFLICT_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G5_AUDIT_CONFLICT_REPORT.md",
+      "document_title": "G5_AUDIT_CONFLICT_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-18",
+      "current_path": "docs/architecture/G5_AUDIT_EVENT_TAXONOMY.md",
+      "proposed_tracked_path": "docs/architecture/G5_AUDIT_EVENT_TAXONOMY.md",
+      "document_title": "G5_AUDIT_EVENT_TAXONOMY.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-19",
+      "current_path": "docs/architecture/G5_AUDIT_SURFACE_INVENTORY.md",
+      "proposed_tracked_path": "docs/architecture/G5_AUDIT_SURFACE_INVENTORY.md",
+      "document_title": "G5_AUDIT_SURFACE_INVENTORY.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-20",
+      "current_path": "docs/architecture/G5_LEGACY_AUDIT_DEPRECATION_PLAN.md",
+      "proposed_tracked_path": "docs/architecture/G5_LEGACY_AUDIT_DEPRECATION_PLAN.md",
+      "document_title": "G5_LEGACY_AUDIT_DEPRECATION_PLAN.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-21",
+      "current_path": "docs/architecture/G5_UNIFIED_AUDIT_LEDGER_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G5_UNIFIED_AUDIT_LEDGER_REPORT.md",
+      "document_title": "G5_UNIFIED_AUDIT_LEDGER_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-22",
+      "current_path": "docs/architecture/G6_COMPATIBILITY_STRATEGY.md",
+      "proposed_tracked_path": "docs/architecture/G6_COMPATIBILITY_STRATEGY.md",
+      "document_title": "G6_COMPATIBILITY_STRATEGY.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-23",
+      "current_path": "docs/architecture/G6_DATA_MIGRATION_MAPPING.md",
+      "proposed_tracked_path": "docs/architecture/G6_DATA_MIGRATION_MAPPING.md",
+      "document_title": "G6_DATA_MIGRATION_MAPPING.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-24",
+      "current_path": "docs/architecture/G6_DOMAIN_INVENTORY.md",
+      "proposed_tracked_path": "docs/architecture/G6_DOMAIN_INVENTORY.md",
+      "document_title": "G6_DOMAIN_INVENTORY.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-25",
+      "current_path": "docs/architecture/G6_DOMAIN_STRANGLER_MIGRATION_REPORT.md",
+      "proposed_tracked_path": "docs/architecture/G6_DOMAIN_STRANGLER_MIGRATION_REPORT.md",
+      "document_title": "G6_DOMAIN_STRANGLER_MIGRATION_REPORT.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-26",
+      "current_path": "docs/architecture/G6_FIRST_MIGRATION_CANDIDATE.md",
+      "proposed_tracked_path": "docs/architecture/G6_FIRST_MIGRATION_CANDIDATE.md",
+      "document_title": "G6_FIRST_MIGRATION_CANDIDATE.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-27",
+      "current_path": "docs/architecture/G6_FRONTEND_MIGRATION_MAPPING.md",
+      "proposed_tracked_path": "docs/architecture/G6_FRONTEND_MIGRATION_MAPPING.md",
+      "document_title": "G6_FRONTEND_MIGRATION_MAPPING.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-28",
+      "current_path": "docs/architecture/G6_LEGACY_ROUTE_MAPPING.md",
+      "proposed_tracked_path": "docs/architecture/G6_LEGACY_ROUTE_MAPPING.md",
+      "document_title": "G6_LEGACY_ROUTE_MAPPING.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-29",
+      "current_path": "docs/architecture/G6_MIGRATION_RISK_REGISTER.md",
+      "proposed_tracked_path": "docs/architecture/G6_MIGRATION_RISK_REGISTER.md",
+      "document_title": "G6_MIGRATION_RISK_REGISTER.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "GSERIES-30",
+      "current_path": "docs/architecture/G6_STRANGLER_SEQUENCE.md",
+      "proposed_tracked_path": "docs/architecture/G6_STRANGLER_SEQUENCE.md",
+      "document_title": "G6_STRANGLER_SEQUENCE.md",
+      "apparent_owner": "Architecture (G3–G6 workstreams)",
+      "source_package": "local docs/architecture (untracked)",
+      "current_status": "untracked analysis/report",
+      "authoritative_or_provisional": "provisional analysis — not Baseline",
+      "repository_facts_referenced": [
+        "Tenant/auth/audit/strangler analysis"
+      ],
+      "contradictions": [
+        "Some claims may predate OQ-3/OQ-4/OQ-6/OQ-7"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-7 for G3/G5 relevance"
+      ],
+      "required_owner_decision": "OD-R01-GSERIES: promote all under architecture/ vs retain as evidence-only",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Default recommend evidence/report retention or optional Tier-B promote; not required for OQ-1 authority chain. Owner may upgrade to PROMOTE_AS_IS as a batch."
+    },
+    {
+      "id": "PROP-PROPOSED_OWNER_DECISION_PACKAGE.md",
+      "current_path": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/PROPOSED_OWNER_DECISION_PACKAGE.md",
+      "proposed_tracked_path": "docs/governance/OWNER_DECISION_PACKAGE.md",
+      "document_title": "Proposed Owner Decision Package",
+      "apparent_owner": "Repository Owner",
+      "source_package": "owner-decision evidence package (untracked)",
+      "current_status": "untracked evidence; still titled PROPOSED",
+      "authoritative_or_provisional": "provisional → promote after signing as OWNER_*",
+      "repository_facts_referenced": [
+        "OQ-1..OQ-7"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Owner signatures / preserved OQ decisions"
+      ],
+      "required_owner_decision": "Confirm promote as signed OWNER_DECISION_* after register completion",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Promote after converting PROPOSED → signed OWNER docs reflecting preserved OQ decisions including R0-3 merged."
+    },
+    {
+      "id": "PROP-PROPOSED_OWNER_DECISION_REGISTER.md",
+      "current_path": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/PROPOSED_OWNER_DECISION_REGISTER.md",
+      "proposed_tracked_path": "docs/governance/OWNER_DECISION_REGISTER.md",
+      "document_title": "Proposed Owner Decision Register",
+      "apparent_owner": "Repository Owner",
+      "source_package": "owner-decision evidence package (untracked)",
+      "current_status": "untracked evidence; still titled PROPOSED",
+      "authoritative_or_provisional": "provisional → promote after signing as OWNER_*",
+      "repository_facts_referenced": [
+        "OQ-1..OQ-7"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Owner signatures / preserved OQ decisions"
+      ],
+      "required_owner_decision": "Confirm promote as signed OWNER_DECISION_* after register completion",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Promote after converting PROPOSED → signed OWNER docs reflecting preserved OQ decisions including R0-3 merged."
+    },
+    {
+      "id": "PROP-PROPOSED_REPOSITORY_REMEDIATION_SEQUENCE.md",
+      "current_path": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/PROPOSED_REPOSITORY_REMEDIATION_SEQUENCE.md",
+      "proposed_tracked_path": "docs/governance/REPOSITORY_REMEDIATION_SEQUENCE.md",
+      "document_title": "Proposed Repository Remediation Sequence",
+      "apparent_owner": "Repository Owner",
+      "source_package": "owner-decision evidence package (untracked)",
+      "current_status": "untracked evidence; still titled PROPOSED",
+      "authoritative_or_provisional": "provisional → promote after signing as OWNER_*",
+      "repository_facts_referenced": [
+        "OQ-1..OQ-7"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Owner signatures / preserved OQ decisions"
+      ],
+      "required_owner_decision": "Confirm promote as signed OWNER_DECISION_* after register completion",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Promote after converting PROPOSED → signed OWNER docs reflecting preserved OQ decisions including R0-3 merged."
+    },
+    {
+      "id": "PROP-PROPOSED_GOVERNANCE_REBASELINE_EXIT_CRITERIA.md",
+      "current_path": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/PROPOSED_GOVERNANCE_REBASELINE_EXIT_CRITERIA.md",
+      "proposed_tracked_path": "docs/governance/GOVERNANCE_REBASELINE_EXIT_CRITERIA.md",
+      "document_title": "Proposed Governance Rebaseline Exit Criteria",
+      "apparent_owner": "Repository Owner",
+      "source_package": "owner-decision evidence package (untracked)",
+      "current_status": "untracked evidence; still titled PROPOSED",
+      "authoritative_or_provisional": "provisional → promote after signing as OWNER_*",
+      "repository_facts_referenced": [
+        "OQ-1..OQ-7"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "Owner signatures / preserved OQ decisions"
+      ],
+      "required_owner_decision": "Confirm promote as signed OWNER_DECISION_* after register completion",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_WITH_REBASELINE",
+      "rationale": "Promote after converting PROPOSED → signed OWNER docs reflecting preserved OQ decisions including R0-3 merged."
+    },
+    {
+      "id": "EV-REBASELINE",
+      "current_path": "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline/",
+      "proposed_tracked_path": "docs/evidence/governance/2026-07-26T08-43-21-repository-rules-rebaseline/",
+      "document_title": "Repository Rules Rebaseline Evidence Package",
+      "apparent_owner": "Repository Owner",
+      "source_package": "evidence (currently untracked)",
+      "current_status": "untracked evidence folder",
+      "authoritative_or_provisional": "evidence",
+      "repository_facts_referenced": [
+        "C-01..C-05, OQs"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Approve tracking this evidence package (recommended)",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Should be git-tracked as evidence (not under docs/governance standards tree)."
+    },
+    {
+      "id": "EV-OWNERPKG",
+      "current_path": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/",
+      "proposed_tracked_path": "docs/evidence/governance/2026-07-26T09-38-03-owner-decision-package/",
+      "document_title": "Owner Decision Package Evidence",
+      "apparent_owner": "Repository Owner",
+      "source_package": "evidence (currently untracked)",
+      "current_status": "untracked evidence folder",
+      "authoritative_or_provisional": "evidence",
+      "repository_facts_referenced": [
+        "PROPOSED OQ package"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Approve tracking this evidence package",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Evidence retention; standards go to docs/governance after signing."
+    },
+    {
+      "id": "EV-R03",
+      "current_path": "docs/evidence/governance/2026-07-26T10-05-37-r0-3-deploy-containment/",
+      "proposed_tracked_path": "docs/evidence/governance/2026-07-26T10-05-37-r0-3-deploy-containment/",
+      "document_title": "R0-3 Deploy Containment Evidence",
+      "apparent_owner": "Repository Owner",
+      "source_package": "evidence (TRACKED on base)",
+      "current_status": "tracked on fix/ca-h01-frontend-f4-cutover @ 1f141fe1",
+      "authoritative_or_provisional": "evidence",
+      "repository_facts_referenced": [
+        "OQ-6 R0-3 merged"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "None — already tracked",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "rationale": "Already tracked via R0-3 merge; do not modify."
+    },
+    {
+      "id": "ROOT-PDF-AIGOV",
+      "current_path": "Confora Ai Development Governance Framework V1.pdf",
+      "proposed_tracked_path": null,
+      "document_title": "Confora AI Development Governance Framework V1",
+      "apparent_owner": "Unknown / CONFORA",
+      "source_package": "repo root (untracked binary)",
+      "current_status": "untracked PDF 70KB",
+      "authoritative_or_provisional": "provisional binary",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [
+        "Prefer markdown AI_GOVERNANCE.md as SoR"
+      ],
+      "dependencies": [],
+      "required_owner_decision": "Confirm licence/distribution rights before any track; prefer extract to markdown",
+      "copyright_or_licensing_concern": "Binary PDF — verify ownership/licence before tracking",
+      "recommended_classification": "DO_NOT_TRACK",
+      "rationale": "Avoid binary SoR; extract requirements into AI_GOVERNANCE.md if needed."
+    },
+    {
+      "id": "ROOT-CONFORA_Design_System_Promptovi_v1.0.docx",
+      "current_path": "CONFORA_Design_System_Promptovi_v1.0.docx",
+      "proposed_tracked_path": null,
+      "document_title": "CONFORA_Design_System_Promptovi_v1.0.docx",
+      "apparent_owner": "Product / CONFORA",
+      "source_package": "repo root (untracked binary)",
+      "current_status": "untracked docx",
+      "authoritative_or_provisional": "legacy/spec binary",
+      "repository_facts_referenced": [
+        "Some cited by Baseline §2"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Keep local-only vs convert excerpts to markdown under docs/",
+      "copyright_or_licensing_concern": "docx may embed third-party content; do not treat as ISO PDF",
+      "recommended_classification": "DO_NOT_TRACK",
+      "rationale": "Binary specs are poor git SoR; convert needed clauses to markdown in later tasks."
+    },
+    {
+      "id": "ROOT-CONFORA_LMS_Plan_Implementacije_v1.0_1.docx",
+      "current_path": "CONFORA_LMS_Plan_Implementacije_v1.0_1.docx",
+      "proposed_tracked_path": null,
+      "document_title": "CONFORA_LMS_Plan_Implementacije_v1.0_1.docx",
+      "apparent_owner": "Product / CONFORA",
+      "source_package": "repo root (untracked binary)",
+      "current_status": "untracked docx",
+      "authoritative_or_provisional": "legacy/spec binary",
+      "repository_facts_referenced": [
+        "Some cited by Baseline §2"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Keep local-only vs convert excerpts to markdown under docs/",
+      "copyright_or_licensing_concern": "docx may embed third-party content; do not treat as ISO PDF",
+      "recommended_classification": "DO_NOT_TRACK",
+      "rationale": "Binary specs are poor git SoR; convert needed clauses to markdown in later tasks."
+    },
+    {
+      "id": "ROOT-CONFORA_Tehnicka_Specifikacija.docx",
+      "current_path": "CONFORA_Tehnicka_Specifikacija.docx",
+      "proposed_tracked_path": null,
+      "document_title": "CONFORA_Tehnicka_Specifikacija.docx",
+      "apparent_owner": "Product / CONFORA",
+      "source_package": "repo root (untracked binary)",
+      "current_status": "untracked docx",
+      "authoritative_or_provisional": "legacy/spec binary",
+      "repository_facts_referenced": [
+        "Some cited by Baseline §2"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Keep local-only vs convert excerpts to markdown under docs/",
+      "copyright_or_licensing_concern": "docx may embed third-party content; do not treat as ISO PDF",
+      "recommended_classification": "DO_NOT_TRACK",
+      "rationale": "Binary specs are poor git SoR; convert needed clauses to markdown in later tasks."
+    },
+    {
+      "id": "ROOT-CONFORA_WCAG22_Zahtjevi.docx",
+      "current_path": "CONFORA_WCAG22_Zahtjevi.docx",
+      "proposed_tracked_path": null,
+      "document_title": "CONFORA_WCAG22_Zahtjevi.docx",
+      "apparent_owner": "Product / CONFORA",
+      "source_package": "repo root (untracked binary)",
+      "current_status": "untracked docx",
+      "authoritative_or_provisional": "legacy/spec binary",
+      "repository_facts_referenced": [
+        "Some cited by Baseline §2"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Keep local-only vs convert excerpts to markdown under docs/",
+      "copyright_or_licensing_concern": "docx may embed third-party content; do not treat as ISO PDF",
+      "recommended_classification": "DO_NOT_TRACK",
+      "rationale": "Binary specs are poor git SoR; convert needed clauses to markdown in later tasks."
+    },
+    {
+      "id": "ROOT-CONFORA_Current_State_v1.md",
+      "current_path": "CONFORA_Current_State_v1.md",
+      "proposed_tracked_path": "docs/reference/CONFORA_Current_State_v1.md",
+      "document_title": "CONFORA Current State v1",
+      "apparent_owner": "Product",
+      "source_package": "repo root (untracked)",
+      "current_status": "untracked markdown at root",
+      "authoritative_or_provisional": "provisional / reference — not Baseline",
+      "repository_facts_referenced": [
+        "Cited by Baseline §2 for some"
+      ],
+      "contradictions": [
+        "May conflict with Baseline/ADRs"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as reference under docs/reference/ vs leave untracked",
+      "copyright_or_licensing_concern": "none known",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Useful product context but not part of OQ-1 minimum authority chain; owner chooses."
+    },
+    {
+      "id": "ROOT-CONFORA_Development_Prompts_1.md",
+      "current_path": "CONFORA_Development_Prompts_1.md",
+      "proposed_tracked_path": "docs/reference/CONFORA_Development_Prompts_1.md",
+      "document_title": "CONFORA Development Prompts 1",
+      "apparent_owner": "Product",
+      "source_package": "repo root (untracked)",
+      "current_status": "untracked markdown at root",
+      "authoritative_or_provisional": "provisional / reference — not Baseline",
+      "repository_facts_referenced": [
+        "Cited by Baseline §2 for some"
+      ],
+      "contradictions": [
+        "May conflict with Baseline/ADRs"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as reference under docs/reference/ vs leave untracked",
+      "copyright_or_licensing_concern": "none known",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Useful product context but not part of OQ-1 minimum authority chain; owner chooses."
+    },
+    {
+      "id": "ROOT-CONFORA_SCHEMES_CATALOG.md",
+      "current_path": "CONFORA_SCHEMES_CATALOG.md",
+      "proposed_tracked_path": "docs/reference/CONFORA_SCHEMES_CATALOG.md",
+      "document_title": "CONFORA Schemes Catalog",
+      "apparent_owner": "Product",
+      "source_package": "repo root (untracked)",
+      "current_status": "untracked markdown at root",
+      "authoritative_or_provisional": "provisional / reference — not Baseline",
+      "repository_facts_referenced": [
+        "Cited by Baseline §2 for some"
+      ],
+      "contradictions": [
+        "May conflict with Baseline/ADRs"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as reference under docs/reference/ vs leave untracked",
+      "copyright_or_licensing_concern": "none known",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Useful product context but not part of OQ-1 minimum authority chain; owner chooses."
+    },
+    {
+      "id": "ROOT-CONFORA_SPEC_ANALIZA.md",
+      "current_path": "CONFORA_SPEC_ANALIZA.md",
+      "proposed_tracked_path": "docs/reference/CONFORA_SPEC_ANALIZA.md",
+      "document_title": "CONFORA Spec Analiza",
+      "apparent_owner": "Product",
+      "source_package": "repo root (untracked)",
+      "current_status": "untracked markdown at root",
+      "authoritative_or_provisional": "provisional / reference — not Baseline",
+      "repository_facts_referenced": [
+        "Cited by Baseline §2 for some"
+      ],
+      "contradictions": [
+        "May conflict with Baseline/ADRs"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [],
+      "required_owner_decision": "Promote as reference under docs/reference/ vs leave untracked",
+      "copyright_or_licensing_concern": "none known",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Useful product context but not part of OQ-1 minimum authority chain; owner chooses."
+    },
+    {
+      "id": "MISS-001",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/governance/ENGINEERING_CONSTITUTION.md",
+      "document_title": "Engineering Constitution",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/governance/ENGINEERING_CONSTITUTION.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "MISS-002",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/governance/CHANGE_CONTROL.md",
+      "document_title": "Change Control",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/governance/CHANGE_CONTROL.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "MISS-003",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/governance/OWNER_DECISION_REGISTER.md",
+      "document_title": "Owner Decision Register (signed)",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/governance/OWNER_DECISION_REGISTER.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "MISS-004",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/governance/STANDARDS_REFERENCE_POLICY.md",
+      "document_title": "Standards Reference Policy",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/governance/STANDARDS_REFERENCE_POLICY.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "MISS-005",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/tasks/TASK_TEMPLATE.md",
+      "document_title": "Task Template",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/tasks/TASK_TEMPLATE.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "MISS-006",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/prompts/CURSOR_IMPLEMENTATION_PROMPT_TEMPLATE.md",
+      "document_title": "Cursor Implementation Prompt Template",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/prompts/CURSOR_IMPLEMENTATION_PROMPT_TEMPLATE.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "MISS-007",
+      "current_path": "(missing)",
+      "proposed_tracked_path": "docs/reviews/INDEPENDENT_REVIEW_TEMPLATE.md",
+      "document_title": "Independent Review Template",
+      "apparent_owner": "Repository Owner / Architecture",
+      "source_package": "not found — to author in R0-1B from templates/evidence",
+      "current_status": "MISSING",
+      "authoritative_or_provisional": "to-create",
+      "repository_facts_referenced": [],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-1"
+      ],
+      "required_owner_decision": "Authorize creation of docs/reviews/INDEPENDENT_REVIEW_TEMPLATE.md in R0-1B",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "UNRESOLVED",
+      "rationale": "Required by proposed target structure; does not exist yet. Seed from R0-3 review/owner docs where applicable."
+    },
+    {
+      "id": "CURSOR-RULES",
+      "current_path": ".cursor/rules/**",
+      "proposed_tracked_path": ".cursor/rules/** (R0-2 only)",
+      "document_title": "Cursor Rules Pack",
+      "apparent_owner": "Repository Owner / AI Governance",
+      "source_package": "local .cursor/rules (gitignored)",
+      "current_status": "gitignored via .cursor/",
+      "authoritative_or_provisional": "operational agent rules — not R0-1",
+      "repository_facts_referenced": [
+        "OQ-2"
+      ],
+      "contradictions": [],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "OQ-2 / R0-2"
+      ],
+      "required_owner_decision": "Defer to R0-2",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "DO_NOT_TRACK",
+      "rationale": "OQ-2: Cursor rules tracked later under separate controlled R0-2 task. Exclude from R0-1 promotion commit."
+    },
+    {
+      "id": "AGENTS",
+      "current_path": "AGENTS.md",
+      "proposed_tracked_path": "AGENTS.md",
+      "document_title": "CONFORA AI Agent Instructions",
+      "apparent_owner": "Repository Owner",
+      "source_package": "repo root (TRACKED)",
+      "current_status": "tracked",
+      "authoritative_or_provisional": "authoritative agent entrypoint",
+      "repository_facts_referenced": [
+        "Points to Baseline"
+      ],
+      "contradictions": [
+        "C-01 until Baseline tracked"
+      ],
+      "duplicate_or_superseded": [],
+      "dependencies": [
+        "GOV-001"
+      ],
+      "required_owner_decision": "None — already tracked; update only if Baseline path changes",
+      "copyright_or_licensing_concern": "none",
+      "recommended_classification": "PROMOTE_AS_IS",
+      "rationale": "Already tracked; remains agent entrypoint. Classification retained for inventory completeness."
+    }
+  ]
+}
