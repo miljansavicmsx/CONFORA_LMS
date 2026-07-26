@@ -1,0 +1,111 @@
+{
+  "max_normative_files": 20,
+  "proposed_count": 15,
+  "files": [
+    {
+      "path": "docs/architecture/ARCHITECTURE.md",
+      "source": "docs/architecture/STRUCTURE.md",
+      "action": "create via rebaseline rename",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "source": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "action": "promote rebaselined",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "source": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "action": "promote rebaselined",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/MULTI_TENANCY_STANDARD.md",
+      "source": "docs/MULTI_TENANCY_STANDARD.md",
+      "action": "move + rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/SHARED_KERNEL_STANDARD.md",
+      "source": "docs/SHARED_KERNEL_STANDARD.md",
+      "action": "move + rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "source": "docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "action": "move + rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/README.md",
+      "source": "docs/architecture/decisions/README.md",
+      "action": "move + rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-001-frontend.md",
+      "source": "docs/architecture/decisions/ADR-001-frontend.md",
+      "action": "supersession record",
+      "classification": "SUPERSEDE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-002-backend.md",
+      "source": "docs/architecture/decisions/ADR-002-backend.md",
+      "action": "rebaseline OQ-3 + RabbitMQ",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-003-database.md",
+      "source": "docs/architecture/decisions/ADR-003-database.md",
+      "action": "rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-004-vector-search.md",
+      "source": "docs/architecture/decisions/ADR-004-vector-search.md",
+      "action": "rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-005-authentication.md",
+      "source": "docs/architecture/decisions/ADR-005-authentication.md",
+      "action": "rebaseline OQ-5",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-006-ai-governance.md",
+      "source": "docs/architecture/decisions/ADR-006-ai-governance.md",
+      "action": "rebaseline",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/adrs/ADR-007-audit-architecture.md",
+      "source": "docs/architecture/decisions/ADR-007-audit-architecture.md",
+      "action": "rebaseline OQ-7 + messaging",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    },
+    {
+      "path": "docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md",
+      "source": "new (optional if Gap Note insufficient)",
+      "action": "create contradiction pointer doc",
+      "classification": "PROMOTE_WITH_REBASELINE"
+    }
+  ],
+  "exclusions": [
+    "G3-G6 normative",
+    "compliance R0-1B3",
+    "cursor R0-2",
+    "app/CI/schema",
+    "FastAPI track",
+    "binaries/PDFs"
+  ],
+  "oq_states_must_remain": {
+    "OQ-3": "OPEN",
+    "OQ-4": "OPEN",
+    "OQ-5": "DIRECTIONAL",
+    "OQ-6": "MERGED_WITH_CONDITIONS",
+    "OQ-7": "OPEN"
+  }
+}

@@ -1,0 +1,15 @@
+# git status after (pre evidence-closure commit)
+
+Captured immediately before the evidence-closure commit while HEAD was still
+the independently reviewed normative tip.
+
+```
+branch: governance/r0-1b2-1-architecture-sot
+HEAD: 16ccdac0d8ff953c5fca3c06638b955bd3d14277
+origin/governance/r0-1b2-1-architecture-sot: 16ccdac0d8ff953c5fca3c06638b955bd3d14277
+tracked working tree: clean (untracked-files=no)
+pull request for head: none
+```
+
+Tracked modifications after evidence edits are limited to this evidence folder
+only; normative architecture paths remain unchanged from tip `16ccdac0`.
