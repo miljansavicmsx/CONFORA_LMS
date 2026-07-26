@@ -1,0 +1,1084 @@
+{
+  "generated": "2026-07-26",
+  "base": "fb90ddd9e3bcdca3f266e9a9b09097d6c9da74dc",
+  "candidates": [
+    {
+      "id": "A-01",
+      "path": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "tracked": false,
+      "title": "Canonical Component Registry",
+      "status_in_doc": "Analysis only",
+      "proposed_target": "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-001",
+        "ADR-002",
+        "ADR-007"
+      ],
+      "owner_decision": "OD-R01B2-1 (scope), OD-R01B2-9 (registry legend)",
+      "transformation": "Rebaseline legend to distinguish intended vs operational vs incomplete vs transitional vs frozen-legacy vs unverified-local; demote apps/web, apps/admin, apps/api from unqualified Canonical; align messaging with Baseline RabbitMQ MVP; cite tracked evidence only.",
+      "rationale": "High value inventory but over-claims operational/canonical status for incomplete or untracked components.",
+      "claims": [
+        "apps/api Canonical",
+        "apps/web Canonical",
+        "apps/admin Canonical",
+        "frontend-app Transitional",
+        "backend Legacy",
+        "RabbitMQ Canonical MVP",
+        "Kafka Transitional"
+      ],
+      "evidence_support": "frontend-app tracked and used as pilot UI (Gap Note + 108 tracked files). backend/ has 72 local routers untracked. Baseline \u00a74.7 RabbitMQ.",
+      "evidence_contradict": "Tracked apps/api has 20 files, no main.ts, app.module imports untracked modules \u2192 not buildable on clean clone. apps/web and apps/admin exist locally with 0 tracked files. Registry Canonical labels conflict with OQ-3/OQ-4.",
+      "gov_conflicts": "OQ-3, OQ-4, Baseline \u00a70.1/\u00a70.2, FRONTEND_CANONICALIZATION_GAP_NOTE",
+      "dependencies": [
+        "LEGACY_DEPRECATION_MATRIX",
+        "ADRs",
+        "Baseline \u00a70"
+      ]
+    },
+    {
+      "id": "A-02",
+      "path": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "tracked": false,
+      "title": "Legacy Deprecation Matrix",
+      "status_in_doc": "Analysis only",
+      "proposed_target": "docs/architecture/LEGACY_DEPRECATION_MATRIX.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Verify each row against tracked/untracked status; add evidence-required column; forbid interpreting Phase labels as authorization to extend legacy; align Kafka/RabbitMQ row with Baseline.",
+      "rationale": "Useful strangler map; must not authorize FastAPI tracking or legacy extension.",
+      "claims": [
+        "Canonical Nest/Postgres/Keycloak/RabbitMQ",
+        "FastAPI 72 routers legacy",
+        "frontend-app deprecate to apps/web+admin Phase 4"
+      ],
+      "evidence_support": "72 backend/routers/*.py present locally (untracked). Keycloak/Nest pilot references in Gap Note and strangler criteria.",
+      "evidence_contradict": "Treats apps/api as ready replacement while tracked apps/api incomplete. frontend-app is operational canonical per OQ-4, not merely Phase-4 deprecation candidate without supersession.",
+      "gov_conflicts": "OQ-3, OQ-4",
+      "dependencies": [
+        "CANONICAL_COMPONENT_REGISTRY",
+        "LEGACY_STRANGLER_RETIREMENT_CRITERIA"
+      ]
+    },
+    {
+      "id": "A-03",
+      "path": "docs/architecture/STRUCTURE.md",
+      "tracked": false,
+      "title": "Enterprise Monorepo Structure",
+      "status_in_doc": "Target folder model",
+      "proposed_target": "docs/architecture/ARCHITECTURE.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-001",
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-4 (rename STRUCTURE\u2192ARCHITECTURE)",
+      "transformation": "Rename to ARCHITECTURE.md; add current-vs-target views; link registry/ADRs; remove Kafka-as-default; document frontend-app operational; apps/api incomplete.",
+      "rationale": "Natural architecture root but currently target-only and contradicts repository reality.",
+      "claims": [
+        "apps/web primary Next.js",
+        "apps/api Nest domain modules",
+        "worker Kafka consumers",
+        "legacy frontend-app maps to apps/web"
+      ],
+      "evidence_support": "Monorepo layout aspirational; packages/* partially tracked.",
+      "evidence_contradict": "Kafka vs Baseline RabbitMQ; no tracked apps/web|admin|worker; frontend-app is operational not merely legacy mapping.",
+      "gov_conflicts": "Baseline \u00a74.1/\u00a74.2/\u00a74.7, OQ-3, OQ-4, C-03",
+      "dependencies": [
+        "ADRs",
+        "registry"
+      ]
+    },
+    {
+      "id": "A-04",
+      "path": "docs/architecture/decisions/ADR-001-frontend.md",
+      "tracked": false,
+      "title": "ADR-001 Frontend Architecture",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-001-frontend.md",
+      "classification": "SUPERSEDE",
+      "related_adrs": [
+        "ADR-001"
+      ],
+      "owner_decision": "OD-R01B2-2 (supersede vs amend)",
+      "transformation": "Formal supersession ADR (recommended) stating Next.js remains target; frontend-app is operational canonical until parity exit criteria; freeze growth of frontend-app features except pilot maintenance.",
+      "rationale": "Historically Accepted but contradicted by OQ-4 and Gap Note; must not silently remain Accepted-as-current.",
+      "claims": [
+        "Next.js apps/web primary",
+        "frontend-app frozen pending migration"
+      ],
+      "evidence_support": "Baseline \u00a74.1 target Next.js; apps/web|admin exist locally (untracked).",
+      "evidence_contradict": "frontend-app 108 tracked files, Vite operational; Gap Note says not frozen for pilot; apps/web|admin 0 tracked.",
+      "gov_conflicts": "OQ-4, FRONTEND_CANONICALIZATION_GAP_NOTE, Baseline \u00a70.2",
+      "dependencies": [
+        "Gap Note",
+        "STRUCTURE/ARCHITECTURE"
+      ]
+    },
+    {
+      "id": "A-05",
+      "path": "docs/architecture/decisions/ADR-002-backend.md",
+      "tracked": false,
+      "title": "ADR-002 Backend Architecture",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-002-backend.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-5 (messaging amendment)",
+      "transformation": "Rebaseline: NestJS intended canonical; OQ-3 OPEN incomplete tracked state; messaging RabbitMQ MVP / Kafka post-MVP via ADR; FastAPI not canonical.",
+      "rationale": "Core backend ADR but Kafka row and implicit completeness conflict with Baseline and OQ-3.",
+      "claims": [
+        "NestJS API",
+        "Prisma",
+        "Redis",
+        "Apache Kafka",
+        "MinIO"
+      ],
+      "evidence_support": "Nest intended in Baseline \u00a74.2; packages/shared-kernel partial; deploy-backend containment.",
+      "evidence_contradict": "Tracked apps/api incomplete; Kafka not MVP per Baseline \u00a74.7 and ADR_ALIGNMENT_NOTE; backend/ FastAPI local untracked.",
+      "gov_conflicts": "OQ-3, Baseline \u00a74.7, C-03",
+      "dependencies": [
+        "ADR_ALIGNMENT_NOTE",
+        "Baseline"
+      ]
+    },
+    {
+      "id": "A-06",
+      "path": "docs/architecture/decisions/ADR-003-database.md",
+      "tracked": false,
+      "title": "ADR-003 Database Strategy",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-003-database.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-003"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Rebaseline: PostgreSQL+Prisma intended; packages/database 0 tracked; root prisma local-only; tenant_id mandatory as requirement not verified completeness.",
+      "rationale": "Core data ADR; schema location claims need honesty.",
+      "claims": [
+        "PostgreSQL 15+",
+        "Prisma Migrate",
+        "tenant_id on core entities"
+      ],
+      "evidence_support": "Baseline DB rules; shared-kernel tenant helpers tracked.",
+      "evidence_contradict": "packages/database untracked (0 files); prisma/schema.prisma local untracked; OQ-7.",
+      "gov_conflicts": "OQ-7",
+      "dependencies": [
+        "MULTI_TENANCY_STANDARD"
+      ]
+    },
+    {
+      "id": "A-07",
+      "path": "docs/architecture/decisions/ADR-004-vector-search.md",
+      "tracked": false,
+      "title": "ADR-004 Vector Search and RAG",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-004-vector-search.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-004",
+        "ADR-006"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Keep pgvector+RAG intent; mark ai-service status unverified/local; no autonomous certification.",
+      "rationale": "Useful AI retrieval ADR; implementation not verified tracked.",
+      "claims": [
+        "pgvector",
+        "apps/ai-service FastAPI"
+      ],
+      "evidence_support": "Baseline vector/AI governance principles.",
+      "evidence_contradict": "apps/ai-service untracked locally; packages/ai-governance 0 tracked.",
+      "gov_conflicts": "AI governance (assistive only)",
+      "dependencies": [
+        "ADR-006"
+      ]
+    },
+    {
+      "id": "A-08",
+      "path": "docs/architecture/decisions/ADR-005-authentication.md",
+      "tracked": false,
+      "title": "ADR-005 Authentication and Authorization",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-005-authentication.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-005"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Rebaseline OQ-5 DIRECTIONAL; packages/auth contracts untracked; SoD as requirement.",
+      "rationale": "Identity ADR must not claim complete RBAC/SoD.",
+      "claims": [
+        "JWT",
+        "MFA-ready",
+        "RBAC SoD",
+        "packages/auth"
+      ],
+      "evidence_support": "Tracked apps/api auth helper files (partial).",
+      "evidence_contradict": "packages/auth 0 tracked; OQ-5 not CLOSED.",
+      "gov_conflicts": "OQ-5",
+      "dependencies": [
+        "MULTI_TENANCY_STANDARD"
+      ]
+    },
+    {
+      "id": "A-09",
+      "path": "docs/architecture/decisions/ADR-006-ai-governance.md",
+      "tracked": false,
+      "title": "ADR-006 AI Governance",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-006-ai-governance.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-006"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Preserve human oversight; note package stubs.",
+      "rationale": "Aligned with Baseline AI rules; package presence unverified.",
+      "claims": [
+        "OpenAI",
+        "ai-service gateway",
+        "packages/ai-governance"
+      ],
+      "evidence_support": "Baseline \u00a7 AI human oversight.",
+      "evidence_contradict": "packages/ai-governance 0 tracked.",
+      "gov_conflicts": "None material if assistive-only preserved",
+      "dependencies": [
+        "ADR-004"
+      ]
+    },
+    {
+      "id": "A-10",
+      "path": "docs/architecture/decisions/ADR-007-audit-architecture.md",
+      "tracked": false,
+      "title": "ADR-007 Audit Architecture",
+      "status_in_doc": "Accepted",
+      "proposed_target": "docs/architecture/adrs/ADR-007-audit-architecture.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-007"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Append-only ledger requirement; replace Kafka fan-out with RabbitMQ MVP note; OQ-7 partial.",
+      "rationale": "Critical compliance ADR; verification incomplete.",
+      "claims": [
+        "Append-only ledger",
+        "packages/audit",
+        "Kafka fan-out"
+      ],
+      "evidence_support": "Baseline audit requirements; audit-client package tracked name exists.",
+      "evidence_contradict": "packages/audit 0 tracked; Kafka vs RabbitMQ; OQ-7 OPEN.",
+      "gov_conflicts": "OQ-7, C-03, C-06",
+      "dependencies": [
+        "MULTI_TENANCY_STANDARD"
+      ]
+    },
+    {
+      "id": "A-11",
+      "path": "docs/architecture/decisions/README.md",
+      "tracked": false,
+      "title": "ADR index README",
+      "status_in_doc": "Index",
+      "proposed_target": "docs/architecture/adrs/README.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-001..007"
+      ],
+      "owner_decision": "OD-R01B2-3",
+      "transformation": "Move with ADR directory; update statuses post-supersession; remove Architecture Bible as sole authority claim vs GOVERNANCE_HIERARCHY.",
+      "rationale": "Needed index after path migration.",
+      "claims": [
+        "decisions/ is SoT",
+        "ADRs override informal docs"
+      ],
+      "evidence_support": "ADR_ALIGNMENT_NOTE path convention.",
+      "evidence_contradict": "Authority wording must yield to owner decisions/Baseline hierarchy.",
+      "gov_conflicts": "GOVERNANCE_HIERARCHY",
+      "dependencies": [
+        "ADR path move"
+      ]
+    },
+    {
+      "id": "A-12",
+      "path": "docs/MULTI_TENANCY_STANDARD.md",
+      "tracked": false,
+      "title": "Multi-Tenancy Standard",
+      "status_in_doc": "Authoritative \u2014 non-negotiable (self-declared)",
+      "proposed_target": "docs/architecture/MULTI_TENANCY_STANDARD.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-003",
+        "ADR-005",
+        "ADR-007"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Move under architecture/; demote self-declared Authoritative to Architecture Standard subordinate to Baseline/OQ-7; separate requirement vs verified controls.",
+      "rationale": "Essential tenancy architecture; currently over-claims authority and assumes schema gaps that need re-verification.",
+      "claims": [
+        "mandatory tenant_id",
+        "JWT tenant_id",
+        "TenantContext",
+        "canonical Prisma lacked tenant_id (audit F-02)"
+      ],
+      "evidence_support": "Tracked prisma-tenant-extension.ts and tenant-access-violation.filter.ts exist.",
+      "evidence_contradict": "packages/database 0 tracked; OQ-7 OPEN; document claims need evidence refresh.",
+      "gov_conflicts": "OQ-7; cannot outrank Baseline",
+      "dependencies": [
+        "ADR-003",
+        "ADR-007"
+      ]
+    },
+    {
+      "id": "A-13",
+      "path": "docs/SHARED_KERNEL_STANDARD.md",
+      "tracked": false,
+      "title": "Shared Kernel Standard",
+      "status_in_doc": "Authoritative (self-declared)",
+      "proposed_target": "docs/architecture/SHARED_KERNEL_STANDARD.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Move under architecture/; update package status table vs tracked reality (shared-kernel partial impl; auth/audit/ai-governance untracked).",
+      "rationale": "Useful boundary standard; status table outdated.",
+      "claims": [
+        "shared-kernel/auth/audit/ai-governance placeholders",
+        "shared-types production"
+      ],
+      "evidence_support": "packages/shared-kernel has tracked src (entities, tenant); packages/shared-types tracked.",
+      "evidence_contradict": "Doc says shared-kernel is placeholder \u2014 partially obsolete; packages/auth|audit|ai-governance|database still 0 tracked.",
+      "gov_conflicts": "None if rebaselined",
+      "dependencies": [
+        "registry"
+      ]
+    },
+    {
+      "id": "A-14",
+      "path": "docs/governance/ADR_ALIGNMENT_NOTE.md",
+      "tracked": false,
+      "title": "ADR Alignment Note",
+      "status_in_doc": "CANONICAL (synced F6-LOCAL-2) \u2014 local claim",
+      "proposed_target": "Retain content via adrs/README + ARCHITECTURE.md; optional evidence-only keep",
+      "classification": "MERGE_WITH_OTHER",
+      "related_adrs": [
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-3, OD-R01B2-5",
+      "transformation": "Merge path+messaging guidance into adrs/README and ADR-002 amendment; do not promote as separate Level-1 governance.",
+      "rationale": "Valuable C-03 documentation; duplicates future ADR rebaseline.",
+      "claims": [
+        "decisions/ SoT",
+        "RabbitMQ MVP vs Kafka forward-looking"
+      ],
+      "evidence_support": "Matches Baseline \u00a74.7; CLRC messaging reality stated.",
+      "evidence_contradict": "Self-status CANONICAL conflicts with untracked file and GOVERNANCE_HIERARCHY.",
+      "gov_conflicts": "Untracked cannot be canonical governance",
+      "dependencies": [
+        "ADR-002"
+      ]
+    },
+    {
+      "id": "A-15",
+      "path": "docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "tracked": false,
+      "title": "Legacy Strangler Retirement Criteria",
+      "status_in_doc": "CANONICAL (synced F6-LOCAL-2) \u2014 local claim",
+      "proposed_target": "docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-8",
+      "transformation": "Move to architecture/; rebaseline Nest pilot-authority claims against tracked apps/api incompleteness; keep FastAPI retirement evidence gates; do not authorize FastAPI track.",
+      "rationale": "Strong retirement gates; some pilot-authority claims exceed verified tracked state.",
+      "claims": [
+        "Nest apps/api pilot authority",
+        "FastAPI frozen",
+        "F4-9/F5 proof folders"
+      ],
+      "evidence_support": "Evidence folders referenced may exist locally under docs/evidence/** (many untracked).",
+      "evidence_contradict": "Tracked apps/api not confirmed buildable; claiming Nest pilot authority on clean clone is unsafe.",
+      "gov_conflicts": "OQ-3",
+      "dependencies": [
+        "LEGACY_DEPRECATION_MATRIX"
+      ]
+    },
+    {
+      "id": "A-16",
+      "path": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md",
+      "tracked": true,
+      "title": "Frontend Canonicalization Gap Note",
+      "status_in_doc": "CANONICAL (tracked R0-1B1)",
+      "proposed_target": "docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md (unchanged path)",
+      "classification": "PROMOTE_AS_IS",
+      "related_adrs": [
+        "ADR-001"
+      ],
+      "owner_decision": "None for path; OD-R01B2-2 for ADR supersession linkage",
+      "transformation": "Do not rewrite in R0-1B2A; optionally cross-link from new ADR-001 supersession in R0-1B2 execution.",
+      "rationale": "Already tracked; correctly preserves OQ-4.",
+      "claims": [
+        "frontend-app operational truth",
+        "apps/web|admin not sole pilot"
+      ],
+      "evidence_support": "Matches OQ-4 and Baseline \u00a70.2; frontend-app tracked.",
+      "evidence_contradict": "None material vs governance.",
+      "gov_conflicts": "None",
+      "dependencies": [
+        "ADR-001 supersession"
+      ]
+    },
+    {
+      "id": "A-17",
+      "path": "docs/ARCHITECTURE_BIBLE.md",
+      "tracked": false,
+      "title": "Architecture Bible",
+      "status_in_doc": "local untracked",
+      "proposed_target": "N/A for R0-1B2",
+      "classification": "DO_NOT_TRACK",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Defer; content may duplicate/conflict; not in \u226420 scope.",
+      "rationale": "Large secondary corpus; R0-1B2 prefers ARCHITECTURE.md + ADRs + registry.",
+      "claims": [
+        "entry-point architecture"
+      ],
+      "evidence_support": "Referenced by STRUCTURE.md",
+      "evidence_contradict": "Untracked; authority unclear vs Baseline",
+      "gov_conflicts": "Potential hierarchy confusion",
+      "dependencies": []
+    },
+    {
+      "id": "A-18",
+      "path": "docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md",
+      "tracked": false,
+      "title": "Proposed new OQ-3/OQ-4 architecture contradiction record",
+      "status_in_doc": "N/A (proposed)",
+      "proposed_target": "docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md",
+      "classification": "PROMOTE_WITH_REBASELINE",
+      "related_adrs": [
+        "ADR-001",
+        "ADR-002"
+      ],
+      "owner_decision": "OD-R01B2-1",
+      "transformation": "Author in R0-1B2 execution if Gap Note + Baseline \u00a70 insufficient for architecture readers; else skip to stay \u226420.",
+      "rationale": "Optional single contradiction record for architecture tree.",
+      "claims": [
+        "none yet"
+      ],
+      "evidence_support": "Recommended only if needed",
+      "evidence_contradict": "May duplicate Gap Note / Baseline \u00a70",
+      "gov_conflicts": "None if carefully worded",
+      "dependencies": [
+        "Gap Note",
+        "Baseline"
+      ]
+    },
+    {
+      "id": "G-G3_API_TENANT_ENFORCEMENT_MATRIX.md",
+      "path": "docs/architecture\\G3_API_TENANT_ENFORCEMENT_MATRIX.md",
+      "tracked": false,
+      "title": "G3_API_TENANT_ENFORCEMENT_MATRIX.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_R_P0_REMEDIATION_REPORT.md",
+      "path": "docs/architecture\\G3_R_P0_REMEDIATION_REPORT.md",
+      "tracked": false,
+      "title": "G3_R_P0_REMEDIATION_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_SEED_TENANT_VALIDATION.md",
+      "path": "docs/architecture\\G3_SEED_TENANT_VALIDATION.md",
+      "tracked": false,
+      "title": "G3_SEED_TENANT_VALIDATION.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_TENANT_ISOLATION_GAP_REPORT.md",
+      "path": "docs/architecture\\G3_TENANT_ISOLATION_GAP_REPORT.md",
+      "tracked": false,
+      "title": "G3_TENANT_ISOLATION_GAP_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_TENANT_ISOLATION_VALIDATION_REPORT.md",
+      "path": "docs/architecture\\G3_TENANT_ISOLATION_VALIDATION_REPORT.md",
+      "tracked": false,
+      "title": "G3_TENANT_ISOLATION_VALIDATION_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_TENANT_MODEL_CLASSIFICATION.md",
+      "path": "docs/architecture\\G3_TENANT_MODEL_CLASSIFICATION.md",
+      "tracked": false,
+      "title": "G3_TENANT_MODEL_CLASSIFICATION.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_TENANT_REMEDIATION_ROADMAP.md",
+      "path": "docs/architecture\\G3_TENANT_REMEDIATION_ROADMAP.md",
+      "tracked": false,
+      "title": "G3_TENANT_REMEDIATION_ROADMAP.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G3_TENANT_TEST_COVERAGE_PLAN.md",
+      "path": "docs/architecture\\G3_TENANT_TEST_COVERAGE_PLAN.md",
+      "tracked": false,
+      "title": "G3_TENANT_TEST_COVERAGE_PLAN.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_AUTH_BYPASS_VALIDATION.md",
+      "path": "docs/architecture\\G4_AUTH_BYPASS_VALIDATION.md",
+      "tracked": false,
+      "title": "G4_AUTH_BYPASS_VALIDATION.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_AUTH_CANONICALIZATION_REPORT.md",
+      "path": "docs/architecture\\G4_AUTH_CANONICALIZATION_REPORT.md",
+      "tracked": false,
+      "title": "G4_AUTH_CANONICALIZATION_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_AUTH_CONFLICT_REPORT.md",
+      "path": "docs/architecture\\G4_AUTH_CONFLICT_REPORT.md",
+      "tracked": false,
+      "title": "G4_AUTH_CONFLICT_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_AUTH_REMEDIATION_ROADMAP.md",
+      "path": "docs/architecture\\G4_AUTH_REMEDIATION_ROADMAP.md",
+      "tracked": false,
+      "title": "G4_AUTH_REMEDIATION_ROADMAP.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_AUTH_SURFACE_INVENTORY.md",
+      "path": "docs/architecture\\G4_AUTH_SURFACE_INVENTORY.md",
+      "tracked": false,
+      "title": "G4_AUTH_SURFACE_INVENTORY.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_MFA_ENFORCEMENT_MATRIX.md",
+      "path": "docs/architecture\\G4_MFA_ENFORCEMENT_MATRIX.md",
+      "tracked": false,
+      "title": "G4_MFA_ENFORCEMENT_MATRIX.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_ROLE_MODEL_ALIGNMENT.md",
+      "path": "docs/architecture\\G4_ROLE_MODEL_ALIGNMENT.md",
+      "tracked": false,
+      "title": "G4_ROLE_MODEL_ALIGNMENT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G4_TENANT_CLAIM_VALIDATION.md",
+      "path": "docs/architecture\\G4_TENANT_CLAIM_VALIDATION.md",
+      "tracked": false,
+      "title": "G4_TENANT_CLAIM_VALIDATION.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G5_AUDIT_CONFLICT_REPORT.md",
+      "path": "docs/architecture\\G5_AUDIT_CONFLICT_REPORT.md",
+      "tracked": false,
+      "title": "G5_AUDIT_CONFLICT_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G5_AUDIT_EVENT_TAXONOMY.md",
+      "path": "docs/architecture\\G5_AUDIT_EVENT_TAXONOMY.md",
+      "tracked": false,
+      "title": "G5_AUDIT_EVENT_TAXONOMY.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G5_AUDIT_SURFACE_INVENTORY.md",
+      "path": "docs/architecture\\G5_AUDIT_SURFACE_INVENTORY.md",
+      "tracked": false,
+      "title": "G5_AUDIT_SURFACE_INVENTORY.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G5_LEGACY_AUDIT_DEPRECATION_PLAN.md",
+      "path": "docs/architecture\\G5_LEGACY_AUDIT_DEPRECATION_PLAN.md",
+      "tracked": false,
+      "title": "G5_LEGACY_AUDIT_DEPRECATION_PLAN.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G5_UNIFIED_AUDIT_LEDGER_REPORT.md",
+      "path": "docs/architecture\\G5_UNIFIED_AUDIT_LEDGER_REPORT.md",
+      "tracked": false,
+      "title": "G5_UNIFIED_AUDIT_LEDGER_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_COMPATIBILITY_STRATEGY.md",
+      "path": "docs/architecture\\G6_COMPATIBILITY_STRATEGY.md",
+      "tracked": false,
+      "title": "G6_COMPATIBILITY_STRATEGY.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_DATA_MIGRATION_MAPPING.md",
+      "path": "docs/architecture\\G6_DATA_MIGRATION_MAPPING.md",
+      "tracked": false,
+      "title": "G6_DATA_MIGRATION_MAPPING.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_DOMAIN_INVENTORY.md",
+      "path": "docs/architecture\\G6_DOMAIN_INVENTORY.md",
+      "tracked": false,
+      "title": "G6_DOMAIN_INVENTORY.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_DOMAIN_STRANGLER_MIGRATION_REPORT.md",
+      "path": "docs/architecture\\G6_DOMAIN_STRANGLER_MIGRATION_REPORT.md",
+      "tracked": false,
+      "title": "G6_DOMAIN_STRANGLER_MIGRATION_REPORT.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_FIRST_MIGRATION_CANDIDATE.md",
+      "path": "docs/architecture\\G6_FIRST_MIGRATION_CANDIDATE.md",
+      "tracked": false,
+      "title": "G6_FIRST_MIGRATION_CANDIDATE.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_FRONTEND_MIGRATION_MAPPING.md",
+      "path": "docs/architecture\\G6_FRONTEND_MIGRATION_MAPPING.md",
+      "tracked": false,
+      "title": "G6_FRONTEND_MIGRATION_MAPPING.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_LEGACY_ROUTE_MAPPING.md",
+      "path": "docs/architecture\\G6_LEGACY_ROUTE_MAPPING.md",
+      "tracked": false,
+      "title": "G6_LEGACY_ROUTE_MAPPING.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_MIGRATION_RISK_REGISTER.md",
+      "path": "docs/architecture\\G6_MIGRATION_RISK_REGISTER.md",
+      "tracked": false,
+      "title": "G6_MIGRATION_RISK_REGISTER.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    },
+    {
+      "id": "G-G6_STRANGLER_SEQUENCE.md",
+      "path": "docs/architecture\\G6_STRANGLER_SEQUENCE.md",
+      "tracked": false,
+      "title": "G6_STRANGLER_SEQUENCE.md",
+      "status_in_doc": "G3-G6 analysis",
+      "proposed_target": "remain untracked or evidence-only",
+      "classification": "RETAIN_AS_EVIDENCE_ONLY",
+      "related_adrs": [],
+      "owner_decision": "OD-R01B2-7",
+      "transformation": "Do not promote as normative architecture in R0-1B2.",
+      "rationale": "User exclusion: G3-G6 analysis not normative architecture.",
+      "claims": [
+        "various gap/remediation claims"
+      ],
+      "evidence_support": "May inform OQ-7 remediation later.",
+      "evidence_contradict": "N/A",
+      "gov_conflicts": "Must not outrank Baseline",
+      "dependencies": []
+    }
+  ]
+}

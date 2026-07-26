@@ -1,0 +1,55 @@
+{
+  "move_type": "controlled rename of ADR directory",
+  "source_dir": "docs/architecture/decisions/",
+  "target_dir": "docs/architecture/adrs/",
+  "files": [
+    {
+      "source": "docs/architecture/decisions/README.md",
+      "target": "docs/architecture/adrs/README.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-001-frontend.md",
+      "target": "docs/architecture/adrs/ADR-001-frontend.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-002-backend.md",
+      "target": "docs/architecture/adrs/ADR-002-backend.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-003-database.md",
+      "target": "docs/architecture/adrs/ADR-003-database.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-004-vector-search.md",
+      "target": "docs/architecture/adrs/ADR-004-vector-search.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-005-authentication.md",
+      "target": "docs/architecture/adrs/ADR-005-authentication.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-006-ai-governance.md",
+      "target": "docs/architecture/adrs/ADR-006-ai-governance.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    },
+    {
+      "source": "docs/architecture/decisions/ADR-007-audit-architecture.md",
+      "target": "docs/architecture/adrs/ADR-007-audit-architecture.md",
+      "tracked_today": false,
+      "action_in_r0_1b2": "add at target after rebaseline (do not leave stale decisions/ without redirect note)"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "task": "R0-1B2A",
+  "branch": "governance/r0-1b2-architecture-rebaseline-plan",
+  "base_commit": "fb90ddd9e3bcdca3f266e9a9b09097d6c9da74dc",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T20-15-00-r0-1b2-architecture-rebaseline-plan",
+  "evidence_commit_sha": "PENDING_SEE_FINAL_REPORT",
+  "candidate_count": 48,
+  "proposed_promotion_count": 15,
+  "adr_count": 7,
+  "rebaseline_required_count": 14,
+  "supersession_count": 1,
+  "unresolved_contradiction_count": 9,
+  "oq3_options": [
+    "A_recover_local",
+    "B_rebuild_incremental",
+    "C_dual_stack_frozen_fastapi_track",
+    "D_owner_hybrid"
+  ],
+  "adr001_recommendation": "SUPERSEDE_with_operational_frontend_app_and_next_target_retained",
+  "oq_states": {
+    "OQ-3": "OPEN",
+    "OQ-4": "OPEN",
+    "OQ-5": "DIRECTIONAL",
+    "OQ-6": "MERGED_WITH_CONDITIONS",
+    "OQ-7": "OPEN"
+  },
+  "architecture_candidates_modified": false,
+  "excluded_files_modified": false,
+  "verdict_expected": "READY FOR OWNER R0-1B2 PROMOTION DECISION"
+}
