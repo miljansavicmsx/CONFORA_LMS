@@ -3,8 +3,24 @@
   "branch": "governance/r0-1b2-1-architecture-sot",
   "integration_base": "fb90ddd9e3bcdca3f266e9a9b09097d6c9da74dc",
   "planning_commit": "76cc7e3dd6d87865b09dd669dc2df0515f35308b",
-  "normative_commit": "d9f979598976417ad44eeab9ae3dd23efeb6e020",
-  "evidence_commit": "PENDING_SEE_FINAL_REPORT",
+  "initial_normative_commit": "d9f979598976417ad44eeab9ae3dd23efeb6e020",
+  "initial_evidence_commit": "a62b8f91eef6a28aaccd339862b2651524b786a5",
+  "repair_commit_sequence": [
+    "e484155ac9e881c32266c4d361744653d20a32ed",
+    "cdd8f2cb00073d1978435fa30479be4cb36a4db1",
+    "16ccdac0d8ff953c5fca3c06638b955bd3d14277"
+  ],
+  "repair_commits": {
+    "sot_escape_repair": "e484155ac9e881c32266c4d361744653d20a32ed",
+    "escape_repair_evidence": "cdd8f2cb00073d1978435fa30479be4cb36a4db1",
+    "deprecation_matrix_repair": "16ccdac0d8ff953c5fca3c06638b955bd3d14277"
+  },
+  "final_independently_reviewed_normative_tip": "16ccdac0d8ff953c5fca3c06638b955bd3d14277",
+  "evidence_closure_commit_sha_source": "git history / final report",
+  "independent_review_verdict": "GO_WITH_CONDITIONS",
+  "escape_corruption": "FULLY_CLOSED",
+  "normative_content_correction_required": false,
+  "production_deployment_authorized": false,
   "normative_files": [
     "docs/architecture/ARCHITECTURE.md",
     "docs/architecture/CANONICAL_COMPONENT_REGISTRY.md",
@@ -24,18 +40,25 @@
   "c03": "OPEN",
   "attribution": {
     "author": "miljansavic13 <miljan.savic13@gmail.com>",
+    "committer": "miljansavic13 <miljan.savic13@gmail.com>",
     "github_actor": "miljansavicmsx",
-    "independent_reviewer": "PENDING"
+    "independent_reviewer_status": "COMPLETED",
+    "independent_verdict": "GO WITH CONDITIONS",
+    "reviewed_normative_tip": "16ccdac0d8ff953c5fca3c06638b955bd3d14277",
+    "review_date": "2026-07-26"
   },
   "link_validation": {
-    "md_checked": 0,
+    "normative_tip": "16ccdac0d8ff953c5fca3c06638b955bd3d14277",
+    "md_checked": 28,
     "md_broken": 0,
-    "path_checked": 0,
-    "path_issues": 0,
-    "path_issue_list": []
+    "untracked_adr_dependency": false,
+    "untracked_only_resolution": false
   },
-  "verdict_expected": "READY FOR INDEPENDENT REVIEW",
-  "corrective_normative_commit": "e484155ac9e881c32266c4d361744653d20a32ed",
-  "corruption_note": "PowerShell escape corruption repaired",
-  "evidence_commit_original": "a62b8f91eef6a28aaccd339862b2651524b786a5"
+  "verdict": "READY TO CREATE DRAFT PR",
+  "legacy_fields_for_traceability": {
+    "normative_commit_initial_alias": "d9f979598976417ad44eeab9ae3dd23efeb6e020",
+    "evidence_commit_original": "a62b8f91eef6a28aaccd339862b2651524b786a5",
+    "corrective_normative_commit_first": "e484155ac9e881c32266c4d361744653d20a32ed",
+    "corruption_note": "PowerShell escape corruption repaired; tip 16ccdac0 independently reviewed"
+  }
 }
