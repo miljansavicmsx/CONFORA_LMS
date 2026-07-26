@@ -5,7 +5,7 @@
 | **Document ID** | CON-ARCH-OQREG-001 |
 | **Status** | Normative architecture pointer register (R0-1B2.1) |
 | **Date** | 2026-07-26 |
-| **Authority** | Does **not** duplicate or supersede docs/governance/OWNER_DECISION_REGISTER.md |
+| **Authority** | Does **not** duplicate or supersede [OWNER_DECISION_REGISTER.md](../governance/OWNER_DECISION_REGISTER.md) |
 
 Use this register for architecture readers. Binding statuses and decisions remain in the Owner Decision Register.
 
@@ -17,10 +17,10 @@ Use this register for architecture readers. Binding statuses and decisions remai
 |-------|-------|
 | Contradiction ID | C-02 |
 | Status | OPEN |
-| Verified facts | Nest intended; tracked pps/api 20 files; not confirmed buildable; FastAPI untracked |
+| Verified facts | Nest intended; tracked `apps/api` 20 files; not confirmed buildable; FastAPI untracked |
 | Governing decision | OQ-3 OPEN; FastAPI not canonical |
 | Missing owner decision | Recovery option A/B/C/D (deferred OD-R01B2-6) |
-| Affected | pps/api, ackend/, registry, strangler |
+| Affected | `apps/api`, `backend/`, registry, strangler |
 | Permitted interim | Document incompleteness; Nest-directed new design under Baseline |
 | Prohibited interim | Claim buildable; track FastAPI without OD; close OQ-3 |
 | Target task | Separate OQ-3 remediation |
@@ -47,7 +47,7 @@ Use this register for architecture readers. Binding statuses and decisions remai
 |-------|-------|
 | Contradiction ID | C-04 |
 | Status | DIRECTIONAL (OQ-5) |
-| Verified facts | packages/auth 0 tracked; partial Nest auth helpers |
+| Verified facts | `packages/auth` 0 tracked; partial Nest auth helpers |
 | Governing decision | OQ-5 DIRECTIONAL |
 | Missing owner decision | Completion/parity gate for identity stack |
 | Affected | Auth packages, ADR-005 (future) |
@@ -62,7 +62,7 @@ Use this register for architecture readers. Binding statuses and decisions remai
 |-------|-------|
 | Contradiction ID | C-05 |
 | Status | OPEN |
-| Verified facts | rontend-app operational (108 tracked); pps/web/dmin 0 tracked |
+| Verified facts | `frontend-app` operational (108 tracked); `apps/web`/`admin` 0 tracked |
 | Governing decision | OQ-4 OPEN; Gap Note tracked |
 | Missing owner decision | ADR-008 supersession (R0-1B2.2 / OD-R01B2-2) |
 | Affected | Frontend, registry |
@@ -92,7 +92,7 @@ Use this register for architecture readers. Binding statuses and decisions remai
 |-------|-------|
 | Contradiction ID | C-07 |
 | Status | MERGED_WITH_CONDITIONS (containment) |
-| Verified facts | workflow_dispatch deploy-backend; production unauthorized |
+| Verified facts | `workflow_dispatch` deploy-backend; production unauthorized |
 | Governing decision | OQ-6; OD-R03-*; RA-R03-1 |
 | Missing owner decision | Production enablement (not now) |
 | Affected | Deploy docs/workflows |
@@ -110,7 +110,7 @@ Use this register for architecture readers. Binding statuses and decisions remai
 | Verified facts | Prior untracked registry used unqualified Canonical labels |
 | Governing decision | OD-R01B2-9 expanded vocabulary |
 | Missing owner decision | None for vocabulary (applied) |
-| Affected | CANONICAL_COMPONENT_REGISTRY.md |
+| Affected | `CANONICAL_COMPONENT_REGISTRY.md` |
 | Permitted interim | Two-dimension status model |
 | Prohibited interim | Directory ⇒ operational |
 | Target task | Keep registry honest in future edits |
@@ -125,7 +125,7 @@ Use this register for architecture readers. Binding statuses and decisions remai
 | Verified facts | Tracked shared-kernel src exists; older docs called it placeholder |
 | Governing decision | OD-R01B2-1 scope includes shared-kernel rebaseline |
 | Missing owner decision | None blocking |
-| Affected | SHARED_KERNEL_STANDARD.md |
+| Affected | `SHARED_KERNEL_STANDARD.md` |
 | Permitted interim | Describe partial tracked implementation |
 | Prohibited interim | Claim complete kernel/platform packages |
 | Target task | Package completion work |
@@ -137,7 +137,7 @@ Use this register for architecture readers. Binding statuses and decisions remai
 |-------|-------|
 | Contradiction ID | C-10 |
 | Status | OPEN for remaining untracked corpus |
-| Verified facts | Many docs/architecture/G*.md, Bible, decisions/** remain untracked |
+| Verified facts | Many `docs/architecture/G*.md`, Bible, decisions/** remain untracked |
 | Governing decision | OD-R01B2-7 evidence-only for G3–G6/Bible; ADR move in R0-1B2.2 |
 | Missing owner decision | Per-doc promotion beyond R0-1B2.1 |
 | Affected | Untracked architecture corpus |

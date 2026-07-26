@@ -6,18 +6,18 @@
 | **Status** | Normative architecture (R0-1B2.1) |
 | **Date** | 2026-07-26 |
 | **Owner** | Repository Owner / Architecture |
-| **Authority** | Subordinate to approved owner decisions and the Canonical Development Baseline per docs/governance/GOVERNANCE_HIERARCHY.md |
-| **Supersedes (as architecture root)** | Untracked docs/architecture/STRUCTURE.md (left in place as local source only; not tracked) |
+| **Authority** | Subordinate to approved owner decisions and the Canonical Development Baseline per [GOVERNANCE_HIERARCHY.md](../governance/GOVERNANCE_HIERARCHY.md) |
+| **Supersedes (as architecture root)** | Untracked `docs/architecture/STRUCTURE.md` (left in place as local source only; not tracked) |
 
 ## Label legend
 
 | Label | Meaning |
 |-------|---------|
-| VERIFIED_CURRENT | Confirmed against the tracked repository / clean-clone evidence |
-| APPROVED_TARGET | Approved intended direction (not proof of implementation) |
-| PARTIALLY_VERIFIED | Some tracked evidence exists; completeness not proven |
-| UNVERIFIED_LOCAL_ONLY | Present on a developer machine; zero or insufficient tracked files |
-| OPEN_DECISION | Requires owner decision; must not be treated as closed |
+| `VERIFIED_CURRENT` | Confirmed against the tracked repository / clean-clone evidence |
+| `APPROVED_TARGET` | Approved intended direction (not proof of implementation) |
+| `PARTIALLY_VERIFIED` | Some tracked evidence exists; completeness not proven |
+| `UNVERIFIED_LOCAL_ONLY` | Present on a developer machine; zero or insufficient tracked files |
+| `OPEN_DECISION` | Requires owner decision; must not be treated as closed |
 
 ---
 
@@ -27,13 +27,13 @@ This document is the **tracked architecture root** for CONFORA after R0-1B2.1.
 
 It does **not**:
 
-- outrank docs/governance/OWNER_DECISION_REGISTER.md or the Baseline;
+- outrank [OWNER_DECISION_REGISTER.md](../governance/OWNER_DECISION_REGISTER.md) or the Baseline;
 - supersede ADR-001 (deferred to R0-1B2.2);
-- activate messaging ADRs (C-03 remains OPEN);
+- activate messaging ADRs (C-03 remains `OPEN`);
 - select an OQ-3 recovery strategy;
 - authorize production deployment.
 
-ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tracks ADR files. Do not treat untracked docs/architecture/decisions/** as normative links.
+ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tracks ADR files. Do not treat untracked `docs/architecture/decisions/**` as normative links.
 
 ---
 
@@ -41,16 +41,16 @@ ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tra
 
 | Fact | Label |
 |------|-------|
-| Integration tip for R0-1B2.1 work includes R0-1B1 authority chain | VERIFIED_CURRENT |
-| Tracked pps/api has a sparse subset (20 tracked files); no tracked src/main.ts; pp.module.ts imports modules absent from the tracked tree | VERIFIED_CURRENT |
-| Tracked pps/api is **not confirmed buildable** on a clean clone | VERIFIED_CURRENT |
-| rontend-app has 108 tracked files and uses Vite | VERIFIED_CURRENT |
-| pps/web and pps/admin have **0** tracked files | VERIFIED_CURRENT |
-| ackend/ (FastAPI) has **0** tracked files; local tree may exist | UNVERIFIED_LOCAL_ONLY / untracked |
-| packages/database, packages/auth, packages/audit have **0** tracked files | VERIFIED_CURRENT (absence) |
-| packages/shared-kernel has tracked source (9 files) | VERIFIED_CURRENT |
-| R0-3 deploy-backend.yml is workflow_dispatch + Environment production containment | VERIFIED_CURRENT |
-| Production deployment unauthorized; deny-all branch allowlist; RA-R03-1 temporary | APPROVED_TARGET constraints via OQ-6 / OD-R03-* |
+| Integration tip for R0-1B2.1 work includes R0-1B1 authority chain | `VERIFIED_CURRENT` |
+| Tracked `apps/api` has a sparse subset (20 tracked files); no tracked `src/main.ts`; `app.module.ts` imports modules absent from the tracked tree | `VERIFIED_CURRENT` |
+| Tracked `apps/api` is **not confirmed buildable** on a clean clone | `VERIFIED_CURRENT` |
+| `frontend-app` has 108 tracked files and uses Vite | `VERIFIED_CURRENT` |
+| `apps/web` and `apps/admin` have **0** tracked files | `VERIFIED_CURRENT` |
+| `backend/` (FastAPI) has **0** tracked files; local tree may exist | `UNVERIFIED_LOCAL_ONLY` / untracked |
+| `packages/database`, `packages/auth`, `packages/audit` have **0** tracked files | `VERIFIED_CURRENT` (absence) |
+| `packages/shared-kernel` has tracked source (9 files) | `VERIFIED_CURRENT` |
+| R0-3 `deploy-backend.yml` is `workflow_dispatch` + Environment `production` containment | `VERIFIED_CURRENT` |
+| Production deployment unauthorized; deny-all branch allowlist; RA-R03-1 temporary | `APPROVED_TARGET` constraints via OQ-6 / OD-R03-* |
 
 ---
 
@@ -58,13 +58,13 @@ ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tra
 
 | Layer | Target | Label |
 |-------|--------|-------|
-| Frontend | Next.js pps/web + pps/admin, Tailwind, shadcn/ui patterns | APPROVED_TARGET |
-| Backend | NestJS pps/api + worker for async | APPROVED_TARGET |
-| Data | PostgreSQL + Prisma (intended home packages/database) | APPROVED_TARGET |
-| Identity | Keycloak OIDC / JWT; RBAC + SoD (OQ-5 DIRECTIONAL) | APPROVED_TARGET |
-| Audit | Append-only ledger; human-oversight for AI | APPROVED_TARGET |
-| Messaging (MVP requirement) | Baseline §4.7 records **RabbitMQ** as MVP requirement | APPROVED_TARGET / requirement — **not** verified deployed; C-03 OPEN |
-| AI | Assistive only; never autonomous certification authority | APPROVED_TARGET |
+| Frontend | Next.js `apps/web` + `apps/admin`, Tailwind, shadcn/ui patterns | `APPROVED_TARGET` |
+| Backend | NestJS `apps/api` + worker for async | `APPROVED_TARGET` |
+| Data | PostgreSQL + Prisma (intended home `packages/database`) | `APPROVED_TARGET` |
+| Identity | Keycloak OIDC / JWT; RBAC + SoD (OQ-5 DIRECTIONAL) | `APPROVED_TARGET` |
+| Audit | Append-only ledger; human-oversight for AI | `APPROVED_TARGET` |
+| Messaging (MVP requirement) | Baseline §4.7 records **RabbitMQ** as MVP requirement | `APPROVED_TARGET` / requirement — **not** verified deployed; C-03 `OPEN` |
+| AI | Assistive only; never autonomous certification authority | `APPROVED_TARGET` |
 
 ---
 
@@ -72,9 +72,9 @@ ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tra
 
 | Surface | Status | Label |
 |---------|--------|-------|
-| Learner/operator UI | rontend-app (Vite + React) is the **operational canonical** frontend for the locked local RC | VERIFIED_CURRENT + OQ-4 |
-| API (clean clone) | No complete tracked Nest API suitable as operational SoR | VERIFIED_CURRENT |
-| FastAPI | Not approved canonical; untracked if present locally | OPEN_DECISION to track as frozen-legacy only |
+| Learner/operator UI | `frontend-app` (Vite + React) is the **operational canonical** frontend for the locked local RC | `VERIFIED_CURRENT` + OQ-4 |
+| API (clean clone) | No complete tracked Nest API suitable as operational SoR | `VERIFIED_CURRENT` |
+| FastAPI | Not approved canonical; untracked if present locally | `OPEN_DECISION` to track as frozen-legacy only |
 
 ---
 
@@ -82,14 +82,14 @@ ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tra
 
 | Statement | Label |
 |-----------|-------|
-| rontend-app = current tracked operational canonical frontend | VERIFIED_CURRENT |
-| Feature growth on Vite limited to approved pilot maintenance | APPROVED_TARGET / Gap Note |
-| Next.js remains intended target for pps/web and pps/admin | APPROVED_TARGET |
-| Operational parity of Next apps is **not** claimed | VERIFIED_CURRENT non-claim |
-| OQ-4 remains OPEN | OPEN_DECISION |
-| ADR-001 supersession deferred to R0-1B2.2 (future ADR-008) | OPEN_DECISION |
+| `frontend-app` = current tracked operational canonical frontend | `VERIFIED_CURRENT` |
+| Feature growth on Vite limited to approved pilot maintenance | `APPROVED_TARGET` / Gap Note |
+| Next.js remains intended target for `apps/web` and `apps/admin` | `APPROVED_TARGET` |
+| Operational parity of Next apps is **not** claimed | `VERIFIED_CURRENT` non-claim |
+| OQ-4 remains `OPEN` | `OPEN_DECISION` |
+| ADR-001 supersession deferred to R0-1B2.2 (future ADR-008) | `OPEN_DECISION` |
 
-See: docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md.
+See: [FRONTEND_CANONICALIZATION_GAP_NOTE.md](../governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md).
 
 ---
 
@@ -97,11 +97,11 @@ See: docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md.
 
 | Statement | Label |
 |-----------|-------|
-| NestJS is the intended canonical backend direction | APPROVED_TARGET |
-| Tracked pps/api is INTENDED_CANONICAL_INCOMPLETE | VERIFIED_CURRENT |
-| OQ-3 remains OPEN; no A/B/C/D recovery chosen in R0-1B2.1 | OPEN_DECISION |
-| FastAPI ackend/ is not canonical | APPROVED_TARGET / owner decision |
-| FastAPI tracking requires a separate owner-approved frozen-legacy task | OPEN_DECISION gate |
+| NestJS is the intended canonical backend direction | `APPROVED_TARGET` |
+| Tracked `apps/api` is `INTENDED_CANONICAL_INCOMPLETE` | `VERIFIED_CURRENT` |
+| OQ-3 remains `OPEN`; no A/B/C/D recovery chosen in R0-1B2.1 | `OPEN_DECISION` |
+| FastAPI `backend/` is not canonical | `APPROVED_TARGET` / owner decision |
+| FastAPI tracking requires a separate owner-approved frozen-legacy task | `OPEN_DECISION` gate |
 
 ---
 
@@ -109,10 +109,10 @@ See: docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md.
 
 | Statement | Label |
 |-----------|-------|
-| Target: JWT + RBAC + SoD + MFA readiness in canonical stack | APPROVED_TARGET |
-| OQ-5 remains DIRECTIONAL | OPEN_DECISION |
-| packages/auth not tracked on clean clone | VERIFIED_CURRENT |
-| Partial Nest auth helpers exist under tracked pps/api/src/auth/ | PARTIALLY_VERIFIED |
+| Target: JWT + RBAC + SoD + MFA readiness in canonical stack | `APPROVED_TARGET` |
+| OQ-5 remains `DIRECTIONAL` | `OPEN_DECISION` |
+| `packages/auth` not tracked on clean clone | `VERIFIED_CURRENT` |
+| Partial Nest auth helpers exist under tracked `apps/api/src/auth/` | `PARTIALLY_VERIFIED` |
 | Complete SoD enforcement is **not** claimed | non-claim |
 
 ---
@@ -121,12 +121,12 @@ See: docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md.
 
 | Statement | Label |
 |-----------|-------|
-| Requirement: tenant isolation on core entities and request paths | APPROVED_TARGET |
-| Tracked fragments: prisma-tenant-extension.ts, 	enant-access-violation.filter.ts | PARTIALLY_VERIFIED |
-| OQ-7 remains OPEN | OPEN_DECISION |
+| Requirement: tenant isolation on core entities and request paths | `APPROVED_TARGET` |
+| Tracked fragments: `prisma-tenant-extension.ts`, `tenant-access-violation.filter.ts` | `PARTIALLY_VERIFIED` |
+| OQ-7 remains `OPEN` | `OPEN_DECISION` |
 | Complete tenant isolation / RLS is **not** claimed | non-claim |
 
-Detail: docs/architecture/MULTI_TENANCY_STANDARD.md.
+Detail: [MULTI_TENANCY_STANDARD.md](./MULTI_TENANCY_STANDARD.md).
 
 ---
 
@@ -134,9 +134,9 @@ Detail: docs/architecture/MULTI_TENANCY_STANDARD.md.
 
 | Statement | Label |
 |-----------|-------|
-| Intended Prisma home: packages/database | APPROVED_TARGET |
-| Tracked files under packages/database: **0** | VERIFIED_CURRENT |
-| Root prisma/ if present locally is untracked / non-canonical for clean clone | UNVERIFIED_LOCAL_ONLY |
+| Intended Prisma home: `packages/database` | `APPROVED_TARGET` |
+| Tracked files under `packages/database`: **0** | `VERIFIED_CURRENT` |
+| Root `prisma/` if present locally is untracked / non-canonical for clean clone | `UNVERIFIED_LOCAL_ONLY` |
 
 ---
 
@@ -144,10 +144,10 @@ Detail: docs/architecture/MULTI_TENANCY_STANDARD.md.
 
 | Statement | Label |
 |-----------|-------|
-| Append-only audit ledger is required | APPROVED_TARGET |
-| packages/audit-client tracked (5 files); packages/audit untracked (0) | PARTIALLY_VERIFIED |
+| Append-only audit ledger is required | `APPROVED_TARGET` |
+| `packages/audit-client` tracked (5 files); `packages/audit` untracked (0) | `PARTIALLY_VERIFIED` |
 | Complete audit redaction / hash-chain verification on clean clone **not** claimed | non-claim |
-| OQ-7 remains OPEN | OPEN_DECISION |
+| OQ-7 remains `OPEN` | `OPEN_DECISION` |
 
 ---
 
@@ -155,13 +155,13 @@ Detail: docs/architecture/MULTI_TENANCY_STANDARD.md.
 
 | Statement | Label |
 |-----------|-------|
-| C-03 remains OPEN | OPEN_DECISION |
-| Baseline §4.7: RabbitMQ is the MVP **requirement** | APPROVED_TARGET (requirement) |
+| C-03 remains `OPEN` | `OPEN_DECISION` |
+| Baseline §4.7: RabbitMQ is the MVP **requirement** | `APPROVED_TARGET` (requirement) |
 | Untracked ADR candidates historically reference Kafka | historical / untracked — not linked |
 | R0-1B2.1 does **not** activate, amend, or supersede ADR-002 or ADR-007 | constraint |
-| Kafka is **not** a verified deployed MVP component | VERIFIED_CURRENT non-claim |
+| Kafka is **not** a verified deployed MVP component | `VERIFIED_CURRENT` non-claim |
 | RabbitMQ is **not** claimed as verified operational implementation in this document without tracked reproducible evidence | non-claim |
-| pps/worker has **0** tracked files | UNVERIFIED_LOCAL_ONLY |
+| `apps/worker` has **0** tracked files | `UNVERIFIED_LOCAL_ONLY` |
 
 ---
 
@@ -169,14 +169,14 @@ Detail: docs/architecture/MULTI_TENANCY_STANDARD.md.
 
 | Package | Tracked files | Label |
 |---------|---------------|-------|
-| packages/shared-kernel | 9 | PARTIALLY_VERIFIED |
-| packages/shared-types | 8 | PARTIALLY_VERIFIED |
-| packages/ui | 11 | PARTIALLY_VERIFIED |
-| packages/i18n | 50 | PARTIALLY_VERIFIED |
-| packages/audit-client | 5 | PARTIALLY_VERIFIED |
-| packages/database / uth / udit / i-governance | 0 | absent on clean clone |
+| `packages/shared-kernel` | 9 | `PARTIALLY_VERIFIED` |
+| `packages/shared-types` | 8 | `PARTIALLY_VERIFIED` |
+| `packages/ui` | 11 | `PARTIALLY_VERIFIED` |
+| `packages/i18n` | 50 | `PARTIALLY_VERIFIED` |
+| `packages/audit-client` | 5 | `PARTIALLY_VERIFIED` |
+| `packages/database` / `auth` / `audit` / `ai-governance` | 0 | absent on clean clone |
 
-Detail: docs/architecture/SHARED_KERNEL_STANDARD.md.
+Detail: [SHARED_KERNEL_STANDARD.md](./SHARED_KERNEL_STANDARD.md).
 
 ---
 
@@ -184,12 +184,12 @@ Detail: docs/architecture/SHARED_KERNEL_STANDARD.md.
 
 | Rule | Label |
 |------|-------|
-| No unrestricted feature development on frozen legacy surfaces | APPROVED_TARGET |
+| No unrestricted feature development on frozen legacy surfaces | `APPROVED_TARGET` |
 | FastAPI tracking not authorized by this document | constraint |
-| Strangler retirement requires owner decision + independent verification | APPROVED_TARGET |
+| Strangler retirement requires owner decision + independent verification | `APPROVED_TARGET` |
 | Criteria do **not** prove current Nest readiness | non-claim |
 
-See: docs/architecture/LEGACY_DEPRECATION_MATRIX.md, docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md.
+See: [LEGACY_DEPRECATION_MATRIX.md](./LEGACY_DEPRECATION_MATRIX.md), [LEGACY_STRANGLER_RETIREMENT_CRITERIA.md](./LEGACY_STRANGLER_RETIREMENT_CRITERIA.md).
 
 ---
 
@@ -197,7 +197,7 @@ See: docs/architecture/LEGACY_DEPRECATION_MATRIX.md, docs/architecture/LEGACY_ST
 
 | Artifact class | Label |
 |----------------|-------|
-| dist/, coverage, generated SDK outputs | GENERATED — never hand-edit; never treat as source of truth |
+| `dist/`, coverage, generated SDK outputs | `GENERATED` — never hand-edit; never treat as source of truth |
 
 ---
 
@@ -205,17 +205,17 @@ See: docs/architecture/LEGACY_DEPRECATION_MATRIX.md, docs/architecture/LEGACY_ST
 
 | Statement | Label |
 |-----------|-------|
-| R0-3 containment active | VERIFIED_CURRENT |
-| Production deployment unauthorized | APPROVED_TARGET / OQ-6 |
+| R0-3 containment active | `VERIFIED_CURRENT` |
+| Production deployment unauthorized | `APPROVED_TARGET` / OQ-6 |
 | Temporary deny-all deployment branch allowlist | owner decision |
 | RA-R03-1 admin bypass temporary; review by 2026-08-26 | owner decision |
-| R0-7 CI reconstruction still required | OPEN_DECISION / deferred task |
+| R0-7 CI reconstruction still required | `OPEN_DECISION` / deferred task |
 
 ---
 
 ## 16. Open contradictions
 
-See docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md for C-02 through C-10. This root does not close them.
+See [ARCHITECTURE_OPEN_QUESTIONS.md](./ARCHITECTURE_OPEN_QUESTIONS.md) for C-02 through C-10. This root does not close them.
 
 ---
 
@@ -223,20 +223,20 @@ See docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md for C-02 through C-10. This
 
 | Document | Path |
 |----------|------|
-| AGENTS | AGENTS.md |
-| Baseline | docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md |
-| Hierarchy | docs/governance/GOVERNANCE_HIERARCHY.md |
-| Constitution | docs/governance/ENGINEERING_CONSTITUTION.md |
-| Owner decisions | docs/governance/OWNER_DECISION_REGISTER.md |
-| Owner package | docs/governance/OWNER_DECISION_PACKAGE.md |
-| Change control | docs/governance/CHANGE_CONTROL.md |
-| Standards policy | docs/governance/STANDARDS_REFERENCE_POLICY.md |
-| Frontend gap note | docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md |
-| Component registry | docs/architecture/CANONICAL_COMPONENT_REGISTRY.md |
-| Deprecation matrix | docs/architecture/LEGACY_DEPRECATION_MATRIX.md |
-| Multi-tenancy | docs/architecture/MULTI_TENANCY_STANDARD.md |
-| Shared kernel | docs/architecture/SHARED_KERNEL_STANDARD.md |
-| Strangler criteria | docs/architecture/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md |
-| Open questions | docs/architecture/ARCHITECTURE_OPEN_QUESTIONS.md |
+| AGENTS | [AGENTS.md](../../AGENTS.md) |
+| Baseline | [CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md](../governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md) |
+| Hierarchy | [GOVERNANCE_HIERARCHY.md](../governance/GOVERNANCE_HIERARCHY.md) |
+| Constitution | [ENGINEERING_CONSTITUTION.md](../governance/ENGINEERING_CONSTITUTION.md) |
+| Owner decisions | [OWNER_DECISION_REGISTER.md](../governance/OWNER_DECISION_REGISTER.md) |
+| Owner package | [OWNER_DECISION_PACKAGE.md](../governance/OWNER_DECISION_PACKAGE.md) |
+| Change control | [CHANGE_CONTROL.md](../governance/CHANGE_CONTROL.md) |
+| Standards policy | [STANDARDS_REFERENCE_POLICY.md](../governance/STANDARDS_REFERENCE_POLICY.md) |
+| Frontend gap note | [FRONTEND_CANONICALIZATION_GAP_NOTE.md](../governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md) |
+| Component registry | [CANONICAL_COMPONENT_REGISTRY.md](./CANONICAL_COMPONENT_REGISTRY.md) |
+| Deprecation matrix | [LEGACY_DEPRECATION_MATRIX.md](./LEGACY_DEPRECATION_MATRIX.md) |
+| Multi-tenancy | [MULTI_TENANCY_STANDARD.md](./MULTI_TENANCY_STANDARD.md) |
+| Shared kernel | [SHARED_KERNEL_STANDARD.md](./SHARED_KERNEL_STANDARD.md) |
+| Strangler criteria | [LEGACY_STRANGLER_RETIREMENT_CRITERIA.md](./LEGACY_STRANGLER_RETIREMENT_CRITERIA.md) |
+| Open questions | [ARCHITECTURE_OPEN_QUESTIONS.md](./ARCHITECTURE_OPEN_QUESTIONS.md) |
 
 **End of ARCHITECTURE.md**

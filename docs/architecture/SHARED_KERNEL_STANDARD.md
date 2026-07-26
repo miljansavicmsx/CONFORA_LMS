@@ -11,18 +11,18 @@
 
 | Package | Tracked files | Available on clean clone? |
 |---------|---------------|---------------------------|
-| packages/shared-kernel | 9 | Yes (partial implementation) |
-| packages/shared-types | 8 | Yes (partial) |
-| packages/ui | 11 | Yes (partial) |
-| packages/i18n | 50 | Yes (partial) |
-| packages/audit-client | 5 | Yes (client) |
-| packages/config | tracked | Yes |
-| packages/sdk | tracked | Yes (treat generated outputs carefully) |
-| packages/database | 0 | **No** |
-| packages/auth | 0 | **No** |
-| packages/audit | 0 | **No** |
-| packages/ai-governance | 0 | **No** |
-| packages/types | 0 | **No** |
+| `packages/shared-kernel` | 9 | Yes (partial implementation) |
+| `packages/shared-types` | 8 | Yes (partial) |
+| `packages/ui` | 11 | Yes (partial) |
+| `packages/i18n` | 50 | Yes (partial) |
+| `packages/audit-client` | 5 | Yes (client) |
+| `packages/config` | tracked | Yes |
+| `packages/sdk` | tracked | Yes (treat generated outputs carefully) |
+| `packages/database` | 0 | **No** |
+| `packages/auth` | 0 | **No** |
+| `packages/audit` | 0 | **No** |
+| `packages/ai-governance` | 0 | **No** |
+| `packages/types` | 0 | **No** |
 
 Do **not** claim untracked packages are available on a clean clone.
 
@@ -40,10 +40,10 @@ Do **not** claim untracked packages are available on a clean clone.
 
 ## Dependency direction
 
-`	ext
+```text
 apps/*  -->  packages/*  -->  (no dependency back into apps)
 packages/shared-kernel  -->  (minimal; no Nest/Prisma/React)
-`
+```
 
 ## Cross-context imports
 
@@ -52,12 +52,12 @@ packages/shared-kernel  -->  (minimal; no Nest/Prisma/React)
 
 ## Generated output handling
 
-- Generated SDK/OpenAPI outputs are GENERATED
+- Generated SDK/OpenAPI outputs are `GENERATED`
 - Never commit hand-edited generated trees as normative source without review
 
 ## Public API boundaries
 
-- Packages expose explicit src/index.ts (or documented entry) public surfaces
+- Packages expose explicit `src/index.ts` (or documented entry) public surfaces
 - Deep imports into package internals are discouraged
 
 ## Versioning
@@ -66,13 +66,13 @@ packages/shared-kernel  -->  (minimal; no Nest/Prisma/React)
 
 ## Test and evidence requirements
 
-- Kernel changes need unit tests (example: tracked packages/shared-kernel/src/tenant.test.ts)
+- Kernel changes need unit tests (example: tracked `packages/shared-kernel/src/tenant.test.ts`)
 - Evidence of clean-clone install/build for consumers is required before claiming completeness
 
 ## Legacy compatibility boundaries
 
 - Local FastAPI must not be treated as a second shared-kernel SoT
-- Transitional udit-client must not be described as the full audit ledger package
+- Transitional `audit-client` must not be described as the full audit ledger package
 
 ## Non-claims
 

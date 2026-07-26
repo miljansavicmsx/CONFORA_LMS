@@ -18,7 +18,7 @@ Each control below uses:
 |-------|---------|
 | Architectural requirement | What must be true |
 | Repository implementation evidence | What exists in tracked tree today |
-| Verification status | UNVERIFIED / PARTIAL / VERIFIED |
+| Verification status | `UNVERIFIED` / `PARTIAL` / `VERIFIED` |
 | Known bypass | Documented bypass risk |
 | Residual gap | What remains |
 | Remediation owner | Who drives closure |
@@ -31,8 +31,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Every authenticated request establishes a tenant context from trusted server-side identity claims |
-| Repository implementation evidence | Partial Nest auth helpers tracked under pps/api/src/auth/; full TenantModule not in tracked file list |
-| Verification status | PARTIAL |
+| Repository implementation evidence | Partial Nest auth helpers tracked under `apps/api/src/auth/`; full TenantModule not in tracked file list |
+| Verification status | `PARTIAL` |
 | Known bypass | Client-supplied tenant IDs without server validation |
 | Residual gap | End-to-end context factory not confirmed on clean clone |
 | Remediation owner | Backend / Security (OQ-7) |
@@ -43,8 +43,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Authorization and data access enforce tenant boundaries server-side |
-| Repository implementation evidence | pps/api/src/prisma/tenant-access-violation.filter.ts tracked |
-| Verification status | PARTIAL |
+| Repository implementation evidence | `apps/api/src/prisma/tenant-access-violation.filter.ts` tracked |
+| Verification status | `PARTIAL` |
 | Known bypass | Handlers that skip guards; dual FastAPI local paths if used |
 | Residual gap | API-wide coverage matrix not proven on tracked tree |
 | Remediation owner | Backend (OQ-7) |
@@ -54,9 +54,9 @@ Each control below uses:
 
 | Field | Value |
 |-------|-------|
-| Architectural requirement | Business-critical entities include 	enant_id (or approved equivalent) |
-| Repository implementation evidence | packages/database has **0** tracked files; schema SoT absent on clean clone |
-| Verification status | UNVERIFIED on clean clone |
+| Architectural requirement | Business-critical entities include `tenant_id` (or approved equivalent) |
+| Repository implementation evidence | `packages/database` has **0** tracked files; schema SoT absent on clean clone |
+| Verification status | `UNVERIFIED` on clean clone |
 | Known bypass | Models without tenant column; unchecked raw queries |
 | Residual gap | Tracked Prisma schema + migrations required |
 | Remediation owner | Data |
@@ -68,7 +68,7 @@ Each control below uses:
 |-------|-------|
 | Architectural requirement | Raw SQL must include explicit tenant predicates or be platform-scoped with audit |
 | Repository implementation evidence | Not comprehensively inventoried in R0-1B2.1 tracked tree |
-| Verification status | UNVERIFIED |
+| Verification status | `UNVERIFIED` |
 | Known bypass | Raw queries omitting tenant filters |
 | Residual gap | Inventory + lint/review gates |
 | Remediation owner | Backend / Security |
@@ -79,8 +79,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Platform-scope actions are explicit, least-privilege, and audited |
-| Repository implementation evidence | packages/shared-kernel tenant helpers include platform-scope concepts (tracked) |
-| Verification status | PARTIAL |
+| Repository implementation evidence | `packages/shared-kernel` tenant helpers include platform-scope concepts (tracked) |
+| Verification status | `PARTIAL` |
 | Known bypass | Over-broad platform roles |
 | Residual gap | Allowlist + audit coverage proof |
 | Remediation owner | Security |
@@ -91,8 +91,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Jobs propagate tenant context; no silent cross-tenant processing |
-| Repository implementation evidence | pps/worker has **0** tracked files |
-| Verification status | UNVERIFIED |
+| Repository implementation evidence | `apps/worker` has **0** tracked files |
+| Verification status | `UNVERIFIED` |
 | Known bypass | Job payloads without tenant |
 | Residual gap | Tracked worker + tests |
 | Remediation owner | Backend |
@@ -103,8 +103,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Audit events carry tenant association (or explicit platform scope) |
-| Repository implementation evidence | packages/audit-client tracked; ledger service incomplete on clean clone |
-| Verification status | PARTIAL |
+| Repository implementation evidence | `packages/audit-client` tracked; ledger service incomplete on clean clone |
+| Verification status | `PARTIAL` |
 | Known bypass | Events missing tenant fields |
 | Residual gap | OQ-7 ledger completeness |
 | Remediation owner | Platform |
@@ -116,7 +116,7 @@ Each control below uses:
 |-------|-------|
 | Architectural requirement | Cache/object keys are tenant-prefixed (or equivalent isolation) |
 | Repository implementation evidence | Not verified in R0-1B2.1 tracked tree |
-| Verification status | UNVERIFIED |
+| Verification status | `UNVERIFIED` |
 | Known bypass | Global keys |
 | Residual gap | Standard + tests |
 | Remediation owner | Backend |
@@ -127,8 +127,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Automated negative tests prove cross-tenant denial |
-| Repository implementation evidence | Limited e2e specs tracked under pps/api/test/; not a full suite proof |
-| Verification status | PARTIAL |
+| Repository implementation evidence | Limited e2e specs tracked under `apps/api/test/`; not a full suite proof |
+| Verification status | `PARTIAL` |
 | Known bypass | Tests skipped in broken CI (R0-7) |
 | Residual gap | Green CI on clean clone |
 | Remediation owner | QA / Backend |
@@ -139,8 +139,8 @@ Each control below uses:
 | Field | Value |
 |-------|-------|
 | Architectural requirement | Database-enforced tenant protection (RLS or equivalent) where required by Baseline |
-| Repository implementation evidence | No tracked migrations under packages/database |
-| Verification status | UNVERIFIED |
+| Repository implementation evidence | No tracked migrations under `packages/database` |
+| Verification status | `UNVERIFIED` |
 | Known bypass | App-only filters |
 | Residual gap | Tracked SQL policies + tests |
 | Remediation owner | Data |
@@ -152,7 +152,7 @@ Each control below uses:
 |-------|-------|
 | Architectural requirement | Schema changes preserve tenant integrity; backfills are audited |
 | Repository implementation evidence | Absent tracked database package |
-| Verification status | UNVERIFIED |
+| Verification status | `UNVERIFIED` |
 | Known bypass | Untested backfills |
 | Residual gap | Migration playbooks |
 | Remediation owner | Data |
