@@ -34,5 +34,8 @@
     "path_issues": 0,
     "path_issue_list": []
   },
-  "verdict_expected": "READY FOR INDEPENDENT REVIEW"
+  "verdict_expected": "READY FOR INDEPENDENT REVIEW",
+  "corrective_normative_commit": "e484155ac9e881c32266c4d361744653d20a32ed",
+  "corruption_note": "PowerShell escape corruption repaired",
+  "evidence_commit_original": "a62b8f91eef6a28aaccd339862b2651524b786a5"
 }
