@@ -61,27 +61,30 @@ This document defines the canonical development baseline for CONFORA — Digital
 
 It is the controlling reference for future development decisions, AI prompts, architecture changes and implementation tasks.
 
-When there is a conflict between older documents, this baseline prevails unless formally superseded by an approved Architecture Decision Record (ADR).
+**Precedence:** Approved owner decisions (see `OWNER_DECISION_REGISTER.md`) are the highest authority per `GOVERNANCE_HIERARCHY.md`. This Baseline is the controlling development baseline **subordinate to approved owner decisions**. Where an older document conflicts with this Baseline, this Baseline prevails over that older document; where this Baseline conflicts with an approved owner decision, the owner decision prevails. A formal ADR may supersede a specific Baseline statement only where it does not conflict with a higher authority.
 
 ---
 
 ## 2. Source hierarchy
 
-The following hierarchy shall be used when interpreting CONFORA documentation:
+> **Superseded by `GOVERNANCE_HIERARCHY.md` (R0-1B1).** The authoritative order of precedence is defined in `GOVERNANCE_HIERARCHY.md`, in which **approved owner decisions (`OWNER_DECISION_REGISTER.md`) rank above this Baseline**. The legacy list below is retained for historical reference only and does **not** override the governance hierarchy. Some documents named below are not yet tracked; an untracked name is not proof of existence (see §0.7).
 
-1. **This document — CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md**
-2. **CONFORA_GDPR_POLICY.md v2.0**
-3. **AGENTS.md**
-4. **TECH_DEBT.md** — canonical register at `docs/governance/TECH_DEBT.md`
-5. **architecture.md**
-6. **auth-architecture.md**
-7. **CONFORA_WORKFLOWS.md**
-8. **CONFORA_SCHEMES_CATALOG.md**
-9. **iso17024-mapping.md**
-10. **CONFORA_SPEC_ANALIZA.md**
-11. **CONFORA_FULL_SPEC.md**
+Legacy interpretation list (historical, non-authoritative):
 
-If a lower-ranked document conflicts with a higher-ranked document, the higher-ranked document controls.
+1. **Approved owner decisions — `OWNER_DECISION_REGISTER.md`** (highest, per `GOVERNANCE_HIERARCHY.md`)
+2. **This document — CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md**
+3. **CONFORA_GDPR_POLICY.md v2.0**
+4. **AGENTS.md**
+5. **TECH_DEBT.md** — canonical register at `docs/governance/TECH_DEBT.md`
+6. **architecture.md**
+7. **auth-architecture.md**
+8. **CONFORA_WORKFLOWS.md**
+9. **CONFORA_SCHEMES_CATALOG.md**
+10. **iso17024-mapping.md**
+11. **CONFORA_SPEC_ANALIZA.md**
+12. **CONFORA_FULL_SPEC.md**
+
+For any conflict, apply `GOVERNANCE_HIERARCHY.md`; a lower-authority document never overrides a higher-authority one.
 
 ---
 
@@ -116,7 +119,9 @@ The system shall never implement:
 
 ### 4.1 Frontend
 
-Canonical frontend stack:
+> **Approved target / intended canonical direction — not proof of current implementation. See §0.2.** `frontend-app` (Vite + React) is the **current operational canonical frontend** for the locked local release candidate. ADR-001 remains contradicted; formal supersession toward the target stack below is deferred to **R0-1B2** (OQ-4 OPEN). Presence of `apps/web`/`apps/admin` in the repository is not evidence of pilot parity.
+
+Target (intended canonical) frontend stack:
 
 - **Next.js 14+**
 - **TypeScript**
@@ -129,7 +134,9 @@ Frontend must not contain certification decision logic. Frontend may display wor
 
 ### 4.2 Backend
 
-Canonical backend stack:
+> **Approved target / intended canonical direction — not proof of current implementation. See §0.1.** Tracked `apps/api` is **incomplete and not confirmed buildable**; **OQ-3 remains OPEN**. This section states intent, not a verified or approved canonical backend. FastAPI (`backend/`) is not approved as canonical and may only be tracked later via a separate frozen-legacy task.
+
+Target (intended canonical) backend stack:
 
 - **NestJS**
 - **REST + optional GraphQL**
@@ -565,9 +572,9 @@ AGENTS.md
 
 ## 20. Cursor / AI agent rule
 
-Every AI coding agent working on CONFORA must treat this document as the highest-level development baseline.
+Every AI coding agent working on CONFORA must treat this document as the controlling development baseline, **subordinate to approved owner decisions** (`OWNER_DECISION_REGISTER.md`) and interpreted according to `GOVERNANCE_HIERARCHY.md`.
 
-Suggested Cursor rule text:
+Suggested Cursor rule text (illustrative only; `.cursor/rules/**` is governed by R0-2, OQ-2):
 
 ```md
 # CONFORA Canonical Development Baseline
@@ -580,7 +587,7 @@ Before generating or changing code for CONFORA, read and apply:
 
 Do not introduce architecture-breaking shortcuts.
 Do not bypass auditability, tenant isolation, SoD, GDPR retention, AI transparency or human review.
-When documents conflict, CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md prevails unless an approved ADR supersedes it.
+When documents conflict, apply GOVERNANCE_HIERARCHY.md: approved owner decisions rank above this Baseline, which prevails over lower-authority documents unless an approved ADR supersedes a specific statement without conflicting with a higher authority.
 ```
 
 ---

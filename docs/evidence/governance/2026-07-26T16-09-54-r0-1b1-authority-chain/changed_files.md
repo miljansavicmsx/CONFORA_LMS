@@ -24,9 +24,20 @@
 | `docs/evidence/governance/2026-07-26T14-09-58-r0-1-governance-corpus-inventory/**` | new (tracked) — README status notice added |
 | `docs/evidence/governance/2026-07-26T16-09-54-r0-1b1-authority-chain/**` | new (tracked) — R0-1B1 evidence |
 
+## Corrective commit — `docs(governance): align authority precedence and risk review date` (F-M1/F-M2/F-M3)
+
+| Path | Status |
+|------|--------|
+| `AGENTS.md` | modified — F-M2 authority wording (Baseline path preserved) |
+| `docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md` | modified — F-M1 §1/§2/§4.1/§4.2/§20 precedence + intent labels |
+| `docs/governance/OWNER_DECISION_REGISTER.md` | modified — F-M3 OD-R03-1 review date `2026-08-26` |
+| `docs/evidence/governance/2026-07-26T16-09-54-r0-1b1-authority-chain/**` | evidence updates (this package) |
+
+This corrective commit is the **only** commit permitted to modify `AGENTS.md` and does so solely to close F-M2.
+
 ## Scope confirmation
 
-No file outside `docs/governance/**` and `docs/evidence/governance/**` was staged. No application code, CI workflow, schema, migration, runtime config, Cursor rule, or architecture/ADR file was modified.
+No file outside `AGENTS.md`, `docs/governance/**`, and `docs/evidence/governance/**` was staged. No application code, CI workflow, schema, migration, runtime config, Cursor rule, architecture, ADR, or compliance-mapping file was modified.
 
 ## Requested corrections (metadata)
 

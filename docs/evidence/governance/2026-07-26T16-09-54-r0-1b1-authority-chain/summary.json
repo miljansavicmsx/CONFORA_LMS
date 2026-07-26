@@ -16,8 +16,20 @@
     "sha": "PENDING_SEE_FINAL_REPORT",
     "scope": "docs/evidence/governance/**"
   },
-  "agents_md_modified": false,
-  "agents_md_reason": "Already references docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md (correct tracked path)",
+  "corrective_commit": {
+    "message": "docs(governance): align authority precedence and risk review date",
+    "sha": "PENDING_SEE_FINAL_REPORT",
+    "closes_findings": ["F-M1", "F-M2", "F-M3"],
+    "files": [
+      "AGENTS.md",
+      "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
+      "docs/governance/OWNER_DECISION_REGISTER.md",
+      "docs/evidence/governance/2026-07-26T16-09-54-r0-1b1-authority-chain/**"
+    ]
+  },
+  "independent_review_verdict": "GO WITH CONDITIONS",
+  "agents_md_modified": true,
+  "agents_md_reason": "Initial promotion: unchanged (path already correct). Corrective commit: authority wording aligned to Governance Hierarchy Level 1 (F-M2); Baseline path preserved.",
   "normative_files": [
     "docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md",
     "docs/governance/GOVERNANCE_HIERARCHY.md",
@@ -41,7 +53,14 @@
     "substantial_standards_text_copied": false,
     "cursor_rules_modified": false,
     "architecture_or_app_modified": false,
-    "c01_closed": true
+    "c01_closed": true,
+    "fm1_closed": true,
+    "fm2_closed": true,
+    "fm3_closed": true,
+    "oq3_open": true,
+    "oq4_open": true,
+    "ra_r03_1_review_date": "2026-08-26",
+    "production_deployment_authorized": false
   },
   "oq_visible": ["OQ-3", "OQ-4", "OQ-6", "OQ-7"],
   "requested_string_corrections_applied": false,

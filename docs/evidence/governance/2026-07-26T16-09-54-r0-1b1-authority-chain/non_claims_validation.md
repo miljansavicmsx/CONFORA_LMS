@@ -26,4 +26,13 @@ Each mandatory non-claim and where it is explicitly stated in the tracked normat
 
 OQ-3, OQ-4, OQ-6, and OQ-7 are explicitly visible in the Baseline §0 addendum and in the Owner Decision Register Part A. R0-3 is described as containment only; production deployment is stated as unauthorized.
 
-**Result: PASS — all mandatory non-claims are explicit; no implementation is claimed merely because a requirement exists.**
+## Corrective follow-up (F-M1)
+
+The Baseline body was strengthened so intent cannot be misread as verified state:
+- §4.1 (frontend) labelled intended-target with a pointer to §0.2 and the `frontend-app` operational-canonical / OQ-4 OPEN statement inline.
+- §4.2 (backend) labelled intended-target with a pointer to §0.1 and the `apps/api` incomplete / not-confirmed-buildable / OQ-3 OPEN statement inline.
+- §2 marked superseded by `GOVERNANCE_HIERARCHY.md`; owner decisions ranked above the Baseline.
+
+OQ-3 and OQ-4 remain **OPEN**; no backend/frontend was selected or approved.
+
+**Result: PASS — all mandatory non-claims are explicit, now reinforced in the Baseline body (not only §0); no implementation is claimed merely because a requirement exists.**

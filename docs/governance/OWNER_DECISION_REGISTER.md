@@ -122,14 +122,16 @@ Recorded in the R0-3 evidence package `docs/evidence/governance/2026-07-26T10-05
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-26 |
-| Status | ACCEPTED (temporary risk) |
-| Approved option | Preferred `can_admins_bypass=false` not applied in that task; accepted temporarily as RA-R03-1 |
+| Status | ACCEPTED (temporary risk — RA-R03-1; **not permanent**) |
+| Approved option | Preferred `can_admins_bypass=false` not applied in that task; `can_admins_bypass: true` accepted **temporarily** as RA-R03-1 |
 | Owner | Repository Owner |
 | Rationale | Single-maintainer; layered fail-closed controls prevent deploy today |
 | Scope | GitHub Environment `production` |
 | Residual risk | Admin can bypass reviewer gate on a future run |
+| Review / expiry date | **2026-08-26** (30 days), or immediately upon OQ-3 resolution or any attempt to enable production deployment — whichever comes first. Acceptance lapses at the review date unless explicitly renewed in evidence. |
 | Dependencies | Independent release reviewer |
-| Exit criteria | Independent reviewer added **and** `can_admins_bypass=false` before production deployment enabled |
+| Exit criteria | Disable administrator bypass (`can_admins_bypass=false`) **and** add an independent release reviewer distinct from the deploying admin, both **before** production deployment is enabled |
+| Non-affected | OQ-3 remains OPEN; production deployment remains unauthorized; this acceptance grants no deployment authorization |
 | Supersession | — |
 
 ### OD-R03-2 — Deployment branch policy

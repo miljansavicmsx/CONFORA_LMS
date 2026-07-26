@@ -28,4 +28,8 @@ A new contributor (or AI agent) clones the branch and reads `AGENTS.md`.
 
 These are documented as pending in the tracked corpus, not silently omitted.
 
-**Result: PASS — fresh clone satisfies `AGENTS.md` governance entry point.**
+## Corrective follow-up (F-M2)
+
+`AGENTS.md` now directs a fresh-clone reader to the precedence order in `GOVERNANCE_HIERARCHY.md` (approved owner decisions highest; Baseline subordinate). The entry point is therefore not only present but precedence-consistent with the tracked hierarchy. Baseline path preserved.
+
+**Result: PASS — fresh clone satisfies `AGENTS.md` governance entry point with consistent precedence.**

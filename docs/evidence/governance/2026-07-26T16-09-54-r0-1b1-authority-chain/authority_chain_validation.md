@@ -33,6 +33,16 @@ All relative `[text](path)` links in the tracked normative corpus point to files
 
 The Baseline, Engineering Constitution, Change Control, Standards Reference Policy, and Frontend Gap Note use backtick path references (not markdown links), so they introduce no unresolved `[](…)` links. Automated check: `0` broken relative markdown links in the normative corpus (see `commands_executed.md`).
 
+## Corrective follow-up (F-M1, F-M2)
+
+After the independent review, precedence wording was aligned so the chain is unambiguous:
+
+- `AGENTS.md` now states approved owner decisions are highest and the Baseline is subordinate to them (per `GOVERNANCE_HIERARCHY.md`) — matches Level 1 above Level 2.
+- Baseline §1/§2/§20 now defer precedence to `GOVERNANCE_HIERARCHY.md` and rank approved owner decisions above the Baseline; §2 legacy list marked superseded.
+- Baseline §4.1/§4.2 now labelled intended-target with pointers to §0.1/§0.2.
+
+No new markdown links were introduced that fail to resolve; the normative corpus link check remains **0 broken**.
+
 ## Result
 
-Authority chain is **self-contained and tracked**. C-01 is closed.
+Authority chain is **self-contained, tracked, and precedence-consistent** across `AGENTS.md`, the Baseline, and `GOVERNANCE_HIERARCHY.md`. C-01 is closed.

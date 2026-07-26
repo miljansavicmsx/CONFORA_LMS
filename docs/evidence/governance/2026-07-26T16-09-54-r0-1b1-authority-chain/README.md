@@ -35,7 +35,13 @@ Each of the three historical READMEs received a narrowly scoped non-normative **
 
 ## AGENTS.md
 
-**Not modified.** `AGENTS.md` line 7 already references `docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md`, which is now tracked at that exact path. The Baseline path and authority hierarchy in `AGENTS.md` are objectively correct, so no edit was warranted (per task rule).
+**Initial promotion (commits `4fd42eab`/`f4e2bd18`): not modified** — the Baseline path was already correct, closing C-01 by promotion alone.
+
+**Corrective follow-up (commit `docs(governance): align authority precedence and risk review date`): modified** to close independent-review finding **F-M2**. The Canonical Authority section now states that approved owner decisions are the highest authority and the Baseline is the controlling development baseline subordinate to them, interpreted per `GOVERNANCE_HIERARCHY.md`. The Baseline path is preserved. See `CORRECTIVE_ACTIONS_FM1_FM3.md`.
+
+## Independent review and corrective follow-up
+
+The independent review returned **GO WITH CONDITIONS** (preserved in `INDEPENDENT_REVIEW.md`). Findings **F-M1, F-M2, F-M3** are closed by the corrective commit; see `CORRECTIVE_ACTIONS_FM1_FM3.md`. OQ-3 and OQ-4 remain OPEN; R0-3 remains containment only; production deployment remains unauthorized.
 
 ## Mandatory non-claims (preserved)
 
