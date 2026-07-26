@@ -1,0 +1,4 @@
+﻿branch: governance/r0-7a-ci-reconstruction-plan
+HEAD: c6110f417b3c602dc031dacbc422f8a044129cfc
+base tip expected: c6110f417b3c602dc031dacbc422f8a044129cfc
+tracked_clean_before_evidence_commit: (see porcelain below)
