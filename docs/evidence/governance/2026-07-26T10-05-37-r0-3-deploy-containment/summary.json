@@ -37,13 +37,24 @@
   "actionlint_available": false,
   "rollback_documented": true,
   "other_ci_untracked_path_issues_deferred_to": "R0-7",
-  "github_environment_reviewers_configured_in_ui": null,
+  "github_environment_reviewers_configured_in_ui": true,
+  "github_environment_required_reviewer_count": 1,
+  "github_environment_prevent_self_review": true,
+  "github_environment_verification_files": [
+    "GITHUB_ENVIRONMENT_VERIFICATION.md",
+    "github_environment_verification.json"
+  ],
+  "pr_number": 1,
+  "pr_draft": true,
+  "pr_merged": false,
   "external_pilot_claimed": false,
   "security_delegate_claimed": false,
   "dpo_legal_claimed": false,
-  "final_verdict": "GO_WITH_CONDITIONS",
+  "final_verdict": "READY_FOR_INDEPENDENT_REVIEW",
   "conditions": [
-    "Configure GitHub Environment 'production' with required reviewers in repo Settings",
+    "Independent reviewer GO on Draft PR #1",
+    "Document or populate intended deployment-branch allowlist (custom mode on; named entries count 0)",
+    "Optionally disable or justify can_admins_bypass=true",
     "R0-7 must still reconstruct non-deploy CI jobs that reference untracked paths",
     "Production Lambda deploy remains blocked until backend/ is tracked per OQ-3"
   ]

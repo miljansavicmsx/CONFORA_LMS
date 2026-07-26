@@ -36,9 +36,9 @@ Production auto-deploy from untracked `backend/` is contained. Remaining non-dep
 
 ## Conditions (explicit)
 
-1. **GitHub UI:** Environment `production` must be created with **required reviewers** (and ideally deployment branch restrictions). YAML references the environment; reviewer enforcement is a repo setting, not fully expressible in YAML alone.  
+1. **GitHub Environment `production`:** Required reviewers — **VERIFIED** after UI configuration (see `GITHUB_ENVIRONMENT_VERIFICATION.md` / `github_environment_verification.json`). Remaining: empty named branch-policy allowlist (PARTIALLY VERIFIED), `can_admins_bypass=true`, independent reviewer GO.  
 2. **R0-7:** Other workflows (`ci.yml`, `accessibility.yml`, `backend-tests.yml`, etc.) still reference untracked paths; they do **not** deploy Lambda/production API but remain broken on fresh clone.  
-3. **Deploy remains impossible today** until `backend/` is tracked (OQ-3) — by design.
+3. **Deploy remains impossible today** until `backend/` is tracked (OQ-3) — by design (workflow fail-closed + empty branch allowlist).
 
 ## Acceptance checklist
 
@@ -51,7 +51,17 @@ Production auto-deploy from untracked `backend/` is contained. Remaining non-dep
 - [x] Did not modify application code, schemas, migrations, or runtime configuration  
 - [x] Preserved rollback capability  
 - [x] Evidence package produced  
+- [x] GitHub Environment `production` required-reviewer gate verified via API  
+
+## Environment verification (addendum)
+
+See:
+
+- `GITHUB_ENVIRONMENT_VERIFICATION.md`
+- `github_environment_verification.json`
+
+Draft PR #1 remains open for **independent review**; this evidence does not merge or mark the PR ready.
 
 ## Claims not made
 
-No production readiness, external pilot, DPO/legal, security-delegate, or accreditation approval is claimed.
+No production readiness, external pilot, DPO/legal, security-delegate, or accreditation approval is claimed. R0-3 is **not** fully closed without independent reviewer GO.
