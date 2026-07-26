@@ -1,0 +1,48 @@
+{
+  "task": "R0-1A_GOVERNANCE_CORPUS_INVENTORY",
+  "evidence_folder": "docs/evidence/governance/2026-07-26T14-09-58-r0-1-governance-corpus-inventory",
+  "integration_branch": "fix/ca-h01-frontend-f4-cutover",
+  "expected_tip": "1f141fe18aafafd0405b1539788234d253f40f4b",
+  "observed_tip": "1f141fe18aafafd0405b1539788234d253f40f4b",
+  "tip_match": true,
+  "pr_1_state": "MERGED",
+  "r0_3_status": "MERGED — CONTAINMENT ACTIVE WITH CONDITIONS",
+  "tracked_working_tree_clean_at_start": true,
+  "promotion_executed": false,
+  "commits_created": false,
+  "candidate_count": 98,
+  "classification_counts": {
+    "PROMOTE_WITH_REBASELINE": 14,
+    "PROMOTE_AS_IS": 19,
+    "MERGE_WITH_OTHER": 12,
+    "SUPERSEDE": 1,
+    "UNRESOLVED": 13,
+    "RETAIN_AS_EVIDENCE_ONLY": 33,
+    "DO_NOT_TRACK": 6
+  },
+  "wave_a_item_count": 26,
+  "missing_required_structure_docs": [
+    "ENGINEERING_CONSTITUTION.md",
+    "CHANGE_CONTROL.md",
+    "STANDARDS_REFERENCE_POLICY.md",
+    "OWNER_DECISION_REGISTER.md (signed)",
+    "ISO_21001_CONTROL_MAPPING.md",
+    "ISO_27001_CONTROL_MAPPING.md",
+    "TASK_TEMPLATE.md",
+    "CURSOR_IMPLEMENTATION_PROMPT_TEMPLATE.md",
+    "INDEPENDENT_REVIEW_TEMPLATE.md",
+    "SECURITY_ARCHITECTURE.md (filename)",
+    "STANDARDS_TRACEABILITY_MATRIX.md (filename)"
+  ],
+  "preserved_oq": [
+    "OQ-1",
+    "OQ-2",
+    "OQ-3",
+    "OQ-4",
+    "OQ-5",
+    "OQ-6",
+    "OQ-7"
+  ],
+  "final_verdict": "READY_FOR_OWNER_PROMOTION_APPROVAL",
+  "next_task": "R0-1B — execute approved promotion_manifest only"
+}

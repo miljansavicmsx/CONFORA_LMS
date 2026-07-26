@@ -2,14 +2,19 @@
 
 # Canonical Authority
 
-The authoritative development document for CONFORA is:
+Approved owner decisions are the highest repository governance authority.
+
+The Canonical Development Baseline is the controlling development baseline,
+subordinate to approved owner decisions and interpreted according to
+`docs/governance/GOVERNANCE_HIERARCHY.md`:
 
 **docs/governance/CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md**
 
 All AI agents SHALL:
 
 - Read and follow the Baseline before implementation
-- Treat the Baseline as higher authority than any other project document
+- Treat the Baseline as the controlling development baseline, subordinate only
+  to approved owner decisions, per `docs/governance/GOVERNANCE_HIERARCHY.md`
 - Report specification conflicts
 - Refuse implementations that violate governance requirements
 
