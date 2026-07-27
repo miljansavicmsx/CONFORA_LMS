@@ -1,0 +1,26 @@
+{
+  "task": "R0-7S1",
+  "branch": "security/r0-7s1-a11y-ci-containment",
+  "integration_base": "c6110f417b3c602dc031dacbc422f8a044129cfc",
+  "planning_parent": "66356586e596d4b475e6cf81f859b2f7fd11046e",
+  "operational_files_changed": [
+    ".github/workflows/accessibility.yml"
+  ],
+  "containment": {
+    "contents_permission": "read",
+    "git_mutation_removed": true,
+    "artifact_upload_retained": true,
+    "actions_sha_pinned": true
+  },
+  "non_goals": [
+    "a11y test repair",
+    "lockfile",
+    "database",
+    "docker",
+    "fastapi",
+    "branch_protection",
+    "deploy-backend"
+  ],
+  "production_deployment_authorized": false,
+  "evidence_commit_sha_source": "git history / final report"
+}
