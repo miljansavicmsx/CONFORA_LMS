@@ -1,0 +1,46 @@
+{
+  "workflow": ".github/workflows/accessibility.yml",
+  "reviewed_tip": "969ab386ba3f8ff3b04f27c2169c5f8dc922dabb",
+  "pins": [
+    {
+      "action": "actions/checkout",
+      "sha": "11d5960a326750d5838078e36cf38b85af677262",
+      "version_comment": "v4",
+      "publisher": "actions",
+      "full_sha_syntax": true,
+      "publisher_expected": true,
+      "release_tag_sha_independently_verified": true,
+      "verification_note": "GitHub API tag v4 resolves to this commit SHA"
+    },
+    {
+      "action": "pnpm/action-setup",
+      "sha": "b906affcce14559ad1aafd4ab0e942779e9f58b1",
+      "version_comment": "v4",
+      "publisher": "pnpm",
+      "full_sha_syntax": true,
+      "publisher_expected": true,
+      "release_tag_sha_independently_verified": true,
+      "verification_note": "Resolved from tag v4 at containment pin time"
+    },
+    {
+      "action": "actions/setup-node",
+      "sha": "49933ea5288caeca8642d1e84afbd3f7d6820020",
+      "version_comment": "v4",
+      "publisher": "actions",
+      "full_sha_syntax": true,
+      "publisher_expected": true,
+      "release_tag_sha_independently_verified": true,
+      "verification_note": "Resolved from tag v4 at containment pin time"
+    },
+    {
+      "action": "actions/upload-artifact",
+      "sha": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "version_comment": "v4",
+      "publisher": "actions",
+      "full_sha_syntax": true,
+      "publisher_expected": true,
+      "release_tag_sha_independently_verified": true,
+      "verification_note": "Resolved from tag v4 at containment pin time"
+    }
+  ]
+}

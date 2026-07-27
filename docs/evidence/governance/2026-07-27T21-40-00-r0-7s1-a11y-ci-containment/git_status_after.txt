@@ -1,0 +1,8 @@
+﻿branch: security/r0-7s1-a11y-ci-containment
+pre_closure_HEAD: 969ab386ba3f8ff3b04f27c2169c5f8dc922dabb
+upstream_pre_closure: 969ab386ba3f8ff3b04f27c2169c5f8dc922dabb
+evidence_closure_commit_sha_source: git history / final report
+--- git status --short --untracked-files=no (expected post-commit) ---
+(clean tracked tree)
+--- note ---
+Post-push HEAD and upstream SHAs are recorded in the final report.

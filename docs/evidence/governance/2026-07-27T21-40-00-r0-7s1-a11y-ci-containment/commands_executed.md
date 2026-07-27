@@ -1,8 +1,17 @@
 # Commands executed
 
-1. `git fetch origin`
-2. Verify integration tip `c6110f41…` and planning tip `66356586…`
-3. Verify PR #3 MERGED; tracked clean; no existing R0-7S1 PR
-4. `git checkout -B security/r0-7s1-a11y-ci-containment 66356586…`
-5. Resolve Action tag SHAs via GitHub API; edit `accessibility.yml`
-6. Author evidence package; commit; push branch (no PR unless requested)
+## Containment (historical)
+
+Fetch; verify tips; branch from `66356586`; edit `accessibility.yml`; pin
+Actions; remove publish/commit/push; commit; push.
+
+## Evidence closure (this update)
+
+1. Verify branch tip `969ab386` local=remote; tracked clean; no PR.
+2. Verify workflow blob identical to tip; containment invariants.
+3. Record `git_status_before.txt`.
+4. Author independent review + security evidence enrichment.
+5. Validate JSON; confirm workflow untouched.
+6. Commit `docs(repo): record r0-7s1 independent security review`.
+7. Push `security/r0-7s1-a11y-ci-containment` (no force; no PR).
+8. Record `git_status_after.txt` after push validation.
