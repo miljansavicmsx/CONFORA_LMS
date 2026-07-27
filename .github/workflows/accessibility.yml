@@ -13,8 +13,9 @@ concurrency:
   group: a11y-ci-${{ github.ref }}
   cancel-in-progress: true
 
+# R0-7S1: contents must remain read — no commit/push of repository content.
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 env:
@@ -59,13 +60,13 @@ jobs:
       DISABLE_ERD: "true"
       PUPPETEER_SKIP_DOWNLOAD: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 9.14.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: pnpm
@@ -140,13 +141,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 9.14.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: pnpm
@@ -277,7 +278,7 @@ jobs:
 
       - name: Upload accessibility artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: a11y-report
           path: |
@@ -304,15 +305,8 @@ jobs:
           SMTP_FROM: ${{ secrets.SMTP_FROM }}
         run: node scripts/a11y/notify-failure.mjs
 
-      - name: Publish report on main (keep last 30)
-        if: github.ref == 'refs/heads/main' && success()
-        run: |
-          node scripts/a11y/publish-reports.mjs
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/accessibility/reports/
-          git diff --staged --quiet || git commit -m "chore(a11y): publish accessibility CI report [skip ci]"
-          git push || echo "Push skipped (fork or permissions)"
+      # R0-7S1: repository mutation removed. Reports ship via upload-artifact only.
+      # Do not reintroduce repository write-back without a new owner decision.
 
       - name: Record a11y CI outcome (compliance.ci_pipeline_runs)
         if: always()
