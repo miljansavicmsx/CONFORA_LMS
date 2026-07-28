@@ -1,0 +1,34 @@
+{
+  "integration_tip": "adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4",
+  "r0_7b1_commit": "def96f623124b2511f277eb6fa9edf8356d2ed5f",
+  "tracked_manifest_count": 13,
+  "tracked_manifests": [
+    "package.json",
+    "apps/api/package.json",
+    "frontend-app/package.json",
+    "packages/ai-client/package.json",
+    "packages/ai-prompts/package.json",
+    "packages/audit-client/package.json",
+    "packages/config/package.json",
+    "packages/i18n/package.json",
+    "packages/notification-templates/package.json",
+    "packages/sdk/package.json",
+    "packages/shared-kernel/package.json",
+    "packages/shared-types/package.json",
+    "packages/ui/package.json"
+  ],
+  "frontend_app_classification": "TRACKED_STANDALONE_OUTSIDE_ROOT_WORKSPACE",
+  "workspace_globs": [
+    "apps/*",
+    "packages/*"
+  ],
+  "excluded_untracked_manifests": [
+    "apps/admin/package.json",
+    "apps/web/package.json",
+    "apps/worker/package.json",
+    "apps/examiner/package.json",
+    "packages/database/package.json",
+    "frontend-public/package.json",
+    "tests/e2e/package.json"
+  ]
+}

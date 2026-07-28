@@ -1,0 +1,39 @@
+{
+  "task": "R0-7B2",
+  "branch": "ci/r0-7b2-deterministic-pnpm-install",
+  "integration_base": "adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4",
+  "r0_7b1_planning_commit": "def96f623124b2511f277eb6fa9edf8356d2ed5f",
+  "implementation_commit": "54b1b0faf536e96d8c61cb90d38715b4c4ca1d3f",
+  "evidence_commit_sha_source": "git history / final report",
+  "operational_files_changed": [
+    "pnpm-lock.yaml",
+    ".github/workflows/confora-qa.yml"
+  ],
+  "lockfile_importer_count_before": 17,
+  "lockfile_importer_count_after": 12,
+  "removed_stale_importers": [
+    "apps/admin",
+    "apps/examiner",
+    "apps/web",
+    "apps/worker",
+    "packages/database"
+  ],
+  "frontend_app_classification": "TRACKED_STANDALONE_OUTSIDE_ROOT_WORKSPACE",
+  "packages_database_excluded": true,
+  "jsqr_direct_removed": true,
+  "pngjs_direct_removed": true,
+  "pngjs_transitive_retained_via_qrcode": true,
+  "pnpm_version": "9.14.2",
+  "lockfile_generation_command": "pnpm install --lockfile-only --ignore-scripts",
+  "frozen_install_command": "pnpm install --frozen-lockfile --ignore-scripts",
+  "frozen_install_result": "PASS",
+  "normal_lifecycle_enabled_install": "NOT_RUN_HUSKY_PREPARE_LIMITATION",
+  "qa_workflow_pnpm": "9.14.2",
+  "qa_actions_fully_sha_pinned": true,
+  "workspace_yaml_changed": false,
+  "package_json_changed": false,
+  "ci_yml_changed": false,
+  "production_deployment_authorized": false,
+  "deploy_backend_run_count": 0,
+  "ready_for_independent_review": true
+}

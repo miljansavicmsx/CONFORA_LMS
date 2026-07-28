@@ -1,0 +1,5 @@
+branch: ci/r0-7b2-deterministic-pnpm-install
+implementation_commit: 54b1b0faf536e96d8c61cb90d38715b4c4ca1d3f
+evidence_commit_sha_source: git history / final report
+--- git status --short --untracked-files=no (expected post-evidence-commit) ---
+(clean tracked tree)

@@ -1,0 +1,4 @@
+branch: ci/r0-7b2-deterministic-pnpm-install
+HEAD_at_branch_creation: def96f623124b2511f277eb6fa9edf8356d2ed5f
+--- git status --short --untracked-files=no ---
+(clean)

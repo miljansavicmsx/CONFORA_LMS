@@ -1,0 +1,49 @@
+{
+  "workflow": ".github/workflows/confora-qa.yml",
+  "pins": [
+    {
+      "action": "actions/checkout",
+      "sha": "11d5960a326750d5838078e36cf38b85af677262",
+      "version_comment": "v4",
+      "publisher": "GitHub actions org (actions/checkout)",
+      "sha_source": "Aligned with R0-7S1 reviewed accessibility.yml pin; tag object for floating v4 also resolves to this commit family",
+      "full_sha_syntax_verified": true,
+      "publisher_verified": true,
+      "release_tag_to_sha_independently_verified": false,
+      "identity_not_externally_verified_beyond_repo_consistency": true
+    },
+    {
+      "action": "pnpm/action-setup",
+      "sha": "b906affcce14559ad1aafd4ab0e942779e9f58b1",
+      "version_comment": "v4",
+      "publisher": "pnpm (pnpm/action-setup)",
+      "sha_source": "Aligned with R0-7S1 reviewed accessibility.yml pin",
+      "full_sha_syntax_verified": true,
+      "publisher_verified": true,
+      "release_tag_to_sha_independently_verified": false
+    },
+    {
+      "action": "actions/setup-node",
+      "sha": "49933ea5288caeca8642d1e84afbd3f7d6820020",
+      "version_comment": "v4",
+      "publisher": "GitHub actions org (actions/setup-node)",
+      "sha_source": "Aligned with R0-7S1 reviewed accessibility.yml pin; also matches actions/setup-node@v4.4.0 tag resolution in this task",
+      "full_sha_syntax_verified": true,
+      "publisher_verified": true,
+      "release_tag_to_sha_independently_verified": true,
+      "verified_tag": "v4.4.0"
+    },
+    {
+      "action": "zaproxy/action-baseline",
+      "sha": "1e1871e84428617b969d4a1f981a8255630d54b0",
+      "version_comment": "v0.10.0",
+      "publisher": "OWASP ZAP (zaproxy/action-baseline)",
+      "sha_source": "GitHub API git/refs/tags/v0.10.0 -> commit object",
+      "full_sha_syntax_verified": true,
+      "publisher_verified": true,
+      "release_tag_to_sha_independently_verified": true,
+      "verified_tag": "v0.10.0"
+    }
+  ],
+  "pnpm_version_in_workflow": "9.14.2"
+}
