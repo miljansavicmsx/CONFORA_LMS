@@ -1,0 +1,200 @@
+{
+  "integration_tip": "c6110f417b3c602dc031dacbc422f8a044129cfc",
+  "workflows": [
+    {
+      "filename": ".github/workflows/ci.yml",
+      "name": "CI",
+      "triggers": [
+        "push: main|master|develop",
+        "pull_request"
+      ],
+      "jobs": [
+        "quality",
+        "database",
+        "docker"
+      ],
+      "permissions": "default",
+      "environments": [],
+      "concurrency": "ci-${{ github.ref }}; cancel-in-progress: true",
+      "pnpm": "9.14.2",
+      "node": "20",
+      "install": "pnpm install --frozen-lockfile",
+      "services": {
+        "database.postgres": "pgvector/pgvector:pg16"
+      },
+      "checks_on_pr3": {
+        "quality": "FAILURE",
+        "database": "FAILURE",
+        "docker": "SKIPPED"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-1",
+        "RC-R07-2",
+        "RC-R07-3",
+        "RC-R07-6",
+        "RC-R07-7",
+        "RC-R07-12"
+      ],
+      "proposed_task": "R0-7B \u2192 R0-7C \u2192 R0-7E"
+    },
+    {
+      "filename": ".github/workflows/accessibility.yml",
+      "name": "Accessibility CI",
+      "triggers": [
+        "push: main|master",
+        "pull_request",
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "jobs": [
+        "compliance-iso",
+        "accessibility"
+      ],
+      "permissions": {
+        "contents": "write",
+        "pull-requests": "write"
+      },
+      "environments": [],
+      "concurrency": "a11y-ci-${{ github.ref }}",
+      "pnpm": "9.14.2",
+      "node": "20",
+      "install": "pnpm install --frozen-lockfile; frontend-app npm ci; tests/e2e npm ci",
+      "services": {
+        "compliance-iso.postgres": "pgvector/pgvector:pg16"
+      },
+      "checks_on_pr3": {
+        "compliance-iso": "FAILURE",
+        "accessibility": "FAILURE"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-1",
+        "RC-R07-3",
+        "RC-R07-4",
+        "RC-R07-5"
+      ],
+      "proposed_task": "R0-7B \u2192 R0-7D; compliance split in R0-7E"
+    },
+    {
+      "filename": ".github/workflows/deploy-backend.yml",
+      "name": "Deploy backend (Lambda)",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "jobs": [
+        "deploy"
+      ],
+      "permissions": {
+        "contents": "read"
+      },
+      "environments": [
+        "production"
+      ],
+      "checks_on_pr3": {
+        "deploy": "NOT_TRIGGERED"
+      },
+      "required": false,
+      "root_causes": [
+        "R0-3 containment intentional"
+      ],
+      "proposed_task": "Do not modify in R0-7"
+    },
+    {
+      "filename": ".github/workflows/backend-tests.yml",
+      "name": "Backend tests",
+      "triggers": [
+        "push/PR path backend/**"
+      ],
+      "jobs": [
+        "pytest"
+      ],
+      "checks_on_pr3": {
+        "pytest": "NOT_TRIGGERED_PATH_FILTER"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-8"
+      ],
+      "proposed_task": "Defer pending FastAPI/OQ-3 owner decision"
+    },
+    {
+      "filename": ".github/workflows/backend-nightly.yml",
+      "name": "Backend tests (full)",
+      "triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "jobs": [
+        "pytest-full"
+      ],
+      "checks_on_pr3": {
+        "pytest-full": "N/A"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-8"
+      ],
+      "proposed_task": "Disable schedule or gate until backend tracking OD"
+    },
+    {
+      "filename": ".github/workflows/confora-qa.yml",
+      "name": "CONFORA QA (API + compliance)",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "jobs": [
+        "unit-and-compliance",
+        "zap-baseline"
+      ],
+      "pnpm": "9 (floating minor \u2014 defect)",
+      "checks_on_pr3": {
+        "manual": "N/A"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-1",
+        "RC-R07-2",
+        "RC-R07-11"
+      ],
+      "proposed_task": "R0-7E after R0-7B/C; pin pnpm"
+    },
+    {
+      "filename": ".github/workflows/f4-frontend-cutover-gate.yml",
+      "name": "F4 Frontend Cutover Gate",
+      "triggers": [
+        "push/PR path frontend-app + scripts"
+      ],
+      "jobs": [
+        "f4-frontend-cutover"
+      ],
+      "checks_on_pr3": {
+        "f4": "NOT_TRIGGERED_PATH_FILTER"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-4-family ops scripts untracked"
+      ],
+      "proposed_task": "Track ops scripts or narrow gate; npm ci"
+    },
+    {
+      "filename": ".github/workflows/release-candidate.yml",
+      "name": "Release Candidate",
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "jobs": [
+        "rc"
+      ],
+      "checks_on_pr3": {
+        "rc": "N/A"
+      },
+      "required": false,
+      "root_causes": [
+        "RC-R07-8",
+        "frontend-app lockfile tracking gap"
+      ],
+      "proposed_task": "Rebuild after OQ-3/OQ-4; not production authorization"
+    }
+  ]
+}

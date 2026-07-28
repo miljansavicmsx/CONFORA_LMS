@@ -1,0 +1,37 @@
+{
+  "task": "R0-7A",
+  "title": "CI Workflow Inventory and Reconstruction Plan",
+  "branch": "governance/r0-7a-ci-reconstruction-plan",
+  "integration_base": "c6110f417b3c602dc031dacbc422f8a044129cfc",
+  "integration_branch": "fix/ca-h01-frontend-f4-cutover",
+  "pr3_state": "MERGED",
+  "evidence_only": true,
+  "workflows_modified": false,
+  "production_deployment_authorized": false,
+  "workflow_count": 8,
+  "failing_checks_observed_on_pr3": 4,
+  "skipped_checks_observed_on_pr3": 1,
+  "root_cause_count": 13,
+  "shared_root_causes": [
+    "RC-R07-1",
+    "RC-R07-3",
+    "RC-R07-4"
+  ],
+  "oq_unchanged": {
+    "OQ-3": "OPEN",
+    "OQ-4": "OPEN",
+    "OQ-5": "DIRECTIONAL",
+    "OQ-6": "MERGED_WITH_CONDITIONS",
+    "OQ-7": "OPEN",
+    "C-03": "OPEN"
+  },
+  "proposed_sequence": [
+    "R0-7B",
+    "R0-7C",
+    "R0-7D",
+    "R0-7E",
+    "R0-7F"
+  ],
+  "verdict_expected": "READY FOR OWNER R0-7 RECONSTRUCTION DECISION",
+  "evidence_commit_sha_source": "git history / final report"
+}

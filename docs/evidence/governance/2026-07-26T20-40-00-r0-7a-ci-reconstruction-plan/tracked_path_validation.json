@@ -1,0 +1,90 @@
+{
+  "paths": [
+    {
+      "path": "package.json",
+      "tracked_count": 1,
+      "local_exists": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "tracked_count": 1,
+      "local_exists": true
+    },
+    {
+      "path": "packages/database",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "apps/api",
+      "tracked_count": 20,
+      "local_exists": true,
+      "note": "no tracked main.ts"
+    },
+    {
+      "path": "apps/web",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "apps/admin",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "frontend-app",
+      "tracked_count": 108,
+      "local_exists": true
+    },
+    {
+      "path": "frontend-app/package-lock.json",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "backend",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "scripts/a11y",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "scripts/ops/run-f4-8g-frontend-validation.mjs",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "tests/e2e",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "tools/a11y/contrast-check.ts",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "infra/docker/Dockerfile.api",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "infra/docker/Dockerfile.web",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "infra/docker/Dockerfile.admin",
+      "tracked_count": 0,
+      "local_exists": true
+    },
+    {
+      "path": "docker-compose.a11y-ci.yml",
+      "tracked_count": 1,
+      "local_exists": true
+    }
+  ]
+}

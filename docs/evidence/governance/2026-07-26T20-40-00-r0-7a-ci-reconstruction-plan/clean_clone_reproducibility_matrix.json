@@ -1,0 +1,60 @@
+{
+  "rows": [
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "class": "TRACKED_BUT_BROKEN"
+    },
+    {
+      "command": "pnpm lint|typecheck|test|build",
+      "class": "BLOCKED_BY_INSTALL"
+    },
+    {
+      "command": "apps/api jest e2e / pdf-pades",
+      "class": "BLOCKED_BY_INSTALL"
+    },
+    {
+      "command": "packages/database prisma *",
+      "class": "REFERENCES_UNTRACKED_PATH"
+    },
+    {
+      "command": "pgvector service create",
+      "class": "BLOCKED_BY_SERVICE"
+    },
+    {
+      "command": "node scripts/a11y/*.mjs",
+      "class": "REFERENCES_MISSING_SCRIPT"
+    },
+    {
+      "command": "tools/a11y/contrast-check.ts",
+      "class": "REFERENCES_UNTRACKED_PATH"
+    },
+    {
+      "command": "tests/e2e playwright",
+      "class": "REFERENCES_UNTRACKED_PATH"
+    },
+    {
+      "command": "frontend-app npm ci",
+      "class": "GENERATED_INPUT_REQUIRED"
+    },
+    {
+      "command": "docker-compose.a11y-ci FastAPI stack",
+      "class": "LEGACY_ONLY"
+    },
+    {
+      "command": "docker build Dockerfile.*",
+      "class": "REFERENCES_UNTRACKED_PATH"
+    },
+    {
+      "command": "backend pytest workflows",
+      "class": "LEGACY_ONLY"
+    },
+    {
+      "command": "deploy-backend fail-closed gate",
+      "class": "REPRODUCIBLE_TRACKED"
+    },
+    {
+      "command": "f4 scripts/ops validation",
+      "class": "REFERENCES_UNTRACKED_PATH"
+    }
+  ]
+}
