@@ -4,36 +4,56 @@
   "integration_base": "adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4",
   "r0_7b1_planning_commit": "def96f623124b2511f277eb6fa9edf8356d2ed5f",
   "implementation_commit": "54b1b0faf536e96d8c61cb90d38715b4c4ca1d3f",
-  "evidence_commit_sha_source": "git history / final report",
-  "operational_files_changed": [
-    "pnpm-lock.yaml",
-    ".github/workflows/confora-qa.yml"
-  ],
+  "independently_reviewed_tip": "8120874aefbf0baa17525657e43e52e205a24284",
+  "evidence_closure_commit_sha_source": "git history / final report",
+  "independent_verdict": "GO_WITH_CONDITIONS",
+  "deterministic_install": "FROZEN_INSTALL_IGNORE_SCRIPTS_VERIFIED",
+  "pnpm_version": "9.14.2",
+  "pnpm_provenance": "ACCEPTABLE_WITH_PROVENANCE_LIMITATION",
   "lockfile_importer_count_before": 17,
   "lockfile_importer_count_after": 12,
   "removed_stale_importers": [
     "apps/admin",
-    "apps/examiner",
     "apps/web",
     "apps/worker",
+    "apps/examiner",
     "packages/database"
   ],
+  "unexpected_importers": 0,
+  "unresolved_workspace_references": 0,
   "frontend_app_classification": "TRACKED_STANDALONE_OUTSIDE_ROOT_WORKSPACE",
-  "packages_database_excluded": true,
-  "jsqr_direct_removed": true,
-  "pngjs_direct_removed": true,
-  "pngjs_transitive_retained_via_qrcode": true,
-  "pnpm_version": "9.14.2",
-  "lockfile_generation_command": "pnpm install --lockfile-only --ignore-scripts",
-  "frozen_install_command": "pnpm install --frozen-lockfile --ignore-scripts",
-  "frozen_install_result": "PASS",
-  "normal_lifecycle_enabled_install": "NOT_RUN_HUSKY_PREPARE_LIMITATION",
-  "qa_workflow_pnpm": "9.14.2",
-  "qa_actions_fully_sha_pinned": true,
-  "workspace_yaml_changed": false,
-  "package_json_changed": false,
-  "ci_yml_changed": false,
+  "packages_database": "EXCLUDED_NOT_PROMOTED",
+  "jsqr": "ABSENT",
+  "pngjs": {
+    "direct": "REMOVED",
+    "transitive": "RETAINED_VIA_qrcode@1.5.4"
+  },
+  "lockfile_byte_stability": "PASS",
+  "lifecycle_enabled_install": "NOT_RUN",
+  "qa_workflow_fully_repaired": false,
+  "accessibility_ci_repaired": false,
+  "database_ci_repaired": false,
+  "compliance_ci_repaired": false,
   "production_deployment_authorized": false,
   "deploy_backend_run_count": 0,
-  "ready_for_independent_review": true
+  "production_deployment_count": 0,
+  "operational_files_changed": [
+    "pnpm-lock.yaml",
+    ".github/workflows/confora-qa.yml"
+  ],
+  "operational_lock_blob_at_reviewed_tip": "54803e87e1969b566daa2debb1cce81438c8fef5",
+  "operational_qa_blob_at_reviewed_tip": "deceb982378390732e6c424d91b0225e2a38e009",
+  "ready_for_draft_pr": true,
+  "remaining_low_findings": [
+    {
+      "id": "F-L-QA-UNTRACKED-FILTERS",
+      "summary": "confora-qa.yml references untracked @confora/database and @confora/worker",
+      "assigned_to": "R0-7E"
+    },
+    {
+      "id": "F-L-PNPM-NPX-PROVENANCE",
+      "summary": "Reproduction used npx pnpm@9.14.2; prefer Corepack + packageManager in future CI guidance",
+      "assigned_to": "future_ci_guidance"
+    }
+  ]
 }
