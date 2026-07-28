@@ -1,0 +1,485 @@
+{
+  "lockfile_version": "9.0",
+  "importer_count": 17,
+  "importers": [
+    {
+      "importer_path": ".",
+      "status": "TRACKED",
+      "tracked_manifest": "package.json",
+      "dependencies": {
+        "devDependencies": {
+          "@commitlint/cli": "^19.6.0",
+          "@commitlint/config-conventional": "^19.6.0",
+          "@confora/config": "workspace:*",
+          "chrome-launcher": "^1.1.2",
+          "eslint": "^9.15.0",
+          "husky": "^9.1.6",
+          "jsqr": "^1.4.0",
+          "lighthouse": "^12.2.1",
+          "lint-staged": "^15.2.10",
+          "pngjs": "^7.0.0",
+          "prettier": "^3.4.1",
+          "tsx": "^4.19.2",
+          "turbo": "^2.3.3",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [
+          "jsqr",
+          "pngjs"
+        ],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "apps/admin",
+      "status": "NO_TRACKED_MANIFEST",
+      "tracked_manifest": null,
+      "dependencies": {
+        "dependencies": {
+          "@confora/i18n": "workspace:*",
+          "@confora/notification-templates": "workspace:*",
+          "@confora/shared-types": "workspace:*",
+          "@confora/ui": "workspace:*",
+          "i18next": "^24.2.3",
+          "next": "^14.2.18",
+          "react": "^18.3.1",
+          "react-dom": "^18.3.1",
+          "react-i18next": "^15.4.1",
+          "reactflow": "^11.11.4"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "@types/react": "^18.3.12",
+          "@types/react-dom": "^18.3.1",
+          "autoprefixer": "^10.4.20",
+          "eslint": "^9.15.0",
+          "postcss": "^8.4.49",
+          "tailwindcss": "^3.4.15",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": null,
+      "r0_7b2_disposition": "MUST_DISAPPEAR_UNTRACKED_OR_STALE"
+    },
+    {
+      "importer_path": "apps/api",
+      "status": "TRACKED",
+      "tracked_manifest": "apps/api/package.json",
+      "dependencies": {
+        "dependencies": {
+          "@apollo/server": "^4.11.2",
+          "@aws-sdk/client-s3": "^3.700.0",
+          "@aws-sdk/s3-request-presigner": "^3.700.0",
+          "@confora/ai-client": "workspace:*",
+          "@confora/ai-prompts": "workspace:*",
+          "@confora/audit-client": "workspace:*",
+          "@confora/notification-templates": "workspace:*",
+          "@confora/shared-kernel": "workspace:*",
+          "@confora/shared-types": "workspace:*",
+          "@nestjs/apollo": "^12.2.1",
+          "@nestjs/common": "^10.4.8",
+          "@nestjs/core": "^10.4.8",
+          "@nestjs/graphql": "^12.2.1",
+          "@nestjs/passport": "^11.0.5",
+          "@nestjs/platform-express": "^10.4.8",
+          "@nestjs/schedule": "^4.1.1",
+          "@nestjs/swagger": "^7.4.2",
+          "@nestjs/throttler": "^6.2.1",
+          "@prisma/client": "^6.19.0",
+          "@signpdf/placeholder-pdf-lib": "^3.3.0",
+          "@signpdf/signer-p12": "^3.3.0",
+          "@signpdf/signpdf": "^3.3.0",
+          "@signpdf/utils": "^3.3.0",
+          "amqplib": "^0.10.4",
+          "exceljs": "^4.4.0",
+          "graphql": "^16.9.0",
+          "helmet": "^8.1.0",
+          "jsonwebtoken": "^9.0.3",
+          "jwks-rsa": "^4.0.1",
+          "mjml": "^4.15.3",
+          "multer": "^2.1.1",
+          "nestjs-zod": "^4.2.0",
+          "passport": "^0.7.0",
+          "passport-jwt": "^4.0.1",
+          "pdf-lib": "^1.17.1",
+          "puppeteer": "^24.0.0",
+          "qrcode": "^1.5.4",
+          "reflect-metadata": "^0.2.2",
+          "rxjs": "^7.8.1",
+          "zod": "^3.23.8"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@nestjs/cli": "^10.4.8",
+          "@nestjs/schematics": "^10.2.3",
+          "@nestjs/testing": "^10.4.8",
+          "@types/amqplib": "^0.10.5",
+          "@types/express": "^4.17.21",
+          "@types/jest": "^29.5.14",
+          "@types/jsonwebtoken": "^9.0.10",
+          "@types/multer": "^2.1.0",
+          "@types/passport-jwt": "^4.0.1",
+          "@types/qrcode": "^1.5.6",
+          "@types/supertest": "^6.0.2",
+          "cross-env": "^7.0.3",
+          "eslint": "^9.15.0",
+          "jest": "^29.7.0",
+          "source-map-support": "^0.5.21",
+          "supertest": "^7.0.0",
+          "ts-jest": "^29.2.5",
+          "ts-loader": "^9.5.1",
+          "ts-node": "^10.9.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "apps/examiner",
+      "status": "NO_TRACKED_MANIFEST",
+      "tracked_manifest": null,
+      "dependencies": {
+        "devDependencies": {
+          "electron": "^33.2.0"
+        }
+      },
+      "drift_vs_manifest": null,
+      "r0_7b2_disposition": "MUST_DISAPPEAR_UNTRACKED_OR_STALE"
+    },
+    {
+      "importer_path": "apps/web",
+      "status": "NO_TRACKED_MANIFEST",
+      "tracked_manifest": null,
+      "dependencies": {
+        "dependencies": {
+          "@confora/i18n": "workspace:*",
+          "@confora/shared-types": "workspace:*",
+          "@confora/ui": "workspace:*",
+          "i18next": "^24.2.3",
+          "next": "^14.2.18",
+          "react": "^18.3.1",
+          "react-dom": "^18.3.1",
+          "react-i18next": "^15.4.1"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "@types/react": "^18.3.12",
+          "@types/react-dom": "^18.3.1",
+          "autoprefixer": "^10.4.20",
+          "eslint": "^9.15.0",
+          "postcss": "^8.4.49",
+          "tailwindcss": "^3.4.15",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": null,
+      "r0_7b2_disposition": "MUST_DISAPPEAR_UNTRACKED_OR_STALE"
+    },
+    {
+      "importer_path": "apps/worker",
+      "status": "NO_TRACKED_MANIFEST",
+      "tracked_manifest": null,
+      "dependencies": {
+        "dependencies": {
+          "@confora/shared-types": "workspace:*",
+          "@nestjs/common": "^10.4.8",
+          "@nestjs/core": "^10.4.8",
+          "@nestjs/microservices": "^10.4.8",
+          "@nestjs/schedule": "^4.1.1",
+          "@prisma/client": "^6.19.0",
+          "amqp-connection-manager": "^4.1.14",
+          "amqplib": "^0.10.4",
+          "reflect-metadata": "^0.2.2",
+          "rxjs": "^7.8.1"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@nestjs/cli": "^10.4.8",
+          "@nestjs/schematics": "^10.2.3",
+          "@nestjs/testing": "^10.4.8",
+          "@types/amqplib": "^0.10.5",
+          "@types/jest": "^29.5.14",
+          "@types/node": "^22.9.0",
+          "cross-env": "^7.0.3",
+          "eslint": "^9.15.0",
+          "jest": "^29.7.0",
+          "ts-jest": "^29.2.5",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": null,
+      "r0_7b2_disposition": "MUST_DISAPPEAR_UNTRACKED_OR_STALE"
+    },
+    {
+      "importer_path": "packages/ai-client",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/ai-client/package.json",
+      "dependencies": {
+        "dependencies": {
+          "zod": "^3.23.8"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "eslint": "^9.15.0",
+          "tsx": "^4.19.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/ai-prompts",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/ai-prompts/package.json",
+      "dependencies": {
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/audit-client",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/audit-client/package.json",
+      "dependencies": {
+        "dependencies": {
+          "zod": "^3.23.8"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "eslint": "^9.15.0",
+          "tsx": "^4.19.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/config",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/config/package.json",
+      "dependencies": {
+        "dependencies": {
+          "@eslint/js": "^9.15.0",
+          "typescript-eslint": "^8.15.0"
+        },
+        "devDependencies": {
+          "eslint": "^9.15.0"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/database",
+      "status": "NO_TRACKED_MANIFEST",
+      "tracked_manifest": null,
+      "dependencies": {
+        "dependencies": {
+          "@prisma/client": "^6.19.0"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@mermaid-js/mermaid-cli": "^11.15.0",
+          "@types/node": "^22.9.0",
+          "bcryptjs": "^2.4.3",
+          "eslint": "^9.15.0",
+          "prisma": "^6.19.0",
+          "prisma-erd-generator": "^2.1.0",
+          "tsx": "^4.19.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": null,
+      "r0_7b2_disposition": "MUST_DISAPPEAR_UNTRACKED_OR_STALE"
+    },
+    {
+      "importer_path": "packages/i18n",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/i18n/package.json",
+      "dependencies": {
+        "dependencies": {
+          "i18next": "^24.2.3",
+          "react-i18next": "^15.4.1"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@confora/ui": "workspace:*",
+          "@types/jest": "^29.5.14",
+          "@types/node": "^22.9.0",
+          "@types/react": "^18.3.12",
+          "@types/react-dom": "^18.3.1",
+          "eslint": "^9.15.0",
+          "jest": "^29.7.0",
+          "react": "^18.3.1",
+          "react-dom": "^18.3.1",
+          "ts-jest": "^29.2.5",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/notification-templates",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/notification-templates/package.json",
+      "dependencies": {
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/sdk",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/sdk/package.json",
+      "dependencies": {
+        "dependencies": {
+          "zod": "^3.23.8"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "eslint": "^9.15.0",
+          "openapi-typescript": "^7.4.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/shared-kernel",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/shared-kernel/package.json",
+      "dependencies": {
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "eslint": "^9.15.0",
+          "tsx": "^4.19.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/shared-types",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/shared-types/package.json",
+      "dependencies": {
+        "dependencies": {
+          "zod": "^3.23.8"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/node": "^22.9.0",
+          "eslint": "^9.15.0",
+          "tsx": "^4.19.2",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    },
+    {
+      "importer_path": "packages/ui",
+      "status": "TRACKED",
+      "tracked_manifest": "packages/ui/package.json",
+      "dependencies": {
+        "dependencies": {
+          "react-dom": "^18.3.1"
+        },
+        "devDependencies": {
+          "@confora/config": "workspace:*",
+          "@types/react": "^18.3.12",
+          "@types/react-dom": "^18.3.1",
+          "autoprefixer": "^10.4.20",
+          "eslint": "^9.15.0",
+          "postcss": "^8.4.49",
+          "react": "^18.3.1",
+          "tailwindcss": "^3.4.15",
+          "typescript": "^5.6.3"
+        }
+      },
+      "drift_vs_manifest": {
+        "in_lock_not_manifest": [
+          "react-dom"
+        ],
+        "in_manifest_not_lock": []
+      },
+      "r0_7b2_disposition": "REGENERATE_FROM_TRACKED"
+    }
+  ],
+  "importers_without_tracked_manifest": [
+    "apps/admin",
+    "apps/examiner",
+    "apps/web",
+    "apps/worker",
+    "packages/database"
+  ],
+  "tracked_without_importer": [
+    "frontend-app"
+  ],
+  "root_drift": {
+    "in_lock_not_manifest": [
+      "jsqr",
+      "pngjs"
+    ],
+    "in_manifest_not_lock": [],
+    "jsqr_in_lock_importer": true,
+    "pngjs_in_lock_importer": true,
+    "jsqr_in_manifest": false,
+    "pngjs_in_manifest": false
+  }
+}

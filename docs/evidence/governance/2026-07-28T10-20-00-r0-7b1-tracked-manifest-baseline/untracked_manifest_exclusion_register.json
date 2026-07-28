@@ -1,0 +1,47 @@
+{
+  "untracked_or_ignored_manifest_count": 7,
+  "entries": [
+    {
+      "path": "apps/admin/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "Local untracked Nest/Next admin app; OD-R07 workspace inputs exclude untracked manifests; lockfile has stale importer."
+    },
+    {
+      "path": "apps/web/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "Local untracked web app; accessibility.yml still references apps/web but OD-R07-3 authoritative target is tracked frontend-app."
+    },
+    {
+      "path": "apps/worker/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "Local untracked worker; not a tracked R0-7B input."
+    },
+    {
+      "path": "apps/examiner/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "Local untracked examiner package; not a tracked R0-7B input."
+    },
+    {
+      "path": "packages/database/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "OD-R07-2: packages/database promotion deferred; must not influence reconstructed lockfile."
+    },
+    {
+      "path": "frontend-public/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "Local untracked; outside pnpm-workspace globs; not lockfile importer."
+    },
+    {
+      "path": "tests/e2e/package.json",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "Local untracked e2e package; outside workspace globs."
+    },
+    {
+      "path": "backend/",
+      "classification": "UNTRACKED_EXCLUDE_FROM_R0_7B",
+      "reason": "FastAPI backend tree must not be introduced through CI reconstruction (OD-R07-4). No package.json required for exclusion policy."
+    }
+  ],
+  "rule": "No untracked manifest may be used as lockfile-generation input for R0-7B2.",
+  "untracked_manifest_count": 7
+}
