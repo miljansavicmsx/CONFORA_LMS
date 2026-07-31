@@ -1,0 +1,34 @@
+{
+  "task": "R0-7C1",
+  "branch": "governance/r0-7c1-database-service-analysis",
+  "integration_base": "da5d8c197d1b2b20b526486cd06aef45b6e898a0",
+  "r0_7b2_status": "MERGED_DETERMINISTIC_PNPM_INSTALLATION_ACTIVE",
+  "root_cause": "GHA services.options folds unquoted --health-cmd pg_isready -U ... so docker create treats -U as its own flag \u2192 exit 125",
+  "health_command_parsing": "UNQUOTED_ARGS_TOKENIZED_AS_DOCKER_CREATE_FLAGS",
+  "image": "pgvector/pgvector:pg16",
+  "image_mutable_tag": true,
+  "observed_local_image_digest": "sha256:00ba258a66dac104fd5171074a0084462a64a1369d8513f3d0a634e2f24d15bc",
+  "architecture_compatibility": "linux/amd64 observed; GitHub ubuntu-latest compatible",
+  "packages_database": "UNTRACKED_EXCLUDED_OD_R07_2",
+  "pgvector_binaries_available": true,
+  "pgvector_enabled_by_default": false,
+  "pgvector_create_extension_works_ephemeral": true,
+  "pgvector_version_observed": "0.8.2",
+  "postgres_version_observed": "16.14",
+  "proposed_r0_7c2_files": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/accessibility.yml"
+  ],
+  "proposed_max_operational_changed_files": 2,
+  "owner_decisions_required": [
+    "quote-only fix vs also pin image digest",
+    "whether to add separate pgvector CREATE EXTENSION validation step in R0-7C2",
+    "retain pgvector/pgvector:pg16 vs approved alternative image"
+  ],
+  "workflow_changed_in_r0_7c1": false,
+  "schema_changed_in_r0_7c1": false,
+  "packages_database_promoted": false,
+  "production_deployment_authorized": false,
+  "deploy_backend_run_count": 0,
+  "ready_for_r0_7c2_decision": true
+}

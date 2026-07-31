@@ -1,0 +1,5 @@
+branch: governance/r0-7c1-database-service-analysis
+pre_commit_HEAD: da5d8c197d1b2b20b526486cd06aef45b6e898a0
+evidence_commit_sha_source: git history / final report
+--- git status --short --untracked-files=no (expected post-commit) ---
+(clean tracked tree)
