@@ -1,0 +1,34 @@
+{
+  "importer_count_after": 12,
+  "importers_after": [
+    ".",
+    "apps/api",
+    "packages/ai-client",
+    "packages/ai-prompts",
+    "packages/audit-client",
+    "packages/config",
+    "packages/i18n",
+    "packages/notification-templates",
+    "packages/sdk",
+    "packages/shared-kernel",
+    "packages/shared-types",
+    "packages/ui"
+  ],
+  "matches_expected": true,
+  "stale_removed": [
+    "apps/admin",
+    "apps/examiner",
+    "apps/web",
+    "apps/worker",
+    "packages/database"
+  ],
+  "frontend_app_importer_present": false,
+  "packages_database_importer_present": false,
+  "jsqr_direct_root": false,
+  "jsqr_anywhere": false,
+  "pngjs_direct_root": false,
+  "pngjs_transitive_via": "qrcode@1.5.4 (apps/api dependency)",
+  "pngjs_transitive_version": "5.0.0",
+  "lockfile_version": "9.0",
+  "pnpm_version_used": "9.14.2"
+}

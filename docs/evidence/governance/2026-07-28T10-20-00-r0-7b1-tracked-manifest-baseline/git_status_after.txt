@@ -1,0 +1,7 @@
+﻿branch: governance/r0-7b1-tracked-manifest-baseline
+pre_commit_HEAD: adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4
+evidence_commit_sha_source: git history / final report
+--- git status --short --untracked-files=no (expected post-commit) ---
+(clean tracked tree)
+--- note ---
+Post-push HEAD and upstream recorded in final report.

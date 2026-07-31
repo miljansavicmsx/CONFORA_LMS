@@ -12,11 +12,11 @@ jobs:
   unit-and-compliance:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
-          version: 9
-      - uses: actions/setup-node@v4
+          version: 9.14.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "20"
           cache: "pnpm"
@@ -33,6 +33,6 @@ jobs:
     if: ${{ github.event.inputs.zap_target != '' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: zaproxy/action-baseline@v0.10.0
+      - uses: zaproxy/action-baseline@1e1871e84428617b969d4a1f981a8255630d54b0 # v0.10.0
         with:
           target: ${{ github.event.inputs.zap_target }}

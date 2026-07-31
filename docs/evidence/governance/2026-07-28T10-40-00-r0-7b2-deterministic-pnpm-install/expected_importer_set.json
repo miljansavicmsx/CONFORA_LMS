@@ -1,0 +1,25 @@
+{
+  "expected_importers": [
+    ".",
+    "apps/api",
+    "packages/ai-client",
+    "packages/ai-prompts",
+    "packages/audit-client",
+    "packages/config",
+    "packages/i18n",
+    "packages/notification-templates",
+    "packages/sdk",
+    "packages/shared-kernel",
+    "packages/shared-types",
+    "packages/ui"
+  ],
+  "must_remain_absent": [
+    "apps/admin",
+    "apps/examiner",
+    "apps/web",
+    "apps/worker",
+    "packages/database",
+    "frontend-app"
+  ],
+  "importer_count_expected": 12
+}

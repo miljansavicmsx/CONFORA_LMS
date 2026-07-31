@@ -1,0 +1,5 @@
+﻿branch: governance/r0-7b1-tracked-manifest-baseline
+HEAD: adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4
+integration_tip_expected: adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4
+--- git status --short --untracked-files=no ---
+

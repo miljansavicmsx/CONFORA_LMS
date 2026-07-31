@@ -1,0 +1,7 @@
+branch: ci/r0-7b2-deterministic-pnpm-install
+reviewed_tip: 8120874aefbf0baa17525657e43e52e205a24284
+evidence_closure_commit_sha_source: git history / final report
+--- git status --short --untracked-files=no (expected post-closure-commit) ---
+(clean tracked tree)
+--- note ---
+Post-push HEAD and upstream SHAs are recorded in the final report.

@@ -1,0 +1,57 @@
+{
+  "task": "R0-7B1",
+  "branch": "governance/r0-7b1-tracked-manifest-baseline",
+  "integration_base": "adbbbb998c592f1f88dc062a3fdd9fb31ffebdb4",
+  "r0_7s1_status": "MERGED_ACCESSIBILITY_CI_MUTATION_CONTAINED",
+  "tracked_manifest_count": 13,
+  "untracked_manifest_count": 7,
+  "workspace_globs": [
+    "apps/*",
+    "packages/*"
+  ],
+  "lockfile_importer_count": 17,
+  "importer_mismatch_count": 6,
+  "importers_without_tracked_manifest": [
+    "apps/admin",
+    "apps/examiner",
+    "apps/web",
+    "apps/worker",
+    "packages/database"
+  ],
+  "tracked_without_importer": [
+    "frontend-app"
+  ],
+  "root_dependency_drift": {
+    "in_lock_not_manifest": [
+      "jsqr",
+      "pngjs"
+    ],
+    "in_manifest_not_lock": [],
+    "jsqr_in_lock_importer": true,
+    "pngjs_in_lock_importer": true,
+    "jsqr_in_manifest": false,
+    "pngjs_in_manifest": false
+  },
+  "pnpm_declared": "9.14.2",
+  "pnpm_confora_qa": "FLOATING_9",
+  "clean_worktree_frozen_install": "FAIL_ERR_PNPM_OUTDATED_LOCKFILE",
+  "lifecycle_script_risk": "prepare_husky_use_ignore_scripts_for_lockfile_only",
+  "proposed_r0_7b2_allowlist": [
+    "pnpm-lock.yaml",
+    ".github/workflows/confora-qa.yml",
+    ".github/workflows/ci.yml (optional SHA pins if touched)",
+    "pnpm-workspace.yaml (owner-approved only)"
+  ],
+  "proposed_max_changed_files": 3,
+  "lockfile_changed_in_r0_7b1": false,
+  "manifest_changed_in_r0_7b1": false,
+  "workflow_changed_in_r0_7b1": false,
+  "production_deployment_authorized": false,
+  "deploy_backend_run_count": 0,
+  "ready_for_r0_7b2_decision": true,
+  "owner_decisions_still_required": [
+    "frontend-app workspace membership",
+    "OD-R07-8 SHA pinning scope for ci.yml/confora-qa.yml",
+    "confirm drop jsqr/pngjs from root lock importer"
+  ]
+}
