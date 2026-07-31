@@ -1,0 +1,3 @@
+﻿tracked working tree clean after R0-7C2 commit
+HEAD=f4c3baca51095b9d786fd799838ffdfaf0ba6925
+branch=ci/r0-7c2-database-service-boot

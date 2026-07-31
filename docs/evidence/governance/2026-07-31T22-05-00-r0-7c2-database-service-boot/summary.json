@@ -1,0 +1,31 @@
+{
+  "task": "R0-7C2",
+  "branch": "ci/r0-7c2-database-service-boot",
+  "base_commit": "bd3f37e7ac732b1773de095fb27dfdef2d9e9ced",
+  "integration_tip": "da5d8c197d1b2b20b526486cd06aef45b6e898a0",
+  "operational_files_changed": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/accessibility.yml"
+  ],
+  "operational_changed_file_count": 2,
+  "change": "quote --health-cmd so -U is not parsed as docker create flag",
+  "image_retained": "pgvector/pgvector:pg16",
+  "digest_pinned": false,
+  "health_retries_preserved": 10,
+  "create_extension_run": false,
+  "packages_database_promoted": false,
+  "prisma_commands_run": false,
+  "local_broken_exit": 125,
+  "local_fixed_create_exit": 0,
+  "local_health_status": "healthy",
+  "local_pg_isready_exit": 0,
+  "production_deployment_count": 0,
+  "deploy_backend_run_count": 0,
+  "claims_database_job_e2e_green": false,
+  "verdict": "READY_FOR_DRAFT_PR_AND_OWNER_MERGE_DECISION",
+  "deferred_to_r0_7c3": [
+    "immutable registry digest verification",
+    "pgvector binary availability assertion in CI",
+    "CREATE EXTENSION vector in ephemeral DB"
+  ]
+}
