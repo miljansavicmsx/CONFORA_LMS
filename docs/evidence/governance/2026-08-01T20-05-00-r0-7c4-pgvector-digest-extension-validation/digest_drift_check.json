@@ -1,0 +1,8 @@
+{
+  "method": "docker buildx imagetools inspect",
+  "reference": "pgvector/pgvector:pg16",
+  "expected_index_digest": "sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b",
+  "observed_index_digest": "sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b",
+  "drift": false,
+  "linux_amd64_manifest": "sha256:84a355869251af1a3379cfc9fa7b4dbf962c03f642a4bb7b339a203925071c43"
+}
