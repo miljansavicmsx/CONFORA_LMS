@@ -1,15 +1,31 @@
 # Commands executed
 
+## Implementation (historical)
+
 ```text
-git fetch origin
-git rev-parse origin/fix/ca-h01-frontend-f4-cutover
-git rev-parse origin/governance/r0-7c1-database-service-analysis
-gh pr view 5 --json state,mergedAt,mergeCommit
-git ls-files packages/database
-git checkout -B ci/r0-7c2-database-service-boot bd3f37e7ac732b1773de095fb27dfdef2d9e9ced
-# local docker broken vs quoted create/start/health/pg_isready
-# edit ci.yml + accessibility.yml (quote health-cmd only)
-# evidence write + commit + push + draft PR
+git checkout -B ci/r0-7c2-database-service-boot bd3f37e7…
+# quote health-cmd in ci.yml + accessibility.yml
+# local docker broken vs quoted create (implementation session)
+# commit 282aa2bd… ; push ; draft PR #6
 ```
 
-No Prisma, migrate, seed, CREATE EXTENSION, or production commands.
+## Independent review (read-only)
+
+```text
+git fetch origin
+gh pr view 6
+gh pr checks 6 / gh run view <run_ids> --log
+# local broken-form docker create → exit 125
+# local corrected create blocked by Docker Desktop engine unavailable
+```
+
+## Evidence closure
+
+```text
+# create/update files only under this evidence folder
+git add docs/evidence/governance/2026-07-31T22-05-00-r0-7c2-database-service-boot/
+git commit -m "docs(repo): record r0-7c2 independent review"
+git push origin ci/r0-7c2-database-service-boot
+```
+
+No Prisma, migrate, seed, CREATE EXTENSION, workflow edits, or production commands in evidence closure.

@@ -1,21 +1,19 @@
 # Changed files
 
-## Operational
+## Operational (combined R0-7C2 commit `282aa2bd…` only)
 
 | Path | Diff |
 |------|------|
 | `.github/workflows/ci.yml` | 1 line: quote health-cmd |
 | `.github/workflows/accessibility.yml` | 1 line: quote health-cmd |
 
-## Evidence
+## Evidence closure (this commit)
 
-This folder only.
+Only files under this evidence folder. No workflow or operational file changes.
 
-## Not changed
+## Not changed (evidence closure)
 
-- Image tag
-- package manifests / lockfiles
-- schemas / migrations / SQL / seeds
-- `packages/database`
-- application source
-- deploy workflows
+- Workflow blobs remain identical to `282aa2bd`
+- Image tag, retries, credentials, Prisma steps
+- `packages/database`, schemas, migrations, SQL, seeds
+- Dockerfiles / Compose / deploy workflows

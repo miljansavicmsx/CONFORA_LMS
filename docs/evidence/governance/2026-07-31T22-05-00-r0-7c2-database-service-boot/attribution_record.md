@@ -1,7 +1,15 @@
-# Attribution
+# Attribution — R0-7C2
 
-| Role | Identity |
-|------|----------|
-| Git author/committer (traceable human) | miljansavic13 <miljan.savic13@gmail.com> |
-| Task | R0-7C2 PostgreSQL/pgvector CI service boot recovery |
-| Planning ancestry | R0-7C1 `bd3f37e7ac732b1773de095fb27dfdef2d9e9ced` |
+| Role | Record |
+|------|--------|
+| Accountable human owner | Repository owner (CONFORA) |
+| Implementing tool | Cursor agent |
+| Implementation Git author/committer | miljansavic13 (traceable human identity) |
+| Authenticated GitHub push actor | miljansavic13 |
+| Independent reviewer role | Independent GitHub Actions / Docker / PostgreSQL / pgvector / CI-CD security / repository-governance reviewer |
+| Review status | `COMPLETED` |
+| Verdict | `GO WITH CONDITIONS` |
+| Reviewed head | `282aa2bd372dc1248e32c756c0a4a44e7c41a047` |
+| Review date | `2026-08-01` |
+
+No unnecessary personal data is included beyond required audit attribution.

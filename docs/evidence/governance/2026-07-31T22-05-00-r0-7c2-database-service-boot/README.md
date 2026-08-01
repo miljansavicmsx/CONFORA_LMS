@@ -1,31 +1,31 @@
 # R0-7C2 — PostgreSQL/pgvector CI Service Boot Recovery
 
-**Task:** R0-7C2 (implementation)
+**Task:** R0-7C2 (implementation + evidence closure)
 **Branch:** `ci/r0-7c2-database-service-boot`
-**Base (R0-7C1 evidence tip):** `bd3f37e7ac732b1773de095fb27dfdef2d9e9ced`
-**Integration tip:** `da5d8c197d1b2b20b526486cd06aef45b6e898a0`
-**Evidence folder:** `docs/evidence/governance/2026-07-31T22-05-00-r0-7c2-database-service-boot/`
+**Integration base:** `da5d8c197d1b2b20b526486cd06aef45b6e898a0`
+**R0-7C1 planning commit:** `bd3f37e7ac732b1773de095fb27dfdef2d9e9ced`
+**Combined R0-7C2 implementation/evidence commit:** `282aa2bd372dc1248e32c756c0a4a44e7c41a047`
+**Draft PR:** `#6`
+**Independent review:** `GO WITH CONDITIONS` (`INDEPENDENT_REVIEW.md`)
 
-## Objective
+## What R0-7C2 proves
 
-Correct Docker health-command argument parsing so PostgreSQL/pgvector
-GitHub Actions service containers can be created, started, and marked healthy.
+**Service boot only:** Docker create succeeds; postgres service reaches `healthy`;
+exit `125` from unquoted `-U` is closed.
 
-## Non-goals (explicit)
+## Explicit non-claims
 
-- Image replacement or digest pin (deferred R0-7C3)
-- `CREATE EXTENSION vector` (deferred R0-7C3)
-- Prisma generate/migrate/seed/tests
-- Promoting `packages/database` (OD-R07-2)
-- Claiming database job end-to-end green
-- Production deployment
+- Full database CI remains failing after service boot (missing `packages/database`).
+- Prisma and package promotion remain deferred (OD-R07-2 / R0-7E).
+- pgvector extension activation remains unverified (`NOT_VERIFIED`).
+- Mutable image digest remains open for R0-7C3 (`DEFERRED_TO_R0_7C3`).
+- **R0-7C3 must not start before PR #6 is merged.**
 
-## Operational change
+## Operational change (unchanged by evidence closure)
 
-Quote-only repair in two workflow service definitions:
+Quote-only repair in:
 
-- `.github/workflows/ci.yml` (`database` / `postgres`)
-- `.github/workflows/accessibility.yml` (`compliance-iso` / `postgres`)
+- `.github/workflows/ci.yml`
+- `.github/workflows/accessibility.yml`
 
-`--health-retries` remains **10** (unchanged). A truncated task example showing `5`
-was not applied per binding decision: do not change retry/timeout/interval.
+`--health-retries` remains **10**.
