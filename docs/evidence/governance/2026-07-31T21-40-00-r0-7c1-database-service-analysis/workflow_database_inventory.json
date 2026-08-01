@@ -1,0 +1,101 @@
+{
+  "task": "R0-7C1",
+  "integration_tip": "da5d8c197d1b2b20b526486cd06aef45b6e898a0",
+  "workflows": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "job": "database",
+      "service": "postgres",
+      "image": "pgvector/pgvector:pg16",
+      "ports": [
+        "5432:5432"
+      ],
+      "env": {
+        "POSTGRES_USER": "confora",
+        "POSTGRES_PASSWORD": "[REDACTED_EPHEMERAL_CI]",
+        "POSTGRES_DB": "confora"
+      },
+      "health_cmd_raw": "pg_isready -U confora -d confora",
+      "health_options_yaml": "options: >- folded multiline without quotes around health-cmd value",
+      "health_interval": "10s",
+      "health_timeout": "5s",
+      "health_retries": 10,
+      "volumes": null,
+      "init_scripts": null,
+      "dependent_steps": [
+        "pnpm install --frozen-lockfile",
+        "prisma generate (packages/database)",
+        "prisma migrate deploy",
+        "seed",
+        "database tests",
+        "a11y risk jest"
+      ],
+      "package_filters": [
+        "packages/database working-directory"
+      ],
+      "first_failing_step": "Initialize containers / docker create",
+      "current_check": "database fail (exit 125)",
+      "has_same_health_defect": true
+    },
+    {
+      "path": ".github/workflows/accessibility.yml",
+      "job": "compliance-iso",
+      "service": "postgres",
+      "image": "pgvector/pgvector:pg16",
+      "ports": [
+        "5432:5432"
+      ],
+      "env": {
+        "POSTGRES_USER": "confora",
+        "POSTGRES_PASSWORD": "[REDACTED_EPHEMERAL_CI]",
+        "POSTGRES_DB": "confora"
+      },
+      "health_cmd_raw": "pg_isready -U confora -d confora",
+      "health_interval": "10s",
+      "health_timeout": "5s",
+      "health_retries": 10,
+      "volumes": null,
+      "init_scripts": null,
+      "dependent_steps": [
+        "pnpm install",
+        "prisma generate/migrate/seed",
+        "build",
+        "playwright compliance"
+      ],
+      "package_filters": [
+        "packages/database references"
+      ],
+      "first_failing_step": "Initialize containers / docker create",
+      "current_check": "compliance-iso fail (exit 125)",
+      "has_same_health_defect": true
+    },
+    {
+      "path": ".github/workflows/accessibility.yml",
+      "job": "accessibility",
+      "service": null,
+      "note": "No postgres service; uses docker-compose later for backend stack (deferred beyond R0-7C1 items 1-5)",
+      "has_same_health_defect": false
+    },
+    {
+      "path": ".github/workflows/confora-qa.yml",
+      "job": "unit-and-compliance",
+      "service": null,
+      "note": "No postgres service; references pnpm --filter @confora/database (untracked)",
+      "has_same_health_defect": false
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "job": "docker",
+      "service": null,
+      "note": "needs: [quality, database] \u2014 skipped when database fails",
+      "has_same_health_defect": false
+    },
+    {
+      "path": ".github/workflows/deploy-backend.yml",
+      "job": "n/a",
+      "service": null,
+      "note": "No pgvector GHA service; R0-3 containment; not in R0-7C1 repair scope",
+      "has_same_health_defect": false
+    }
+  ]
+}

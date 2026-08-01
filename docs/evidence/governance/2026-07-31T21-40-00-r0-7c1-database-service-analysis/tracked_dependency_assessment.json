@@ -1,0 +1,45 @@
+{
+  "paths": [
+    {
+      "path": "packages/database",
+      "classification": "UNTRACKED_EXCLUDED",
+      "reason": "OD-R07-2 deferred; local directory may exist but not in Git index"
+    },
+    {
+      "path": "packages/database/package.json",
+      "classification": "UNTRACKED_EXCLUDED",
+      "reason": "Not tracked; workflows assume it"
+    },
+    {
+      "path": "packages/database/prisma",
+      "classification": "UNTRACKED_EXCLUDED",
+      "reason": "Local only if present; no tracked schema.prisma"
+    },
+    {
+      "path": "tracked schema.prisma",
+      "classification": "MISSING",
+      "reason": "No tracked Prisma schema file found via git ls-files"
+    },
+    {
+      "path": "tracked migrations/",
+      "classification": "MISSING",
+      "reason": "No tracked migration directories found"
+    },
+    {
+      "path": "Docker init SQL under repo",
+      "classification": "MISSING",
+      "reason": "No service volumes/init scripts in GHA service blocks"
+    },
+    {
+      "path": "apps/api prisma tenant helpers",
+      "classification": "TRACKED_VALID",
+      "reason": "Tracked Nest helpers exist; not used for GHA service boot"
+    },
+    {
+      "path": "@confora/database pnpm filter",
+      "classification": "OWNER_DECISION_REQUIRED",
+      "reason": "Referenced by workflows but package untracked; R0-7E"
+    }
+  ],
+  "r0_7c2_can_boot_without_packages_database": true
+}
