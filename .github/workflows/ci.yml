@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: pgvector/pgvector:pg16
+        image: pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b
         env:
           POSTGRES_USER: confora
           POSTGRES_PASSWORD: confora_dev_change_me
@@ -93,6 +93,100 @@ jobs:
         env:
           PUPPETEER_SKIP_DOWNLOAD: '1'
         run: pnpm install --frozen-lockfile
+
+      - name: Verify pgvector extension
+        shell: bash
+        env:
+          PGVECTOR_IMAGE: pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b
+        run: |
+          set -euo pipefail
+
+          mapfile -t pgvector_containers < <(
+            docker ps --filter status=running --format '{{.ID}}' |
+            while read -r container_id; do
+              configured_image="$(
+                docker inspect --format '{{.Config.Image}}' "${container_id}"
+              )"
+
+              if [[ "${configured_image}" == "${PGVECTOR_IMAGE}" ]]; then
+                printf '%s\n' "${container_id}"
+              fi
+            done
+          )
+
+          if [[ "${#pgvector_containers[@]}" -ne 1 ]]; then
+            echo "::error::Expected exactly one running digest-pinned pgvector service container; found ${#pgvector_containers[@]}"
+            exit 1
+          fi
+
+          pgvector_container="${pgvector_containers[0]}"
+
+          available_version="$(
+            docker exec "${pgvector_container}" \
+              psql \
+                --username=confora \
+                --dbname=confora \
+                --tuples-only \
+                --no-align \
+                --quiet \
+                --set=ON_ERROR_STOP=1 \
+                --command="SELECT default_version FROM pg_available_extensions WHERE name = 'vector';"
+          )"
+
+          available_version="$(printf '%s' "${available_version}" | tr -d '[:space:]')"
+
+          if [[ "${available_version}" != "0.8.6" ]]; then
+            echo "::error::Expected pgvector available version 0.8.6; found '${available_version:-missing}'"
+            exit 1
+          fi
+
+          docker exec "${pgvector_container}" \
+            psql \
+              --username=confora \
+              --dbname=confora \
+              --quiet \
+              --set=ON_ERROR_STOP=1 \
+              --command="CREATE EXTENSION vector;"
+
+          installed_version="$(
+            docker exec "${pgvector_container}" \
+              psql \
+                --username=confora \
+                --dbname=confora \
+                --tuples-only \
+                --no-align \
+                --quiet \
+                --set=ON_ERROR_STOP=1 \
+                --command="SELECT extversion FROM pg_extension WHERE extname = 'vector';"
+          )"
+
+          installed_version="$(printf '%s' "${installed_version}" | tr -d '[:space:]')"
+
+          if [[ "${installed_version}" != "0.8.6" ]]; then
+            echo "::error::Expected installed pgvector version 0.8.6; found '${installed_version:-missing}'"
+            exit 1
+          fi
+
+          vector_result="$(
+            docker exec "${pgvector_container}" \
+              psql \
+                --username=confora \
+                --dbname=confora \
+                --tuples-only \
+                --no-align \
+                --quiet \
+                --set=ON_ERROR_STOP=1 \
+                --command="SELECT '[1,2,3]'::vector::text;"
+          )"
+
+          vector_result="$(printf '%s' "${vector_result}" | tr -d '[:space:]')"
+
+          if [[ "${vector_result}" != "[1,2,3]" ]]; then
+            echo "::error::pgvector sanity check failed"
+            exit 1
+          fi
+
+          echo "pgvector extension verification passed: version ${installed_version}"
 
       - name: Prisma generate
         working-directory: packages/database
