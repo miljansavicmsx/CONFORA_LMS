@@ -31,3 +31,9 @@ Prefer **≤ 2** workflow files:
 - Owner rejects activation step but requires enablement claim
 - Need for signed attestation enforcement before pin
 - Any requirement to promote untracked database source
+
+
+## R0-7C3A revision
+
+Expected extension version for validation: **exactly `0.8.6`** (not `0.8.2`).
+See `r0_7c4_revised_acceptance_criteria.md`.

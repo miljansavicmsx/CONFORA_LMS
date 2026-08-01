@@ -7,3 +7,10 @@
 5. Authorization to start **R0-7C4 implementation** after this planning package.
 
 R0-7C4 must not start until these decisions are recorded.
+
+
+## R0-7C3A status
+
+Owner decisions for digest Option A (`sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b`) and expected amd64 version
+**`0.8.6`** are now recorded in `OWNER_DECISION_UPDATE.md`.
+R0-7C4 may resume after this correction commit is inspectable.

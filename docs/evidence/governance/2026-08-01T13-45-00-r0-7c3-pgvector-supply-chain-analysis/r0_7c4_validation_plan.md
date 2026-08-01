@@ -2,7 +2,7 @@
 
 1. Workflow image reference uses approved immutable digest (not bare mutable tag).
 2. Service still creates and reaches `healthy` (R0-7C2 quoting preserved).
-3. `pg_available_extensions` shows `vector` with expected default_version.
+3. `pg_available_extensions` shows `vector` with expected default_version **0.8.6**.
 4. If owner approved activation: `CREATE EXTENSION vector` succeeds in ephemeral DB.
 5. `installed_version` populated only after create.
 6. No Prisma commands executed.

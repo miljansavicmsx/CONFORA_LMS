@@ -51,3 +51,9 @@ Use only if owner explicitly requires amd64-only lock.
 ## Owner decision required
 
 Yes — select A, B, or temporary C continuation before any workflow pin is implemented (R0-7C4).
+
+
+## R0-7C3A
+
+Option A recommendation unchanged. Extension **version** expectation for amd64
+updated to `0.8.6` (see `OWNER_DECISION_UPDATE.md`).

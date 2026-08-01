@@ -54,3 +54,16 @@ After service healthy, using runner `psql` (or ephemeral client container) to `1
 4. Fail job if missing binaries or create fails.
 
 Must **not**: Prisma, migrate, seed, mount `packages/database`, or touch production.
+
+
+## R0-7C3A superseding verification (approved digest / linux/amd64)
+
+| Field | Corrected value |
+|-------|-----------------|
+| default_version / control | `0.8.6` |
+| After CREATE EXTENSION | `installed_version = 0.8.6` |
+| Vector cast | PASS |
+| Classification of prior `0.8.2` | `PREVIOUS_VERSION_OBSERVATION_NOT_REPRODUCIBLE` |
+
+Historical sections above that state `0.8.2` are retained for audit trail but
+**superseded** by this correction and by `amd64_extension_version_verification.md`.

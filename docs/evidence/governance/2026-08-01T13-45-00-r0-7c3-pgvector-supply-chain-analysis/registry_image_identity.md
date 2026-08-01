@@ -61,3 +61,10 @@ the multi-platform index digest and is **not** the linux/amd64 platform manifest
 
 **Classification:** community/project-published image with public Dockerfile provenance —
 **not** Docker Official Images library. Popularity alone is **not** treated as trust.
+
+
+## R0-7C3A correction
+
+pgvector extension version observed against the approved index digest on
+**linux/amd64** is **`0.8.6`**, not `0.8.2`. Historical mentions of `0.8.2` in
+this package are superseded; see `VERSION_RECONCILIATION.md`.
