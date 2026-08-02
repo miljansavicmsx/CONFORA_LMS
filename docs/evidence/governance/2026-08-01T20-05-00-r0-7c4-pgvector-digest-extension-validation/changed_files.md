@@ -1,10 +1,14 @@
 # Changed files
 
-## Operational (commit 1)
+## Operational (implementation commit `aeb7578c` only)
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/accessibility.yml`
 
-## Evidence (commit 2)
+## Evidence
 
-This folder only.
+This folder (initial evidence commit + this independent-review closure).
+
+## Evidence closure (this commit)
+
+Only files under this R0-7C4 evidence folder. No workflow changes.

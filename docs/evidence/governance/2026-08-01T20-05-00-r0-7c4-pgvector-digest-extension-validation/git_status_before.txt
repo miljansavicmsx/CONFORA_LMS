@@ -1,1 +1,1 @@
-(tracked clean before evidence staging)
+(tracked working tree clean)

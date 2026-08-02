@@ -1,1 +1,1 @@
-(expected clean after evidence commit)
+(post-commit expected: tracked working tree clean; workflows unchanged)

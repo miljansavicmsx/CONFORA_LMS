@@ -13,3 +13,14 @@ docker buildx imagetools inspect pgvector/pgvector:pg16
 git commit -m "ci: pin pgvector image and verify extension"
 # evidence folder + second commit
 ```
+
+
+## Independent review closure
+
+```text
+git fetch origin
+# verify head 47657f97…, blobs identical to aeb7578c, no PR
+# create/update evidence files under this folder only
+git commit -m "docs(repo): record r0-7c4 independent review"
+git push origin ci/r0-7c4-pgvector-digest-extension-validation
+```
