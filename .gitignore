@@ -8,6 +8,7 @@ build/
 **/.next/
 
 frontend-app/dist/
+frontend-app/dist-a11y/
 frontend-app/.vite/
 frontend-public/dist/
 frontend-public/.next/

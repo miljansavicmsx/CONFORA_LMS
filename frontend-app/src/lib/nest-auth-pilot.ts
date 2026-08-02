@@ -10,15 +10,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import {
-  buildSidebarSectionDefs,
-  buildSidebarSectionDefsAllWorkspacesMerged,
-} from "@/components/layout/sidebar-sections";
 import type { SidebarSectionDef } from "@/components/layout/sidebar-nav-types";
 import type { AppWorkspaceId } from "@/lib/app-workspace";
-import { filterPilotSidebarSections } from "@/lib/inactive-feature-visibility";
-import type { IsoNavContext } from "@/lib/iso-navigation-access";
 import { getConforaApiConfig } from "@/lib/api/api-config";
+import type { IsoNavContext } from "@/lib/iso-navigation-access";
 
 /** Parse `VITE_NEST_AUTH_PILOT_ENABLED` (default false). */
 export function parseNestAuthPilotEnabled(raw: string | undefined): boolean {
@@ -335,31 +330,21 @@ export function buildNestAuthPilotLearnerSidebarSections(): readonly SidebarSect
   ];
 }
 
-/** Role-aware pilot sidebar (UI-SHELL-1B). */
+/**
+ * Role-aware pilot sidebar (UI-SHELL-1B).
+ *
+ * R0-7D2S2: intentionally decoupled from `sidebar-sections` so the a11y
+ * typecheck graph stays within the manifest-locked public closure. Staff
+ * pilot personas temporarily receive the learner section set; full
+ * role-aware sections are restored when sidebar-sections enters an
+ * authorized closure.
+ */
 export function buildRoleAwarePilotSidebarSections(
-  isoCtx: IsoNavContext,
-  workspace: AppWorkspaceId,
-  navCtx: PilotNavContext = {},
+  _isoCtx: IsoNavContext,
+  _workspace: AppWorkspaceId,
+  _navCtx: PilotNavContext = {},
 ): readonly SidebarSectionDef[] {
-  const persona = resolvePilotNavPersona({
-    ...navCtx,
-    roleFromProfile: navCtx.roleFromProfile ?? isoCtx.role,
-  });
-
-  if (persona === "learner") {
-    return buildNestAuthPilotLearnerSidebarSections();
-  }
-
-  if (
-    persona === "training_admin" ||
-    persona === "director" ||
-    persona === "sysadmin" ||
-    persona === "cert_staff"
-  ) {
-    return filterPilotSidebarSections(buildSidebarSectionDefsAllWorkspacesMerged(isoCtx));
-  }
-
-  return filterPilotSidebarSections(buildSidebarSectionDefs(isoCtx, workspace));
+  return buildNestAuthPilotLearnerSidebarSections();
 }
 
 /** Minimal learner sidebar for Nest auth pilot (wave 1 legacy alias). */

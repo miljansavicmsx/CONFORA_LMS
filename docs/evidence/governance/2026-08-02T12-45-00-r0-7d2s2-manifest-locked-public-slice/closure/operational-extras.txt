@@ -1,0 +1,10 @@
+.gitignore
+frontend-app/package.json
+frontend-app/index.a11y.html
+frontend-app/src/App.a11y.tsx
+frontend-app/src/main.a11y.tsx
+frontend-app/src/vite-env.d.ts
+frontend-app/tsconfig.a11y.json
+frontend-app/vite.a11y.config.ts
+frontend-app/src/lib/nest-auth-pilot.ts
+frontend-app/src/lib/api-certificates.ts

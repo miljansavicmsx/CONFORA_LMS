@@ -1,0 +1,145 @@
+@import "non.geist";
+@import "non.geist/mono";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-geist-sans: "Geist-Variable", system-ui, sans-serif;
+    --font-geist-mono: "GeistMono-Variable", ui-monospace, monospace;
+    --radius: 0.5rem;
+    /* CONFORA Design System: brand Cerulean #0EA5E9, app bg #F8FAFC */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 199 89% 48%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+  }
+
+  /* Premium dark shell (DashboardLayout `.dark`) — `border-border/50` itd. */
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+    --border: 215 20% 27%;
+    --input: 215 20% 27%;
+    --ring: 199 89% 48%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: #f8fafc;
+    color: hsl(var(--foreground));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: 0.125rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /** Subtle grid kao `bg-grid-slate-700/[0.05]` (Tailwind arbitrary alpha). */
+  .bg-grid-slate-700\/05 {
+    background-image:
+      linear-gradient(to right, rgb(51 65 85 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(51 65 85 / 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Course player — tekst lekcije (callout blokovi, D.7) */
+  .cf-callout {
+    @apply my-4 rounded-lg border px-4 py-3 text-sm leading-relaxed;
+  }
+
+  .cf-callout-title {
+    @apply mb-1 block text-xs font-bold uppercase tracking-wide;
+  }
+
+  .cf-callout-info {
+    @apply border-brand/35 bg-brand/10 text-text-secondary [&_.cf-callout-title]:text-brand;
+  }
+
+  .cf-callout-warning {
+    @apply border-amber-500/35 bg-amber-500/10 text-text-secondary [&_.cf-callout-title]:text-amber-400;
+  }
+
+  .cf-callout-important {
+    @apply border-violet-500/35 bg-violet-500/10 text-text-secondary [&_.cf-callout-title]:text-violet-300;
+  }
+
+  /* Admin TipTap callout čvorovi (D.8) */
+  .cf-admin-callout {
+    @apply my-3 rounded-r-lg border-l-4 py-3 pl-4 pr-3 text-sm leading-relaxed text-text-secondary;
+  }
+
+  .cf-admin-callout-info {
+    @apply border-brand bg-brand/10;
+  }
+
+  .cf-admin-callout-warning {
+    @apply border-amber-500 bg-amber-500/10;
+  }
+
+  .cf-admin-callout-important {
+    @apply border-red-500 bg-red-500/10;
+  }
+
+  .cf-admin-callout-example {
+    @apply border-emerald-500 bg-emerald-500/10;
+  }
+
+  /* D.10 — štampa samo pregled certifikata */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #cf-cert-print-root,
+    #cf-cert-print-root * {
+      visibility: visible;
+    }
+    #cf-cert-print-root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      box-shadow: none !important;
+    }
+  }
+}

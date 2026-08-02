@@ -1,0 +1,45 @@
+{
+  "phase": "R0-7D2S2",
+  "type": "manifest_locked_public_frontend_slice",
+  "implementation": true,
+  "pull_request": false,
+  "architecture": "A11Y_PUBLIC_ENTRY_SEPARATION",
+  "implementation_base": "d08ccc91f2a06ac27c56a9dd9fab6ffd46e6c7d2",
+  "r0_7d1_tip": "f9b4a392c410fc6306ab57ac434196981119ce8e",
+  "integration_tip": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "rejected_branch": {
+    "name": "ci/r0-7d2-accessibility-baseline",
+    "tip": "13cdd75280206ec00587e5455b7c76bf7d75e269",
+    "classification": "REJECTED_EXPERIMENTAL_NOT_PR_ELIGIBLE",
+    "used_as_implementation_base": false,
+    "cherry_pick": false,
+    "path_checkout_candidate_source": true
+  },
+  "routes": ["/", "/login", "/verify"],
+  "verify_detail_route": "/verify/:verificationHash",
+  "promoted_source_ceiling": 68,
+  "promoted_source_count": 68,
+  "operational_extra_count": 10,
+  "cumulative_operational_changed_files": 78,
+  "operational_ceiling": 78,
+  "s1_evidence": "docs/evidence/governance/2026-08-02T10-10-00-r0-7d2s1-minimal-public-source-closure/",
+  "package_strategy": "PACKAGE_SOURCE_RESOLVE_WITH_EPHEMERAL_CSS_BUILD",
+  "generated_css_committed": false,
+  "package_dist_tracked": false,
+  "production_entry_modified": false,
+  "axe_implemented": false,
+  "accessibility_remediation": false,
+  "gha_a11y_workflow": false,
+  "gates": {
+    "typecheck_a11y": "PASS",
+    "build_a11y": "PASS",
+    "preview_routes": "PASS"
+  },
+  "scripts": {
+    "typecheck:a11y": "tsc -p tsconfig.a11y.json --pretty false",
+    "build:a11y": "npm run a11y:ui-css && vite build -c vite.a11y.config.ts",
+    "ci:a11y": "npm run typecheck:a11y && npm run build:a11y",
+    "preview:a11y": "vite preview -c vite.a11y.config.ts"
+  },
+  "verdict": "IMPLEMENTED_LOCAL_A11Y_SLICE_READY_FOR_FOLLOW_ON_AXE"
+}

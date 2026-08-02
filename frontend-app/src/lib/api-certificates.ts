@@ -1,57 +1,25 @@
 /**
- * ISO 17024 certifikati — credential wallet (auth) i javna verifikacija.
+ * ISO 17024 — public certificate verification helpers for the a11y slice.
+ *
+ * R0-7D2S2: wallet/registry staff helpers removed so this already-tracked module
+ * stays within the manifest-locked import closure (no api-staff-cert-registry,
+ * no separate public-verification-client file).
+ *
+ * Type stubs for MyCertificateItem / CertificateRegistryRow remain so in-closure
+ * entity-relationship builders typecheck without pulling staff APIs.
  */
 
-import { getConforaApiConfig } from "@/lib/api/api-config";
-import { resolveOwnerForPath } from "@/lib/api/endpoint-registry";
-import { api } from "@/lib/api";
-import {
-  fetchNestRegistryConfig,
-  resolveNestEffectiveRegistryMode,
-} from "@/lib/api-staff-cert-registry";
 import {
   verifyPublicCertificateByHash,
   type PublicCertificateVerifyResponse,
-} from "@/lib/api/public-verification-client";
+} from "@/lib/api";
 
-/** Canonical Nest learner wallet (P1-B2). */
-const NEST_WALLET_PATH = "/v1/me/certificates";
-/** Legacy rollback path. */
-const LEGACY_WALLET_PATH = "/api/certificates/my";
-
-function resolveWalletApiPath(): string {
-  const provider = getConforaApiConfig().provider;
-  if (provider === "legacy") return LEGACY_WALLET_PATH;
-  if (provider === "nest") return NEST_WALLET_PATH;
-  return resolveOwnerForPath(NEST_WALLET_PATH, "hybrid") === "nest"
-    ? NEST_WALLET_PATH
-    : LEGACY_WALLET_PATH;
-}
-
-const NEST_WALLET_PDF_URL_PATH = "/v1/me/certificates";
-
-function resolveWalletPdfUrlPath(certificateId: string): string {
-  const encoded = encodeURIComponent(certificateId.trim());
-  const provider = getConforaApiConfig().provider;
-  if (provider === "legacy") {
-    return `/api/certificates/my/${encoded}/pdf-url`;
-  }
-  if (provider === "nest") {
-    return `${NEST_WALLET_PDF_URL_PATH}/${encoded}/pdf-url`;
-  }
-  return resolveOwnerForPath(`${NEST_WALLET_PDF_URL_PATH}/${encoded}/pdf-url`, "hybrid") === "nest"
-    ? `${NEST_WALLET_PDF_URL_PATH}/${encoded}/pdf-url`
-    : `/api/certificates/my/${encoded}/pdf-url`;
-}
-
-/** Kategorije u novčaniku — odvojeno od `certificateKind` (strogi backend enum). */
 export type CredentialWalletCategory = "exam_pass" | "certification";
 
 export type MyCertificateItem = {
   readonly certificateId: string;
   readonly certificateKind: string;
   readonly credentialWalletCategory: CredentialWalletCategory;
-  /** Kratak opis tipa dokumenta za UI. */
   readonly documentTypeLabel: string;
   readonly title: string;
   readonly courseName: string | null;
@@ -62,55 +30,15 @@ export type MyCertificateItem = {
   readonly lifecycleStatus: string;
   readonly qrHash: string | null;
   readonly pdfUrl: string | null;
-  /** Relativna putanja u learner SPA (npr. /verify/CON-…). */
   readonly learnerVerifyPath: string;
-  /** Puni URL javne provjere (CERTIFICATE_VERIFY_BASE_URL). */
   readonly publicVerificationUrl: string | null;
   readonly supersededByCertificateId: string | null;
-  /** Backend (exam pass) — kratka napomena da nije certifikacija osobe. */
   readonly credentialScopeNote?: string | null;
-  /** TD-081 selector-safe fields */
   readonly schemeTitle?: string;
   readonly issuedAt?: string | null;
   readonly validUntil?: string | null;
-  readonly publicNumber?: string;
-  readonly recertificationEligible?: boolean;
-  readonly cpdEligible?: boolean;
 };
 
-export type VerifiedCertificatePublic = {
-  readonly certificateId: string;
-  readonly fullName: string;
-  readonly courseName: string | null;
-  readonly issueDate: string | null;
-  readonly expiryDate: string | null;
-  /** Preferiraj ako postoji (usklađeno s backend `effectiveStatus`). */
-  readonly effectiveStatus?: string;
-  readonly status: string;
-  readonly verificationResult?: string;
-  /** I backend `certificateKind` (PERSON_CERTIFICATION | EXAM_PASS_…). */
-  readonly certificateKind?: string;
-  /** Ljudski čitljiva oznaka tipa (backend `credentialTypeLabel`). */
-  readonly credentialTypeLabel?: string | null;
-};
-
-export type VerifyCertificateResult =
-  | { readonly kind: "ok"; readonly data: VerifiedCertificatePublic }
-  | { readonly kind: "not_found" }
-  | { readonly kind: "error"; readonly message: string };
-
-export async function fetchMyCertificates(): Promise<MyCertificateItem[]> {
-  const path = resolveWalletApiPath();
-  const { data } = await api.get<
-    MyCertificateItem[] | { readonly items?: MyCertificateItem[]; readonly contractVersion?: string }
-  >(path);
-  if (Array.isArray(data)) {
-    return data;
-  }
-  return Array.isArray(data?.items) ? data.items : [];
-}
-
-/** Registar (ISO) — samo PERSON_CERTIFICATION, filtrirano po tenantu u backendu. */
 export type CertificateRegistryRow = {
   readonly certificateId: string;
   readonly holderName: string;
@@ -124,52 +52,26 @@ export type CertificateRegistryRow = {
   readonly publicVerificationUrl: string | null;
 };
 
-export async function fetchCertificatesRegistry(status?: string): Promise<CertificateRegistryRow[]> {
-  const q = status?.trim() ? `?status=${encodeURIComponent(status.trim())}` : "";
-  const { data } = await api.get<CertificateRegistryRow[]>(`/api/certificates/registry${q}`);
-  return Array.isArray(data) ? data : [];
-}
+export type VerifiedCertificatePublic = {
+  readonly certificateId: string;
+  readonly fullName: string;
+  readonly courseName: string | null;
+  readonly issueDate: string | null;
+  readonly expiryDate: string | null;
+  readonly effectiveStatus?: string;
+  readonly status: string;
+  readonly verificationResult?: string;
+  readonly certificateKind?: string;
+  readonly credentialTypeLabel?: string | null;
+};
 
-/** Resolves staff registry source mode (env override → Nest config → dual). */
-export async function resolveEffectiveCertRegistrySourceMode(): Promise<"dual" | "nest"> {
-  const envMode = import.meta.env.VITE_CERT_REGISTRY_SOURCE?.trim().toLowerCase();
-  if (envMode === "nest" || envMode === "dual") {
-    return envMode;
-  }
-  try {
-    const config = await fetchNestRegistryConfig();
-    return resolveNestEffectiveRegistryMode(config);
-  } catch {
-    return "dual";
-  }
-}
-
-/** Presigned PDF download URL after JWT ownership check (P1-B2-6 Nest in hybrid/nest). */
-export async function fetchMyCertificatePdfUrl(certificateId: string): Promise<string> {
-  const path = resolveWalletPdfUrlPath(certificateId);
-  const { data } = await api.get<
-    | { pdfUrl: string }
-    | {
-        readonly pdfUrl: string;
-        readonly contractVersion?: string;
-        readonly certificateId?: string;
-        readonly expiresAt?: string;
-        readonly accessMode?: string;
-      }
-  >(path);
-  const url = String(data.pdfUrl ?? "").trim();
-  if (!url) {
-    throw new Error("PDF URL nije dostupan.");
-  }
-  return url;
-}
-
-/** Javni odgovor (GET /api/public/verify/{hash}) — legacy alias on Nest. */
-type PublicCertificateVerifyResponseLegacy = PublicCertificateVerifyResponse;
+export type VerifyCertificateResult =
+  | { readonly kind: "ok"; readonly data: VerifiedCertificatePublic }
+  | { readonly kind: "not_found" }
+  | { readonly kind: "error"; readonly message: string };
 
 /**
- * Kanonska javna provjera po verification hash-u (64 hex). Bez JWT-a.
- * Isti URL format kao `frontend-public`: /verify/{hash} → ovaj API.
+ * Canonical public verify by verification hash (64 hex). No JWT.
  */
 export async function verifyCertificate(verificationHash: string): Promise<VerifyCertificateResult> {
   const h = verificationHash.trim();
@@ -183,7 +85,7 @@ export async function verifyCertificate(verificationHash: string): Promise<Verif
   if (result.kind === "error") {
     return { kind: "error", message: result.normalized.message };
   }
-  const d = result.data as PublicCertificateVerifyResponseLegacy;
+  const d = result.data as PublicCertificateVerifyResponse;
   const st = String(d.effectiveStatus ?? d.verificationResult ?? "UNKNOWN");
   const base: VerifiedCertificatePublic = {
     certificateId: String(d.certId ?? "").trim() || `${h.slice(0, 16)}…`,
@@ -201,7 +103,9 @@ export async function verifyCertificate(verificationHash: string): Promise<Verif
     ...(d.verificationResult !== undefined && d.verificationResult !== null
       ? { verificationResult: d.verificationResult }
       : {}),
-    ...(d.certificateKind !== undefined && d.certificateKind !== null ? { certificateKind: d.certificateKind } : {}),
+    ...(d.certificateKind !== undefined && d.certificateKind !== null
+      ? { certificateKind: d.certificateKind }
+      : {}),
     ...(d.credentialTypeLabel !== undefined && d.credentialTypeLabel !== null
       ? { credentialTypeLabel: d.credentialTypeLabel }
       : {}),

@@ -1,0 +1,7 @@
+/ status=200
+/login status=200
+/verify status=200
+/verify/deadbeef status=200
+preview_port=5174
+index_html_emitted=true
+spa_fallback=ok
