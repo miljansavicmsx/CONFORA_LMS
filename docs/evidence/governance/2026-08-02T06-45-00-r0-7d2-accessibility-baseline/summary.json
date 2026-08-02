@@ -1,0 +1,42 @@
+{
+  "phase": "R0-7D2",
+  "strategy": "PLAN_C_STAGED_RECOVERY",
+  "integration_base": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "r0_7d1_commit": "f9b4a392c410fc6306ab57ac434196981119ce8e",
+  "accessibility_target": "frontend-app",
+  "frontend_app_classification": "TRACKED_STANDALONE_OUTSIDE_ROOT_WORKSPACE",
+  "approved_dependency": {
+    "name": "@axe-core/playwright",
+    "version": "4.12.1",
+    "type": "devDependency",
+    "pin": "exact"
+  },
+  "transitive_axe_core": "4.12.1",
+  "direct_dependency_count_added": 1,
+  "ruleset": "WCAG_2_2_AA_AUTOMATED_SUBSET",
+  "axe_tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "routes": [
+    "/",
+    "/login",
+    "/verify",
+    "/contact",
+    "/pricing",
+    "/faq"
+  ],
+  "auth": "UNAUTHENTICATED_ONLY",
+  "permissions": {
+    "contents": "read"
+  },
+  "pr_comments": false,
+  "operational_file_count": 6,
+  "compliance_iso": "UNCHANGED_UNREPAIRED",
+  "deploy_backend_run_count": 0,
+  "production_deployment_count": 0,
+  "production_authorization": false
+}
