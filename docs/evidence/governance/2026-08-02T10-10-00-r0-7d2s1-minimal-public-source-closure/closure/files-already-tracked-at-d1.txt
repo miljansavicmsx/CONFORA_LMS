@@ -1,0 +1,7 @@
+frontend-app/src/components/i18n/LanguageSwitcher.tsx
+frontend-app/src/components/layout/sidebar-nav-types.ts
+frontend-app/src/lib/api-certificates.ts
+frontend-app/src/lib/locale-preference.ts
+frontend-app/src/lib/nest-auth-pilot.ts
+frontend-app/src/pages/Login.tsx
+frontend-app/src/pages/public/VerifyLookupPage.tsx

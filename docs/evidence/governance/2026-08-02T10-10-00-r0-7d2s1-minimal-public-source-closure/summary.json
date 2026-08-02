@@ -1,0 +1,31 @@
+{
+  "phase": "R0-7D2S1",
+  "type": "planning_architecture_decision",
+  "implementation": false,
+  "pull_request": false,
+  "base_commit": "f9b4a392c410fc6306ab57ac434196981119ce8e",
+  "integration_base": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "rejected_branch": {
+    "name": "ci/r0-7d2-accessibility-baseline",
+    "tip": "13cdd75280206ec00587e5455b7c76bf7d75e269",
+    "classification": "REJECTED_EXPERIMENTAL_NOT_PR_ELIGIBLE"
+  },
+  "independent_review": "NO-GO",
+  "architecture_decision": "A11Y_PUBLIC_ENTRY_SEPARATION",
+  "package_strategy": "PACKAGE_SOURCE_RESOLVE_WITH_EPHEMERAL_CSS_BUILD",
+  "initial_routes": ["/", "/login", "/verify"],
+  "deferred_routes": ["/contact", "/pricing", "/faq"],
+  "deferred_routes_extra_source_files": 5,
+  "deferred_routes_recommendation": "KEEP_DEFERRED",
+  "three_route_page_closure": {
+    "total_modules": 75,
+    "already_tracked_at_d1": 7,
+    "need_per_file_promote": 68
+  },
+  "full_app_graph_modules_approx": 545,
+  "typecheck_gate": "typecheck:a11y && build:a11y",
+  "generated_css_committed": false,
+  "forbid_carry_packages_ui_dist_styles_css": true,
+  "scope_classification": "FRONTEND_JUSTIFIED_CLOSURE_OWNER_AUTHORIZATION_REQUIRED",
+  "verdict": "READY_FOR_OWNER_SCOPE_AUTHORIZATION"
+}
