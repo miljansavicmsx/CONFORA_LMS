@@ -1,0 +1,41 @@
+{
+  "workflow": ".github/workflows/accessibility.yml",
+  "triggers": [
+    "push(main|master)",
+    "pull_request",
+    "workflow_dispatch",
+    "schedule(cron 0 3 * * *)"
+  ],
+  "concurrency": "a11y-ci-${{ github.ref }} cancel-in-progress",
+  "permissions": {
+    "contents": "read",
+    "pull-requests": "write"
+  },
+  "jobs": {
+    "compliance-iso": {
+      "runner": "ubuntu-latest",
+      "timeout_minutes": 25,
+      "services": [
+        "postgres pgvector digest-pinned"
+      ],
+      "package_manager": "pnpm 9.14.2",
+      "lockfile": "pnpm-lock.yaml (root)",
+      "cache": "actions/setup-node cache:pnpm",
+      "first_failure": "Prisma generate, migrate, seed \u2014 packages/database missing",
+      "accessibility_logic": false,
+      "mutation": false
+    },
+    "accessibility": {
+      "runner": "ubuntu-latest",
+      "timeout_minutes": 20,
+      "services": [],
+      "package_manager": "pnpm 9.14.2 then npm in frontend-app",
+      "lockfile": "pnpm-lock.yaml root; frontend-app/package-lock.json UNTRACKED",
+      "cache": "pnpm",
+      "first_failure": "Design token contrast \u2014 tools/a11y/contrast-check.ts missing",
+      "pr_comment": "scripts/a11y/pr-comment.mjs (UNTRACKED)",
+      "artifacts": "upload-artifact a11y-report retention 14d",
+      "mutation": "none (R0-7S1 write-back removed)"
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "paths": [
+    {
+      "path": ".github/workflows/accessibility.yml",
+      "class": "TRACKED_VALID",
+      "notes": "workflow under analysis"
+    },
+    {
+      "path": "package.json",
+      "class": "TRACKED_VALID",
+      "notes": "a11y:* scripts point to untracked files"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "class": "TRACKED_VALID",
+      "notes": "root frozen install works"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "class": "TRACKED_VALID",
+      "notes": "apps/* packages/* only \u2014 frontend-app excluded"
+    },
+    {
+      "path": "frontend-app/package.json",
+      "class": "TRACKED_STANDALONE",
+      "notes": "TRACKED_STANDALONE_OUTSIDE_ROOT_WORKSPACE"
+    },
+    {
+      "path": "frontend-app/package-lock.json",
+      "class": "UNTRACKED_LOCAL_ONLY",
+      "notes": "required for npm ci; not on remote"
+    },
+    {
+      "path": "frontend-app/",
+      "class": "TRACKED_STANDALONE",
+      "notes": "108 tracked paths"
+    },
+    {
+      "path": "frontend-app/e2e/",
+      "class": "TRACKED_STANDALONE",
+      "notes": "acceptance e2e present; not axe suite"
+    },
+    {
+      "path": "packages/ui/tokens.ts",
+      "class": "TRACKED_VALID",
+      "notes": "contrast script imports tokens"
+    },
+    {
+      "path": "tools/a11y/",
+      "class": "UNTRACKED_LOCAL_ONLY",
+      "notes": "MISSING on CI; OWNER_DECISION_REQUIRED to promote"
+    },
+    {
+      "path": "scripts/a11y/",
+      "class": "UNTRACKED_LOCAL_ONLY",
+      "notes": "MISSING on CI; OWNER_DECISION_REQUIRED"
+    },
+    {
+      "path": "tests/e2e/",
+      "class": "UNTRACKED_LOCAL_ONLY",
+      "notes": "0 tracked; workflow depends on it"
+    },
+    {
+      "path": "apps/web",
+      "class": "MISSING",
+      "notes": "0 tracked; workflow starts pnpm start"
+    },
+    {
+      "path": "apps/admin",
+      "class": "MISSING",
+      "notes": "0 tracked"
+    },
+    {
+      "path": "packages/database",
+      "class": "LEGACY_EXCLUDED",
+      "notes": "OD-R07-2 UNTRACKED_EXCLUDED"
+    },
+    {
+      "path": "backend/",
+      "class": "LEGACY_EXCLUDED",
+      "notes": "FastAPI excluded from frontend-app a11y target"
+    },
+    {
+      "path": "docker-compose.a11y-ci.yml",
+      "class": "TRACKED_VALID",
+      "notes": "includes fastapi-backend \u2014 not frontend-app-only"
+    }
+  ]
+}

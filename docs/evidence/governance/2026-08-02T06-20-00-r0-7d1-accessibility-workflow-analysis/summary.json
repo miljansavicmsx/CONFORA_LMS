@@ -1,0 +1,46 @@
+{
+  "integration_base": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "r0_7c4_merge_commit": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "workflow_analyzed": ".github/workflows/accessibility.yml",
+  "jobs_analyzed": [
+    "accessibility",
+    "compliance-iso"
+  ],
+  "accessibility_target": "frontend-app",
+  "frontend_app_classification": "TRACKED_STANDALONE_OUTSIDE_ROOT_WORKSPACE",
+  "root_workspace_membership": false,
+  "current_first_failure": "Design token contrast \u2014 tools/a11y/contrast-check.ts ERR_MODULE_NOT_FOUND",
+  "missing_tracked_paths": [
+    "tools/a11y/contrast-check.ts",
+    "scripts/a11y/*.mjs",
+    "tests/e2e/**",
+    "frontend-app/package-lock.json"
+  ],
+  "untracked_path_count_local_a11y_helpers": 11,
+  "deterministic_install_status": {
+    "root_pnpm_frozen": "PASS",
+    "frontend_app_npm_ci": "NOT_DETERMINISTIC_ON_CI_LOCKFILE_UNTRACKED"
+  },
+  "browser_test_availability": "UNAVAILABLE_ON_CI_TESTS_E2E_UNTRACKED",
+  "contrast_check_availability": "MISSING_ON_CI_LOCAL_UNTRACKED_ONLY",
+  "pr_comment_implementation_status": "REFERENCED_BUT_UNTRACKED",
+  "workflow_mutation_status": "CONTAINED_R0_7S1_NO_GIT_WRITEBACK",
+  "current_permissions": {
+    "contents": "read",
+    "pull-requests": "write"
+  },
+  "credential_exposure_findings": [
+    "A11Y_DEMO_PASSWORD in top-level env appears in Actions step logs (value omitted)",
+    "DEV_LOCAL_PASSWORD same pattern (value omitted)"
+  ],
+  "compliance_job_relationship": "SAME_WORKFLOW_FILE_SEPARATE_JOB_OUT_OF_R0_7D_REPAIR",
+  "recommended_implementation_option": "Plan C \u2014 Staged recovery",
+  "proposed_workflow_file_count": 1,
+  "proposed_script_file_count": 3,
+  "maximum_operational_file_count": 6,
+  "owner_decision_count": 10,
+  "deploy_backend_run_count": 0,
+  "production_deployment_count": 0,
+  "production_authorization": false,
+  "final_readiness_classification": "READY FOR R0-7D2 OWNER DECISION"
+}
