@@ -13,18 +13,15 @@ concurrency:
   group: a11y-ci-${{ github.ref }}
   cancel-in-progress: true
 
-# R0-7S1: contents must remain read — no commit/push of repository content.
+# R0-7S1 / R0-7D2: contents read only — no commit/push; artifacts only (no PR comments).
 permissions:
   contents: read
-  pull-requests: write
 
 env:
-  REPORTS_DIR: tests/e2e/reports
+  # Shared local URLs for compliance-iso Playwright gates (not production).
   PLAYWRIGHT_APP_URL: http://127.0.0.1:5173
   PLAYWRIGHT_API_URL: http://127.0.0.1:8000
   PLAYWRIGHT_PUBLIC_URL: http://127.0.0.1:3000
-  A11Y_DEMO_PASSWORD: devlocal123
-  DEV_LOCAL_PASSWORD: devlocal123
   VITE_API_URL: http://127.0.0.1:8000
 
 jobs:
@@ -137,191 +134,64 @@ jobs:
           pnpm exec jest --config ./jest.integration.config.cjs \
             scheme-public-722 --runInBand
 
+  # R0-7D2: frontend-app-only accessibility baseline (PLAN_C stage 1).
+  # Does not repair compliance-iso, Prisma, packages/database, or design-token contrast.
   accessibility:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend-app
+    env:
+      PLAYWRIGHT_A11Y_BASELINE: "1"
+      PLAYWRIGHT_NO_WEB_SERVER: "1"
+      PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173
+      A11Y_REPORT_DIR: ${{ github.workspace }}/frontend-app/test-results/accessibility
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
-        with:
-          version: 9.14.2
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
-          cache: pnpm
+          cache: npm
+          cache-dependency-path: frontend-app/package-lock.json
 
-      - name: Install workspace
-        run: pnpm install --frozen-lockfile
-
-      - name: Design token contrast (WCAG 1.4.3 / 1.4.11)
-        run: pnpm a11y:contrast
-
-      - name: Build apps (production)
-        env:
-          DISABLE_ERD: "true"
-          PUPPETEER_SKIP_DOWNLOAD: "1"
-          VITE_API_URL: http://127.0.0.1:8000
-        run: |
-          pnpm build
-          cd frontend-app && npm ci && npm run build
-
-      - name: Start backend stack (docker-compose)
-        run: |
-          docker compose -f docker-compose.a11y-ci.yml up -d --wait
-
-      - name: Seed role-access demo users
-        run: |
-          pip install -r backend/requirements.txt
-          AWS_ENDPOINT_URL_DYNAMODB=http://127.0.0.1:8001 \
-            AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test \
-            python scripts/seed_role_access_demo.py
-
-      - name: Install e2e deps
-        working-directory: tests/e2e
+      - name: Install frontend-app (frozen lockfile)
         run: npm ci
 
-      - name: Playwright browser
-        working-directory: tests/e2e
+      - name: Build frontend-app
+        run: npm run build
+
+      - name: Install Playwright Chromium
         run: npx playwright install chromium --with-deps
 
-      - name: Start frontends (production mode)
-        env:
-          CSP_MODE: report-only
-          NODE_ENV: production
+      - name: Start vite preview
         run: |
           set -euo pipefail
-          mkdir -p "$REPORTS_DIR"
-          (cd frontend-app && CSP_MODE=report-only NODE_ENV=production npm exec vite preview -- --host 127.0.0.1 --port 5173 &)
-          (cd apps/web && CSP_MODE=report-only pnpm start &)
-          (cd apps/admin && CSP_MODE=report-only pnpm start &)
-          npx wait-on@8.0.1 \
-            http://127.0.0.1:5173 \
-            http://127.0.0.1:8000/health \
-            http://127.0.0.1:3000 \
-            http://127.0.0.1:3001 \
-            -t 180000
-
-      - name: T2 — combined axe + CSP (report-only)
-        working-directory: tests/e2e
-        env:
-          CSP_MODE: report-only
-          PLAYWRIGHT_ADMIN_URL: http://127.0.0.1:3001
-        run: npx playwright test csp-vs-a11y.spec.ts --reporter=line
-
-      - name: T2 — combined axe + CSP (enforce)
-        working-directory: tests/e2e
-        env:
-          CSP_MODE: enforce
-          PLAYWRIGHT_ADMIN_URL: http://127.0.0.1:3001
-        run: |
-          pkill -f "next start" || true
-          pkill -f "vite preview" || true
-          sleep 2
-          (cd frontend-app && CSP_MODE=enforce NODE_ENV=production npm exec vite preview -- --host 127.0.0.1 --port 5173 &)
-          (cd apps/web && CSP_MODE=enforce pnpm start &)
-          (cd apps/admin && CSP_MODE=enforce pnpm start &)
-          npx wait-on@8.0.1 http://127.0.0.1:5173 http://127.0.0.1:3000 http://127.0.0.1:3001 -t 120000
-          npx playwright test csp-vs-a11y.spec.ts --reporter=line
-
-      - name: T1 — axe public paths
-        working-directory: tests/e2e
-        env:
-          A11Y_RESULTS_FILE: ${{ github.workspace }}/tests/e2e/reports/axe-public.json
-        run: npx playwright test a11y-axe-public.spec.ts --reporter=line
-
-      - name: T1 — axe authenticated paths (parallel by role)
-        working-directory: tests/e2e
-        run: |
-          set -euo pipefail
-          ROLES="learner candidate training_admin tech_committee director sys_admin cert_committee auditor"
-          FAILED=0
-          PIDS=""
-          for role in $ROLES; do
-            (
-              export A11Y_ROLE="$role"
-              export A11Y_RESULTS_FILE="${{ github.workspace }}/tests/e2e/reports/axe-${role}.json"
-              npx playwright test a11y-axe-authenticated.spec.ts --reporter=line
-            ) &
-            PIDS="$PIDS $!"
+          npm run preview -- --host 127.0.0.1 --port 5173 &
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:5173/ > /dev/null; then
+              echo "preview ready"
+              exit 0
+            fi
+            sleep 2
           done
-          for pid in $PIDS; do
-            wait "$pid" || FAILED=1
-          done
-          exit $FAILED
+          echo "preview failed to become ready"
+          exit 1
 
-      - name: T5 — keyboard journeys
-        working-directory: tests/e2e
-        env:
-          A11Y_KEYBOARD_RESULTS: ${{ github.workspace }}/tests/e2e/reports/keyboard.json
-        run: npx playwright test a11y-keyboard.spec.ts --reporter=line
-
-      - name: T6 — screen reader (Level A + B)
-        working-directory: tests/e2e
-        run: npx playwright test a11y-screen-reader.spec.ts --reporter=line
-
-      - name: T7 — motion & cognitive (automated)
-        working-directory: tests/e2e
-        run: npx playwright test a11y-motion-cognitive.spec.ts --reporter=line
-
-      - name: T4 — Lighthouse accessibility gate
-        run: node scripts/a11y/run-lighthouse.mjs
-
-      - name: Compare axe vs baseline
-        if: always()
-        run: node scripts/a11y/compare-baseline.mjs
-
-      - name: Aggregate HTML report + coverage gate
-        if: always()
-        run: node scripts/a11y/aggregate-report.mjs
+      - name: Browser axe WCAG_2_2_AA_AUTOMATED_SUBSET (public routes)
+        run: npx playwright test --config=playwright.config.ts
 
       - name: Upload accessibility artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: a11y-report
+          name: a11y-frontend-app-baseline
           path: |
-            tests/e2e/reports/
-            tests/e2e/playwright-report/
+            frontend-app/test-results/
+            frontend-app/playwright-report/
           retention-days: 14
+          if-no-files-found: warn
 
-      - name: PR comment summary
-        if: always() && github.event_name == 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: node scripts/a11y/pr-comment.mjs
-
-      - name: Notify on failure (#a11y + champion)
-        if: failure()
-        env:
-          SLACK_A11Y_WEBHOOK_URL: ${{ secrets.SLACK_A11Y_WEBHOOK_URL }}
-          A11Y_CHAMPION_EMAIL: ${{ secrets.A11Y_CHAMPION_EMAIL }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          SMTP_FROM: ${{ secrets.SMTP_FROM }}
-        run: node scripts/a11y/notify-failure.mjs
-
-      # R0-7S1: repository mutation removed. Reports ship via upload-artifact only.
-      # Do not reintroduce repository write-back without a new owner decision.
-
-      - name: Record a11y CI outcome (compliance.ci_pipeline_runs)
-        if: always()
-        env:
-          DATABASE_URL: ${{ secrets.COMPLIANCE_DATABASE_URL }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          GITHUB_REF: ${{ github.ref }}
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_WORKFLOW: ${{ github.workflow }}
-          GITHUB_JOB_STATUS: ${{ job.status }}
-          A11Y_CI_CONCLUSION: ${{ job.status }}
-        run: |
-          if [ -z "${DATABASE_URL:-}" ]; then
-            echo "COMPLIANCE_DATABASE_URL not configured — skip CI ingest"
-            exit 0
-          fi
-          cd packages/database && pnpm exec prisma generate
-          node ../../scripts/record-a11y-ci-run.mjs
+      # R0-7S1 / R0-7D2: repository mutation forbidden. Artifacts only.
+      # No PR comments. No untracked scripts/a11y or tools/a11y references.
