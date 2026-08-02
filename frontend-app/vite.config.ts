@@ -44,13 +44,22 @@ export default defineConfig({
     },
   },
   resolve: {
+    // R0-7D2R: file: packages live outside frontend-app/; pin shared deps to this app's node_modules.
+    dedupe: ["react", "react-dom", "i18next", "react-i18next"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // R0-7D2R: resolve local file: packages from source (dist not required in clean checkout).
+      // Resolve local file: packages from source (JS dist not required in clean checkout).
       "@confora/i18n/react": path.resolve(__dirname, "../packages/i18n/src/react.tsx"),
       "@confora/i18n": path.resolve(__dirname, "../packages/i18n/src/index.ts"),
-      "@confora/ui/styles.css": path.resolve(__dirname, "../packages/ui/dist/styles.css"),
+      "@confora/ui/styles.css": path.resolve(
+        __dirname,
+        "../packages/ui/dist/styles.css",
+      ),
       "@confora/ui": path.resolve(__dirname, "../packages/ui/src/index.ts"),
+      react: path.resolve(__dirname, "node_modules/react"),
+      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      i18next: path.resolve(__dirname, "node_modules/i18next"),
+      "react-i18next": path.resolve(__dirname, "node_modules/react-i18next"),
     },
   },
   server: {
