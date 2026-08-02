@@ -1,0 +1,123 @@
+/* CONFORA LMS — Video.js skin (kontrole #1F4E79) */
+.confora-video-js.video-js {
+  font-family: inherit;
+}
+
+.confora-video-js.video-js .vjs-control-bar {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(31, 78, 121, 0.92) 100%
+  );
+}
+
+.confora-video-js.video-js .vjs-big-play-button {
+  border-color: #1f4e79;
+  background-color: rgba(31, 78, 121, 0.88);
+  border-radius: 50%;
+  width: 2.8em;
+  height: 2.8em;
+  line-height: 2.6em;
+  margin-top: -1.4em;
+  margin-left: -1.4em;
+}
+
+.confora-video-js.video-js .vjs-big-play-button:hover,
+.confora-video-js.video-js .vjs-big-play-button:focus {
+  background-color: #1f4e79;
+  border-color: #1f4e79;
+}
+
+.confora-video-js.video-js .vjs-play-progress,
+.confora-video-js.video-js .vjs-slider-bar,
+.confora-video-js.video-js .vjs-volume-level {
+  background-color: #1f4e79;
+}
+
+.confora-video-js.video-js .vjs-progress-control .vjs-play-progress:before {
+  color: #1f4e79;
+}
+
+.confora-video-js.video-js .vjs-load-progress div {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.confora-video-js.video-js .vjs-control:focus:before,
+.confora-video-js.video-js .vjs-control:hover:before {
+  text-shadow: 0 0 0.5em #1f4e79;
+}
+
+.confora-video-js.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  background-color: rgba(20, 40, 60, 0.96);
+}
+
+.confora-video-js.video-js .vjs-menu li.vjs-selected,
+.confora-video-js.video-js .vjs-menu li:focus,
+.confora-video-js.video-js .vjs-menu li:hover {
+  background-color: #1f4e79;
+  color: #fff;
+}
+
+/* Immersive / cinema (D.7) — brand #0EA5E9, tamna kontrolna traka */
+.confora-video-js--immersive.video-js .vjs-control-bar {
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.95) 100%);
+}
+
+.confora-video-js--immersive.video-js .vjs-big-play-button {
+  border-color: #0ea5e9;
+  background-color: rgba(14, 165, 233, 0.35);
+}
+
+.confora-video-js--immersive.video-js .vjs-big-play-button:hover,
+.confora-video-js--immersive.video-js .vjs-big-play-button:focus {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+}
+
+.confora-video-js--immersive.video-js .vjs-play-progress,
+.confora-video-js--immersive.video-js .vjs-slider-bar,
+.confora-video-js--immersive.video-js .vjs-volume-level {
+  background-color: #0ea5e9;
+}
+
+.confora-video-js--immersive.video-js .vjs-progress-control .vjs-play-progress:before {
+  color: #0ea5e9;
+}
+
+.confora-video-js--immersive.video-js .vjs-control:focus:before,
+.confora-video-js--immersive.video-js .vjs-control:hover:before {
+  text-shadow: 0 0 0.5em #0ea5e9;
+}
+
+.confora-video-js--immersive.video-js .vjs-menu li.vjs-selected,
+.confora-video-js--immersive.video-js .vjs-menu li:focus,
+.confora-video-js--immersive.video-js .vjs-menu li:hover {
+  background-color: #0ea5e9;
+  color: #0f172a;
+}
+
+/* Markeri poglavlja na scrubberu */
+.confora-video-js.video-js .vjs-progress-holder {
+  position: relative;
+}
+
+.cf-vjs-chapter-marker {
+  position: absolute;
+  bottom: 100%;
+  z-index: 2;
+  margin-bottom: 1px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 5px solid #0ea5e9;
+  padding: 0;
+  border-top: none;
+  background: none;
+  cursor: pointer;
+}
+
+.cf-vjs-chapter-marker:hover {
+  filter: brightness(1.15);
+}

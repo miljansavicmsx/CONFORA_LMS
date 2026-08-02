@@ -1,0 +1,1255 @@
+{
+  "version": "2026.05.phase3",
+  "transitions": [
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "DRAFT",
+      "to": "SUBMITTED",
+      "action": "submit_application",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "SCREENING",
+      "action": "screening_start",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "PENDING_REVIEW",
+      "to": "SCREENING",
+      "action": "screening_start",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "AWAITING_MORE_INFO",
+      "to": "SCREENING",
+      "action": "screening_start",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "REQUEST_INFO",
+      "to": "SCREENING",
+      "action": "screening_start",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SCREENING",
+      "to": "SCREENING",
+      "action": "screening_start",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": true
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SCREENING",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "PENDING_REVIEW",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "AWAITING_MORE_INFO",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "REQUEST_INFO",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "RETURNED_FOR_MORE_INFO",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "eligibility_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "REQUEST_INFO",
+      "action": "eligibility_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SCREENING",
+      "to": "REQUEST_INFO",
+      "action": "eligibility_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "REQUEST_INFO",
+      "action": "eligibility_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "PENDING_REVIEW",
+      "to": "REQUEST_INFO",
+      "action": "eligibility_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "AWAITING_MORE_INFO",
+      "to": "REQUEST_INFO",
+      "action": "eligibility_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "RETURNED_FOR_MORE_INFO",
+      "to": "REQUEST_INFO",
+      "action": "eligibility_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SCREENING",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "PENDING_REVIEW",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "AWAITING_MORE_INFO",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "REQUEST_INFO",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "RETURNED_FOR_MORE_INFO",
+      "to": "REJECTED_AT_APPLICATION_STAGE",
+      "action": "eligibility_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "ELIGIBLE_FOR_DECISION",
+      "to": "UNDER_REVIEW",
+      "action": "start_committee_review",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": true,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "RETURNED_FOR_MORE_INFO",
+      "action": "committee_return_info",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "APPROVED",
+      "action": "committee_approve",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "REJECTED_AFTER_DECISION",
+      "action": "committee_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "ELIGIBLE_FOR_DECISION",
+      "to": "APPROVED",
+      "action": "pilot_approve",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": true,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "APPROVED",
+      "action": "pilot_approve",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SCREENING",
+      "to": "APPROVED",
+      "action": "pilot_approve",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "APPROVED",
+      "action": "pilot_approve",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "REQUEST_INFO",
+      "to": "APPROVED",
+      "action": "pilot_approve",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "RETURNED_FOR_MORE_INFO",
+      "to": "APPROVED",
+      "action": "pilot_approve",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "ELIGIBLE_FOR_DECISION",
+      "to": "REJECTED_AFTER_DECISION",
+      "action": "pilot_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "REJECTED_AFTER_DECISION",
+      "action": "pilot_reject",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "RETURNED_FOR_MORE_INFO",
+      "action": "pilot_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "ELIGIBLE_FOR_DECISION",
+      "to": "RETURNED_FOR_MORE_INFO",
+      "action": "pilot_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "SUBMITTED",
+      "to": "RETURNED_FOR_MORE_INFO",
+      "action": "pilot_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "RETURNED_FOR_MORE_INFO",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "committee_return_resolve",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "RETURNED_FOR_MORE_INFO",
+      "to": "SUBMITTED",
+      "action": "resubmit_after_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_APPLICATION",
+      "from": "UNDER_REVIEW",
+      "to": "ELIGIBLE_FOR_DECISION",
+      "action": "void_committee_review",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "PENDING_COMMITTEE_REVIEW",
+      "to": "UNDER_COMMITTEE_REVIEW",
+      "action": "start_review",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": true,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "RETURNED_FOR_MORE_INFORMATION",
+      "to": "UNDER_COMMITTEE_REVIEW",
+      "action": "start_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "RETURNED_FOR_MORE_INFORMATION",
+      "action": "return_for_info",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "APPROVED",
+      "action": "approve_decision",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": true,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "REJECTED",
+      "action": "reject_decision",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": true,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "RETURNED_FOR_MORE_INFORMATION",
+      "action": "committee_vote_split_return",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "APPROVED",
+      "action": "committee_vote_majority_approve",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": true,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "REJECTED",
+      "action": "committee_vote_majority_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "PENDING_COMMITTEE_REVIEW",
+      "to": "VOIDED",
+      "action": "void_decision",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "UNDER_COMMITTEE_REVIEW",
+      "to": "VOIDED",
+      "action": "void_decision",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_DECISION",
+      "from": "RETURNED_FOR_MORE_INFORMATION",
+      "to": "VOIDED",
+      "action": "void_decision",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "SUSPENDED",
+      "action": "suspend_certificate",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "REVOKED",
+      "action": "revoke_certificate",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "WITHDRAWN",
+      "action": "withdraw_certificate",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "SUSPENDED",
+      "to": "ACTIVE",
+      "action": "reactivate_certificate",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "SUSPENDED",
+      "to": "REVOKED",
+      "action": "revoke_certificate",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "SUSPENDED",
+      "to": "WITHDRAWN",
+      "action": "withdraw_certificate",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "RECERTIFICATION_DUE",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "UNDER_RECERTIFICATION_REVIEW",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "RENEWED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "EXPIRED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "ACTIVE",
+      "to": "REPLACED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "RECERTIFICATION_DUE",
+      "to": "RECERTIFICATION_DUE",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "RECERTIFICATION_DUE",
+      "to": "UNDER_RECERTIFICATION_REVIEW",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "RECERTIFICATION_DUE",
+      "to": "RENEWED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "RECERTIFICATION_DUE",
+      "to": "EXPIRED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "UNDER_RECERTIFICATION_REVIEW",
+      "to": "RENEWED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "UNDER_RECERTIFICATION_REVIEW",
+      "to": "EXPIRED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "UNDER_RECERTIFICATION_REVIEW",
+      "to": "SUSPENDED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "UNDER_RECERTIFICATION_REVIEW",
+      "to": "ACTIVE",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "UNDER_RECERTIFICATION_REVIEW",
+      "to": "RECERTIFICATION_DUE",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "RECERTIFICATION_DUE",
+      "to": "SUSPENDED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "SUSPENDED",
+      "to": "RECERTIFICATION_DUE",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "DRAFT",
+      "to": "ACTIVE",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "DRAFT",
+      "to": "REVOKED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "PERSON_CERTIFICATION",
+      "from": "SUSPENDED",
+      "to": "REPLACED",
+      "action": "lifecycle_engine",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "DRAFT",
+      "to": "SUBMITTED",
+      "action": "submit_recert_application",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "REQUEST_INFO",
+      "to": "SUBMITTED",
+      "action": "submit_recert_application",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "SUBMITTED",
+      "to": "UNDER_REVIEW",
+      "action": "staff_continue_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "UNDER_REVIEW",
+      "to": "UNDER_REVIEW",
+      "action": "staff_continue_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "SUBMITTED",
+      "to": "REQUEST_INFO",
+      "action": "staff_request_info",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "UNDER_REVIEW",
+      "to": "REQUEST_INFO",
+      "action": "staff_request_info",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "UNDER_REVIEW",
+      "to": "APPROVED",
+      "action": "committee_decision_approve",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "UNDER_REVIEW",
+      "to": "REJECTED",
+      "action": "committee_decision_reject",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RECERTIFICATION",
+      "from": "APPROVED",
+      "to": "COMPLETED",
+      "action": "issue_renewal_complete",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "DRAFT",
+      "to": "REVIEW",
+      "action": "submit_scheme_for_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "REVIEW",
+      "to": "APPROVED",
+      "action": "committee_approve_scheme",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "APPROVED",
+      "to": "ACTIVE",
+      "action": "activate_scheme",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "ACTIVE",
+      "to": "SUSPENDED",
+      "action": "suspend_scheme",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "SUSPENDED",
+      "to": "ACTIVE",
+      "action": "reactivate_scheme",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "ACTIVE",
+      "to": "ARCHIVED",
+      "action": "archive_scheme",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CERTIFICATION_SCHEME",
+      "from": "SUSPENDED",
+      "to": "ARCHIVED",
+      "action": "archive_scheme",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "NONCONFORMITY",
+      "from": "OPEN",
+      "to": "INVESTIGATING",
+      "action": "submit_ncr_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "NONCONFORMITY",
+      "from": "INVESTIGATING",
+      "to": "ACTION_DEFINED",
+      "action": "define_actions",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "NONCONFORMITY",
+      "from": "ACTION_DEFINED",
+      "to": "IMPLEMENTING",
+      "action": "start_implementing",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "NONCONFORMITY",
+      "from": "IMPLEMENTING",
+      "to": "EFFECTIVENESS_REVIEW",
+      "action": "ready_for_effectiveness",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "NONCONFORMITY",
+      "from": "EFFECTIVENESS_REVIEW",
+      "to": "CLOSED",
+      "action": "close_ncr",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "NONCONFORMITY",
+      "from": "CLOSED",
+      "to": "CLOSED",
+      "action": "noop_closed",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": true
+    },
+    {
+      "workflowType": "CAPA_ACTION",
+      "from": "OPEN",
+      "to": "IN_PROGRESS",
+      "action": "start_capa_action",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CAPA_ACTION",
+      "from": "IN_PROGRESS",
+      "to": "COMPLETED",
+      "action": "complete_capa_action",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "CAPA_ACTION",
+      "from": "COMPLETED",
+      "to": "VERIFIED",
+      "action": "verify_capa_action",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "OPEN",
+      "to": "MITIGATING",
+      "action": "start_mitigation",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "MITIGATING",
+      "to": "MONITORING",
+      "action": "mark_monitoring_via_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "MONITORING",
+      "to": "ACCEPTED",
+      "action": "accept_residual",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "OPEN",
+      "to": "ACCEPTED",
+      "action": "accept_residual_direct",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "MITIGATING",
+      "to": "ACCEPTED",
+      "action": "accept_residual_from_mitigating",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "MONITORING",
+      "to": "CLOSED",
+      "action": "close_risk",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "ACCEPTED",
+      "to": "CLOSED",
+      "action": "close_risk",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "OPEN",
+      "to": "CLOSED",
+      "action": "close_risk",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "RISK",
+      "from": "MITIGATING",
+      "to": "CLOSED",
+      "action": "close_risk",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "OPEN",
+      "to": "UNDER_REVIEW",
+      "action": "start_impartiality_review",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "UNDER_REVIEW",
+      "to": "MITIGATION_DEFINED",
+      "action": "define_impartiality_mitigation",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "MITIGATION_DEFINED",
+      "to": "MONITORING",
+      "action": "start_monitoring",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "OPEN",
+      "to": "MONITORING",
+      "action": "start_monitoring_from_open",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "MONITORING",
+      "to": "ACCEPTED",
+      "action": "accept_threat_residual",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "OPEN",
+      "to": "ACCEPTED",
+      "action": "accept_threat_residual_direct",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "MONITORING",
+      "to": "CLOSED",
+      "action": "close_threat",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "IMPARTIALITY_THREAT",
+      "from": "ACCEPTED",
+      "to": "CLOSED",
+      "action": "close_threat",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "MANAGEMENT_REVIEW",
+      "from": "DRAFT",
+      "to": "IN_REVIEW",
+      "action": "start_mr_cycle",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "MANAGEMENT_REVIEW",
+      "from": "IN_REVIEW",
+      "to": "COMPLETED",
+      "action": "complete_mr_cycle",
+      "auditAction": null,
+      "businessCritical": false,
+      "requiresSod": false,
+      "reversible": false
+    },
+    {
+      "workflowType": "MANAGEMENT_REVIEW",
+      "from": "COMPLETED",
+      "to": "APPROVED",
+      "action": "approve_mr_cycle",
+      "auditAction": null,
+      "businessCritical": true,
+      "requiresSod": false,
+      "reversible": false
+    }
+  ]
+}

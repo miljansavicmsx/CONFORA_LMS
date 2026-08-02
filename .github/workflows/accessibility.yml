@@ -138,7 +138,8 @@ jobs:
   # Does not repair compliance-iso, Prisma, packages/database, or design-token contrast.
   accessibility:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # R0-7D2R: approved maximum job timeout is 15 minutes.
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend-app

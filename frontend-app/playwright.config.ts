@@ -46,9 +46,12 @@ export default defineConfig({
   testDir: a11yBaseline ? "./tests/accessibility" : "./e2e",
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
-  retries: process.env.CI ? 2 : 0,
+  // R0-7D2R: approved CI max retries = 1; HTML reporter required for artifacts.
+  retries: process.env.CI ? 1 : 0,
   workers: 1,
-  reporter: process.env.CI ? "github" : "list",
+  reporter: process.env.CI
+    ? [["github"], ["html", { open: "never" }], ["list"]]
+    : "list",
   use: {
     baseURL: a11yBaseline
       ? a11yOrigin
