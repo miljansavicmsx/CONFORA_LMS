@@ -1,0 +1,52 @@
+{
+  "phase": "028D-2aS3E",
+  "type": "ready_for_review_evidence_closure",
+  "verdict": "READY_FOR_REVIEW_EVIDENCE_CLOSED",
+  "operational_source_modified": false,
+  "pr": {
+    "number": 8,
+    "url": "https://github.com/miljansavicmsx/CONFORA_LMS/pull/8",
+    "title": "feat(frontend): enable authenticated candidate complaint filing",
+    "state": "OPEN",
+    "isDraft": false,
+    "baseRefName": "fix/ca-h01-frontend-f4-cutover",
+    "headRefName": "feature/028d-2as2-complaint-filing-closure",
+    "headRefOid_at_start": "011f652673a2a50dd71044e52ae9c2624cec4be5",
+    "mergeable": "MERGEABLE",
+    "mergeStateStatus": "UNSTABLE",
+    "autoMergeRequest": null,
+    "merged": false
+  },
+  "title_aligned_before_transition": true,
+  "reviewed_operational_tip": "52fd59fff195ed06026cc0385dde7004226317d7",
+  "starting_evidence_head": "011f652673a2a50dd71044e52ae9c2624cec4be5",
+  "operational_changed_files_after_reviewed_tip": 0,
+  "focused_tests": {
+    "discovered": 14,
+    "executed": 14,
+    "passed": 14,
+    "failed": 0,
+    "result": "PASS"
+  },
+  "pr_caused_blocking_failure_count": 0,
+  "baseline_failure_count": 5,
+  "baseline_failure_causes": [
+    "quality: @confora/shared-kernel lint (no-unnecessary-condition / no-unnecessary-type-assertion)",
+    "database: packages/database working directory missing (untracked at integration tip)",
+    "compliance-iso: packages/database working directory missing",
+    "accessibility: missing tools/a11y and scripts/a11y modules at integration tip",
+    "f4-frontend-cutover: missing scripts/ops/run-f4-8g-frontend-validation.mjs at integration and PR tips"
+  ],
+  "docker_check": "SKIPPED",
+  "appeal_ui": "NOT_IMPLEMENTED",
+  "get_me_applications": "NOT_IMPLEMENTED",
+  "appeal_ownership_fix": "DEFERRED",
+  "td_006": "OPEN",
+  "td_006_modified": false,
+  "deploy_backend_run_count": 0,
+  "production_deployment_count": 0,
+  "production_authorization": false,
+  "merge_authorized": false,
+  "auto_merge_authorized": false,
+  "ready_for_review_completed": true
+}

@@ -1,0 +1,62 @@
+{
+  "head_sha": "011f652673a2a50dd71044e52ae9c2624cec4be5",
+  "pr": 8,
+  "checks": [
+    {
+      "name": "compliance-iso",
+      "workflow": "Accessibility CI",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/miljansavicmsx/CONFORA_LMS/actions/runs/30764247807/job/91540061724"
+    },
+    {
+      "name": "quality",
+      "workflow": "CI",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/miljansavicmsx/CONFORA_LMS/actions/runs/30764247793/job/91540061626"
+    },
+    {
+      "name": "f4-frontend-cutover",
+      "workflow": "F4 Frontend Cutover Gate",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/miljansavicmsx/CONFORA_LMS/actions/runs/30764247813/job/91540061748"
+    },
+    {
+      "name": "accessibility",
+      "workflow": "Accessibility CI",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/miljansavicmsx/CONFORA_LMS/actions/runs/30764247807/job/91540061737"
+    },
+    {
+      "name": "database",
+      "workflow": "CI",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/miljansavicmsx/CONFORA_LMS/actions/runs/30764247793/job/91540061634"
+    },
+    {
+      "name": "docker",
+      "workflow": "CI",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/miljansavicmsx/CONFORA_LMS/actions/runs/30764247793/job/91540149562"
+    }
+  ],
+  "failure_count": 5,
+  "skipped_count": 1,
+  "pr_caused_blocking_failure_count": 0,
+  "runs": [
+    {
+      "databaseId": 30764247813,
+      "workflowName": "F4 Frontend Cutover Gate",
+      "conclusion": "failure"
+    },
+    {
+      "databaseId": 30764247793,
+      "workflowName": "CI",
+      "conclusion": "failure"
+    },
+    {
+      "databaseId": 30764247807,
+      "workflowName": "Accessibility CI",
+      "conclusion": "failure"
+    }
+  ]
+}
