@@ -89,5 +89,54 @@
       "pdfPending": "PDF bo na voljo po izdaji dokumenta.",
       "digitalSignatureLocal": "Digitalni podpis ni aktiviran v lokalnem MVP okolju."
     }
+  },
+  "complaintsFiling": {
+    "title": "Nova pritožba",
+    "description": "Pritožba izraža nezadovoljstvo s postopkom, storitvijo ali vedenjem. Ni pritožba zoper odločitev in ni zahteva za podporo / stik. Oddaja pritožbe ne spremeni statusa certifikacije niti rezultata izpita.",
+    "identityDisclosure": "Prijavljeni ste. Vaša identiteta se obdrži pri tej pritožbi; ta kanal ni anonimen.",
+    "categoryLabel": "Kategorija",
+    "subjectLabel": "Zadeva",
+    "descriptionLabel": "Opis",
+    "cancel": "Prekliči",
+    "submit": "Oddaj pritožbo",
+    "submitting": "Pošiljanje…",
+    "validation": {
+      "required": "Zadeva in opis sta obvezna."
+    },
+    "errors": {
+      "HTTP_ERROR": "Pritožbe ni bilo mogoče prejeti. Poskusite znova ali kontaktirajte podporo.",
+      "NETWORK_ERROR": "Omrežna napaka. Preverite povezavo in poskusite znova.",
+      "VALIDATION_ERROR": "Preverite obrazec in poskusite znova.",
+      "UNAUTHORIZED": "Seja je potekla. Prijavite se znova za oddajo pritožbe.",
+      "FORBIDDEN": "Nimate dovoljenja za oddajo pritožbe.",
+      "NOT_FOUND": "Storitev za pritožbe ni dosegljiva.",
+      "UNKNOWN": "Pritožbe ni bilo mogoče prejeti. Poskusite znova ali kontaktirajte podporo."
+    },
+    "success": {
+      "message": "Vaša pritožba je bila prejeta.",
+      "reference": "Referenca: {{reference}}",
+      "close": "Zapri"
+    },
+    "categories": {
+      "complaint": "Pritožba na postopek / storitev",
+      "technical_support": "Tehnična pritožba (platforma)",
+      "improvement_proposal": "Predlog izboljšave",
+      "training_proposal": "Predlog usposabljanja"
+    },
+    "page": {
+      "title": "Pritožbe in ugovori",
+      "supportLink": "Pojdi na podporo / stik",
+      "appealsTab": "Pritožbe zoper odločitev",
+      "complaintsTab": "Pritožbe",
+      "newComplaint": "Nova pritožba",
+      "newAppealDisabled": "Nova pritožba zoper odločitev",
+      "appealsDeferredTitle": "Oddaja pritožbe zoper odločitev je odložena, dokler ne obstajajo kontrole lastništva in odkrivanja (TD-006).",
+      "appealsDeferredHeading": "Oddaja pritožbe zoper odločitev ni na voljo",
+      "appealsDeferredBody": "Oddaja kandidatske pritožbe zoper odločitev ostaja odložena. Pred poštenim obrazcem so potrebni enforcement lastništva nad sklicem odločitve in self-scoped odkrivanje prijav.",
+      "loadingComplaints": "Nalaganje pritožb…",
+      "loadComplaintsError": "Pritožb trenutno ni mogoče naložiti. Preverite prijavo in poskusite znova.",
+      "emptyComplaints": "Še nimate oddanih pritožb.",
+      "toastReceived": "Pritožba je bila prejeta."
+    }
   }
 }

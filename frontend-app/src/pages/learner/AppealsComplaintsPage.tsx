@@ -1,39 +1,39 @@
 /**
  * APPEALS-COMPLAINTS-1 — Learner appeals & complaints foundation page.
- * žalba ≠ prigovor; contact request remains on /dashboard/support.
+ * Complaint filing: 028D-2aS2 OPTION_C → submitLearnerComplaint / listLearnerComplaints.
+ * Appeal filing: deferred (TD-006); APPEAL_UI = NOT_IMPLEMENTED.
  */
 
+import { CANDIDATE_PORTAL_NS } from "@confora/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { FileWarning, Gavel, Loader2, Plus } from "lucide-react";
 import { useCallback, useState, type JSX } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { FormalAppealDialog } from "@/components/grievances/FormalAppealDialog";
 import { FormalComplaintDialog } from "@/components/grievances/FormalComplaintDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { fetchMyAppeals, fetchMyComplaints, type AppealListItem, type ComplaintListItem } from "@/lib/api-grievances";
+import { listLearnerComplaints } from "@/lib/api/complaints-client";
+import type { ComplaintListItem } from "@/lib/api/complaints-types";
 import {
   APPEAL_COMPLAINT_BOUNDARY_NOTICE,
   APPEAL_SECTION_NOTICE,
   COMPLAINT_SECTION_NOTICE,
   CONTACT_BOUNDARY_NOTICE,
-  learnerAppealStatusLabel,
-  learnerAppealTypeLabel,
   learnerComplaintCategoryLabel,
   learnerComplaintStatusLabel,
 } from "@/lib/appeals-complaints-labels";
 import { cn } from "@/lib/utils";
 
 const Q_COMPLAINTS = ["myComplaints"] as const;
-const Q_APPEALS = ["myAppeals"] as const;
 
 type TabId = "appeals" | "complaints";
 
-function formatDate(iso: string | null | undefined): string {
+function formatDate(iso: string | null | undefined, locale: string): string {
   if (!iso) return "—";
   try {
-    return new Date(iso).toLocaleString("bs-BA", { dateStyle: "medium", timeStyle: "short" });
+    return new Date(iso).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" });
   } catch {
     return iso;
   }
@@ -45,38 +45,13 @@ function truncateId(id: string): string {
   return `${t.slice(0, 8)}…${t.slice(-4)}`;
 }
 
-function AppealCard({ row }: { readonly row: AppealListItem }): JSX.Element {
-  return (
-    <article
-      className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-4 text-sm"
-      data-testid={`learner-appeal-card-${row.appealId}`}
-    >
-      <div className="flex flex-wrap items-center gap-2 text-xs text-text-muted">
-        <Gavel className="h-4 w-4 text-amber-200" aria-hidden />
-        <span className="font-mono" title={row.appealId}>
-          {truncateId(row.appealId)}
-        </span>
-        <span aria-hidden>·</span>
-        <time dateTime={row.createdAt}>{formatDate(row.createdAt)}</time>
-      </div>
-      <p className="mt-2 font-medium text-text-primary">{row.summary}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        <Badge variant="outline" className="border-amber-500/40 font-normal text-amber-100">
-          {learnerAppealTypeLabel(String(row.appealType ?? "CERTIFICATION_DECISION_APPEAL"))}
-        </Badge>
-        <Badge
-          variant="outline"
-          className="border-border/50 font-normal text-text-secondary"
-          data-testid={`learner-appeal-status-${row.appealId}`}
-        >
-          {learnerAppealStatusLabel(String(row.status))}
-        </Badge>
-      </div>
-    </article>
-  );
-}
-
-function ComplaintCard({ row }: { readonly row: ComplaintListItem }): JSX.Element {
+function ComplaintCard({
+  row,
+  locale,
+}: {
+  readonly row: ComplaintListItem;
+  readonly locale: string;
+}): JSX.Element {
   return (
     <article
       className="rounded-xl border border-border/50 bg-surface-secondary/40 p-4 text-sm"
@@ -88,7 +63,7 @@ function ComplaintCard({ row }: { readonly row: ComplaintListItem }): JSX.Elemen
           {truncateId(row.complaintId)}
         </span>
         <span aria-hidden>·</span>
-        <time dateTime={row.createdAt}>{formatDate(row.createdAt)}</time>
+        <time dateTime={row.createdAt}>{formatDate(row.createdAt, locale)}</time>
       </div>
       <p className="mt-2 font-medium text-text-primary">{row.subject}</p>
       <div className="mt-2 flex flex-wrap gap-2">
@@ -108,8 +83,8 @@ function ComplaintCard({ row }: { readonly row: ComplaintListItem }): JSX.Elemen
 }
 
 export default function AppealsComplaintsPage(): JSX.Element {
+  const { t, i18n } = useTranslation(CANDIDATE_PORTAL_NS);
   const [tab, setTab] = useState<TabId>("appeals");
-  const [appealOpen, setAppealOpen] = useState(false);
   const [complaintOpen, setComplaintOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -118,8 +93,7 @@ export default function AppealsComplaintsPage(): JSX.Element {
     window.setTimeout(() => setToast(null), 3500);
   }, []);
 
-  const appealsQ = useQuery({ queryKey: Q_APPEALS, queryFn: fetchMyAppeals });
-  const complaintsQ = useQuery({ queryKey: Q_COMPLAINTS, queryFn: fetchMyComplaints });
+  const complaintsQ = useQuery({ queryKey: Q_COMPLAINTS, queryFn: listLearnerComplaints });
 
   return (
     <div className="min-h-0 flex-1 overflow-auto px-4 py-8 lg:px-8" data-testid="learner-appeals-complaints-page">
@@ -135,14 +109,16 @@ export default function AppealsComplaintsPage(): JSX.Element {
 
       <div className="mx-auto max-w-4xl">
         <header className="mb-8 border-b border-border/40 pb-6">
-          <h1 className="text-2xl font-bold tracking-tight text-text-primary">Žalbe i prigovori</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+            {t("complaintsFiling.page.title")}
+          </h1>
           <p className="mt-2 max-w-3xl text-sm text-text-secondary" data-testid="learner-appeals-complaints-boundary">
             {APPEAL_COMPLAINT_BOUNDARY_NOTICE}
           </p>
           <p className="mt-2 text-xs text-text-muted" data-testid="learner-appeals-contact-boundary">
             {CONTACT_BOUNDARY_NOTICE}{" "}
             <Link to="/dashboard/support" className="font-medium text-brand underline-offset-2 hover:underline">
-              Idi na podršku / kontakt
+              {t("complaintsFiling.page.supportLink")}
             </Link>
           </p>
         </header>
@@ -150,7 +126,7 @@ export default function AppealsComplaintsPage(): JSX.Element {
         <div
           className="mb-6 flex flex-wrap gap-2"
           role="tablist"
-          aria-label="Žalbe i prigovori"
+          aria-label={t("complaintsFiling.page.title")}
           data-testid="learner-appeals-complaints-tabs"
         >
           <Button
@@ -162,7 +138,7 @@ export default function AppealsComplaintsPage(): JSX.Element {
             onClick={() => setTab("appeals")}
             data-testid="learner-appeals-tab"
           >
-            Žalbe
+            {t("complaintsFiling.page.appealsTab")}
           </Button>
           <Button
             type="button"
@@ -173,7 +149,7 @@ export default function AppealsComplaintsPage(): JSX.Element {
             onClick={() => setTab("complaints")}
             data-testid="learner-complaints-tab"
           >
-            Prigovori
+            {t("complaintsFiling.page.complaintsTab")}
           </Button>
         </div>
 
@@ -182,41 +158,33 @@ export default function AppealsComplaintsPage(): JSX.Element {
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 id="appeals-heading" className="text-lg font-semibold text-text-primary">
-                  Žalbe
+                  {t("complaintsFiling.page.appealsTab")}
                 </h2>
                 <p className="mt-1 text-sm text-text-secondary">{APPEAL_SECTION_NOTICE}</p>
               </div>
-              <Button type="button" size="sm" onClick={() => setAppealOpen(true)} data-testid="learner-appeal-new-btn">
+              <Button
+                type="button"
+                size="sm"
+                disabled
+                aria-disabled="true"
+                title={t("complaintsFiling.page.appealsDeferredTitle")}
+                data-testid="learner-appeal-new-btn"
+              >
                 <Plus className="mr-2 h-4 w-4" aria-hidden />
-                Nova žalba
+                {t("complaintsFiling.page.newAppealDisabled")}
               </Button>
             </div>
-            {appealsQ.isLoading ? (
-              <div className="flex items-center gap-2 text-text-secondary">
-                <Loader2 className="h-6 w-6 animate-spin text-brand" />
-                Učitavanje žalbi…
+            <div
+              className="rounded-xl border border-dashed border-amber-500/30 bg-amber-500/5 px-4 py-8 text-sm text-amber-50/90"
+              data-testid="learner-appeals-deferred"
+              role="status"
+            >
+              <div className="mb-2 flex items-center gap-2 font-medium text-amber-100">
+                <Gavel className="h-4 w-4" aria-hidden />
+                {t("complaintsFiling.page.appealsDeferredHeading")}
               </div>
-            ) : null}
-            {appealsQ.isError ? (
-              <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
-                Trenutno nije moguće učitati žalbe. Provjerite prijavu i pokušajte ponovo.
-              </p>
-            ) : null}
-            {!appealsQ.isLoading && !appealsQ.isError && (appealsQ.data?.length ?? 0) === 0 ? (
-              <p
-                className="rounded-xl border border-dashed border-border/50 bg-surface-secondary/30 px-4 py-8 text-sm text-text-secondary"
-                data-testid="learner-appeals-empty"
-              >
-                Još nemate podnesenih žalbi.
-              </p>
-            ) : null}
-            <ul className="mt-4 flex flex-col gap-3">
-              {appealsQ.data?.map((row) => (
-                <li key={row.appealId}>
-                  <AppealCard row={row} />
-                </li>
-              ))}
-            </ul>
+              <p>{t("complaintsFiling.page.appealsDeferredBody")}</p>
+            </div>
           </section>
         ) : null}
 
@@ -225,7 +193,7 @@ export default function AppealsComplaintsPage(): JSX.Element {
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 id="complaints-heading" className="text-lg font-semibold text-text-primary">
-                  Prigovori
+                  {t("complaintsFiling.page.complaintsTab")}
                 </h2>
                 <p className="mt-1 text-sm text-text-secondary">{COMPLAINT_SECTION_NOTICE}</p>
               </div>
@@ -236,18 +204,18 @@ export default function AppealsComplaintsPage(): JSX.Element {
                 data-testid="learner-complaint-new-btn"
               >
                 <Plus className="mr-2 h-4 w-4" aria-hidden />
-                Novi prigovor
+                {t("complaintsFiling.page.newComplaint")}
               </Button>
             </div>
             {complaintsQ.isLoading ? (
               <div className="flex items-center gap-2 text-text-secondary">
-                <Loader2 className="h-6 w-6 animate-spin text-brand" />
-                Učitavanje prigovora…
+                <Loader2 className="h-6 w-6 animate-spin text-brand" aria-hidden />
+                {t("complaintsFiling.page.loadingComplaints")}
               </div>
             ) : null}
             {complaintsQ.isError ? (
               <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
-                Trenutno nije moguće učitati prigovore. Provjerite prijavu i pokušajte ponovo.
+                {t("complaintsFiling.page.loadComplaintsError")}
               </p>
             ) : null}
             {!complaintsQ.isLoading && !complaintsQ.isError && (complaintsQ.data?.length ?? 0) === 0 ? (
@@ -255,13 +223,13 @@ export default function AppealsComplaintsPage(): JSX.Element {
                 className="rounded-xl border border-dashed border-border/50 bg-surface-secondary/30 px-4 py-8 text-sm text-text-secondary"
                 data-testid="learner-complaints-empty"
               >
-                Još nemate podnesenih prigovora.
+                {t("complaintsFiling.page.emptyComplaints")}
               </p>
             ) : null}
             <ul className="mt-4 flex flex-col gap-3">
               {complaintsQ.data?.map((row) => (
                 <li key={row.complaintId}>
-                  <ComplaintCard row={row} />
+                  <ComplaintCard row={row} locale={i18n.language} />
                 </li>
               ))}
             </ul>
@@ -269,16 +237,11 @@ export default function AppealsComplaintsPage(): JSX.Element {
         ) : null}
       </div>
 
-      <FormalAppealDialog
-        open={appealOpen}
-        onOpenChange={setAppealOpen}
-        onSuccess={() => showToast("Žalba je zaprimljena. Status certifikacije nije automatski promijenjen.")}
-      />
       <FormalComplaintDialog
         open={complaintOpen}
         onOpenChange={setComplaintOpen}
         onSuccess={() => {
-          showToast("Prigovor je zaprimljen.");
+          showToast(t("complaintsFiling.page.toastReceived"));
           void complaintsQ.refetch();
         }}
       />

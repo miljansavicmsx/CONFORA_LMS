@@ -1,0 +1,35 @@
+{
+  "phase": "028D-2aS2",
+  "type": "complaint_filing_closure_implementation",
+  "owner_authorization": "OPTION_C_DIRECT_SUBMIT_LEARNER_COMPLAINT",
+  "pull_request": false,
+  "integration_tip": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "planning_branch": "governance/r0-028d-2as1-complaint-frontend-closure",
+  "planning_tip": "dd43c8b1830b3d96243d69b639a167bc80af4498",
+  "implementation_branch": "feature/028d-2as2-complaint-filing-closure",
+  "candidate_source_tip": "13cdd75280206ec00587e5455b7c76bf7d75e269",
+  "candidate_source_role": "inspect_only_per_file_path_checkout",
+  "rejected_branches_remain_not_ancestors": true,
+  "promoted_path_checkout_count": 16,
+  "owner_ceiling": 22,
+  "rbac_overreach_promoted": 0,
+  "api_grievances_promoted": false,
+  "api_grievances_used": false,
+  "new_infrastructure_modules": 0,
+  "submit_path": "submitLearnerComplaint",
+  "list_path": "listLearnerComplaints",
+  "appeal_ui": "NOT_IMPLEMENTED",
+  "get_me_applications": "NOT_IMPLEMENTED",
+  "appeal_ownership_fix": "DEFERRED",
+  "td_006": "OPEN",
+  "td_006_modified": false,
+  "auth_slim": {
+    "auth_token_provider": "auth-storage only (no authStore)",
+    "auth_refresh": "legacy Bearer refresh only (no nest-auth-pilot / auth-client)"
+  },
+  "tests": {
+    "i18n_locale_parity_candidatePortal": "PASS",
+    "complaints_client_vitest": "PASS (9/9 via ephemeral config; integration vite.config references missing vite-csp-preview.mjs pre-existing)"
+  },
+  "verdict": "COMPLAINT_FILING_SLICE_IMPLEMENTED_AWAITING_INDEPENDENT_REVIEW"
+}

@@ -8,6 +8,7 @@ import {
   CANONICAL_STAFF_COMPLAINTS_PATH,
   getPublicComplaintStatus,
   listLearnerComplaints,
+  submitLearnerComplaint,
   submitPublicComplaint,
 } from "@/lib/api/complaints-client";
 import { caseCategoryToComplaintType } from "@/lib/api/complaints-category.util";
@@ -88,6 +89,37 @@ describe("complaints-client (F4-8c)", () => {
     expect(result.nextStep).toContain("acknowledged");
     expect(result).not.toHaveProperty("tenantId");
     expect(result).not.toHaveProperty("id");
+  });
+
+  it("submitLearnerComplaint posts canonical B15 payload", async () => {
+    postMock.mockResolvedValue({
+      data: {
+        complaint: {
+          id: "uuid-submit-1",
+          publicReference: "CMP-SUB-1",
+          complaintType: "PROCESS_COMPLAINT",
+          complaintTargetType: "CERTIFICATION_BODY",
+          status: "SUBMITTED",
+          submittedAt: "2026-08-02T12:00:00.000Z",
+          complaintSummary: "Platform delay\n\nExam room wait exceeded SLA.",
+        },
+      },
+    });
+
+    const row = await submitLearnerComplaint({
+      category: "complaint",
+      subject: "Platform delay",
+      description: "Exam room wait exceeded SLA.",
+    });
+
+    expect(postMock).toHaveBeenCalledWith(CANONICAL_LEARNER_COMPLAINTS_PATH, {
+      complaintType: "PROCESS_COMPLAINT",
+      complaintTargetType: "CERTIFICATION_BODY",
+      complaintSummary: "Platform delay\n\nExam room wait exceeded SLA.",
+    });
+    expect(row.publicReference).toBe("CMP-SUB-1");
+    expect(row.complaintId).toBe("uuid-submit-1");
+    expect(row.subject).toBe("Platform delay");
   });
 
   it("listLearnerComplaints uses canonical learner path", async () => {

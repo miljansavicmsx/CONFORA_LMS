@@ -89,5 +89,54 @@
       "pdfPending": "PDF will be available after document issuance.",
       "digitalSignatureLocal": "Digital signature is not enabled in the local MVP environment."
     }
+  },
+  "complaintsFiling": {
+    "title": "New complaint",
+    "description": "A complaint expresses dissatisfaction with a process, service, or conduct. It is not an appeal against a decision and is not a support or contact request. Filing a complaint does not change certification status or an exam result.",
+    "identityDisclosure": "You are signed in. Your identity is retained with this complaint; this channel is not anonymous.",
+    "categoryLabel": "Category",
+    "subjectLabel": "Subject",
+    "descriptionLabel": "Description",
+    "cancel": "Cancel",
+    "submit": "Submit complaint",
+    "submitting": "Submitting…",
+    "validation": {
+      "required": "Subject and description are required."
+    },
+    "errors": {
+      "HTTP_ERROR": "The complaint could not be received. Try again or contact support.",
+      "NETWORK_ERROR": "Network error. Check your connection and try again.",
+      "VALIDATION_ERROR": "Please check the form and try again.",
+      "UNAUTHORIZED": "Your session expired. Sign in again to submit a complaint.",
+      "FORBIDDEN": "You are not allowed to submit a complaint.",
+      "NOT_FOUND": "The complaint service could not be reached.",
+      "UNKNOWN": "The complaint could not be received. Try again or contact support."
+    },
+    "success": {
+      "message": "Your complaint was received.",
+      "reference": "Reference: {{reference}}",
+      "close": "Close"
+    },
+    "categories": {
+      "complaint": "Process / service complaint",
+      "technical_support": "Technical complaint (platform)",
+      "improvement_proposal": "Improvement proposal",
+      "training_proposal": "Training proposal"
+    },
+    "page": {
+      "title": "Appeals and complaints",
+      "supportLink": "Go to support / contact",
+      "appealsTab": "Appeals",
+      "complaintsTab": "Complaints",
+      "newComplaint": "New complaint",
+      "newAppealDisabled": "New appeal",
+      "appealsDeferredTitle": "Appeal filing is deferred until ownership and discovery controls exist (TD-006).",
+      "appealsDeferredHeading": "Appeal filing not available",
+      "appealsDeferredBody": "Candidate appeal submission remains deferred. Ownership enforcement on decision references and self-scoped application discovery are required before an honest appeal form can ship.",
+      "loadingComplaints": "Loading complaints…",
+      "loadComplaintsError": "Complaints could not be loaded. Check that you are signed in and try again.",
+      "emptyComplaints": "You have not submitted any complaints yet.",
+      "toastReceived": "Complaint received."
+    }
   }
 }

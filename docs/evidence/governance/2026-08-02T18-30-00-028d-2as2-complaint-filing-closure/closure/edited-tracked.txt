@@ -1,0 +1,16 @@
+# Modified / added application + i18n (not path-checkouts)
+
+## Tracked seeds edited
+
+- `frontend-app/src/components/grievances/FormalComplaintDialog.tsx` — OPTION_C rewire + i18n + disclosure + states
+- `frontend-app/src/pages/learner/AppealsComplaintsPage.tsx` — listLearnerComplaints; appeal deferred
+- `frontend-app/src/lib/api/__tests__/complaints-client.test.ts` — submitLearnerComplaint coverage
+
+## Slimmed after path-checkout
+
+- `frontend-app/src/lib/api/auth-token-provider.ts`
+- `frontend-app/src/lib/auth-refresh.ts`
+
+## i18n (locale parity)
+
+- `packages/i18n/locales/{en,bs,hr,sr,sl}/candidatePortal.json` — `complaintsFiling.*`
