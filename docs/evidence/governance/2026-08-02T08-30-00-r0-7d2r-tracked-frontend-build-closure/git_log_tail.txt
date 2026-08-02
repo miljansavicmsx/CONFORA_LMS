@@ -1,0 +1,8 @@
+ccc8e5f8 fix(frontend-app): make clean-checkout vite resolve local packages (R0-7D2R)
+a277a19f fix(frontend-app): restore tracked buildable source slice for a11y baseline (R0-7D2R)
+5ef2ad5f docs(repo): add r0-7d2 accessibility baseline evidence
+9e5aa70e ci: restore frontend-app accessibility baseline (R0-7D2)
+f9b4a392 docs(repo): add r0-7d accessibility workflow analysis
+4090be85 Merge PR #7: pin pgvector image and verify extension (R0-7C4)
+2559096d docs(repo): record r0-7c4 independent review
+47657f97 docs(repo): add r0-7c4 pgvector verification evidence

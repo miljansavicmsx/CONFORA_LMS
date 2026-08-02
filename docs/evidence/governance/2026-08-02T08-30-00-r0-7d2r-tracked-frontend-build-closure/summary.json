@@ -1,0 +1,49 @@
+{
+  "phase": "R0-7D2R",
+  "strategy": "TRACKED_FRONTEND_BUILD_CLOSURE_BEFORE_ACCESSIBILITY_EXECUTION",
+  "independent_review_prior_verdict": "NO-GO",
+  "preserved_ancestry": [
+    "4090be85a0f8e423d199610f82e3949c899cc90b",
+    "f9b4a392c410fc6306ab57ac434196981119ce8e",
+    "9e5aa70e62df1cf2520595c063b9b269c69961f5",
+    "5ef2ad5f07d4a2c01498f0ac116d480e03221d2f"
+  ],
+  "corrective_implementation_commits": [
+    "a277a19fc5d835bdf069894ecf5cd38864ef3ea4",
+    "ccc8e5f8773288e54b80b6c7ac829f0d0af8abaa"
+  ],
+  "prior_r0_7d2_evidence_folder": "docs/evidence/governance/2026-08-02T06-45-00-r0-7d2-accessibility-baseline/",
+  "prior_evidence_honesty_correction": {
+    "clean_tracked_build_at_5ef2ad5f": "FAILED",
+    "preview_executed_at_5ef2ad5f": false,
+    "axe_executed_at_5ef2ad5f": false,
+    "violation_count_available_at_5ef2ad5f": false,
+    "github_hosted_execution_at_5ef2ad5f": false
+  },
+  "clean_worktree_prove": {
+    "npm_ci": "PASS",
+    "npm_run_build": "PASS",
+    "preview": "PASS",
+    "route_readiness": "PASS",
+    "playwright_discovery_tests": 6,
+    "axe_executed": true,
+    "axe_zero_violations": false,
+    "html_reporter_observed": true,
+    "github_hosted_execution": "NOT_CLAIMED"
+  },
+  "axe_violation_summary": {
+    "/": { "rules": ["color-contrast"], "violations": 1 },
+    "/login": { "rules": ["color-contrast"], "violations": 1 },
+    "/verify": { "rules": ["aria-hidden-focus", "color-contrast"], "violations": 2 },
+    "/contact": { "rules": ["color-contrast"], "violations": 1 },
+    "/pricing": { "rules": ["color-contrast", "select-name"], "violations": 2 },
+    "/faq": { "rules": ["color-contrast"], "violations": 1 }
+  },
+  "medium_findings_closed": {
+    "playwright_ci_retries": 1,
+    "html_reporter": true,
+    "accessibility_job_timeout_minutes": 15
+  },
+  "draft_pr_opened": false,
+  "production_deployment_count": 0
+}

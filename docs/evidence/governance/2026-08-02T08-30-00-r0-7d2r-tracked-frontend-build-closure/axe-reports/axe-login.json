@@ -1,0 +1,121 @@
+{
+  "route": "/login",
+  "ruleset": "WCAG_2_2_AA_AUTOMATED_SUBSET",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "url": "http://127.0.0.1:5173/login",
+  "timestamp": "2026-08-02T07:31:38.275Z",
+  "violations": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "tags": [
+        "cat.color",
+        "wcag2aa",
+        "wcag143",
+        "TTv5",
+        "TT13.c",
+        "EN-301-549",
+        "EN-9.1.4.3",
+        "ACT",
+        "RGAAv4",
+        "RGAA-3.2.1"
+      ],
+      "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+      "nodes": [
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#f8fafc",
+                "bgColor": "#8b929c",
+                "contrastRatio": 3,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<select id=\"login-language-switcher-select\" class=\"rounded-lg border border-border/60 bg-surface-secondary/50 text-text-primary h-9 px-2.5 text-sm\" aria-label=\"Jezik\" data-testid=\"login-language-switcher-select\">",
+                  "target": [
+                    "#login-language-switcher-select"
+                  ]
+                },
+                {
+                  "html": "<body>",
+                  "target": [
+                    "body"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 3 (foreground color: #f8fafc, background color: #8b929c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<select id=\"login-language-switcher-select\" class=\"rounded-lg border border-border/60 bg-surface-secondary/50 text-text-primary h-9 px-2.5 text-sm\" aria-label=\"Jezik\" data-testid=\"login-language-switcher-select\">",
+          "target": [
+            "#login-language-switcher-select"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3 (foreground color: #f8fafc, background color: #8b929c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+        },
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#f8fafc",
+                "bgColor": "#ffffff",
+                "contrastRatio": 1.04,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<div class=\"rounded-xl border border-slate-200 bg-white text-slate-950 shadow-sm\">",
+                  "target": [
+                    ".rounded-xl"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 1.04 (foreground color: #f8fafc, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<p class=\"text-sm font-medium text-text-primary\">Pilot i produkcija</p>",
+          "target": [
+            ".space-y-1 > .text-text-primary"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.04 (foreground color: #f8fafc, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+        }
+      ]
+    }
+  ],
+  "passesCount": 27,
+  "incompleteCount": 1,
+  "nonClaims": [
+    "full_wcag_22_aa_conformity",
+    "legal_accessibility_compliance",
+    "manual_review",
+    "assistive_technology_compatibility",
+    "authenticated_route_coverage",
+    "design_token_contrast_validation",
+    "production_accessibility_readiness"
+  ]
+}

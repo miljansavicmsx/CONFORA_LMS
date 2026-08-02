@@ -1,0 +1,217 @@
+{
+  "route": "/contact",
+  "ruleset": "WCAG_2_2_AA_AUTOMATED_SUBSET",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "url": "http://127.0.0.1:5173/contact",
+  "timestamp": "2026-08-02T07:32:01.690Z",
+  "violations": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "tags": [
+        "cat.color",
+        "wcag2aa",
+        "wcag143",
+        "TTv5",
+        "TT13.c",
+        "EN-301-549",
+        "EN-9.1.4.3",
+        "ACT",
+        "RGAAv4",
+        "RGAA-3.2.1"
+      ],
+      "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+      "nodes": [
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#94a3b8",
+                "bgColor": "#f8fafc",
+                "contrastRatio": 2.45,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<body>",
+                  "target": [
+                    "body"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 2.45 (foreground color: #94a3b8, background color: #f8fafc, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<p class=\"mt-2 text-sm text-text-secondary\">Javni obrazac bez obveznog računa. Uvjerite sustav da niste robot prije slanja. Prijavljeni korisnici mogu automatski biti popunjeni kontakt podaci.</p>",
+          "target": [
+            ".mt-2"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.45 (foreground color: #94a3b8, background color: #f8fafc, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+        },
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#f8fafc",
+                "bgColor": "#ffffff",
+                "contrastRatio": 1.04,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<select id=\"contact-category\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-text-primary\">",
+                  "target": [
+                    "#contact-category"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 1.04 (foreground color: #f8fafc, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<select id=\"contact-category\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-text-primary\">",
+          "target": [
+            "#contact-category"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.04 (foreground color: #f8fafc, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+        },
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#f8fafc",
+                "bgColor": "#ffffff",
+                "contrastRatio": 1.04,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<textarea id=\"contact-body\" class=\"flex min-h-[140px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-text-primary\" maxlength=\"20000\"></textarea>",
+                  "target": [
+                    "#contact-body"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 1.04 (foreground color: #f8fafc, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<textarea id=\"contact-body\" class=\"flex min-h-[140px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-text-primary\" maxlength=\"20000\"></textarea>",
+          "target": [
+            "#contact-body"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.04 (foreground color: #f8fafc, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+        },
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#8a9bb2",
+                "bgColor": "#f8fafc",
+                "contrastRatio": 2.7,
+                "fontSize": "9.0pt (12px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<body>",
+                  "target": [
+                    "body"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 2.7 (foreground color: #8a9bb2, background color: #f8fafc, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<p class=\"text-xs text-text-muted\">Prilozi trenutačno nisu dostupni putem kanonskog kontakt API-ja. Opis i kontakt podaci ostaju u poruci.</p>",
+          "target": [
+            ".text-xs"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.7 (foreground color: #8a9bb2, background color: #f8fafc, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+        },
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#94a3b8",
+                "bgColor": "#f8fafc",
+                "contrastRatio": 2.45,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<body>",
+                  "target": [
+                    "body"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 2.45 (foreground color: #94a3b8, background color: #f8fafc, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<p class=\"mt-1 text-sm text-text-secondary\">Unesite referencu prijave (npr. CNT-2026-…) koju ste dobili nakon slanja.</p>",
+          "target": [
+            ".mt-1"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.45 (foreground color: #94a3b8, background color: #f8fafc, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+        }
+      ]
+    }
+  ],
+  "passesCount": 21,
+  "incompleteCount": 1,
+  "nonClaims": [
+    "full_wcag_22_aa_conformity",
+    "legal_accessibility_compliance",
+    "manual_review",
+    "assistive_technology_compatibility",
+    "authenticated_route_coverage",
+    "design_token_contrast_validation",
+    "production_accessibility_readiness"
+  ]
+}
