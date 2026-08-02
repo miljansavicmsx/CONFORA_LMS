@@ -1,0 +1,7 @@
+frontend-app/src/components/grievances/FormalComplaintDialog.tsx
+frontend-app/src/components/layout/sidebar-nav-types.ts
+frontend-app/src/components/layout/sidebar-sections.tsx
+frontend-app/src/lib/api/complaints-client.ts
+frontend-app/src/lib/appeals-complaints-labels.ts
+frontend-app/src/lib/nest-auth-pilot.ts
+frontend-app/src/pages/learner/AppealsComplaintsPage.tsx

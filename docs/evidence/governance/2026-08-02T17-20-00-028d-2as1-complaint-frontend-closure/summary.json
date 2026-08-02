@@ -1,0 +1,41 @@
+{
+  "phase": "028D-2aS1",
+  "type": "planning_dependency_closure_source_authority",
+  "implementation": false,
+  "promotion": false,
+  "pull_request": false,
+  "integration_tip": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "stopped_branch": {
+    "name": "feature/028d-2ar-candidate-complaint-filing",
+    "tip": "4090be85a0f8e423d199610f82e3949c899cc90b",
+    "classification": "STOPPED_PRE_FLIGHT_NO_IMPLEMENTATION_NOT_PR_ELIGIBLE"
+  },
+  "rejected_branches": [
+    {
+      "name": "ci/r0-7d2-accessibility-baseline",
+      "tip": "13cdd75280206ec00587e5455b7c76bf7d75e269",
+      "classification": "REJECTED_EXPERIMENTAL_NOT_PR_ELIGIBLE",
+      "role": "inspect_only_preferred_candidate_tip"
+    },
+    {
+      "name": "ci/r0-7d2s2-manifest-locked-public-slice",
+      "tip": "fda8d363ceccabd16403f20f4caf5ffc3e530832",
+      "classification": "REJECTED_EXPERIMENTAL_NOT_PR_ELIGIBLE",
+      "role": "inspect_only_incomplete_for_complaint_dialog_deps"
+    }
+  ],
+  "preflight_code": "FRONTEND_APP_OPERATIONAL_GRAPH_INCOMPLETE",
+  "complaint_only": true,
+  "appeals_in_scope": false,
+  "td_006_open": true,
+  "td_006_modified": false,
+  "first_order_missing_from_complaint_seeds": 10,
+  "page_slice_additional_missing": ["badge.tsx", "utils.ts"],
+  "d2_honest_closure_tracked_nodes": 47,
+  "already_at_integration": 7,
+  "candidate_promote_count": 40,
+  "candidate_promote_rbac_overreach_count": 18,
+  "duplicate_infrastructure_authorized": false,
+  "preferred_architecture": "JUSTIFIED_PER_FILE_PATH_CHECKOUT_FROM_REJECTED_D2_WITH_OWNER_CEILING",
+  "verdict": "READY_FOR_OWNER_SCOPE_AUTHORIZATION"
+}

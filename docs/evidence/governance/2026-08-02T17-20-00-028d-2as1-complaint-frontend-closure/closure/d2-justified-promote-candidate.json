@@ -1,0 +1,296 @@
+{
+  "seeds": [
+    "frontend-app/src/components/grievances/FormalComplaintDialog.tsx",
+    "frontend-app/src/lib/api/complaints-client.ts",
+    "frontend-app/src/pages/learner/AppealsComplaintsPage.tsx"
+  ],
+  "skipAppealArtifacts": true,
+  "atRejectedD2": {
+    "trackedCount": 47,
+    "missingOnD2": [],
+    "external": [
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-label",
+      "@radix-ui/react-slot",
+      "@tanstack/react-query",
+      "axios",
+      "class-variance-authority",
+      "clsx",
+      "lucide-react",
+      "react",
+      "react-router",
+      "tailwind-merge",
+      "zustand",
+      "zustand/middleware",
+      "zustand/middleware/immer"
+    ]
+  },
+  "alreadyAtIntegration": [
+    "frontend-app/src/components/grievances/FormalComplaintDialog.tsx",
+    "frontend-app/src/components/layout/sidebar-nav-types.ts",
+    "frontend-app/src/components/layout/sidebar-sections.tsx",
+    "frontend-app/src/lib/api/complaints-client.ts",
+    "frontend-app/src/lib/appeals-complaints-labels.ts",
+    "frontend-app/src/lib/nest-auth-pilot.ts",
+    "frontend-app/src/pages/learner/AppealsComplaintsPage.tsx"
+  ],
+  "needPromoteCount": 40,
+  "needPromote": [
+    "frontend-app/src/components/ui/badge.tsx",
+    "frontend-app/src/components/ui/button.tsx",
+    "frontend-app/src/components/ui/dialog.tsx",
+    "frontend-app/src/components/ui/label.tsx",
+    "frontend-app/src/lib/admin-education-access.ts",
+    "frontend-app/src/lib/admin-reports-access.ts",
+    "frontend-app/src/lib/api-grievances.ts",
+    "frontend-app/src/lib/api/api-config.ts",
+    "frontend-app/src/lib/api/api-error.ts",
+    "frontend-app/src/lib/api/api-provider.ts",
+    "frontend-app/src/lib/api/auth-client.ts",
+    "frontend-app/src/lib/api/auth-token-provider.ts",
+    "frontend-app/src/lib/api/complaints-canonical-flag.ts",
+    "frontend-app/src/lib/api/complaints-category.util.ts",
+    "frontend-app/src/lib/api/complaints-types.ts",
+    "frontend-app/src/lib/api/endpoint-registry.ts",
+    "frontend-app/src/lib/api/http-client.ts",
+    "frontend-app/src/lib/app-workspace.ts",
+    "frontend-app/src/lib/appeals-committee-access.ts",
+    "frontend-app/src/lib/auth-refresh.ts",
+    "frontend-app/src/lib/auth-storage.ts",
+    "frontend-app/src/lib/authorization.ts",
+    "frontend-app/src/lib/certification-assignment-access.ts",
+    "frontend-app/src/lib/certification-committee-access.ts",
+    "frontend-app/src/lib/certification-staff-queue-access.ts",
+    "frontend-app/src/lib/content-editor-access.ts",
+    "frontend-app/src/lib/course-creator-access.ts",
+    "frontend-app/src/lib/governance-access.ts",
+    "frontend-app/src/lib/inactive-feature-visibility.ts",
+    "frontend-app/src/lib/iso-navigation-access.ts",
+    "frontend-app/src/lib/jwt-payload.ts",
+    "frontend-app/src/lib/permissions.ts",
+    "frontend-app/src/lib/roles.ts",
+    "frontend-app/src/lib/staff-identity-review-access.ts",
+    "frontend-app/src/lib/sys-admin-access.ts",
+    "frontend-app/src/lib/tenant-directory-access.ts",
+    "frontend-app/src/lib/user-registry-access.ts",
+    "frontend-app/src/lib/utils.ts",
+    "frontend-app/src/stores/authStore.ts",
+    "frontend-app/src/types/lms-stores.ts"
+  ],
+  "categories": {
+    "http_auth_stack": [
+      "frontend-app/src/lib/api/api-config.ts",
+      "frontend-app/src/lib/api/api-error.ts",
+      "frontend-app/src/lib/api/api-provider.ts",
+      "frontend-app/src/lib/api/auth-client.ts",
+      "frontend-app/src/lib/api/auth-token-provider.ts",
+      "frontend-app/src/lib/api/http-client.ts",
+      "frontend-app/src/lib/auth-refresh.ts",
+      "frontend-app/src/lib/jwt-payload.ts",
+      "frontend-app/src/stores/authStore.ts"
+    ],
+    "complaint_domain": [
+      "frontend-app/src/lib/api-grievances.ts",
+      "frontend-app/src/lib/api/complaints-canonical-flag.ts",
+      "frontend-app/src/lib/api/complaints-category.util.ts",
+      "frontend-app/src/lib/api/complaints-types.ts"
+    ],
+    "ui_primitives": [
+      "frontend-app/src/components/ui/badge.tsx",
+      "frontend-app/src/components/ui/button.tsx",
+      "frontend-app/src/components/ui/dialog.tsx",
+      "frontend-app/src/components/ui/label.tsx"
+    ],
+    "shared_utils_types": [
+      "frontend-app/src/lib/utils.ts",
+      "frontend-app/src/types/lms-stores.ts"
+    ],
+    "access_rbac_overreach": [
+      "frontend-app/src/lib/admin-education-access.ts",
+      "frontend-app/src/lib/admin-reports-access.ts",
+      "frontend-app/src/lib/app-workspace.ts",
+      "frontend-app/src/lib/appeals-committee-access.ts",
+      "frontend-app/src/lib/authorization.ts",
+      "frontend-app/src/lib/certification-assignment-access.ts",
+      "frontend-app/src/lib/certification-committee-access.ts",
+      "frontend-app/src/lib/certification-staff-queue-access.ts",
+      "frontend-app/src/lib/content-editor-access.ts",
+      "frontend-app/src/lib/course-creator-access.ts",
+      "frontend-app/src/lib/governance-access.ts",
+      "frontend-app/src/lib/iso-navigation-access.ts",
+      "frontend-app/src/lib/permissions.ts",
+      "frontend-app/src/lib/roles.ts",
+      "frontend-app/src/lib/staff-identity-review-access.ts",
+      "frontend-app/src/lib/sys-admin-access.ts",
+      "frontend-app/src/lib/tenant-directory-access.ts",
+      "frontend-app/src/lib/user-registry-access.ts"
+    ],
+    "other": [
+      "frontend-app/src/lib/api/endpoint-registry.ts",
+      "frontend-app/src/lib/auth-storage.ts",
+      "frontend-app/src/lib/inactive-feature-visibility.ts"
+    ]
+  },
+  "blobs": {
+    "frontend-app/src/components/ui/badge.tsx": {
+      "d2": "c6b18f45537f871395e636df79bcda88168b7dc3",
+      "onS2": true
+    },
+    "frontend-app/src/components/ui/button.tsx": {
+      "d2": "2a995a2698a7bbde96ac8926f8aee612474d96ab",
+      "onS2": true
+    },
+    "frontend-app/src/components/ui/dialog.tsx": {
+      "d2": "fe2629a2b6f3cb5ee1e58a7013c07482f9a9fa54",
+      "onS2": false
+    },
+    "frontend-app/src/components/ui/label.tsx": {
+      "d2": "1d9c5a2c0e435d9e62e7cf7895875cc14d441633",
+      "onS2": true
+    },
+    "frontend-app/src/lib/admin-education-access.ts": {
+      "d2": "cd514ca38bd2ab7d089c722ae0fca32c2b96bf6e",
+      "onS2": false
+    },
+    "frontend-app/src/lib/admin-reports-access.ts": {
+      "d2": "e2afbc92d1f571021d67cf6b980aa761d2ae8bb4",
+      "onS2": false
+    },
+    "frontend-app/src/lib/api-grievances.ts": {
+      "d2": "8066c9d864c446aa886e71cb7ccc7391dfc771b7",
+      "onS2": false
+    },
+    "frontend-app/src/lib/api/api-config.ts": {
+      "d2": "d0777d5bab1b91923a677e1e51caec0e19407f04",
+      "onS2": true
+    },
+    "frontend-app/src/lib/api/api-error.ts": {
+      "d2": "f34e71a334c9ab906b30bc938527e609eb0cb0a5",
+      "onS2": true
+    },
+    "frontend-app/src/lib/api/api-provider.ts": {
+      "d2": "fc843512bbc261b7ad46c3e6f394948f43b92f8e",
+      "onS2": true
+    },
+    "frontend-app/src/lib/api/auth-client.ts": {
+      "d2": "1f918a7a618fa0798e3dc2f4df3c7a46ff2cd355",
+      "onS2": true
+    },
+    "frontend-app/src/lib/api/auth-token-provider.ts": {
+      "d2": "e1bbc33b5372576960d1f8b6966b61cd9d1b6880",
+      "onS2": true
+    },
+    "frontend-app/src/lib/api/complaints-canonical-flag.ts": {
+      "d2": "98713542f6c6b932815655f0aff77d75134ddcd4",
+      "onS2": false
+    },
+    "frontend-app/src/lib/api/complaints-category.util.ts": {
+      "d2": "6c6b5ba90052f12c08abcabd8ac0c0abb7b67943",
+      "onS2": false
+    },
+    "frontend-app/src/lib/api/complaints-types.ts": {
+      "d2": "7bed225079cbeedc7d98e5408413c6786c617c4c",
+      "onS2": false
+    },
+    "frontend-app/src/lib/api/endpoint-registry.ts": {
+      "d2": "ad88a55d4e29e736e35239e6541864abdad272ff",
+      "onS2": true
+    },
+    "frontend-app/src/lib/api/http-client.ts": {
+      "d2": "5be4988c263e6e83323cdc8c4ebb8d15c287e3f6",
+      "onS2": true
+    },
+    "frontend-app/src/lib/app-workspace.ts": {
+      "d2": "440df2dcbd3814a86714c22843e97cb04518daf7",
+      "onS2": true
+    },
+    "frontend-app/src/lib/appeals-committee-access.ts": {
+      "d2": "a04faa86a611e0e248ed1b5d88f6d8d5f959c703",
+      "onS2": true
+    },
+    "frontend-app/src/lib/auth-refresh.ts": {
+      "d2": "50de269ff2687149f85585921f2f6b83124dd2e4",
+      "onS2": true
+    },
+    "frontend-app/src/lib/auth-storage.ts": {
+      "d2": "469795652e97d8ab0711c13cbeb68777bb3e4bb7",
+      "onS2": false
+    },
+    "frontend-app/src/lib/authorization.ts": {
+      "d2": "5112c3c4d9ab580fd47510f2258f218d1e439029",
+      "onS2": true
+    },
+    "frontend-app/src/lib/certification-assignment-access.ts": {
+      "d2": "cceabe364454c15ed2939392e9409eb2ed5def08",
+      "onS2": false
+    },
+    "frontend-app/src/lib/certification-committee-access.ts": {
+      "d2": "cc98972add84e1e1b4b287b5d260c6fb7c40261d",
+      "onS2": true
+    },
+    "frontend-app/src/lib/certification-staff-queue-access.ts": {
+      "d2": "a740e53da677ced00a4cf4da2db265c93d384e8f",
+      "onS2": true
+    },
+    "frontend-app/src/lib/content-editor-access.ts": {
+      "d2": "450fbc7974e5c57e8b35d50914b22231b3daf248",
+      "onS2": true
+    },
+    "frontend-app/src/lib/course-creator-access.ts": {
+      "d2": "cfdeac30a3bc84a5d8cd8fc271ffa2e3f187ad00",
+      "onS2": false
+    },
+    "frontend-app/src/lib/governance-access.ts": {
+      "d2": "905895bf04b8aef77c5e48cfbe6c8abdef4cf036",
+      "onS2": true
+    },
+    "frontend-app/src/lib/inactive-feature-visibility.ts": {
+      "d2": "ddb9567c42773eeca0ad93d53dedff3e84d40e40",
+      "onS2": true
+    },
+    "frontend-app/src/lib/iso-navigation-access.ts": {
+      "d2": "ee8541cb1c658224f0d23c150b3f07bf359a45b5",
+      "onS2": true
+    },
+    "frontend-app/src/lib/jwt-payload.ts": {
+      "d2": "0458efd1da756ccd9906c82335e2ea3aa130941b",
+      "onS2": true
+    },
+    "frontend-app/src/lib/permissions.ts": {
+      "d2": "f914f23fb4992f0909e24fadcbc2c9e169fa42b5",
+      "onS2": true
+    },
+    "frontend-app/src/lib/roles.ts": {
+      "d2": "577b6d0af70ba025d26978f45157190c7788f460",
+      "onS2": true
+    },
+    "frontend-app/src/lib/staff-identity-review-access.ts": {
+      "d2": "06330b7258718482709a36a158c9b1f2e945e643",
+      "onS2": false
+    },
+    "frontend-app/src/lib/sys-admin-access.ts": {
+      "d2": "2a1a005c84df9629e88abc5a7d3ab044cf825448",
+      "onS2": true
+    },
+    "frontend-app/src/lib/tenant-directory-access.ts": {
+      "d2": "4fbf7985c6120d7eac61b5a7959e51d6bbce7b13",
+      "onS2": true
+    },
+    "frontend-app/src/lib/user-registry-access.ts": {
+      "d2": "ece1111b0a5f8acb7a3d7b9adf5e305ff2a8ca64",
+      "onS2": true
+    },
+    "frontend-app/src/lib/utils.ts": {
+      "d2": "a70ebb68c72f16ee05bd936c4a5a7328da83caee",
+      "onS2": true
+    },
+    "frontend-app/src/stores/authStore.ts": {
+      "d2": "248696587348a35392fa47624f793b6a40ec7b20",
+      "onS2": true
+    },
+    "frontend-app/src/types/lms-stores.ts": {
+      "d2": "04d424fd2d179e09872a1e7657d8de59d7126f95",
+      "onS2": true
+    }
+  }
+}
