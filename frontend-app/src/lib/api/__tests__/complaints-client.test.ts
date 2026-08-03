@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { buildConforaApiUrl } from "@/lib/api/api-provider";
 import * as httpClient from "@/lib/api/http-client";
 import {
   acknowledgeComplaint,
@@ -12,6 +13,7 @@ import {
   submitPublicComplaint,
 } from "@/lib/api/complaints-client";
 import { caseCategoryToComplaintType } from "@/lib/api/complaints-category.util";
+import { isNestOnlyComplaintPath, resolveOwnerForPath } from "@/lib/api/endpoint-registry";
 
 const getMock = vi.fn();
 const postMock = vi.fn();
@@ -19,6 +21,9 @@ const postMock = vi.fn();
 describe("complaints-client (F4-8c)", () => {
   beforeEach(() => {
     vi.stubEnv("VITE_CONFORA_API_URL", "http://nest.example.test");
+    vi.stubEnv("VITE_LEGACY_API_URL", "http://127.0.0.1:8000");
+    // Clean-tree default is legacy; Nest complaint paths must still hit Nest.
+    vi.stubEnv("VITE_API_PROVIDER", "legacy");
     vi.stubEnv("VITE_COMPLAINTS_CANONICAL_ENABLED", "true");
     getMock.mockReset();
     postMock.mockReset();
@@ -60,11 +65,36 @@ describe("complaints-client (F4-8c)", () => {
     expect(fetchMock).toHaveBeenCalledOnce();
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(`http://nest.example.test${CANONICAL_PUBLIC_COMPLAINTS_PATH}`);
+    expect(url).not.toContain("127.0.0.1:8000");
     expect(init.method).toBe("POST");
     const payload = JSON.parse(String(init.body)) as Record<string, unknown>;
     expect(payload.complaintType).toBe("PROCESS_COMPLAINT");
     expect(payload).not.toHaveProperty("tenantId");
     expect(payload).not.toHaveProperty("id");
+  });
+
+  it("submitPublicComplaint routes to Nest even when VITE_API_PROVIDER=legacy", async () => {
+    vi.stubEnv("VITE_API_PROVIDER", "legacy");
+    vi.stubEnv("VITE_CONFORA_API_URL", "http://nest.example.test");
+    vi.stubEnv("VITE_LEGACY_API_URL", "http://legacy.example.test");
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ publicReference: "CMP-ROUTE-1", status: "SUBMITTED" }), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    await submitPublicComplaint({
+      category: "complaint",
+      subject: "Route",
+      description: "Must hit Nest",
+      submitterName: "Ana",
+      submitterEmail: "ana@example.com",
+    });
+
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`http://nest.example.test${CANONICAL_PUBLIC_COMPLAINTS_PATH}`);
+    expect(url).not.toContain("legacy.example.test");
   });
 
   it("getPublicComplaintStatus returns safe fields only", async () => {
@@ -217,5 +247,42 @@ describe("complaints-client (F4-8c)", () => {
     const detail = await acknowledgeComplaint("uuid-2");
     expect(postMock).toHaveBeenCalledWith(`${CANONICAL_STAFF_COMPLAINTS_PATH}/uuid-2/acknowledge`, {});
     expect(detail.status).toBe("ACKNOWLEDGED");
+  });
+});
+
+describe("nest-only complaint routing (028D-2aS5)", () => {
+  beforeEach(() => {
+    vi.stubEnv("VITE_CONFORA_API_URL", "http://nest.example.test");
+    vi.stubEnv("VITE_LEGACY_API_URL", "http://127.0.0.1:8000");
+    vi.stubEnv("VITE_API_PROVIDER", "legacy");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("marks canonical complaint prefixes as Nest-only", () => {
+    expect(isNestOnlyComplaintPath(CANONICAL_PUBLIC_COMPLAINTS_PATH)).toBe(true);
+    expect(isNestOnlyComplaintPath(CANONICAL_LEARNER_COMPLAINTS_PATH)).toBe(true);
+    expect(isNestOnlyComplaintPath(`${CANONICAL_STAFF_COMPLAINTS_PATH}/uuid/acknowledge`)).toBe(true);
+    expect(isNestOnlyComplaintPath("/v1/me/complaints")).toBe(false);
+    expect(isNestOnlyComplaintPath("/v1/admin/complaints")).toBe(false);
+  });
+
+  it("forces Nest owner under VITE_API_PROVIDER=legacy", () => {
+    expect(resolveOwnerForPath(CANONICAL_PUBLIC_COMPLAINTS_PATH, "legacy")).toBe("nest");
+    expect(resolveOwnerForPath(CANONICAL_LEARNER_COMPLAINTS_PATH, "legacy")).toBe("nest");
+    expect(resolveOwnerForPath(`${CANONICAL_STAFF_COMPLAINTS_PATH}/uuid/acknowledge`, "legacy")).toBe(
+      "nest",
+    );
+    expect(resolveOwnerForPath("/v1/me/complaints", "legacy")).toBe("legacy");
+    expect(resolveOwnerForPath("/v1/admin/complaints", "legacy")).toBe("legacy");
+  });
+
+  it("buildConforaApiUrl uses Nest base for learner complaints under legacy provider", () => {
+    expect(buildConforaApiUrl(CANONICAL_LEARNER_COMPLAINTS_PATH)).toBe(
+      `http://nest.example.test${CANONICAL_LEARNER_COMPLAINTS_PATH}`,
+    );
+    expect(buildConforaApiUrl("/v1/me/complaints")).toBe("http://127.0.0.1:8000/v1/me/complaints");
   });
 });

@@ -509,8 +509,27 @@ const HYBRID_NEST_PREFIXES: readonly string[] = [
 /** Auth remains on legacy in hybrid until P0-B completes. */
 const HYBRID_LEGACY_PREFIXES: readonly string[] = ["/auth/"];
 
+/**
+ * Canonical Nest complaint surfaces (F4-8c / 028D-2aS5).
+ * These paths must always resolve to the Nest base URL — even when
+ * `VITE_API_PROVIDER=legacy` — because they are not served by the legacy stack.
+ * Legacy aliases (`/v1/me/complaints`, `/v1/admin/complaints`) are intentionally
+ * excluded so `VITE_COMPLAINTS_CANONICAL_ENABLED=false` can still hit FastAPI.
+ */
+const NEST_ONLY_COMPLAINT_PREFIXES: readonly string[] = [
+  "/v1/public/complaints",
+  "/v1/learner/complaints",
+  "/v1/staff/complaints",
+];
+
 function matchesPrefix(path: string, prefix: string): boolean {
   return path === prefix || path.startsWith(prefix);
+}
+
+/** True when path is a Nest-only canonical complaint route. */
+export function isNestOnlyComplaintPath(path: string): boolean {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return NEST_ONLY_COMPLAINT_PREFIXES.some((prefix) => matchesPrefix(normalized, prefix));
 }
 
 /**
@@ -542,9 +561,14 @@ export function resolveHybridOwnerForPath(path: string): EndpointOwner {
 }
 
 export function resolveOwnerForPath(path: string, provider: ApiProviderMode): EndpointOwner {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  // 028D-2aS5: Nest-only complaint routes must not inherit legacy provider base.
+  if (isNestOnlyComplaintPath(normalized)) {
+    return "nest";
+  }
   if (provider === "legacy") return "legacy";
   if (provider === "nest") return "nest";
-  return resolveHybridOwnerForPath(path);
+  return resolveHybridOwnerForPath(normalized);
 }
 
 export function getEndpointsByGroup(group: EndpointGroup): readonly EndpointDefinition[] {

@@ -1,0 +1,3 @@
+﻿frontend-app/src/lib/api/endpoint-registry.ts
+frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+docs/evidence/governance/2026-08-03T14-10-00-028d-2as5-complaint-api-routing/
