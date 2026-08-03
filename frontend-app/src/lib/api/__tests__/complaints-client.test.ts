@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { buildConforaApiUrl } from "@/lib/api/api-provider";
+import { buildConforaApiUrl, resolveApiTarget } from "@/lib/api/api-provider";
 import * as httpClient from "@/lib/api/http-client";
 import {
   acknowledgeComplaint,
@@ -251,6 +251,13 @@ describe("complaints-client (F4-8c)", () => {
 });
 
 describe("nest-only complaint routing (028D-2aS5)", () => {
+  const noncanonicalSiblingPaths = [
+    "/v1/public/complaints-extra",
+    "/v1/public/complaints.evil",
+    "/v1/learner/complaints-old",
+    "/v1/staff/complaintsBackup",
+  ] as const;
+
   beforeEach(() => {
     vi.stubEnv("VITE_CONFORA_API_URL", "http://nest.example.test");
     vi.stubEnv("VITE_LEGACY_API_URL", "http://127.0.0.1:8000");
@@ -265,8 +272,16 @@ describe("nest-only complaint routing (028D-2aS5)", () => {
     expect(isNestOnlyComplaintPath(CANONICAL_PUBLIC_COMPLAINTS_PATH)).toBe(true);
     expect(isNestOnlyComplaintPath(CANONICAL_LEARNER_COMPLAINTS_PATH)).toBe(true);
     expect(isNestOnlyComplaintPath(`${CANONICAL_STAFF_COMPLAINTS_PATH}/uuid/acknowledge`)).toBe(true);
+    expect(isNestOnlyComplaintPath(`${CANONICAL_LEARNER_COMPLAINTS_PATH}?status=SUBMITTED`)).toBe(true);
     expect(isNestOnlyComplaintPath("/v1/me/complaints")).toBe(false);
     expect(isNestOnlyComplaintPath("/v1/admin/complaints")).toBe(false);
+  });
+
+  it("rejects noncanonical complaint siblings from the forced Nest override", () => {
+    for (const path of noncanonicalSiblingPaths) {
+      expect(isNestOnlyComplaintPath(path)).toBe(false);
+      expect(resolveOwnerForPath(path, "legacy")).toBe("legacy");
+    }
   });
 
   it("forces Nest owner under VITE_API_PROVIDER=legacy", () => {
@@ -279,10 +294,51 @@ describe("nest-only complaint routing (028D-2aS5)", () => {
     expect(resolveOwnerForPath("/v1/admin/complaints", "legacy")).toBe("legacy");
   });
 
+  it("preserves legacy complaint aliases across provider modes", () => {
+    const aliases = ["/v1/me/complaints", "/v1/admin/complaints"] as const;
+    const expectedOwners = {
+      legacy: "legacy",
+      nest: "nest",
+      hybrid: "nest",
+    } as const;
+
+    for (const path of aliases) {
+      for (const [provider, expectedOwner] of Object.entries(expectedOwners)) {
+        expect(resolveOwnerForPath(path, provider as keyof typeof expectedOwners)).toBe(expectedOwner);
+      }
+    }
+
+    vi.stubEnv("VITE_API_PROVIDER", "");
+    for (const path of aliases) {
+      expect(resolveApiTarget(path)).toMatchObject({
+        baseUrl: "http://127.0.0.1:8000",
+        owner: "legacy",
+        provider: "legacy",
+      });
+    }
+  });
+
+  it("preserves unrelated endpoint ownership", () => {
+    const routes = [
+      { path: "/auth/login", legacy: "legacy", nest: "nest", hybrid: "legacy" },
+      { path: "/v1/courses", legacy: "legacy", nest: "nest", hybrid: "nest" },
+      { path: "/api/public/verify/certificate-1", legacy: "legacy", nest: "nest", hybrid: "nest" },
+    ] as const;
+
+    for (const route of routes) {
+      expect(resolveOwnerForPath(route.path, "legacy")).toBe(route.legacy);
+      expect(resolveOwnerForPath(route.path, "nest")).toBe(route.nest);
+      expect(resolveOwnerForPath(route.path, "hybrid")).toBe(route.hybrid);
+    }
+  });
+
   it("buildConforaApiUrl uses Nest base for learner complaints under legacy provider", () => {
     expect(buildConforaApiUrl(CANONICAL_LEARNER_COMPLAINTS_PATH)).toBe(
       `http://nest.example.test${CANONICAL_LEARNER_COMPLAINTS_PATH}`,
     );
     expect(buildConforaApiUrl("/v1/me/complaints")).toBe("http://127.0.0.1:8000/v1/me/complaints");
+    for (const path of noncanonicalSiblingPaths) {
+      expect(buildConforaApiUrl(path)).toBe(`http://127.0.0.1:8000${path}`);
+    }
   });
 });

@@ -1,0 +1,22 @@
+provider | input path | normalized pathname | matched registry entry | resolved owner | selected API base | expected | actual | result
+legacy | /v1/public/complaints | /v1/public/complaints | NEST_ONLY_COMPLAINT_PREFIXES:/v1/public/complaints | nest | http://nest.example.test | nest | nest | PASS
+legacy | /v1/learner/complaints | /v1/learner/complaints | NEST_ONLY_COMPLAINT_PREFIXES:/v1/learner/complaints | nest | http://nest.example.test | nest | nest | PASS
+legacy | /v1/staff/complaints | /v1/staff/complaints | NEST_ONLY_COMPLAINT_PREFIXES:/v1/staff/complaints | nest | http://nest.example.test | nest | nest | PASS
+nest | /v1/public/complaints | /v1/public/complaints | NEST_ONLY_COMPLAINT_PREFIXES:/v1/public/complaints | nest | http://nest.example.test | nest | nest | PASS
+hybrid | /v1/learner/complaints/uuid | /v1/learner/complaints/uuid | NEST_ONLY_COMPLAINT_PREFIXES:/v1/learner/complaints | nest | http://nest.example.test | nest | nest | PASS
+legacy | /v1/staff/complaints/uuid/acknowledge | /v1/staff/complaints/uuid/acknowledge | NEST_ONLY_COMPLAINT_PREFIXES:/v1/staff/complaints | nest | http://nest.example.test | nest | nest | PASS
+legacy | /v1/public/complaints-extra | /v1/public/complaints-extra | none; direct provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+legacy | /v1/public/complaints.evil | /v1/public/complaints.evil | none; direct provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+legacy | /v1/learner/complaints-old | /v1/learner/complaints-old | none; direct provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+legacy | /v1/staff/complaintsBackup | /v1/staff/complaintsBackup | none; direct provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+legacy | /v1/me/complaints | /v1/me/complaints | none; direct provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+nest | /v1/me/complaints | /v1/me/complaints | none; direct provider=nest | nest | http://nest.example.test | nest | nest | PASS
+hybrid | /v1/me/complaints | /v1/me/complaints | HYBRID_NEST_PREFIXES:/v1/ | nest | http://nest.example.test | nest | nest | PASS
+missing/default | /v1/me/complaints | /v1/me/complaints | default provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+legacy | /v1/admin/complaints | /v1/admin/complaints | none; direct provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+nest | /v1/admin/complaints | /v1/admin/complaints | none; direct provider=nest | nest | http://nest.example.test | nest | nest | PASS
+hybrid | /v1/admin/complaints | /v1/admin/complaints | HYBRID_NEST_PREFIXES:/v1/ | nest | http://nest.example.test | nest | nest | PASS
+missing/default | /v1/admin/complaints | /v1/admin/complaints | default provider=legacy | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+hybrid | /auth/login | /auth/login | HYBRID_LEGACY_PREFIXES:/auth/ | legacy | http://127.0.0.1:8000 | legacy | legacy | PASS
+hybrid | /v1/courses | /v1/courses | HYBRID_NEST_PREFIXES:/v1/ | nest | http://nest.example.test | nest | nest | PASS
+hybrid | /api/public/verify/certificate-1 | /api/public/verify/certificate-1 | HYBRID_NEST_PREFIXES:/api/public/verify | nest | http://nest.example.test | nest | nest | PASS

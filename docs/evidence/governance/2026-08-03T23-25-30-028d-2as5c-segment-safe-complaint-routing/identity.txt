@@ -1,0 +1,12 @@
+repository=miljansavicmsx/CONFORA_LMS
+pull_request=8
+base_branch=fix/ca-h01-frontend-f4-cutover
+base_sha=4090be85a0f8e423d199610f82e3949c899cc90b
+branch=feature/028d-2as2-complaint-filing-closure
+previous_head_sha=d05db079b494aae1dc65f4906cb67602cd1173ae
+new_head_sha=COMMIT_CONTAINING_THIS_EVIDENCE_PACKAGE
+corrective_commit_sha=COMMIT_CONTAINING_THIS_EVIDENCE_PACKAGE
+clean_inspection_path=C:/Users/milja/.codex/visualizations/2026/08/03/019fc72d-2214-7773-8ad9-ab021b469d26/c
+initial_tree_clean=true
+initial_head_detached=true
+implementation_branch_verified=true

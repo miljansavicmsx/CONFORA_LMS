@@ -1,0 +1,8 @@
+path | legacy owner | nest owner | hybrid owner | result
+/auth/login | legacy | nest | legacy | PASS
+/v1/courses | legacy | nest | nest | PASS
+/api/public/verify/certificate-1 | legacy | nest | nest | PASS
+
+The shared matchesPrefix implementation and all hybrid registry arrays are
+unchanged. No unrelated route ownership changed.
+unrelated_provider_routing_change_count=0

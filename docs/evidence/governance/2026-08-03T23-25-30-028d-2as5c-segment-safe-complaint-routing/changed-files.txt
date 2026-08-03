@@ -1,0 +1,17 @@
+frontend-app/src/lib/api/endpoint-registry.ts
+frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/README.md
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/summary.json
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/identity.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/git-status-before.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/git-status-after.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/changed-files.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/commit-chain.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/routing-matrix.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/canonical-path-results.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/negative-path-results.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/legacy-alias-results.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/unrelated-route-results.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/focused-tests.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/scope-verification.txt
+docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/deployment-verification.txt

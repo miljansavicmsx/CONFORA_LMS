@@ -1,0 +1,8 @@
+Pre-commit scope status after correction and tests:
+ M frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+ M frontend-app/src/lib/api/endpoint-registry.ts
+?? docs/evidence/governance/2026-08-03T23-25-30-028d-2as5c-segment-safe-complaint-routing/
+
+Expected post-commit/push status: clean.
+The exact final status is recorded in the post-push verification report because
+this file is itself part of the single authorized commit.

@@ -526,10 +526,16 @@ function matchesPrefix(path: string, prefix: string): boolean {
   return path === prefix || path.startsWith(prefix);
 }
 
+function matchesRouteSegmentPrefix(path: string, prefix: string): boolean {
+  if (!path.startsWith(prefix)) return false;
+  const boundary = path.charAt(prefix.length);
+  return boundary === "" || boundary === "/" || boundary === "?" || boundary === "#";
+}
+
 /** True when path is a Nest-only canonical complaint route. */
 export function isNestOnlyComplaintPath(path: string): boolean {
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  return NEST_ONLY_COMPLAINT_PREFIXES.some((prefix) => matchesPrefix(normalized, prefix));
+  return NEST_ONLY_COMPLAINT_PREFIXES.some((prefix) => matchesRouteSegmentPrefix(normalized, prefix));
 }
 
 /**

@@ -1,0 +1,11 @@
+path | provider | owner | selected base | result
+/v1/me/complaints | legacy | legacy | http://127.0.0.1:8000 | PASS
+/v1/me/complaints | nest | nest | http://nest.example.test | PASS
+/v1/me/complaints | hybrid | nest | http://nest.example.test | PASS
+/v1/me/complaints | missing/default | legacy | http://127.0.0.1:8000 | PASS
+/v1/admin/complaints | legacy | legacy | http://127.0.0.1:8000 | PASS
+/v1/admin/complaints | nest | nest | http://nest.example.test | PASS
+/v1/admin/complaints | hybrid | nest | http://nest.example.test | PASS
+/v1/admin/complaints | missing/default | legacy | http://127.0.0.1:8000 | PASS
+
+legacy_aliases_preserved=true

@@ -1,0 +1,38 @@
+authorized production files changed=1
+authorized test files changed=1
+authorized evidence folders added=1
+unauthorized changed files=0
+
+Production correction:
+- Added complaint-specific route-segment boundary matching.
+- Left generic hybrid prefix matching unchanged.
+
+Test integrity:
+- deleted tests=0
+- weakened tests=0
+- skipped test declarations added=0
+- tests renamed to avoid discovery=0
+- circular implementation assertions added=0
+- overbroad mocks added=0
+- untracked local test imports added=0
+- main contaminated checkout dependencies=0
+
+Behavioral boundaries:
+- duplicate request behavior changed=false
+- dual-write behavior changed=false
+- Bearer-header behavior changed=false
+- API base configuration changed=false
+- persisted authentication changed=false
+- complaint request payloads changed=false
+- refresh behavior changed=false
+- unrelated endpoint ownership changed=false
+
+segment_safe_matching=true
+canonical_complaint_routes_force_nest=true
+legacy_aliases_preserved=true
+unrelated_provider_routing_change_count=0
+test_weakening_count=0
+untracked_test_dependency_count=0
+unauthorized_changed_file_count=0
+FULL_FRONTEND_BUILD=NOT_VERIFIED
+DEFAULT_FRONTEND_VITEST_PATH=NOT_REPAIRED
