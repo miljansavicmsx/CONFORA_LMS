@@ -1,0 +1,23 @@
+Coverage commit:
+frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+
+Evidence commit:
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/README.md
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/summary.json
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/identity.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/git-status-before.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/git-status-after-tests.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/changed-files.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/commit-chain.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/coverage-matrix.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/canonical-path-results.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/negative-sibling-results.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/legacy-alias-results.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/unrelated-route-results.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/authorization-results.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/identity-boundary-results.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/focused-tests.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/test-integrity.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/scope-verification.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/github-state-before-push.txt
+docs/evidence/governance/2026-08-04T09-02-11-028d-2as5e-tracked-coverage-closure/deployment-verification.txt

@@ -1,0 +1,11 @@
+previous_head=d05db079b494aae1dc65f4906cb67602cd1173ae
+corrective_parent=d05db079b494aae1dc65f4906cb67602cd1173ae
+corrective_commit=COMMIT_CONTAINING_THIS_EVIDENCE_PACKAGE
+new_head=COMMIT_CONTAINING_THIS_EVIDENCE_PACKAGE
+subject=fix(frontend): enforce segment-safe complaint route ownership
+commit_count_created=1
+history_rewrite=false
+amend=false
+rebase=false
+squash=false
+force_push=false

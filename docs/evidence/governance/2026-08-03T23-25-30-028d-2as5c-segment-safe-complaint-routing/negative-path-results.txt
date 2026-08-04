@@ -1,0 +1,7 @@
+/v1/public/complaints-extra | Nest-only=false | legacy owner=legacy | legacy base selected | PASS
+/v1/public/complaints.evil | Nest-only=false | legacy owner=legacy | legacy base selected | PASS
+/v1/learner/complaints-old | Nest-only=false | legacy owner=legacy | legacy base selected | PASS
+/v1/staff/complaintsBackup | Nest-only=false | legacy owner=legacy | legacy base selected | PASS
+
+No production negative-string denylist was added.
+segment_safe_matching=true

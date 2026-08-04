@@ -1,0 +1,11 @@
+repository=miljansavicmsx/CONFORA_LMS
+pr_number=8
+live_pr_head=ae062f66b007e0305837ec5e14a3970c45cb5785
+live_pr_base=4090be85a0f8e423d199610f82e3949c899cc90b
+state=OPEN
+ready_for_review=true
+merged=false
+auto_merge=false
+mergeable=MERGEABLE
+merge_state_status=UNSTABLE
+pr_body_updated=false

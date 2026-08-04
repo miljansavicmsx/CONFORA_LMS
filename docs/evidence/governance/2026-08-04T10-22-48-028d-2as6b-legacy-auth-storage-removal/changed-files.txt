@@ -1,0 +1,9 @@
+Removal commit 42bbbb5df5eaebf56973e59704e2a636e085afd6:
+D frontend-app/src/lib/auth-storage.ts
+
+deleted_operational_file_count=1
+modified_operational_file_count=0
+added_operational_file_count=0
+unauthorized_changed_file_count=0
+
+The evidence commit may add only this new S6B evidence directory.

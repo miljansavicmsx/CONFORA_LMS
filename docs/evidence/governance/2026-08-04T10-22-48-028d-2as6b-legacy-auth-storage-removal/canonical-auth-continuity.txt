@@ -1,0 +1,16 @@
+Canonical storage contract:
+storage_key=confora-auth
+access_token_path=state.accessToken
+refresh_token_path=state.refreshToken
+
+Protected blob identities at previous head and removal commit:
+frontend-app/src/lib/api/auth-token-provider.ts=3d4f47c6b11bbe8676ac8af20fef24d7a31a1ef4
+frontend-app/src/lib/api/http-client.ts=5be4988c263e6e83323cdc8c4ebb8d15c287e3f6
+frontend-app/src/lib/auth-refresh.ts=22cf7c4adb6c4c5001c3c0a968ddf3026cc52335
+frontend-app/src/lib/api/complaints-client.ts=4b7bc2e98a6c2989b214b191f8030dc596aee6f1
+
+canonical_auth_provider_changed=false
+http_client_changed=false
+auth_refresh_changed=false
+no_second_authentication_store_introduced=true
+legacy_fallback_attempt_count=0

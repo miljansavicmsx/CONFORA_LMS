@@ -1,0 +1,39 @@
+﻿{
+  "phase": "028D-2aS5",
+  "type": "complaint_api_routing_corrective",
+  "prior_review_verdict": "NO-GO",
+  "prior_defect": "CANONICAL_COMPLAINT_PATHS_ROUTED_TO_LEGACY_UNDER_LEGACY_PROVIDER",
+  "correction": "NEST_ONLY_COMPLAINT_OWNERSHIP",
+  "nest_only_prefixes": [
+    "/v1/public/complaints",
+    "/v1/learner/complaints",
+    "/v1/staff/complaints"
+  ],
+  "legacy_aliases_unchanged": [
+    "/v1/me/complaints",
+    "/v1/admin/complaints"
+  ],
+  "branch": "feature/028d-2as2-complaint-filing-closure",
+  "starting_head": "9682c0f8904edd36f6ee15d07a836b9b2f425bb8",
+  "base_branch": "fix/ca-h01-frontend-f4-cutover",
+  "base_tip": "4090be85a0f8e423d199610f82e3949c899cc90b",
+  "pull_request": 8,
+  "merged": false,
+  "auto_merge": false,
+  "workflows_modified": false,
+  "backend_modified": false,
+  "appeals_modified": false,
+  "td_006": "OPEN",
+  "td_006_modified": false,
+  "r0_7e_started": false,
+  "tests": {
+    "command": "npm run test:028d-2as2r",
+    "config": "frontend-app/vitest.028d-2as2r.config.ts",
+    "provider_stub": "legacy",
+    "result": "PASS",
+    "auth_token_provider": "5/5",
+    "complaints_client_and_routing": "13/13",
+    "total": "18/18"
+  },
+  "verdict": "COMPLAINT_API_ROUTING_CORRECTED_AWAITING_INDEPENDENT_RE_REVIEW"
+}

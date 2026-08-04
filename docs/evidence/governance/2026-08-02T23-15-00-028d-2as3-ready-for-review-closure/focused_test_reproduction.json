@@ -1,0 +1,21 @@
+{
+  "command": "npm run test:028d-2as2r",
+  "cwd": "frontend-app",
+  "config": "vitest.028d-2as2r.config.ts",
+  "started_at_local": "2026-08-02T23:12:46",
+  "discovered": 14,
+  "executed": 14,
+  "passed": 14,
+  "failed": 0,
+  "files": [
+    {
+      "path": "src/lib/api/__tests__/auth-token-provider.test.ts",
+      "passed": 5
+    },
+    {
+      "path": "src/lib/api/__tests__/complaints-client.test.ts",
+      "passed": 9
+    }
+  ],
+  "result": "PASS"
+}

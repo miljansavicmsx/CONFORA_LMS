@@ -1,0 +1,10 @@
+# Appeal / TD-006 verification
+
+```text
+APPEAL_UI = NOT_IMPLEMENTED
+GET_ME_APPLICATIONS = NOT_IMPLEMENTED
+APPEAL_OWNERSHIP_FIX = DEFERRED
+TD_006 = OPEN
+```
+
+`docs/TECHNICAL_DEBT_REGISTER.md` was not modified in this corrective.

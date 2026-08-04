@@ -1,0 +1,4 @@
+frontend-app/src/lib/api/auth-token-provider.ts
+frontend-app/src/lib/api/__tests__/auth-token-provider.test.ts
+frontend-app/vitest.028d-2as2r.config.ts
+frontend-app/package.json

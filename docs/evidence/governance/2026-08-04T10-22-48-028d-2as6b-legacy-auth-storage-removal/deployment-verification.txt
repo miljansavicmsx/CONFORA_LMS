@@ -1,0 +1,7 @@
+github_deployment_query_sha=f1873fc07f28aed013dfcb63de56928f76acca0f
+github_deployment_response=[]
+production_deployment_count=0
+deployment_triggered=false
+DEPLOYMENT_AUTHORIZATION=false
+PRODUCTION_READINESS=NOT_CLAIMED
+HEALTHY_REPOSITORY_WIDE_CI=NOT_CLAIMED

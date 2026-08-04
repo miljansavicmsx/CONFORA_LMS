@@ -1,0 +1,11 @@
+provider=legacy | /v1/public/complaints-extra | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/public/complaintsextra | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/public/complaints.evil | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/public/complaintsBackup | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/learner/complaints-old | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/learner/complaintsBackup | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/staff/complaints-old | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/staff/complaintsBackup | canonical=false | owner=legacy | PASS
+
+negative_sibling_case_count=8
+noncanonical_sibling_override_count=0

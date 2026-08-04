@@ -1,0 +1,7 @@
+/v1/public/complaints | legacy provider | owner=nest | PASS
+/v1/learner/complaints | legacy provider | owner=nest | PASS
+/v1/staff/complaints | legacy provider | owner=nest | PASS
+/v1/staff/complaints/uuid/acknowledge | legacy provider | owner=nest | PASS
+/v1/learner/complaints?status=SUBMITTED | canonical boundary | Nest-only=true | PASS
+
+canonical_complaint_routes_force_nest=true

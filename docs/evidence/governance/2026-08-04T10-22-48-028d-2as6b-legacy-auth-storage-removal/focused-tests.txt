@@ -1,0 +1,27 @@
+command=npm.cmd run test:028d-2as2r
+working_directory=C:\Users\milja\.codex\visualizations\2026\08\03\019fc72d-2214-7773-8ad9-ab021b469d26\c\frontend-app
+os=Microsoft Windows NT 10.0.26200.0
+architecture=X64
+node=v24.13.1
+npm=11.8.0
+pnpm=11.9.0
+vitest=3.2.7
+
+Sandboxed launch:
+exit_code=1
+classification=ENVIRONMENT_SANDBOX_STARTUP_BLOCK
+discovered=0
+causal_error=esbuild could not read above the isolated clone and could not resolve the tracked Vitest config
+repository_test_failure=false
+
+Authorized exact-command rerun outside the filesystem sandbox:
+exit_code=0
+src/lib/api/__tests__/auth-token-provider.test.ts=5/5 PASS (11ms)
+src/lib/api/__tests__/complaints-client.test.ts=18/18 PASS (140ms)
+test_files=2/2 PASS
+discovered=23
+executed=23
+passed=23
+failed=0
+skipped=0
+duration=4.29s

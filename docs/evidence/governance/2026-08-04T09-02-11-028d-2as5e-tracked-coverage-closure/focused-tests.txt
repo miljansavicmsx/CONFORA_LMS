@@ -1,0 +1,18 @@
+inspection_path=C:/Users/milja/.codex/visualizations/2026/08/03/019fc72d-2214-7773-8ad9-ab021b469d26/c
+os=Microsoft Windows 10.0.26200
+architecture=x64
+node=v24.13.1
+npm=11.8.0
+pnpm=11.9.0
+command=cmd /c npm.cmd run test:028d-2as2r
+exit_code=0
+test_files=src/lib/api/__tests__/auth-token-provider.test.ts,src/lib/api/__tests__/complaints-client.test.ts
+discovered=23
+executed=23
+passed=23
+failed=0
+skipped=0
+duration=4.54s
+
+FULL_FRONTEND_BUILD=NOT_VERIFIED
+DEFAULT_FRONTEND_VITEST_PATH=NOT_REPAIRED

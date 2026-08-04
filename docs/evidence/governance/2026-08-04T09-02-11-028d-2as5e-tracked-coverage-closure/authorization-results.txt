@@ -1,0 +1,11 @@
+submit_request_count=1
+submit_base_url=http://nest.example.test
+submit_authorization=Bearer [REDACTED]
+submit_bearer_authorization_directly_verified=true
+
+listing_request_count=1
+listing_base_url=http://nest.example.test
+listing_authorization=Bearer [REDACTED]
+listing_bearer_authorization_directly_verified=true
+
+real_token_recorded=false

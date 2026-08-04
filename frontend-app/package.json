@@ -13,6 +13,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "audit:f4-frontend-api": "node ../scripts/ops/audit-f4-frontend-api-usage.mjs",
+    "test:028d-2as2r": "vitest run --config vitest.028d-2as2r.config.ts",
     "test:f4-cutover": "vitest run contact-client complaints grievances appeals reports api-reports f4-cutover-flags-defaults",
     "test:e2e:f4-smoke": "playwright test f4-cutover-smoke",
     "validate:f4-cutover": "node ../scripts/ops/run-f4-8g-frontend-validation.mjs",

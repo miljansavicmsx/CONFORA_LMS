@@ -1,0 +1,12 @@
+path=/auth/login | legacy=legacy | nest=nest | hybrid=legacy | PASS
+path=/v1/courses | legacy=legacy | nest=nest | hybrid=nest | PASS
+path=/api/public/verify/certificate-1 | legacy=legacy | nest=nest | hybrid=nest | PASS
+
+generic_hybrid_matcher_changed=false
+api_base_configuration_changed=false
+duplicate_request_introduced=false
+dual_write_introduced=false
+complaint_payload_changed=false
+persisted_authentication_changed=false
+token_refresh_changed=false
+unrelated_provider_routing_change_count=0

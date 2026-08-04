@@ -1,0 +1,17 @@
+GitHub deployment query before push:
+repository=miljansavicmsx/CONFORA_LMS
+ref=feature/028d-2as2-complaint-filing-closure
+deployment_count=0
+
+PR state before push:
+state=OPEN
+is_draft=false
+merged=false
+auto_merge=false
+mergeable=MERGEABLE
+merge_state_status=UNSTABLE
+
+production_authorization=false
+deployment_triggered_by_task=false
+workflow_rerun_triggered_by_task=false
+post_push_deployment_state=verified externally after the single commit push

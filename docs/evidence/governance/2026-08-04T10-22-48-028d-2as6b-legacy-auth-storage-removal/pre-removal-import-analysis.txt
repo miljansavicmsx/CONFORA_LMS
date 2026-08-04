@@ -1,0 +1,13 @@
+target=frontend-app/src/lib/auth-storage.ts
+classification=PR_CAUSED_UNREACHABLE_DEAD_SURFACE
+introduced_by=129e243aa65482838f55f2ba7c318e20bbd33957
+
+production_importer_count=0
+test_importer_count=0
+dynamic_import_count=0
+barrel_export_count=0
+string_based_module_reference_count=0
+build_script_reference_count=0
+
+Searches covered the tracked frontend source, test paths, dynamic import and require forms, export/from forms, package manifests, scripts, and GitHub workflows. Exported-name matches outside the target resolve to the separate canonical auth-token-provider implementation; they are not imports from auth-storage.
+removal_safe=true

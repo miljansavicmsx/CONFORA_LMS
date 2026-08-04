@@ -89,5 +89,54 @@
       "pdfPending": "PDF će biti dostupan nakon izdavanja dokumenta.",
       "digitalSignatureLocal": "Digitalni potpis nije aktiviran u lokalnom MVP okruženju."
     }
+  },
+  "complaintsFiling": {
+    "title": "Novi prigovor",
+    "description": "Prigovor je izraz nezadovoljstva procesom, uslugom ili ponašanjem. Nije žalba na odluku i nije zahtev za podršku / kontakt. Podnošenje prigovora ne menja status sertifikacije niti rezultat ispita.",
+    "identityDisclosure": "Prijavljeni ste. Vaš identitet se zadržava uz ovaj prigovor; ovaj kanal nije anoniman.",
+    "categoryLabel": "Kategorija",
+    "subjectLabel": "Predmet",
+    "descriptionLabel": "Opis",
+    "cancel": "Odustani",
+    "submit": "Podnesi prigovor",
+    "submitting": "Slanje…",
+    "validation": {
+      "required": "Predmet i opis su obavezni."
+    },
+    "errors": {
+      "HTTP_ERROR": "Prigovor nije primljen. Pokušajte ponovo ili kontaktirajte podršku.",
+      "NETWORK_ERROR": "Mrežna greška. Proverite vezu i pokušajte ponovo.",
+      "VALIDATION_ERROR": "Proverite obrazac i pokušajte ponovo.",
+      "UNAUTHORIZED": "Sesija je istekla. Prijavite se ponovo da podnesete prigovor.",
+      "FORBIDDEN": "Nemate dozvolu za podnošenje prigovora.",
+      "NOT_FOUND": "Usluga za prigovore nije dostupna.",
+      "UNKNOWN": "Prigovor nije primljen. Pokušajte ponovo ili kontaktirajte podršku."
+    },
+    "success": {
+      "message": "Prigovor je primljen.",
+      "reference": "Referenca: {{reference}}",
+      "close": "Zatvori"
+    },
+    "categories": {
+      "complaint": "Prigovor na proces / uslugu",
+      "technical_support": "Tehnički prigovor (platforma)",
+      "improvement_proposal": "Predlog poboljšanja",
+      "training_proposal": "Predlog obuke"
+    },
+    "page": {
+      "title": "Žalbe i prigovori",
+      "supportLink": "Idi na podršku / kontakt",
+      "appealsTab": "Žalbe",
+      "complaintsTab": "Prigovori",
+      "newComplaint": "Novi prigovor",
+      "newAppealDisabled": "Nova žalba",
+      "appealsDeferredTitle": "Podnošenje žalbe je odloženo dok ne postoje kontrole vlasništva i otkrivanja (TD-006).",
+      "appealsDeferredHeading": "Podnošenje žalbe nije dostupno",
+      "appealsDeferredBody": "Kandidatsko podnošenje žalbe ostaje odloženo. Pre iskrenog obrasca žalbe potrebni su enforcement vlasništva nad referencom odluke i self-scoped otkrivanje prijava.",
+      "loadingComplaints": "Učitavanje prigovora…",
+      "loadComplaintsError": "Trenutno nije moguće učitati prigovore. Proverite prijavu i pokušajte ponovo.",
+      "emptyComplaints": "Još nemate podnesenih prigovora.",
+      "toastReceived": "Prigovor je primljen."
+    }
   }
 }

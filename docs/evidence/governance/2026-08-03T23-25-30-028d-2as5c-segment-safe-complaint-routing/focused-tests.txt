@@ -1,0 +1,38 @@
+Initial sandbox attempt (not a test result):
+command=cmd /c npm.cmd run test:028d-2as2r -- src/lib/api/__tests__/complaints-client.test.ts -t "nest-only complaint routing"
+exit_code=1
+discovery=not reached
+reason=sandbox denied esbuild access to clean-clone parent path
+
+Routing-block diagnostic rerun:
+command=cmd /c npm.cmd run test:028d-2as2r -- src/lib/api/__tests__/complaints-client.test.ts -t "nest-only complaint routing"
+exit_code=0
+test_files=src/lib/api/__tests__/complaints-client.test.ts
+discovered=16
+executed=6
+passed=6
+failed=0
+filtered=10
+duration=5.19s
+
+Authoritative narrow file run:
+command=cmd /c npm.cmd run test:028d-2as2r -- src/lib/api/__tests__/complaints-client.test.ts
+exit_code=0
+test_files=src/lib/api/__tests__/complaints-client.test.ts
+discovered=16
+executed=16
+passed=16
+failed=0
+skipped=0
+duration=4.38s
+
+Complete focused suite:
+command=cmd /c npm.cmd run test:028d-2as2r
+exit_code=0
+test_files=src/lib/api/__tests__/auth-token-provider.test.ts,src/lib/api/__tests__/complaints-client.test.ts
+discovered=21
+executed=21
+passed=21
+failed=0
+skipped=0
+duration=4.96s

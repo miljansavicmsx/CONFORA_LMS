@@ -1,0 +1,8 @@
+classification=SINGLE_BOUNDED_REFRESH_BRIDGE
+implementation=frontend-app/src/lib/auth-refresh.ts
+consumer=frontend-app/src/lib/api/http-client.ts
+duplicate_runtime_reachable_refresh_implementation_count=0
+auth_refresh_changed=false
+ROTATED_REFRESH_TOKEN_PERSISTENCE_NON_BLOCKING_FOLLOW_UP=OPEN
+
+The correction removes no refresh behavior and does not claim closure of the rotated-refresh-token persistence follow-up.
