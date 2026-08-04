@@ -1,0 +1,12 @@
+provider=legacy | path=/v1/public/complaints | owner=nest | PASS
+provider=legacy | path=/v1/public/complaints/ | owner=nest | PASS
+provider=legacy | path=/v1/public/complaints/123 | owner=nest | PASS
+provider=legacy | path=/v1/public/complaints?status=open | owner=nest | PASS
+provider=legacy | path=/v1/public/complaints#history | owner=nest | PASS
+provider=legacy | path=/v1/learner/complaints | owner=nest | PASS
+provider=legacy | path=/v1/learner/complaints/ | owner=nest | PASS
+provider=legacy | path=/v1/learner/complaints/123 | owner=nest | PASS
+provider=legacy | path=/v1/learner/complaints?page=1 | owner=nest | PASS
+provider=legacy | path=/v1/staff/complaints | owner=nest | PASS
+provider=legacy | path=/v1/staff/complaints/ | owner=nest | PASS
+provider=legacy | path=/v1/staff/complaints/123 | owner=nest | PASS

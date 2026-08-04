@@ -1,0 +1,4 @@
+provider=legacy | /v1/me/complaints | canonical=false | owner=legacy | PASS
+provider=legacy | /v1/admin/complaints | canonical=false | owner=legacy | PASS
+
+legacy_aliases_preserved=true

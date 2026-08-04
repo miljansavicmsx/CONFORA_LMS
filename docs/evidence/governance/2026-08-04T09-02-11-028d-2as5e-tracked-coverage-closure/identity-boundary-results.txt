@@ -1,0 +1,11 @@
+userId=absent
+candidateId=absent
+actorId=absent
+role=absent
+permission=absent
+permissionCode=absent
+tenantId=absent
+tenant_id=absent
+
+browser_identity_field_count=0
+identity_authority=JWT/backend-derived

@@ -1,0 +1,10 @@
+area | cases | result
+canonical public | exact, slash, descendant, query, fragment | PASS
+canonical learner | exact, slash, descendant, query | PASS
+canonical staff | exact, slash, descendant | PASS
+negative siblings | 8 literal cases | PASS
+compatibility aliases | /v1/me/complaints, /v1/admin/complaints | PASS
+unrelated routes | auth, v1 Nest, public verification | PASS
+submit Bearer boundary | actual Axios request config | PASS
+listing Bearer boundary | actual Axios request config | PASS
+browser identity fields | 8 forbidden keys absent | PASS

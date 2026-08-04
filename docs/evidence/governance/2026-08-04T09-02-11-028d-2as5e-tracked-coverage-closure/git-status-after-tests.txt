@@ -1,0 +1,7 @@
+After first focused test execution and before the coverage commit:
+ M frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+
+After coverage commit:
+tracked_tree_clean=true
+untracked_path_count=0
+head=c41522135d97f7e90eb89b58fa48a320f9cfde8c

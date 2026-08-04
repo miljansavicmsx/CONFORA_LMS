@@ -1,0 +1,12 @@
+deleted_tests=0
+weakened_tests=0
+skipped_tests_added=0
+renamed_to_avoid_discovery=0
+tautological_tests_added=0
+production_logic_copied_into_assertions=0
+overbroad_mocks_added=0
+untracked_probe_dependencies=0
+main_checkout_dependencies=0
+order_dependent_tests=0
+test_weakening_count=0
+untracked_test_dependency_count=0
