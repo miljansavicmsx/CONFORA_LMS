@@ -1,0 +1,27 @@
+Tree searched=f1873fc07f28aed013dfcb63de56928f76acca0f
+Patterns=confora_access_token,confora_refresh_token
+
+Executable production source:
+- frontend-app/src/lib/auth-storage.ts declared one access key and one refresh key.
+- production_legacy_access_key_match_count_before=1
+- production_legacy_refresh_key_match_count_before=1
+- legacy_token_key_read_count_before=2
+- legacy_token_key_write_count_before=2
+- legacy_token_key_clear_count_before=2
+
+Tests:
+- frontend-app/src/lib/api/__tests__/auth-token-provider.test.ts intentionally sets/asserts legacy keys to prove canonical isolation.
+- access literal line matches=4
+- refresh literal line matches=2
+
+Documentary source comment:
+- frontend-app/src/lib/api/auth-token-provider.ts documents that no legacy dual-write occurs.
+- access literal line matches=1
+- refresh literal line matches=1
+
+Historical evidence:
+- docs/evidence/governance/2026-08-02T21-20-00-028d-2as2r-auth-continuity/architecture_decision.md
+- access literal line matches=1
+- refresh literal line matches=1
+
+generated_artifact_match_count=0

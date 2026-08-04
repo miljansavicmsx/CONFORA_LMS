@@ -1,0 +1,9 @@
+f1873fc07f28aed013dfcb63de56928f76acca0f
+42bbbb5df5eaebf56973e59704e2a636e085afd6 fix(frontend): remove dead legacy auth storage surface
+SELF docs(repo): record 028d-2as6b auth storage removal
+
+removal_commit_parent=f1873fc07f28aed013dfcb63de56928f76acca0f
+removal_commit_changed_file_count=1
+removal_commit_deleted_file_count=1
+removal_commit_unauthorized_file_count=0
+history_rewrite_detected=false

@@ -1,0 +1,15 @@
+public_helper=frontend-app/src/lib/api/complaints-client.ts::submitPublicComplaint
+public_path=/v1/public/complaints
+public_helper_changed=false
+public_credentials=omit
+public_isAnonymous_contract_changed=false
+
+candidate_submit=frontend-app/src/lib/api/complaints-client.ts::submitLearnerComplaint
+candidate_list=frontend-app/src/lib/api/complaints-client.ts::listLearnerComplaints
+candidate_http_client=frontend-app/src/lib/api/http-client.ts::getHttpClient
+candidate_anonymous_submission_mode_count=0
+candidate_authenticated_submit_authorization_verified=true
+complaint_payload_fields_changed=false
+disclosure_text_changed=false
+
+Focused tests verify Bearer Authorization for authenticated candidate submit and learner listing. No real token is recorded.

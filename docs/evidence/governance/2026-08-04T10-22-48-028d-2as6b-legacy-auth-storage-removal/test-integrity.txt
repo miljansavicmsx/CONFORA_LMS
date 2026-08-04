@@ -1,0 +1,11 @@
+Tracked test/config dependencies:
+frontend-app/package.json
+frontend-app/vitest.028d-2as2r.config.ts
+frontend-app/src/lib/api/__tests__/auth-token-provider.test.ts
+frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+
+test_weakening_count=0
+untracked_test_dependency_count=0
+test_files_changed_by_removal_commit=0
+FULL_FRONTEND_BUILD=NOT_VERIFIED
+DEFAULT_FRONTEND_VITEST_PATH=NOT_REPAIRED

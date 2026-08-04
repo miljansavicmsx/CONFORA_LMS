@@ -1,0 +1,20 @@
+Tree searched=42bbbb5df5eaebf56973e59704e2a636e085afd6
+Patterns=confora_access_token,confora_refresh_token
+
+Executable production source:
+production_legacy_access_key_match_count=0
+production_legacy_refresh_key_match_count=0
+runtime_reachable_legacy_storage_count=0
+new_storage_key_count=0
+legacy_token_key_read_count=0
+legacy_token_key_write_count=0
+legacy_token_key_clear_count=0
+legacy_fallback_attempt_count=0
+
+Remaining literals are non-executable classifications only:
+- intentional negative tests in frontend-app/src/lib/api/__tests__/auth-token-provider.test.ts;
+- documentary source comment in frontend-app/src/lib/api/auth-token-provider.ts;
+- accurate historical evidence under docs/evidence/**;
+- this S6B evidence package after its SELF commit.
+
+No prior evidence was rewritten.

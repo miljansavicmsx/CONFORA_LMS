@@ -1,0 +1,9 @@
+before_removal_commit:
+ D frontend-app/src/lib/auth-storage.ts
+
+after_removal_commit:
+tracked_status_entry_count=0
+untracked_path_count=0
+tracked_tree_clean=true
+
+removal_commit_sha=42bbbb5df5eaebf56973e59704e2a636e085afd6

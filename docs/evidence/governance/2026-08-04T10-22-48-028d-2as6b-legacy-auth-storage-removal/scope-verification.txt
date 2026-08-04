@@ -1,0 +1,31 @@
+Authorized operational path:
+frontend-app/src/lib/auth-storage.ts
+
+Observed operational change:
+deleted=frontend-app/src/lib/auth-storage.ts
+deleted_operational_file_count=1
+modified_operational_file_count=0
+added_operational_file_count=0
+unauthorized_changed_file_count=0
+
+Protected areas changed:
+auth-refresh=false
+auth-token-provider=false
+http-client=false
+complaints-client=false
+complaint_components_or_pages=false
+App.tsx=false
+Login.tsx=false
+dashboard_routes=false
+auth_store=false
+apps_api=false
+package_manifests=false
+lockfiles=false
+workflows=false
+RBAC=false
+navigation=false
+deployment=false
+appeals=false
+TD-006=false
+R0-7E=false
+existing_evidence=false
