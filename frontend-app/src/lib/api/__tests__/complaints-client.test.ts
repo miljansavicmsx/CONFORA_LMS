@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { InternalAxiosRequestConfig } from "axios";
 
 import { buildConforaApiUrl, resolveApiTarget } from "@/lib/api/api-provider";
+import { PERSISTED_AUTH_STORAGE_KEY } from "@/lib/api/auth-token-provider";
 import * as httpClient from "@/lib/api/http-client";
 import {
   acknowledgeComplaint,
@@ -251,10 +253,29 @@ describe("complaints-client (F4-8c)", () => {
 });
 
 describe("nest-only complaint routing (028D-2aS5)", () => {
+  const canonicalComplaintPaths = [
+    "/v1/public/complaints",
+    "/v1/public/complaints/",
+    "/v1/public/complaints/123",
+    "/v1/public/complaints?status=open",
+    "/v1/public/complaints#history",
+    "/v1/learner/complaints",
+    "/v1/learner/complaints/",
+    "/v1/learner/complaints/123",
+    "/v1/learner/complaints?page=1",
+    "/v1/staff/complaints",
+    "/v1/staff/complaints/",
+    "/v1/staff/complaints/123",
+  ] as const;
+
   const noncanonicalSiblingPaths = [
     "/v1/public/complaints-extra",
+    "/v1/public/complaintsextra",
     "/v1/public/complaints.evil",
+    "/v1/public/complaintsBackup",
     "/v1/learner/complaints-old",
+    "/v1/learner/complaintsBackup",
+    "/v1/staff/complaints-old",
     "/v1/staff/complaintsBackup",
   ] as const;
 
@@ -269,10 +290,10 @@ describe("nest-only complaint routing (028D-2aS5)", () => {
   });
 
   it("marks canonical complaint prefixes as Nest-only", () => {
-    expect(isNestOnlyComplaintPath(CANONICAL_PUBLIC_COMPLAINTS_PATH)).toBe(true);
-    expect(isNestOnlyComplaintPath(CANONICAL_LEARNER_COMPLAINTS_PATH)).toBe(true);
-    expect(isNestOnlyComplaintPath(`${CANONICAL_STAFF_COMPLAINTS_PATH}/uuid/acknowledge`)).toBe(true);
-    expect(isNestOnlyComplaintPath(`${CANONICAL_LEARNER_COMPLAINTS_PATH}?status=SUBMITTED`)).toBe(true);
+    for (const path of canonicalComplaintPaths) {
+      expect(isNestOnlyComplaintPath(path)).toBe(true);
+      expect(resolveOwnerForPath(path, "legacy")).toBe("nest");
+    }
     expect(isNestOnlyComplaintPath("/v1/me/complaints")).toBe(false);
     expect(isNestOnlyComplaintPath("/v1/admin/complaints")).toBe(false);
   });
@@ -340,5 +361,104 @@ describe("nest-only complaint routing (028D-2aS5)", () => {
     for (const path of noncanonicalSiblingPaths) {
       expect(buildConforaApiUrl(path)).toBe(`http://127.0.0.1:8000${path}`);
     }
+  });
+});
+
+describe("authenticated complaint request boundary (028D-2aS5E)", () => {
+  const syntheticAccessToken = "synthetic-complaint-access-token";
+  const browserIdentityFields = [
+    "userId",
+    "candidateId",
+    "actorId",
+    "role",
+    "permission",
+    "permissionCode",
+    "tenantId",
+    "tenant_id",
+  ] as const;
+
+  function installRecordingAdapter(responseData: unknown): InternalAxiosRequestConfig[] {
+    const requests: InternalAxiosRequestConfig[] = [];
+    const client = httpClient.getHttpClient();
+    client.defaults.adapter = async (config) => {
+      requests.push(config);
+      return {
+        data: responseData,
+        status: 200,
+        statusText: "OK",
+        headers: {},
+        config,
+      };
+    };
+    return requests;
+  }
+
+  beforeEach(() => {
+    vi.stubEnv("VITE_CONFORA_API_URL", "http://nest.example.test");
+    vi.stubEnv("VITE_LEGACY_API_URL", "http://127.0.0.1:8000");
+    vi.stubEnv("VITE_API_PROVIDER", "legacy");
+    vi.stubEnv("VITE_COMPLAINTS_CANONICAL_ENABLED", "true");
+    localStorage.setItem(
+      PERSISTED_AUTH_STORAGE_KEY,
+      JSON.stringify({
+        state: {
+          accessToken: syntheticAccessToken,
+          refreshToken: "synthetic-complaint-refresh-token",
+          isAuthenticated: true,
+        },
+        version: 0,
+      }),
+    );
+    httpClient.resetHttpClientForTests();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+    vi.unstubAllEnvs();
+    httpClient.resetHttpClientForTests();
+  });
+
+  it("sends Bearer Authorization on authenticated complaint submission", async () => {
+    const requests = installRecordingAdapter({
+      complaint: {
+        id: "uuid-auth-submit",
+        publicReference: "CMP-AUTH-SUBMIT",
+        complaintType: "PROCESS_COMPLAINT",
+        complaintTargetType: "CERTIFICATION_BODY",
+        status: "SUBMITTED",
+        submittedAt: "2026-08-04T08:00:00.000Z",
+        complaintSummary: "Authorization boundary\n\nSynthetic request only.",
+      },
+    });
+
+    await submitLearnerComplaint({
+      category: "complaint",
+      subject: "Authorization boundary",
+      description: "Synthetic request only.",
+    });
+
+    expect(requests).toHaveLength(1);
+    const request = requests[0]!;
+    expect(request.url).toBe(CANONICAL_LEARNER_COMPLAINTS_PATH);
+    expect(request.baseURL).toBe("http://nest.example.test");
+    expect(request.headers.get("Authorization")).toBe(`Bearer ${syntheticAccessToken}`);
+    const payload = JSON.parse(String(request.data)) as Record<string, unknown>;
+    for (const field of browserIdentityFields) {
+      expect(payload).not.toHaveProperty(field);
+    }
+  });
+
+  it("sends Bearer Authorization on authenticated learner complaint listing", async () => {
+    const requests = installRecordingAdapter({ items: [] });
+
+    await listLearnerComplaints();
+
+    expect(requests).toHaveLength(1);
+    const request = requests[0]!;
+    expect(request.method).toBe("get");
+    expect(request.url).toBe(CANONICAL_LEARNER_COMPLAINTS_PATH);
+    expect(request.baseURL).toBe("http://nest.example.test");
+    expect(request.headers.get("Authorization")).toBe(`Bearer ${syntheticAccessToken}`);
+    expect(request.data).toBeUndefined();
   });
 });
