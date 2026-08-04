@@ -1,0 +1,8 @@
+Snapshot phase: after package creation, before the authorized commit.
+Actual status: exactly the 23 new files listed in changed-files.txt.
+actual_pre_commit_new_file_count=23
+changed_files_inventory_match=true
+existing_file_modification_count=0
+paths_outside_package_folder=0
+Post-commit requirement: git status --porcelain=v1 --untracked-files=all has no entries.
+This file does not claim post-commit validation before that validation occurs.

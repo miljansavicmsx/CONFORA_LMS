@@ -1,0 +1,5 @@
+Command: git status --porcelain=v1 --untracked-files=all
+HEAD: f5e48ddb774f3e505fd3c5a6fc4c13492ed4b8cd (detached before branch creation)
+Output: no entries
+tracked_tree_clean=true
+untracked_path_count=0

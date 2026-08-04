@@ -1,0 +1,11 @@
+repository=miljansavicmsx/CONFORA_LMS
+integration_branch=fix/ca-h01-frontend-f4-cutover
+integration_tip=f5e48ddb774f3e505fd3c5a6fc4c13492ed4b8cd
+pr_8_state=MERGED
+pr_8_merge_commit=f5e48ddb774f3e505fd3c5a6fc4c13492ed4b8cd
+planning_branch=planning/r0-7e-p1-scope-and-ci-lanes
+planning_branch_parent=f5e48ddb774f3e505fd3c5a6fc4c13492ed4b8cd
+deployment_count_at_entry=0
+tracked_tree_at_entry=CLEAN
+untracked_path_count_at_entry=0
+identity_gate=PASS
