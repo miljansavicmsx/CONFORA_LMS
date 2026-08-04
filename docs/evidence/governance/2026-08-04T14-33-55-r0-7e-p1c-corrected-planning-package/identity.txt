@@ -1,0 +1,12 @@
+repository=miljansavicmsx/CONFORA_LMS
+integration_branch=fix/ca-h01-frontend-f4-cutover
+integration_sha=f5e48ddb774f3e505fd3c5a6fc4c13492ed4b8cd
+planning_branch=planning/r0-7e-p1-scope-and-ci-lanes
+previous_planning_sha=bf33e4a98343229dde59cc92a449ed9134abb2b0
+expected_correction_parent=bf33e4a98343229dde59cc92a449ed9134abb2b0
+original_package_tree=c46992e1a8a6d7038797f3478422a12a62f78e8e
+pr_for_planning_branch=ABSENT
+deployment_count_at_entry=0
+tracked_tree_at_entry=CLEAN
+untracked_path_count_at_entry=0
+identity_gate=PASS
