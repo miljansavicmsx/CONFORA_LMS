@@ -1,0 +1,25 @@
+change_type=A
+allowed_folder=docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/
+
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/README.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/summary.json
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/identity.txt
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/git-status-before.txt
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/git-status-after.txt
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/changed-files.txt
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/author-self-review-classification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/finding-correction-crosswalk.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/owner-decision-field-verification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/ci-lane-verification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/non-claims-verification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/work-package-verification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/mandatory-declaration-verification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/evidence-supersession-verification.md
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/commit-chain.txt
+A docs/evidence/governance/2026-08-05T23-03-46-r0-7e-np1e-evidence-conformance-correction/deployment-verification.txt
+
+new_file_count=16
+existing_file_modification_count=0
+existing_file_deletion_count=0
+unexpected_evidence_file_count=0
+unauthorized_changed_file_count=0

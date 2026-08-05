@@ -1,0 +1,7 @@
+inspection_head=b57fe0b964c9696715c6ba892f1bf47e9c9bda00
+branch=governance/r0-7e-np1-normative-promotion
+tracked_status_count=0
+untracked_path_count=0
+index_change_count=0
+worktree_change_count=0
+identity_gate=PASS
