@@ -1,0 +1,15 @@
+required_new_document_count=6
+required_status_document_count=6
+owner_decision_record_count=8
+adopted_with_limitations_count=7
+deferred_owner_decision_count=1
+ci_lane_count=6
+implementation_compliance_state_count=4
+required_non_claim_count=6
+missing_required_non_claim_count=0
+blocked_is_pass_count=0
+local_only_authority_acceptance_count=0
+policy_to_implementation_promotion_count=0
+od_r07e_3_presented_as_adopted_count=0
+cross_document_contradiction_count=0
+validation_result=PASS

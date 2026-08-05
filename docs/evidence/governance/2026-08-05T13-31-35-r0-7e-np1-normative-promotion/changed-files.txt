@@ -1,0 +1,33 @@
+COMMIT 1 — NORMATIVE GOVERNANCE
+
+M	docs/governance/OWNER_DECISION_REGISTER.md
+A	docs/governance/R0_7E_ACTION_AND_ARTIFACT_PINNING_POLICY.md
+A	docs/governance/R0_7E_CI_LANE_POLICY.md
+A	docs/governance/R0_7E_COMPLIANCE_VALIDATION_POLICY.md
+A	docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md
+A	docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md
+A	docs/governance/R0_7E_SCOPE_AND_AUTHORITY.md
+
+existing_normative_file_modified_count=1
+new_normative_file_count=6
+
+COMMIT 2 — EVIDENCE ONLY
+
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/README.md
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/authority-source.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/changed-files.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/commit-chain.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/cross-document-validation.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/deferred-authority-verification.md
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/deployment-verification.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/git-status-after.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/git-status-before.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/identity.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/non-claims-verification.md
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/normative-document-inventory.md
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/owner-decision-mapping.md
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/scope-verification.txt
+A	docs/evidence/governance/2026-08-05T13-31-35-r0-7e-np1-normative-promotion/summary.json
+
+evidence_file_count=15
+unauthorized_changed_file_count=0

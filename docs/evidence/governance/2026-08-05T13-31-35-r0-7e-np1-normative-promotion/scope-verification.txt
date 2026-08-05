@@ -1,0 +1,16 @@
+existing_normative_file_modified_count=1
+new_normative_file_count=6
+evidence_file_count=15
+unauthorized_governance_change_count=0
+workflow_changed_file_count=0
+production_source_changed_file_count=0
+package_manifest_changed_file_count=0
+lockfile_changed_file_count=0
+database_file_changed_count=0
+deployment_file_changed_count=0
+governance_hierarchy_changed=false
+tech_debt_file_created=false
+historical_planning_package_changed_file_count=0
+rejected_branch_changed=false
+unauthorized_changed_file_count=0
+scope_verification=PASS
