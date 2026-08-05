@@ -10,6 +10,9 @@ Status: PROPOSED NORMATIVE REPOSITORY PROMOTION — EFFECTIVE ONLY AFTER REVIEWE
 This proposed policy has no normative effect in the authoritative integration
 branch until independent review and a separately authorized true merge.
 
+The NP2 author self-review NO-GO does not satisfy independent review. A genuinely
+separate reviewer execution identity remains required after NP1D correction.
+
 ## Deferred and open authority
 
 ### R0-7D
@@ -28,6 +31,19 @@ adopted, approved, resolved, or implementation-ready. Local-only reconstruction
 is prohibited. A database-dependent implementation result must remain
 `BLOCKED_MISSING_TRACKED_AUTHORITY`.
 
+### Frontend authority
+
+`frontend-app` remains the transitional operational frontend bridge. Full
+authenticated application integration remains a tracked baseline gap, and a
+deterministic frontend clean-clone build is not verified. R0-7D closure remains
+the required authority gate.
+
+### Backend authentication authority
+
+Tracked `apps/api` remains incomplete and is not confirmed buildable. Backend
+JWT authority is contract-only, not implementation-proven authority. No local
+`backend/**` content may be used to close this gap.
+
 ### F4 validation
 
 F4 validation remains a separate focused prerequisite requiring its own source
@@ -40,6 +56,9 @@ Absent `docs/governance/TECH_DEBT.md` remains a separate
 governance-restoration gap. No local-only or synthesized substitute is
 authority. This policy does not create that file, authorize dependent
 validation, or close TD-006.
+
+Local-only content cannot close any tracked governance, architecture,
+implementation, dependency, test, or evidence gap.
 
 ## Mandatory non-claims
 
@@ -54,6 +73,14 @@ validation, or close TD-006.
 `ISO_CONFORMITY = NOT_CLAIMED`
 
 `PRODUCTION_READINESS = NOT_CLAIMED`
+
+`FRONTEND_CLEAN_CLONE_BUILD = NOT_VERIFIED`
+
+`BACKEND_JWT_AUTHORITY = CONTRACT_ONLY`
+
+`NP2_AUTHOR_SELF_REVIEW = NO_GO`
+
+`INDEPENDENT_REVIEW_REQUIRED = true`
 
 No policy or evidence package claims healthy repository-wide CI, a successful
 clean-clone build, implementation compliance, certification, accreditation,

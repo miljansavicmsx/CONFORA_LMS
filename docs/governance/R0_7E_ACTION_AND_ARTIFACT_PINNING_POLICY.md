@@ -38,3 +38,7 @@ dependency, image, download, manifest, lockfile, or deployment change.
 Any exception requires a separate, time-bounded owner decision naming the exact
 artifact, rationale, compensating controls, accountable owner, expiry, review,
 and rollback.
+
+`WORKFLOW_MODIFICATION_AUTHORIZATION = false`
+
+`IMPLEMENTATION_AUTHORIZATION = false`

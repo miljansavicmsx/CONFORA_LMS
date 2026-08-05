@@ -13,9 +13,10 @@ implementation, conformity assessment, certification, or accreditation claim.
 
 ## Governance-policy validation
 
-`governance-policy-validation` may validate approved tracked policy structure,
-required references, authority metadata, evidence schemas, prohibited claims,
-and workflow-governance rules.
+`governance-policy-validation` may validate approved tracked governance
+document structure, architecture declarations, evidence structure,
+prohibited-claim controls, reference integrity, governance consistency,
+authority metadata, and workflow-governance rules.
 
 Permitted outcomes are:
 
@@ -57,6 +58,18 @@ Every result must record the exact commit, approved scope, tracked-input
 manifest, validator identity, commands, logs, negative tests, exclusions, and
 residual limitations. Copyrighted standards content remains controlled by
 `STANDARDS_REFERENCE_POLICY.md`.
+
+The following unqualified claims are prohibited:
+
+- `ISO compliant`;
+- `ISO certified`;
+- `compliance passed`;
+- document-only implementation success.
+
+Unauthorized standards-text reproduction is prohibited. Clause identifiers and
+original CONFORA summaries must remain within licensed and copyright-safe use.
+
+`IMPLEMENTATION_AUTHORIZATION = false`
 
 `ISO_CONFORMITY = NOT_CLAIMED`
 

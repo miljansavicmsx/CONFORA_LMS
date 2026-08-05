@@ -10,44 +10,54 @@ Status: PROPOSED NORMATIVE REPOSITORY PROMOTION — EFFECTIVE ONLY AFTER REVIEWE
 This proposed policy becomes effective only after independent review and a
 separately authorized true merge. It does not authorize any work package.
 
+The NP2 author self-review NO-GO is not independent review. A genuinely separate
+reviewer execution identity must review the corrected NP1D head.
+
 ## Separate authorization gates
 
-No work package is implicitly authorized by planning, policy adoption, evidence,
-independent review, predecessor completion, CI state, or merge readiness. Every
-future package requires a separate owner authorization naming:
+No work package is implicitly authorized by planning, owner decisions, policy
+adoption, evidence, independent review, predecessor completion, CI state, or
+merge readiness. Every future package requires a separate owner authorization
+naming:
 
 - exact base, branch, and path allowlist;
 - prohibited paths and scope-expansion stop conditions;
+- explicit entry criteria and predecessor state;
 - commands, tests, and clean-tree requirements;
 - commit, push, and evidence boundaries;
 - required reviewers and segregation-of-duties controls;
 - merge-readiness, merge, repository-setting, and deployment states;
 - rollback method and residual limitations.
 
-Planning, implementation, evidence, independent review, merge readiness, merge
-authorization, merge execution, post-merge verification, and deployment
-authorization remain separate gates.
+Planning, owner decisions, normative promotion, implementation, evidence,
+independent review, merge readiness, merge authorization, merge execution,
+post-merge verification, and deployment authorization remain separate gates.
 
 ## Required predecessor and package boundaries
 
-1. R0-7D remains open and blocks all R0-7E implementation. Its closure must be
+1. Normative promotion is followed by genuinely independent review. The
+   proposed documents require reviewed merge before they become effective.
+2. R0-7D remains open and blocks all R0-7E implementation. Its closure must be
    forward-only, separately authorized, independently reviewed, and merged.
-2. OD-R07E-3 remains deferred. Database-dependent implementation remains blocked
+3. OD-R07E-3 remains deferred. Database-dependent implementation remains blocked
    until approved `packages/database/**` source authority and a separate owner
-   recovery decision exist.
-3. Quality correction, six-lane workflow implementation, and compliance
-   validation separation must be distinct, exactly scoped packages.
-4. F4 validation restoration is a separate focused prerequisite and cannot be
+   recovery decision exist, or remains an explicit blocked state.
+4. `R0-7E-Q1` is a separate tracked-quality correction package.
+5. `R0-7E-Q2` is a separate six-lane orchestration package.
+6. `R0-7E-C1` is a separate policy-versus-implementation validation package.
+7. F4 validation restoration is a separate focused prerequisite and cannot be
    silently included in a quality or compliance package.
-5. `docs/governance/TECH_DEBT.md` restoration is a separate governance task;
+8. `docs/governance/TECH_DEBT.md` restoration is a separate governance task;
    it cannot be synthesized and TD-006 remains open.
-6. Closure evidence follows operational work and cannot correct operational
+9. Closure evidence follows operational work and cannot correct operational
    defects.
-7. Independent review must inspect exact published history before any owner
+10. Independent review must inspect exact published history before any owner
    merge-readiness decision.
-8. Merge requires a separate exact authorization. Deployment remains a later,
+11. Owner merge readiness is separate from explicit merge authorization. Merge
+   requires a separate exact authorization. Deployment remains a later,
    separately governed decision.
-9. R0-7F is not started or authorized by R0-7E planning or policy promotion.
+12. R0-7F may begin only after R0-7E exit and a separate plan, review, and owner
+   authorization.
 
 ## Stop conditions
 
@@ -64,3 +74,7 @@ secrets, personal data, or unrelated content.
 `MERGE_AUTHORIZATION = false`
 
 `DEPLOYMENT_AUTHORIZATION = false`
+
+`NP2_AUTHOR_SELF_REVIEW = NO_GO`
+
+`INDEPENDENT_REVIEW_REQUIRED = true`

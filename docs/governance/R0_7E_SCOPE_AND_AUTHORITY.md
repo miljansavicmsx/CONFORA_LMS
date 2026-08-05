@@ -11,6 +11,9 @@ This document is proposed policy only. It has no normative effect in the
 authoritative integration branch until it passes independent review and is
 integrated through a separately authorized true merge commit.
 
+The NP2 result is an accepted author self-review NO-GO, not independent review.
+A genuinely separate reviewer execution identity must review the NP1D head.
+
 ## Bounded phase
 
 R0-7E is a bounded CI quality and honest-compliance governance phase. Its
@@ -26,6 +29,9 @@ governed scope is:
 
 Planning establishes no implementation authority. Documentation is not proof of
 runtime behavior. Evidence packages record events but do not create policy.
+Every implementation package requires separate exact owner authorization.
+
+`R0_7D = OPEN_BLOCKING_R0_7E_IMPLEMENTATION`
 
 ## Authority boundary
 
@@ -39,11 +45,14 @@ and documentation claims cannot satisfy missing implementation authority.
 
 ## Explicit exclusions
 
-This policy does not authorize application source, package source, workflow,
-manifest, lockfile, database, accessibility, F4, deployment, repository-setting,
-or technical-debt-register changes. It does not close R0-7D, resolve
-`packages/database/**`, create `docs/governance/TECH_DEBT.md`, close TD-006,
-start R0-7F, open a pull request, authorize merge, or authorize deployment.
+This policy does not authorize product-feature work, authentication restoration,
+backend reconstruction, database reconstruction, appeal functionality,
+application source, package source, workflow, manifest, lockfile, accessibility,
+F4, deployment, repository-setting, or technical-debt-register changes. It does
+not close R0-7D, resolve `packages/database/**`, create
+`docs/governance/TECH_DEBT.md`, close TD-006, start R0-7F, open a pull request,
+claim ISO conformity or production readiness, authorize merge, or authorize
+deployment.
 
 ## Gate separation
 
@@ -59,3 +68,11 @@ implies completion or authorization of another.
 `MERGE_AUTHORIZATION = false`
 
 `DEPLOYMENT_AUTHORIZATION = false`
+
+`ISO_CONFORMITY = NOT_CLAIMED`
+
+`PRODUCTION_READINESS = NOT_CLAIMED`
+
+`NP2_AUTHOR_SELF_REVIEW = NO_GO`
+
+`INDEPENDENT_REVIEW_REQUIRED = true`
