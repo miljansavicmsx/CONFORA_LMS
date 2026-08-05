@@ -1,0 +1,13 @@
+ci_lane_count=6
+authority_attribute_count=6
+inclusions_attribute_count=6
+exclusions_attribute_count=6
+permitted_results_attribute_count=6
+blocked_state_semantics_attribute_count=6
+evidence_expectations_attribute_count=6
+prohibited_claims_attribute_count=6
+exit_conditions_attribute_count=6
+owner_decision_dependency_attribute_count=6
+false_green_semantic_count=0
+local_only_lane_authority_count=0
+ci_lane_validation=PASS_CORRECTED

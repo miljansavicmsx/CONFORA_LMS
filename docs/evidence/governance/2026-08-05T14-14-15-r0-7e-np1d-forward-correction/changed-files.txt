@@ -1,0 +1,34 @@
+NORMATIVE CORRECTION COMMIT
+
+M	docs/governance/OWNER_DECISION_REGISTER.md
+M	docs/governance/R0_7E_ACTION_AND_ARTIFACT_PINNING_POLICY.md
+M	docs/governance/R0_7E_CI_LANE_POLICY.md
+M	docs/governance/R0_7E_COMPLIANCE_VALIDATION_POLICY.md
+M	docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md
+M	docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md
+M	docs/governance/R0_7E_SCOPE_AND_AUTHORITY.md
+
+corrected_normative_file_count=7
+unauthorized_normative_file_count=0
+
+EVIDENCE CORRECTION COMMIT
+
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/README.md
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/authorization.md
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/changed-files.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/ci-lane-validation.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/commit-chain.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/cross-document-validation.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/deployment-verification.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/finding-corrections.md
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/git-status-after.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/git-status-before.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/identity.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/independent-review-boundary.md
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/policy-validation.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/register-validation.txt
+A	docs/evidence/governance/2026-08-05T14-14-15-r0-7e-np1d-forward-correction/summary.json
+
+evidence_file_count=15
+historical_file_modified_count=0
+unauthorized_changed_file_count=0
