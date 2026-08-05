@@ -8,7 +8,10 @@
 
 This register records decisions that are **approved or formally recorded** as of this task. Provisional recommendations are **not** recorded as approved unless they were adopted as binding decisions. Open questions are marked **OPEN**.
 
-Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` / `MERGED_WITH_CONDITIONS` / `DIRECTIONAL`.
+Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` /
+`MERGED_WITH_CONDITIONS` / `DIRECTIONAL` /
+`ADOPTED_WITH_RECORDED_LIMITATIONS` /
+`DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY`.
 
 ---
 
@@ -335,6 +338,132 @@ Approved for this R0-1 governance promotion sequence.
 | Dependencies | — |
 | Exit criteria | Roles documented in Change Control |
 | Supersession | — |
+
+---
+
+## Part D — R0-7E governance and planning decisions (OD-R07E-1 … OD-R07E-8)
+
+**Status:** PROPOSED NORMATIVE REPOSITORY PROMOTION — EFFECTIVE ONLY AFTER REVIEWED MERGE
+
+The owner decisions below were recorded on 2026-08-05 after independent review
+of the corrected planning authority at
+`5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`. They do not authorize
+implementation, workflow changes, repository-setting changes, merge, or
+deployment. This section has no normative effect until it is integrated by a
+separately reviewed and authorized merge into the authoritative integration
+branch.
+
+### OD-R07E-1 — Bounded R0-7E definition
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Adopt the bounded R0-7E CI-quality and honest-compliance policy boundary |
+| Owner | Repository Owner |
+| Rationale | Establish a reviewable problem boundary without converting planning evidence into implementation authority |
+| Scope | Policy definition and planning only; every operational package requires separate exact authorization |
+| Residual risk | The adopted boundary does not repair any CI lane or prove any implementation control |
+| Dependencies | R0-7D prerequisite closure; OD-R07E-2 through OD-R07E-8 as applicable |
+| Exit criteria | Separately authorized, implemented, independently reviewed, and merged work packages satisfy their bounded criteria |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-1 in the corrected planning package |
+
+### OD-R07E-2 — Six-lane CI model
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Adopt all six named CI lanes and their explicit exclusion and blocked-state semantics |
+| Owner | Repository Owner |
+| Rationale | Keep missing tracked authority visible and prevent unavailable targets from producing false-green results |
+| Scope | Reporting boundaries and result semantics only; no workflow or validator implementation is authorized |
+| Residual risk | Lane commands and clean-clone execution remain unimplemented and unverified |
+| Dependencies | OD-R07E-1, OD-R07E-4, OD-R07E-5, OD-R07E-8 |
+| Exit criteria | Separately authorized workflow and validator packages implement all six lanes with deterministic evidence |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-2 in the corrected planning package |
+
+### OD-R07E-3 — Database disposition
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY |
+| Approved option | None; the database disposition is not adopted |
+| Owner | Repository Owner |
+| Rationale | No approved tracked source authority currently supports recovery or reconstruction of `packages/database/**` |
+| Scope | Database-dependent implementation and implementation-compliance results remain blocked; local-only source is prohibited |
+| Residual risk | Tenant, audit, migration, and database-dependent controls cannot be implementation-proven |
+| Dependencies | A separately approved database source authority and owner decision |
+| Exit criteria | Owner records an approved source, exact recovery boundary, reviewers, tests, evidence, and successor authorization |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-3 in the corrected planning package; no disposition option is adopted |
+
+### OD-R07E-4 — Forward-only R0-7D prerequisite closure
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Keep a fresh forward-only R0-7D closure as a prerequisite to R0-7E implementation |
+| Owner | Repository Owner |
+| Rationale | Deterministic frontend install, build, preview, and accessibility authority must precede dependent CI work |
+| Scope | Prerequisite policy only; no R0-7D path or implementation is authorized by this decision |
+| Residual risk | All R0-7E implementation remains blocked while R0-7D is open |
+| Dependencies | Separate exact R0-7D authorization, implementation, independent review, and merge |
+| Exit criteria | Approved R0-7D closure is verified and merged into the authoritative integration branch |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-4 in the corrected planning package |
+
+### OD-R07E-5 — Compliance lane names and claims
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Adopt `governance-policy-validation` and `implementation-compliance-validation` with qualified result states |
+| Owner | Repository Owner |
+| Rationale | Prevent policy checks from being represented as implementation proof or ISO conformity |
+| Scope | Naming, state semantics, evidence boundaries, and prohibited claims only |
+| Residual risk | No validator, control mapping, or implementation-compliance result is yet proven |
+| Dependencies | OD-R07E-1, OD-R07E-2, OD-R07E-3 where a tested control depends on database authority, OD-R07E-8 |
+| Exit criteria | Separately authorized validators deterministically emit only qualified outcomes and pass independent review |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-5 in the corrected planning package |
+
+### OD-R07E-6 — Separate F4 prerequisite
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Keep F4 validator restoration as a separate prerequisite package |
+| Owner | Repository Owner |
+| Rationale | Prevent F4 restoration from silently expanding quality or compliance work packages |
+| Scope | Sequencing and separation only; no F4 source, helper, workflow, or path change is authorized |
+| Residual risk | F4 validation remains unavailable until separately authorized, implemented, reviewed, and merged |
+| Dependencies | Approved frontend authority from R0-7D and a separate exact F4 authorization |
+| Exit criteria | A tracked reproducible F4 validator is independently verified and merged |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-6 in the corrected planning package |
+
+### OD-R07E-7 — Separate technical-debt authority restoration
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Restore canonical technical-debt authority only through a separate source-reconciliation package |
+| Owner | Repository Owner |
+| Rationale | Avoid fabricating debt history or using an inferred local source |
+| Scope | Separate-restoration policy only; this decision does not create `docs/governance/TECH_DEBT.md` or close TD-006 |
+| Residual risk | Validators that require canonical technical-debt authority remain blocked |
+| Dependencies | Approved source reconciliation and separate exact authorization |
+| Exit criteria | Canonical debt authority is independently reviewed and merged without closing TD-006 unless separately authorized |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-7 in the corrected planning package |
+
+### OD-R07E-8 — Immutable action and artifact pinning
+| Field | Value |
+|-------|-------|
+| Date | 2026-08-05 |
+| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
+| Approved option | Make immutable pinning and deterministic lock authority mandatory with a bounded exception process |
+| Owner | Repository Owner |
+| Rationale | Establish auditable supply-chain provenance, fail-closed verification, and deterministic rollback |
+| Scope | Requirements apply when a separately authorized package touches a covered artifact class; no artifact change is authorized here |
+| Residual risk | Existing artifacts are not asserted compliant and no workflow health claim follows |
+| Dependencies | Package-specific owner authorization and independent supply-chain review |
+| Exit criteria | Each touched artifact is pinned, verified, evidenced, and rollback-tested or covered by an approved time-bounded exception |
+| Supersession | Supersedes only the unresolved recommendation state for OD-R07E-8 in the corrected planning package |
 
 ---
 

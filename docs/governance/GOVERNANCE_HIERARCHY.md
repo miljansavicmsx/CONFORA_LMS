@@ -39,6 +39,21 @@ Controls architecture direction, security, ISO alignment, GDPR retention, AI gov
 | Change Control | [CHANGE_CONTROL.md](./CHANGE_CONTROL.md) |
 | Standards Reference Policy | [STANDARDS_REFERENCE_POLICY.md](./STANDARDS_REFERENCE_POLICY.md) |
 
+#### Proposed R0-7E Level 3 policy promotion
+
+**Status:** PROPOSED NORMATIVE REPOSITORY PROMOTION — EFFECTIVE ONLY AFTER REVIEWED MERGE
+
+The following companion policies have no normative effect until a separately
+reviewed and authorized merge integrates them into the authoritative
+integration branch. They remain subordinate to Levels 1 and 2.
+
+| Document | Path |
+|----------|------|
+| R0-7E CI Lane Policy | [R0_7E_CI_LANE_POLICY.md](./R0_7E_CI_LANE_POLICY.md) |
+| R0-7E Compliance Validation Policy | [R0_7E_COMPLIANCE_VALIDATION_POLICY.md](./R0_7E_COMPLIANCE_VALIDATION_POLICY.md) |
+| R0-7E Action and Artifact Pinning Policy | [R0_7E_ACTION_ARTIFACT_PINNING_POLICY.md](./R0_7E_ACTION_ARTIFACT_PINNING_POLICY.md) |
+| R0-7E Work-Package Governance | [R0_7E_WORK_PACKAGE_GOVERNANCE.md](./R0_7E_WORK_PACKAGE_GOVERNANCE.md) |
+
 ### Level 4 — Accepted ADRs
 
 Accepted Architecture Decision Records that do **not** conflict with higher authority. ADRs are not yet tracked in the authoritative corpus; they are scheduled for promotion in **R0-1B2** under `docs/architecture/adrs/`. Until then, ADR content is referenced but ADR-001 is known to be contradicted (see Level 2 §0.2 and the Frontend Canonicalization Gap Note below).
