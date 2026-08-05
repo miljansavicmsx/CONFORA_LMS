@@ -1,0 +1,17 @@
+normative_commit=6d02324411fccdf584dad5be85ae80cb7f2174a0
+normative_parent=5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be
+normative_parent_count=1
+subject=docs(governance): promote adopted R0-7E policy
+normative_changed_file_count=6
+normative_added_file_count=4
+normative_modified_file_count=2
+normative_deleted_file_count=0
+normative_non_governance_file_count=0
+required_status_marking_count=6
+policy_document_count=4
+adopted_with_recorded_limitations_count=7
+deferred_owner_decision_count=1
+od_r07e_3_adopted=false
+od_r07e_3_status=DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY
+diff_check=PASS
+unauthorized_changed_file_count=0

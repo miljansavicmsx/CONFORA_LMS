@@ -1,0 +1,11 @@
+Command:
+git status --porcelain=v1 --untracked-files=all
+
+Captured after normative commit
+at 2026-08-05T12:35:09+02:00:
+
+(clean)
+
+head=6d02324411fccdf584dad5be85ae80cb7f2174a0
+tracked_change_count=0
+untracked_path_count=0

@@ -1,0 +1,28 @@
+NORMATIVE COMMIT 6d02324411fccdf584dad5be85ae80cb7f2174a0
+
+M	docs/governance/GOVERNANCE_HIERARCHY.md
+M	docs/governance/OWNER_DECISION_REGISTER.md
+A	docs/governance/R0_7E_ACTION_ARTIFACT_PINNING_POLICY.md
+A	docs/governance/R0_7E_CI_LANE_POLICY.md
+A	docs/governance/R0_7E_COMPLIANCE_VALIDATION_POLICY.md
+A	docs/governance/R0_7E_WORK_PACKAGE_GOVERNANCE.md
+
+normative_changed_file_count=6
+normative_non_governance_file_count=0
+unauthorized_changed_file_count=0
+
+EVIDENCE COMMIT SELF
+
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/README.md
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/authorization.md
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/changed-files.txt
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/git-status-before.txt
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/identity.txt
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/non-claims-and-stop-conditions.md
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/normative-commit-verification.txt
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/owner-decision-disposition.md
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/summary.json
+A	docs/evidence/governance/2026-08-05T12-35-09-r0-7e-normative-promotion/validation-results.md
+
+evidence_file_count=10
+evidence_existing_file_modification_count=0
