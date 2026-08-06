@@ -10,8 +10,10 @@ Status: PROPOSED NORMATIVE REPOSITORY PROMOTION — EFFECTIVE ONLY AFTER REVIEWE
 This proposed policy has no normative effect in the authoritative integration
 branch until independent review and a separately authorized true merge.
 
-The NP2 author self-review NO-GO does not satisfy independent review. A genuinely
-separate reviewer execution identity remains required after NP1D correction.
+The NP2 author self-review NO-GO did not satisfy independent review. The later
+`R0_7E_NP2_R4_INDEPENDENT_REVIEW = NO_GO` established reviewer independence and
+identified four blocking normative finding groups. After NP1G correction, a
+genuinely independent re-review of the exact published head remains required.
 
 ## Deferred and open authority
 
@@ -31,12 +33,18 @@ adopted, approved, resolved, or implementation-ready. Local-only reconstruction
 is prohibited. A database-dependent implementation result must remain
 `BLOCKED_MISSING_TRACKED_AUTHORITY`.
 
+`PACKAGES_DATABASE_AUTHORITY = ABSENT`
+
+`DATABASE_IMPLEMENTATION_COMPLIANCE = BLOCKED_MISSING_TRACKED_AUTHORITY`
+
 ### Frontend authority
 
 `frontend-app` remains the transitional operational frontend bridge. Full
 authenticated application integration remains a tracked baseline gap, and a
 deterministic frontend clean-clone build is not verified. R0-7D closure remains
 the required authority gate.
+
+`FRONTEND_AUTHORITY = BASELINE_TRACKED_GAP`
 
 ### Backend authentication authority
 
@@ -50,6 +58,8 @@ F4 validation remains a separate focused prerequisite requiring its own source
 authority, exact path allowlist, implementation authorization, tests, evidence,
 independent review, and merge authorization.
 
+`F4_VALIDATOR = SEPARATE_FOCUSED_PREREQUISITE`
+
 ### Technical-debt register
 
 Absent `docs/governance/TECH_DEBT.md` remains a separate
@@ -57,8 +67,12 @@ governance-restoration gap. No local-only or synthesized substitute is
 authority. This policy does not create that file, authorize dependent
 validation, or close TD-006.
 
+`TECH_DEBT_REGISTER = BASELINE_GOVERNANCE_GAP`
+
 Local-only content cannot close any tracked governance, architecture,
 implementation, dependency, test, or evidence gap.
+
+`LOCAL_ONLY_CONTENT_CANNOT_CLOSE_TRACKED_GAPS = true`
 
 ## Mandatory non-claims
 
@@ -80,7 +94,9 @@ implementation, dependency, test, or evidence gap.
 
 `NP2_AUTHOR_SELF_REVIEW = NO_GO`
 
-`INDEPENDENT_REVIEW_REQUIRED = true`
+`R0_7E_NP2_R4_INDEPENDENT_REVIEW = NO_GO`
+
+`INDEPENDENT_REREVIEW_REQUIRED = true`
 
 No policy or evidence package claims healthy repository-wide CI, a successful
 clean-clone build, implementation compliance, certification, accreditation,

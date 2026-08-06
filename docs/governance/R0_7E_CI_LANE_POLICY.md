@@ -19,6 +19,8 @@ results.
 ### 1. Canonical tracked workspace
 
 - Identifier: `canonical-tracked-workspace`.
+- Purpose: execute deterministic lint, typecheck, and unit-test validation for
+  the explicit set of complete packages in the tracked canonical workspace.
 - Authority: root workspace manifests, lock authority, and tracked packages with
   complete executable inputs.
 - Inclusions: root manifests and an explicit allowlist of complete tracked
@@ -36,10 +38,14 @@ results.
 - Exit conditions: deterministic clean-clone execution for every declared
   package with no hidden filter.
 - Owner-decision dependency: OD-R07E-1, OD-R07E-2, and OD-R07E-8.
+- Consuming work package: `R0-7E-Q1` for authorized tracked-quality correction
+  and `R0-7E-Q2` for separately authorized lane orchestration.
 
 ### 2. Transitional frontend
 
 - Identifier: `transitional-frontend-app`.
+- Purpose: report focused and full validation states for the tracked
+  transitional `frontend-app` bridge without claiming strategic canonicality.
 - Authority: tracked `frontend-app/**` plus explicitly approved tracked
   dependencies.
 - Inclusions: frontend manifest, source, configuration, tests, and approved
@@ -57,10 +63,14 @@ results.
 - Exit conditions: approved R0-7D closure establishes deterministic install,
   build, preview, tests, and accessibility execution.
 - Owner-decision dependency: OD-R07E-2 and OD-R07E-4.
+- Consuming work package: `R0-7E-Q2`, only after separately authorized and
+  reviewed `R0-7D-CLOSURE` satisfies the stated frontend prerequisites.
 
 ### 3. Tracked legacy
 
 - Identifier: `legacy-tracked`.
+- Purpose: report only owner-approved tracked legacy scope without promoting
+  legacy source to canonical authority or reconstructing local-only content.
 - Authority: tracked Git legacy paths explicitly approved for a future
   frozen-legacy task.
 - Inclusions: only owner-approved legacy source, configuration, and tests that
@@ -78,10 +88,14 @@ results.
 - Exit conditions: separately approved frozen-legacy package with tracked
   authority and independent review.
 - Owner-decision dependency: a separate OQ-3 and frozen-legacy owner decision.
+- Consuming work package: none authorized; a future consuming frozen-legacy
+  package must be separately named and approved by the owner.
 
 ### 4. Missing authority
 
 - Identifier: `missing-authority`.
+- Purpose: preserve explicit blocked or failed results for required authority
+  that is absent or incomplete in the tracked clean-clone baseline.
 - Authority: tracked Git absence or incompleteness proof and the governing
   tracked references.
 - Inclusions: absent `packages/database/**`, accessibility tooling, F4
@@ -100,10 +114,14 @@ results.
 - Exit conditions: each dependency is separately recovered and merged, or the
   owner explicitly retains its blocked state.
 - Owner-decision dependency: OD-R07E-2, OD-R07E-3, OD-R07E-6, and OD-R07E-7.
+- Consuming work package: `R0-7E-Q2` for visible lane orchestration; recovery of
+  any named authority requires its own separately authorized work package.
 
 ### 5. Governance-policy validation
 
 - Identifier: `governance-policy-validation`.
+- Purpose: validate approved policy structure, references, declarations, and
+  claim controls without implying implementation conformity.
 - Authority: approved tracked governance and architecture documents at their
   recorded hierarchy levels.
 - Inclusions: approved policy allowlist, architecture declarations, reference
@@ -121,10 +139,14 @@ results.
 - Exit conditions: deterministic clean-clone validation with policy-only result
   labels and independent review.
 - Owner-decision dependency: OD-R07E-1, OD-R07E-5, and OD-R07E-8.
+- Consuming work package: `R0-7E-C1` for separately authorized policy-scope
+  validation.
 
 ### 6. Implementation-compliance validation
 
 - Identifier: `implementation-compliance-validation`.
+- Purpose: validate only an owner-approved implementation control whose full
+  source, dependencies, tests, and evidence exist in tracked authority.
 - Authority: complete tracked implementation, dependencies, executable tests,
   approved control mapping, and exact-commit evidence.
 - Inclusions: only the exact implementation and tests required by an
@@ -144,6 +166,8 @@ results.
   independently prove only the named control.
 - Owner-decision dependency: OD-R07E-1, OD-R07E-3, OD-R07E-5, and applicable
   architecture decisions.
+- Consuming work package: `R0-7E-C1`, limited to separately authorized controls
+  with complete tracked implementation authority.
 
 ## Mandatory semantics
 

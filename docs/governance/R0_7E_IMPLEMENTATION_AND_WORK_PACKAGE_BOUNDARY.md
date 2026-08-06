@@ -10,8 +10,10 @@ Status: PROPOSED NORMATIVE REPOSITORY PROMOTION — EFFECTIVE ONLY AFTER REVIEWE
 This proposed policy becomes effective only after independent review and a
 separately authorized true merge. It does not authorize any work package.
 
-The NP2 author self-review NO-GO is not independent review. A genuinely separate
-reviewer execution identity must review the corrected NP1D head.
+The NP2 author self-review NO-GO was not independent review. The later
+`R0_7E_NP2_R4_INDEPENDENT_REVIEW = NO_GO` established reviewer independence and
+identified four blocking normative finding groups. The exact published NP1G
+head requires a genuinely independent re-review.
 
 ## Separate authorization gates
 
@@ -20,44 +22,52 @@ adoption, evidence, independent review, predecessor completion, CI state, or
 merge readiness. Every future package requires a separate owner authorization
 naming:
 
-- exact base, branch, and path allowlist;
+- the applicable owner-decision gate;
+- exact base, branch, entry criteria, predecessor state, and path allowlist;
 - prohibited paths and scope-expansion stop conditions;
-- explicit entry criteria and predecessor state;
 - commands, tests, and clean-tree requirements;
 - commit, push, and evidence boundaries;
-- required reviewers and segregation-of-duties controls;
-- merge-readiness, merge, repository-setting, and deployment states;
-- rollback method and residual limitations.
+- rollback method and residual limitations;
+- a genuinely independent reviewer and segregation-of-duties controls;
+- merge-readiness verification;
+- separate explicit merge authorization;
+- deployment authorization state and repository-setting authorization state.
 
 Planning, owner decisions, normative promotion, implementation, evidence,
 independent review, merge readiness, merge authorization, merge execution,
 post-merge verification, and deployment authorization remain separate gates.
 
+`NO_IMPLEMENTATION_PACKAGE_IS_AUTHORIZED_BY_THIS_POLICY_ALONE`
+
 ## Required predecessor and package boundaries
 
-1. Normative promotion is followed by genuinely independent review. The
-   proposed documents require reviewed merge before they become effective.
-2. R0-7D remains open and blocks all R0-7E implementation. Its closure must be
-   forward-only, separately authorized, independently reviewed, and merged.
-3. OD-R07E-3 remains deferred. Database-dependent implementation remains blocked
-   until approved `packages/database/**` source authority and a separate owner
-   recovery decision exist, or remains an explicit blocked state.
-4. `R0-7E-Q1` is a separate tracked-quality correction package.
-5. `R0-7E-Q2` is a separate six-lane orchestration package.
-6. `R0-7E-C1` is a separate policy-versus-implementation validation package.
-7. F4 validation restoration is a separate focused prerequisite and cannot be
-   silently included in a quality or compliance package.
-8. `docs/governance/TECH_DEBT.md` restoration is a separate governance task;
-   it cannot be synthesized and TD-006 remains open.
-9. Closure evidence follows operational work and cannot correct operational
-   defects.
-10. Independent review must inspect exact published history before any owner
-   merge-readiness decision.
-11. Owner merge readiness is separate from explicit merge authorization. Merge
-   requires a separate exact authorization. Deployment remains a later,
-   separately governed decision.
-12. R0-7F may begin only after R0-7E exit and a separate plan, review, and owner
-   authorization.
+1. The normative promotion package is prepared without implementation effect.
+2. A genuinely independent read-only review inspects its exact published head.
+3. A separately authorized reviewed true merge integrates the normative
+   governance before it becomes effective.
+4. Separately authorized `R0-7D-CLOSURE` is completed, independently reviewed,
+   and merged; R0-7D remains open and blocks all R0-7E implementation until then.
+5. OD-R07E-3 receives an approved database disposition, or every
+   database-dependent result remains explicitly
+   `BLOCKED_MISSING_TRACKED_AUTHORITY`.
+6. `R0-7E-Q1` is a separately authorized tracked-quality correction package.
+7. `R0-7E-Q2` is a separately authorized six-lane orchestration package.
+8. `R0-7E-C1` is a separately authorized policy-versus-implementation
+   validation package.
+9. F4 validation restoration is a separately authorized focused prerequisite
+   and cannot be silently included in a quality or compliance package.
+10. `R0-7E-E1` is a separate closure-evidence package that follows operational
+    work and cannot correct operational defects.
+11. `R0-7E-R1` is a genuinely independent read-only review of exact published
+    implementation and evidence history.
+12. The owner performs a separate merge-readiness gate after R0-7E-R1.
+13. Merge requires separate explicit owner authorization; deployment remains a
+    later, separately governed authorization state.
+14. R0-7F may begin only after R0-7E exit and a separate plan, review, and owner
+    authorization.
+
+Restoration of `docs/governance/TECH_DEBT.md` remains a separate governance
+task. It cannot be synthesized inside these packages, and TD-006 remains open.
 
 ## Stop conditions
 
@@ -77,4 +87,6 @@ secrets, personal data, or unrelated content.
 
 `NP2_AUTHOR_SELF_REVIEW = NO_GO`
 
-`INDEPENDENT_REVIEW_REQUIRED = true`
+`R0_7E_NP2_R4_INDEPENDENT_REVIEW = NO_GO`
+
+`INDEPENDENT_REREVIEW_REQUIRED = true`
