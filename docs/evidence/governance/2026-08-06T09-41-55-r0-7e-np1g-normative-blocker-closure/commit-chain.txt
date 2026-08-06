@@ -1,0 +1,10 @@
+authorized_base=d2f27a1173e6353c2eae35fb67f810f2fed245c6
+normative_correction_commit=dedc9c45f4c0ae1a8d6c2cb18ad026f998be10b4
+normative_correction_parent=d2f27a1173e6353c2eae35fb67f810f2fed245c6
+normative_correction_subject=docs(governance): close R0-7E NP2-R4 blockers
+evidence_commit=SELF
+evidence_expected_parent=dedc9c45f4c0ae1a8d6c2cb18ad026f998be10b4
+evidence_expected_subject=docs(repo): record R0-7E NP1G correction evidence
+expected_new_commit_count=2
+history_rewrite_detected=false
+forward_only=true
