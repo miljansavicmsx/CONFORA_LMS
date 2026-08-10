@@ -1,7 +1,7 @@
 import { SkipToMainLink } from "@confora/ui";
 import { A11Y_NS } from "@confora/i18n";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, BookOpenCheck, ClipboardList, LayoutDashboard, Medal } from "lucide-react";
+import { ClipboardList, LayoutDashboard } from "lucide-react";
 import { useSyncExternalStore, type JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, useLocation } from "react-router";
@@ -52,10 +52,7 @@ export type DashboardLayoutProps = {
 
 const MOBILE_NAV = [
   { to: "/dashboard", label: "Dashboard", short: "Dom", icon: LayoutDashboard, end: true },
-  { to: "/dashboard/courses", label: "Kursevi", short: "Kur.", icon: BookOpen, end: true },
-  { to: "/dashboard/exams", label: "Ispiti", short: "Isp.", icon: BookOpenCheck, end: false },
   { to: "/dashboard/certification/applications", label: "Prijave", short: "Prij.", icon: ClipboardList, end: false },
-  { to: "/dashboard/certification/status", label: "Cert.", short: "Cer.", icon: Medal, end: false },
 ] as const;
 
 function useMediaMinLg(): boolean {
