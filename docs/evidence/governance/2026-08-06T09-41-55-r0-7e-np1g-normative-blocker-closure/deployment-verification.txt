@@ -1,0 +1,12 @@
+observation_point=authorized_base_before_np1g_push
+pull_request_count=0
+manual_workflow_rerun_count=0
+branch_workflow_run_count=0
+deployment_count=0
+deploy_backend_run_count=0
+production_environment_used=false
+production_credentials_used=false
+auto_merge_enabled=false
+merge_authorization=false
+deployment_authorization=false
+post_push_verification=REQUIRED_OUTSIDE_SELF_REFERENTIAL_EVIDENCE_COMMIT

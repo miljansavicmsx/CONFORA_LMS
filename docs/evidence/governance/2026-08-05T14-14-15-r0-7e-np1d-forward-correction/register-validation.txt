@@ -1,0 +1,15 @@
+owner_decision_record_count=8
+adopted_with_limitations_count=7
+deferred_owner_decision_count=1
+decision_source_field_count=8
+independent_review_source_field_count=8
+disposition_field_count=8
+normative_effect_field_count=8
+limitations_field_count=8
+implementation_authorization_field_count=8
+merge_authorization_field_count=8
+deployment_authorization_field_count=8
+related_governance_document_field_count=8
+deferred_dependency_field_count=8
+od_r07e_3_adoption_overclaim_count=0
+register_validation=PASS_CORRECTED

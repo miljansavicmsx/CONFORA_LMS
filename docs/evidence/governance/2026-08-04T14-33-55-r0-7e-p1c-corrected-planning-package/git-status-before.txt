@@ -1,0 +1,7 @@
+Command: git status --porcelain=v1 --untracked-files=all
+Branch: planning/r0-7e-p1-scope-and-ci-lanes
+HEAD: bf33e4a98343229dde59cc92a449ed9134abb2b0
+Upstream: bf33e4a98343229dde59cc92a449ed9134abb2b0
+Output: no entries
+tracked_tree_clean=true
+untracked_path_count=0

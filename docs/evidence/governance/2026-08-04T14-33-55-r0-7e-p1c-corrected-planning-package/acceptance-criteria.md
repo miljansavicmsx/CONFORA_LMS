@@ -1,0 +1,34 @@
+# Corrected Acceptance Criteria
+
+Every criterion is mandatory unless a later owner decision explicitly narrows
+its applicable work-package scope. BLOCKED is not PASS.
+
+| ID | Requirement | Verification command or method | Required evidence | Pass condition | Fail condition | Responsible gate | Blocking status |
+|---|---|---|---|---|---|---|---|
+| AC-01 | Exact Git identity | git rev-parse HEAD; git ls-remote approved refs; parent verification | Identity record with full SHAs | All expected refs and parent match | Any SHA, branch, parent, or ancestry differs | Package entry gate | BLOCKING |
+| AC-02 | Owner-approved six-lane matrix | Compare six lane IDs/fields to signed OD-R07E-2 | Owner response and matrix checksum | All six lanes and semantics explicitly approved | Missing decision, lane, or field | Owner-decision gate | BLOCKING |
+| AC-03 | Deterministic clean-clone install | Fresh clone; approved frozen install command twice | Commands, tool versions, lock hash, logs | Both installs succeed without mutation and resolve identically | Failure, network drift, or lock mutation | Q2 quality gate | BLOCKING |
+| AC-04 | Deterministic clean-clone lint | Run every approved allowlisted lint command twice | Allowlist, commands, exit codes, logs | All declared targets pass identically | Failure, hidden target, or divergent result | Q1/Q2 quality gate | BLOCKING |
+| AC-05 | Deterministic clean-clone typecheck | Run every approved allowlisted typecheck command twice | Allowlist, commands, exit codes, logs | All declared targets pass identically | Failure, hidden target, or divergent result | Q2 quality gate | BLOCKING |
+| AC-06 | Deterministic clean-clone unit tests | Run every approved allowlisted unit suite twice | Test inventory, commands, results, logs | All declared tests pass identically | Failure, missing test, or divergent result | Q2 quality gate | BLOCKING |
+| AC-07 | Transitional frontend deterministic execution | R0-7D fresh clone install/build/preview/test/a11y sequence | Lock authority, dependency graph, commands, logs | Approved sequence is reproducible with complete tracked inputs | Missing lock/input or nondeterministic result | R0-7D closure gate | BLOCKING |
+| AC-08 | No hidden missing-path filters | Negative fixtures remove each required path and execute lane discovery | Fixture list and expected blocker outputs | Every missing path remains visible with blocker code | Any missing path disappears or lane passes | Q2 negative-test gate | BLOCKING |
+| AC-09 | No local-only authority | Compare all consumed paths with git ls-files at exact SHA | Consumed-path manifest and Git inventory | Every consumed input is tracked and approved | Any untracked/local-only input is used | Every implementation gate | BLOCKING |
+| AC-10 | Explicit unavailable state | Execute availability assertions for absent/incomplete inputs | Lane result JSON and blocker reasons | Unavailable inputs produce BLOCKED_MISSING_TRACKED_AUTHORITY | Blocked becomes PASS or skipped-success | Q2/C1 status gate | BLOCKING |
+| AC-11 | Governance-policy validation | Run approved policy schema/reference/claim validators and negatives | Validator identity, allowlist, outputs, fixtures | Policy-only result is deterministic and qualified | Validator fails or implies implementation conformity | C1 policy gate | BLOCKING |
+| AC-12 | Implementation-compliance validation | Run approved control-specific tests or availability assertions | Scope decision, input manifest, commands, results | Result is PASS/FAIL/BLOCKED/N/A exactly per evidence | Unqualified compliance, skipped-success, or missing evidence | C1 implementation gate | BLOCKING |
+| AC-13 | Complete implementation evidence | Reconcile changed paths, tests, commands, logs, review, and residual risks | Evidence manifest tied to exact SHA | Every claim maps to tracked source and reproduced result | Missing, stale, contaminated, or unverifiable evidence | E1 evidence gate | BLOCKING |
+| AC-14 | No false ISO or conformity claim | Prohibited-phrase scan plus semantic reviewer inspection | Scan output and reviewer finding log | No prohibited or unqualified claim exists | ISO compliant/certified or equivalent overclaim appears | C1 and R1 review gate | BLOCKING |
+| AC-15 | Complete evidence package | Validate required evidence schema, identity, redaction, inventory, and checksums | Evidence index and validation output | All required artifacts resolve and are clean | Missing link, secret/PII, stale SHA, or unresolved artifact | E1 evidence gate | BLOCKING |
+| AC-16 | Independent review | Reviewer reproduces scope, tests, history, security, and governance checks | Independent verdict tied to exact head | Review issues GO with zero blocking findings | No review, identity drift, or NO-GO | R1 independent gate | BLOCKING |
+| AC-17 | Zero unresolved blocking findings | Reconcile review register against corrective evidence | Finding register and closure mapping | Blocking finding count is zero | Any blocking finding remains open | R1 closure gate | BLOCKING |
+| AC-18 | Separate owner merge-readiness | Owner records readiness after live identity/check review | Signed readiness decision | Explicit readiness applies to exact head/base | Missing, stale, conditional-unresolved, or inferred readiness | Owner readiness gate | BLOCKING |
+| AC-19 | Separate merge authorization | Verify explicit authorization after readiness | Signed merge authorization with exact SHAs/method | Authorization is current and exact | Absent, stale, inferred, or broader authorization | Owner merge gate | BLOCKING |
+| AC-20 | True merge commit only | Inspect merge commit parent count/order and trees | Merge SHA and parent proof | Exactly two expected parents in order; complete tree | Squash, rebase, wrong parent, or missing change | Post-merge gate | BLOCKING |
+| AC-21 | No deployment | Query GitHub deployments and deploy workflow runs before/after | API output and timestamps | Deployment and deploy-backend run counts remain zero | Any deployment/run or production credential use | Every package and post-merge gate | BLOCKING |
+| AC-22 | No premature R0-7F | Inspect settings/ruleset changes and R0-7F authorization | Ruleset diff, owner decision, predecessor proof | No enforcement before R0-7E merge and separate authorization | Any early required-check/settings enforcement | R0-7F entry gate | BLOCKING |
+| AC-23 | Rollback readiness | Review package-specific revert/restore plan and test where applicable | Rollback plan, prior identities, dry review | Reviewed rollback restores prior authority without rewrite | Missing/unexecutable rollback or force-history requirement | Package readiness gate | BLOCKING |
+
+acceptance_criterion_count = 23
+acceptance_criterion_missing_test_method_count = 0
+acceptance_criterion_missing_pass_fail_count = 0

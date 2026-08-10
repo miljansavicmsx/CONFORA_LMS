@@ -1,0 +1,12 @@
+evidence_package_commit_reference=SELF
+validated_pre_commit_target_state=true
+staged_new_file_count=16
+staged_existing_file_modification_count=0
+staged_deleted_file_count=0
+unstaged_change_count=0
+untracked_path_count=0
+expected_post_commit_tracked_tree_clean=true
+expected_post_commit_untracked_path_count=0
+
+The SELF commit and post-push state require verification outside this
+self-referential evidence file. No post-push observation is claimed here.

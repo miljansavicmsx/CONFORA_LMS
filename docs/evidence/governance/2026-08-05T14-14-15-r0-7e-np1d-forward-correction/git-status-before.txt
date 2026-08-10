@@ -1,0 +1,10 @@
+Snapshot phase: before NP1D normative correction.
+Command: git status --porcelain=v1 --untracked-files=all
+
+Output:
+(clean)
+
+branch=governance/r0-7e-np1-normative-promotion
+head=4f5443b9fc7e0ddcb1ec47877e15d78eb9ae931c
+tracked_tree_clean=true
+untracked_path_count=0

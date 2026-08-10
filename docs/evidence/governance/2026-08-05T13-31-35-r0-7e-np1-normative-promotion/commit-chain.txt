@@ -1,0 +1,13 @@
+base=5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be
+commit_1=a86d2c53fb96e7ea8958a174bc69cf7796e9b7c1
+commit_1_parent=5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be
+commit_1_subject=docs(governance): promote R0-7E owner decisions
+commit_1_classification=NORMATIVE_GOVERNANCE_ONLY
+commit_1_changed_file_count=7
+commit_2=SELF
+commit_2_expected_parent=a86d2c53fb96e7ea8958a174bc69cf7796e9b7c1
+commit_2_subject=docs(repo): record R0-7E normative promotion evidence
+commit_2_classification=EVIDENCE_ONLY
+commit_2_expected_changed_file_count=15
+expected_commit_count=2
+amend_rebase_squash_reset_history_rewrite=false

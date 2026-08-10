@@ -1,0 +1,19 @@
+normative_commit=dedc9c45f4c0ae1a8d6c2cb18ad026f998be10b4
+evidence_commit=SELF
+
+M docs/governance/R0_7E_CI_LANE_POLICY.md
+M docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md
+M docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md
+
+evidence_folder=docs/evidence/governance/2026-08-06T09-41-55-r0-7e-np1g-normative-blocker-closure/
+evidence_file_count=16
+normative_file_modified_count=3
+unauthorized_normative_file_change_count=0
+historical_file_modified_count=0
+historical_file_deleted_count=0
+workflow_changed_file_count=0
+production_source_changed_file_count=0
+manifest_changed_file_count=0
+lockfile_changed_file_count=0
+database_file_changed_count=0
+deployment_file_changed_count=0

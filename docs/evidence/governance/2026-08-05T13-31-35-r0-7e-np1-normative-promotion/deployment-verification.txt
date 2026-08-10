@@ -1,0 +1,11 @@
+snapshot_phase=before_evidence_commit_and_push
+repository=miljansavicmsx/CONFORA_LMS
+branch=governance/r0-7e-np1-normative-promotion
+pull_request_count=0
+manual_workflow_run_count_for_branch=0
+deployment_count=0
+deploy_backend_run_count=0
+auto_merge_authorization=false
+deployment_authorization=false
+production_access_used=false
+post_push_verification=REQUIRED_OUTSIDE_SELF_REFERENTIAL_EVIDENCE_COMMIT
