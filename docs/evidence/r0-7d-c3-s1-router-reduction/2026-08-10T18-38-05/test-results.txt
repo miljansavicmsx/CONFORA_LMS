@@ -1,0 +1,28 @@
+STATIC CHECK COMMAND
+PowerShell read-only manifest checks over App.tsx, sidebar-sections.tsx, DashboardLayout.tsx, nest-auth-pilot.ts, vite.config.ts, and the authorized base version of nest-auth-pilot.ts.
+
+TEST-S1-01=PASS all 29 approved surfaces remain represented
+TEST-S1-02=PASS excluded route declarations and shell surfaces are absent
+TEST-S1-03=PASS excluded sidebar entries are absent
+TEST-S1-04=PASS excluded default-mobile entries are absent
+TEST-S1-05=PASS /dashboard/admin/users is not advertised
+TEST-S1-06=PASS blocked-prefix negative controls are unchanged
+TEST-S1-07=PASS approved role predicates remain and visibility is not broadened
+TEST-S1-08=PASS no advertised navigation path is orphaned
+focused_static_tests_passed=8
+focused_static_tests_failed=0
+
+VITEST COMMAND ATTEMPTED
+C:\Users\milja\Desktop\CONFORA_R0D_C1\frontend-app\node_modules\.bin\vitest.cmd run src/__tests__/minimum-bridge-route-contract.test.ts src/components/layout/__tests__/sidebar-sections.test.ts src/components/layout/__tests__/role-workspace-smoke.test.ts src/components/layout/__tests__/td-070-f2-i18n.test.tsx src/lib/__tests__/nest-auth-pilot.test.ts --config vitest.028d-2as2r.config.ts
+
+focused_vitest_tests_passed=0
+focused_vitest_tests_failed=0
+focused_vitest_tests_not_run=26
+focused_vitest_execution_status=NOT_RUN_EXISTING_RUNTIME_INCOMPLETE
+blocking_dependency=@vitejs/plugin-react
+startup_result=ERR_MODULE_NOT_FOUND before test discovery
+dependency_install_performed=false
+dependency_mutation_performed=false
+full_build_run=false
+preview_run=false
+accessibility_tooling_run=false

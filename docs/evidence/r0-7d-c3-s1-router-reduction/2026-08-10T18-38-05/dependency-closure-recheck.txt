@@ -1,0 +1,17 @@
+pre_reduction_missing_target_count=181
+previous_owner_minimum_bridge_missing_target_count=73
+newly_proven_dead_dependency_target_count=3
+post_reduction_reachable_missing_target_count=70
+post_reduction_required_MB_E_target_count=66
+post_reduction_required_MB_B_target_count=4
+targets_removed_from_requirement=111
+unexpected_remaining_excluded_target_count=0
+unexpected_lost_required_target_count=0
+
+MB-B outputs remain absent and were not generated:
+packages/i18n/dist/index.js
+packages/i18n/dist/react.js
+packages/ui/dist/index.js
+packages/ui/dist/styles.css
+
+No MB-E source was implemented.
