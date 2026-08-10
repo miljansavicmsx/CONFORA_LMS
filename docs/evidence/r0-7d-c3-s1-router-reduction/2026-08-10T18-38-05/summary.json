@@ -5,7 +5,7 @@
   "implementation_branch": "governance/r0-7d-c3-s1-router-reduction",
   "source_commit": "d08acff2fa13c3d5e21dcf1fe4c3f71ce7782bbc",
   "source_commit_parent": "d289a2e7a6dd67c143cec3f2b4c71f52ef4a22b5",
-  "evidence_commit": "PENDING_THIS_COMMIT",
+  "evidence_commit": "067c2dd5a72db395ada51b1fe8058b68d1ca4225",
   "approved_surface_count_present": 29,
   "approved_surface_count_missing": 0,
   "router_reduction_item_count": 182,
