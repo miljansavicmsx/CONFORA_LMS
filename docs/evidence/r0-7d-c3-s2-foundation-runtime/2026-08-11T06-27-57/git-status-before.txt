@@ -1,0 +1,5 @@
+clone=C:\CONFORA_R0D_C3S2_CODEX
+branch=governance/r0-7d-c3-s2-foundation-runtime
+HEAD=7d6a572fae6ae607e3db873d0ebb2f78ef0ab37e
+worktree_clean=true
+original_dirty_workspace_touched=false

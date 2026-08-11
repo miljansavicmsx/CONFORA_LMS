@@ -1,0 +1,16 @@
+﻿SOURCE = R3F1_EXTERNAL_READ_ONLY_VERIFICATION
+SOURCE_TASK = R0-7D-C3-S2-R3F1
+SOURCE_RESULT = PASS
+
+PRE_minus_POST_count=5
+POST_minus_PRE_count=0
+PRE_minus_POST:
+frontend-app/src/design-system/index.tsx
+frontend-app/src/index.css
+frontend-app/src/lib/app-workspace.ts
+frontend-app/src/lib/inactive-feature-visibility.ts
+frontend-app/src/lib/workspace-continuity/index.ts
+POST_minus_PRE:
+(none)
+authorized_five_target_delta_exact=True
+

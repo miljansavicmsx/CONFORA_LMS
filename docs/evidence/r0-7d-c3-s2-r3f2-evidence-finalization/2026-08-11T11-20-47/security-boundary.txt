@@ -1,0 +1,31 @@
+﻿SOURCE = R3F1_EXTERNAL_READ_ONLY_VERIFICATION
+SOURCE_TASK = R0-7D-C3-S2-R3F1
+SOURCE_RESULT = PASS
+
+RBAC_WEAKENED=false
+TENANT_ISOLATION_WEAKENED=false
+AUTHENTICATION_WEAKENED=false
+AUTHORIZATION_WEAKENED=false
+SOD_WEAKENED=false
+ROUTE_AUTHORITY_EXPANDED=false
+NAVIGATION_AUTHORITY_EXPANDED=false
+PUBLIC_VERIFICATION_BOUNDARY_WEAKENED=false
+CERTIFICATION_BOUNDARY_WEAKENED=false
+COMMITTEE_BOUNDARY_WEAKENED=false
+ADMIN_BOUNDARY_WEAKENED=false
+visibility_logic_fail_closed=True
+visibility_grants_authorization=false
+inactive_feature_exposure_broadened=False
+cross_tenant_state_sharing=false
+sensitive_state_persistence_added=false
+server_side_persistence_added=false
+network_call_added=false
+authentication_state_added=false
+guard_bypass_added=false
+T017_PRESENTATIONAL_ONLY=True
+new_route_count=0
+new_navigation_entry_count=0
+unauthorized_production_files=(none)
+app_tsx_unchanged=True
+sidebar_unchanged=True
+

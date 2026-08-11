@@ -1,0 +1,6 @@
+frontend-app/src/design-system/index.tsx
+frontend-app/src/index.css
+frontend-app/src/lib/app-workspace.ts
+frontend-app/src/lib/inactive-feature-visibility.ts
+frontend-app/src/lib/workspace-continuity/index.ts
+frontend-app/src/lib/__tests__/foundation-runtime.test.ts

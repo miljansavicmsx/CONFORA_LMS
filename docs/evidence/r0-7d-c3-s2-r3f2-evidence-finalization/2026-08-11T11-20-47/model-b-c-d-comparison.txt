@@ -1,0 +1,8 @@
+﻿MODEL_B_PRE = 68/65/3
+MODEL_B_POST = 63/60/3
+MODEL_C_PRE = 83/79/4
+MODEL_C_POST = 78/74/4
+MODEL_D_PRE = 69/66/3
+MODEL_D_POST = 64/61/3
+OWNER_SELECTED = D
+REASON = owner-surface deterministic graph; no silent shell seeding; auditable inventories

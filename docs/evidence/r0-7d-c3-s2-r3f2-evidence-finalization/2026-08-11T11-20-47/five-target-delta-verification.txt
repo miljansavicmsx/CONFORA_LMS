@@ -1,0 +1,11 @@
+﻿SOURCE = R3F1_EXTERNAL_READ_ONLY_VERIFICATION
+PRE_minus_POST_count = 5
+POST_minus_PRE_count = 0
+authorized_five_target_delta_exact = true
+new_required_missing_target_count = 0
+PRE_only_targets =
+frontend-app/src/design-system/index.tsx
+frontend-app/src/index.css
+frontend-app/src/lib/app-workspace.ts
+frontend-app/src/lib/inactive-feature-visibility.ts
+frontend-app/src/lib/workspace-continuity/index.ts

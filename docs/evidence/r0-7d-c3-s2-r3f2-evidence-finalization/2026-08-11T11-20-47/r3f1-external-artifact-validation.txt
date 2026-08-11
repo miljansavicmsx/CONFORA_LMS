@@ -1,0 +1,10 @@
+﻿external_artifact_count = 9
+summary_json_parses = true
+logical_control_matrix_parses = true
+all_required_R3F1_fields_match = true
+PRE_git_verification_rows = 69
+POST_git_verification_rows = 64
+verification_failures = 0
+logical_controls_passed = 8
+logical_controls_failed = 0
+logical_controls_not_run = 0

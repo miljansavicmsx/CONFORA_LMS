@@ -1,0 +1,6 @@
+T017 design-system => frontend-app/src/design-system/index.tsx; MyCertificates; @/design-system; wallet UI primitives and ds.
+T018 index.css => frontend-app/src/index.css; main.tsx; @/index.css; global stylesheet.
+T032 app-workspace => frontend-app/src/lib/app-workspace.ts; layout/header/sidebar/command center; AppWorkspaceId, APP_WORKSPACE_LABELS.
+T039 inactive-feature-visibility => frontend-app/src/lib/inactive-feature-visibility.ts; nest-auth-pilot; filterPilotSidebarSections.
+T048 workspace-continuity => frontend-app/src/lib/workspace-continuity/index.ts; MyCertificates/command center; ribbon and in-memory continuity APIs.
+All targets missing before and reachable from the approved bridge.
