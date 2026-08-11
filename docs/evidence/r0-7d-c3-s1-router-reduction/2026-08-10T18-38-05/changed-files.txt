@@ -1,0 +1,26 @@
+SOURCE COMMIT
+MODIFIED PRODUCTION frontend-app/src/App.tsx
+MODIFIED PRODUCTION frontend-app/src/components/layout/sidebar-sections.tsx
+MODIFIED PRODUCTION frontend-app/src/layouts/DashboardLayout.tsx
+MODIFIED PRODUCTION frontend-app/src/lib/nest-auth-pilot.ts
+ADDED TEST frontend-app/src/__tests__/minimum-bridge-route-contract.test.ts
+MODIFIED TEST frontend-app/src/components/layout/__tests__/sidebar-sections.test.ts
+MODIFIED TEST frontend-app/src/lib/__tests__/nest-auth-pilot.test.ts
+
+EVIDENCE COMMIT
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/summary.json
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/authority.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/git-status-before-completion.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/git-status-after-source.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/git-diff-name-status.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/git-diff-stat.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/approved-surface-manifest.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/excluded-surface-check.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/post-reduction-route-inventory.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/dependency-closure-recheck.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/removed-requirement-analysis.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/changed-files.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/source-provenance.md
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/test-results.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/rejected-history-ancestry.txt
+ADDED EVIDENCE docs/evidence/r0-7d-c3-s1-router-reduction/2026-08-10T18-38-05/c3-s1-r1-correction.txt

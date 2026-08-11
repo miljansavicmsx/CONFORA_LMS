@@ -1,0 +1,5 @@
+HEAD=d08acff2fa13c3d5e21dcf1fe4c3f71ce7782bbc
+branch=governance/r0-7d-c3-s1-router-reduction
+tracked_change_count=0
+untracked_path_count=0
+status=clean

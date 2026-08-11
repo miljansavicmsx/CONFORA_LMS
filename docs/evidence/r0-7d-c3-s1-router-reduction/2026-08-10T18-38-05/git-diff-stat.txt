@@ -1,0 +1,10 @@
+base=d289a2e7a6dd67c143cec3f2b4c71f52ef4a22b5
+source=d08acff2fa13c3d5e21dcf1fe4c3f71ce7782bbc
+frontend-app/src/App.tsx                           | 849 ++++-----------------
+frontend-app/src/__tests__/minimum-bridge-route-contract.test.ts | 107 +++
+frontend-app/src/components/layout/__tests__/sidebar-sections.test.ts | 104 ++-
+frontend-app/src/components/layout/sidebar-sections.tsx | 376 +++------
+frontend-app/src/layouts/DashboardLayout.tsx       |   5 +-
+frontend-app/src/lib/__tests__/nest-auth-pilot.test.ts | 18 +
+frontend-app/src/lib/nest-auth-pilot.ts            |   2 -
+7 files changed, 398 insertions(+), 1063 deletions(-)

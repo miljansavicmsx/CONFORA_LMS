@@ -1,0 +1,23 @@
+target=frontend-app/src/lib/course-creator-access
+pre_reduction_dependency_chain=frontend-app/src/main.tsx -> frontend-app/src/lib/nest-auth-pilot.ts -> frontend-app/src/components/layout/sidebar-sections.tsx -> frontend-app/src/lib/course-creator-access
+removed_reference=/dashboard/admin/kreiraj-kurs sidebar entry and its exclusive access predicate
+post_reduction_reachable_from_approved_surface=false
+approved_surface_impact=NONE
+reason=ONLY_DEPENDENCY_CHAIN_REMOVED_WITH_OWNER_EXCLUDED_SIDEBAR_SURFACE
+future_implementation_required=false
+
+target=frontend-app/src/lib/tenant-directory-access
+pre_reduction_dependency_chain=frontend-app/src/main.tsx -> frontend-app/src/lib/nest-auth-pilot.ts -> frontend-app/src/components/layout/sidebar-sections.tsx -> frontend-app/src/lib/tenant-directory-access
+removed_reference=/dashboard/admin/tenants sidebar entries and their exclusive access predicate
+post_reduction_reachable_from_approved_surface=false
+approved_surface_impact=NONE
+reason=ONLY_DEPENDENCY_CHAIN_REMOVED_WITH_OWNER_EXCLUDED_SIDEBAR_SURFACE
+future_implementation_required=false
+
+target=frontend-app/src/lib/user-registry-access
+pre_reduction_dependency_chain=frontend-app/src/main.tsx -> frontend-app/src/lib/nest-auth-pilot.ts -> frontend-app/src/components/layout/sidebar-sections.tsx -> frontend-app/src/lib/user-registry-access
+removed_reference=/dashboard/admin/users sidebar entries and their exclusive access predicate
+post_reduction_reachable_from_approved_surface=false
+approved_surface_impact=NONE
+reason=ONLY_DEPENDENCY_CHAIN_REMOVED_WITH_OWNER_EXCLUDED_SIDEBAR_SURFACE
+future_implementation_required=false

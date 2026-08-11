@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   LifeBuoy,
   Medal,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -254,7 +253,6 @@ function buildTrainingAdminPilotMobileNav(): readonly NestAuthPilotMobileNavItem
 function buildSysadminPilotMobileNav(): readonly NestAuthPilotMobileNavItem[] {
   return [
     { to: "/dashboard", label: "Dashboard", short: "Dom", icon: LayoutDashboard, end: true },
-    { to: "/dashboard/admin/users", label: "Korisnici", short: "Kor.", icon: Users, end: true },
     {
       to: "/dashboard/admin/reports",
       label: "Izvještaji i audit",

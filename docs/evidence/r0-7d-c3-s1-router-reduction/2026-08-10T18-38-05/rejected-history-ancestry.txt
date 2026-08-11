@@ -1,0 +1,10 @@
+source_commit=d08acff2fa13c3d5e21dcf1fe4c3f71ce7782bbc
+authorized_base_is_ancestor=true
+rejected_commit_13cdd752_in_history=false
+rejected_commit_fda8d363_in_history=false
+provenance_commit_a277a19_used_as_authority=false
+rejected_history_source_copy=false
+rejected_history_cherry_pick=false
+rejected_history_merge=false
+rejected_history_rebase=false
+forward_only_history=true

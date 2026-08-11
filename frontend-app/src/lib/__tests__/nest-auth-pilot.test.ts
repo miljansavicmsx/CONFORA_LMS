@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildNestAuthPilotMobileNav,
   buildNestAuthPilotSidebarSections,
+  buildRoleAwarePilotMobileNav,
   isNestAuthPilotActive,
   isNestAuthPilotConfigured,
   isPilotDashboardPathAllowed,
@@ -142,7 +143,24 @@ describe("nest-auth-pilot route whitelist", () => {
       "/dashboard/learner/education",
       "/courses",
       "/dashboard/certification/applications",
+      "/dashboard/appeals-complaints",
       "/dashboard/support",
     ]);
+  });
+
+  it("pilot role navigation never advertises the excluded admin users route", () => {
+    for (const roleFromProfile of [
+      "learner",
+      "STAFF_TRAINADM",
+      "STAFF_DIR",
+      "STAFF_SYSADM",
+      "reviewer",
+    ]) {
+      expect(
+        buildRoleAwarePilotMobileNav({ roleFromProfile }).some(
+          (item) => item.to === "/dashboard/admin/users",
+        ),
+      ).toBe(false);
+    }
   });
 });

@@ -1,0 +1,33 @@
+approved_surface_count=29
+approved_surface_count_present=29
+approved_surface_count_missing=0
+
+S149 <application-bootstrap>
+S024 /verify
+S025 /verify/:verificationHash
+S023 /login
+S037 /courses
+S039 /courses/:courseId
+S048 /dashboard route group
+S049 /dashboard index
+S057 /dashboard/learner/education
+S059 /dashboard/exams/register
+S064 /dashboard/certification/applications
+S068 /dashboard/my-certificates
+S070 /dashboard/my-recertifications
+S074 /dashboard/support
+S075 /dashboard/appeals-complaints
+S091 /dashboard/iso/applications
+S095 /dashboard/iso/appeals
+S096 /dashboard/iso/complaints
+S105 /dashboard/iso/reports
+S106 /dashboard/admin/education
+S107 /dashboard/admin/reports
+S112 /dashboard/admin/support
+S113 /dashboard/admin/appeals-complaints
+S118 /dashboard/admin/identity-review
+S140 /dashboard/admin/recertification
+S144 /dashboard/committee/pilot-applications
+S151 <landmark-dev-audit>
+S152 <a11y-skip-link>
+S154 <csp-preview-entry>

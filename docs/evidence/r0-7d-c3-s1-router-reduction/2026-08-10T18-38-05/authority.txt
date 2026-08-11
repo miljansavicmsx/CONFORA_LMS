@@ -1,0 +1,12 @@
+task=R0-7D-C3-S1-R1
+repository=miljansavicmsx/CONFORA_LMS
+authorized_base_branch=fix/ca-h01-frontend-f4-cutover
+authorized_base_sha=d289a2e7a6dd67c143cec3f2b4c71f52ef4a22b5
+implementation_branch=governance/r0-7d-c3-s1-router-reduction
+owner_architecture_decision_id=OD-R0D-ARCHITECTURE-PATH
+owner_scope_decision_id=OD-R0D-FRONTEND-BRIDGE-SCOPE
+correction_authorization=R0-7D-C3-S1-R1
+implementation_authorization=C3-S1-R1_ONLY
+pr_creation_authorization=false
+merge_authorization=false
+deployment_authorization=false

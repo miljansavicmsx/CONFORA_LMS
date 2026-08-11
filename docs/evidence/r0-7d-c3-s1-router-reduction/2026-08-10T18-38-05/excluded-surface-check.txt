@@ -1,0 +1,13 @@
+router_reduction_item_count=182
+excluded_surface_count=125
+RR-01_removed_app_route_and_import_items=123
+RR-02_removed_feedback_and_shell_fallback_items=2
+RR-03_removed_sidebar_references=53
+RR-04_removed_dashboard_mobile_references=3
+RR-05_removed_admin_users_pilot_reference=1
+unauthorized_route_reference_count_remaining=0
+contradictory_admin_users_reference_count=0
+orphan_navigation_reference_count=0
+feedback_widget_reference_count=0
+app_shell_fallback_reference_count=0
+unexpected_remaining_excluded_target_count=0
