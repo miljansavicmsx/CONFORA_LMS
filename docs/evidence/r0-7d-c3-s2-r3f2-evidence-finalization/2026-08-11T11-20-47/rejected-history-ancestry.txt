@@ -1,0 +1,5 @@
+﻿rejected = 13cdd75280206ec00587e5455b7c76bf7d75e269,fda8d363ceccabd16403f20f4caf5ffc3e530832
+non_authoritative = a277a19fc5d835bdf069894ecf5cd38864ef3ea4
+rejected_history_in_corrected_ancestry = false
+rejected_history_used_as_authority = false
+corrected_source_authority_head = 888fb762672680356dfed1cf3f81389ce683d300

@@ -1,0 +1,20 @@
+﻿SOURCE = INDEPENDENT_CURSOR_R3A_FORENSICS
+CANONICAL_MODEL = D
+SEEDS = frontend-app/src/main.tsx ; frontend-app/vite.config.ts
+
+RESOLUTION_RULE_ALIAS_@/ = map "@/X" -> frontend-app/src/X
+RESOLUTION_RULE_RELATIVE = resolve . and .. against importer directory
+RESOLUTION_RULE_EXPORT_FROM = treat export ... from / export * from as edges
+RESOLUTION_RULE_DYNAMIC_IMPORT = treat import("...") literal as edges
+RESOLUTION_RULE_TYPE_ONLY = included in B/C/D primary counts (excluded only in D_NO_TYPE variant)
+RESOLUTION_RULE_CSS = follow side-effect CSS imports; do not parse CSS for further deps
+RESOLUTION_RULE_EXTENSION_ORDER = try .tsx,.ts,.jsx,.js,.css,.mjs then /index.*
+RESOLUTION_RULE_MISSING_UI_DEFAULT = pages/components default missing identity .tsx
+RESOLUTION_RULE_MISSING_LIB_DEFAULT = other frontend-app paths default missing identity .ts
+RESOLUTION_RULE_MISSING_DESIGN_SYSTEM_DIR = @/design-system -> .../design-system/index.tsx
+RESOLUTION_RULE_MISSING_WORKSPACE_CONTINUITY_DIR = @/lib/workspace-continuity -> .../index.ts
+RESOLUTION_RULE_PKG_I18N = @confora/i18n -> packages/i18n/dist/index.js ; /react -> dist/react.js
+RESOLUTION_RULE_PKG_UI = @confora/ui -> packages/ui/dist/index.js ; /styles.css -> dist/styles.css
+RESOLUTION_RULE_QUERY_SUFFIX = strip ?raw and other query suffixes before resolve
+RESOLUTION_RULE_EXTERNAL_NPM = ignore non-@confora package imports (EXTERNAL_PACKAGE / NON_LOCAL)
+

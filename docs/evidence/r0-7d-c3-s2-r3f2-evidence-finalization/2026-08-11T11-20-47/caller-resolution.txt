@@ -1,0 +1,11 @@
+﻿SOURCE = R3F1_EXTERNAL_READ_ONLY_VERIFICATION
+SOURCE_TASK = R0-7D-C3-S2-R3F1
+SOURCE_RESULT = PASS
+
+PASS CommandAiSuggestionsâ† file=frontend-app/src/components/command-center/CommandAiSuggestions.tsx contains=EnterpriseAiBadge
+PASS CommandEntityRowâ† file=frontend-app/src/components/command-center/CommandEntityRow.tsx contains=EnterpriseAiBadge
+PASS DashboardLayoutâ† file=frontend-app/src/layouts/DashboardLayout.tsx contains=@/lib/app-workspace
+PASS nest-auth-pilotâ† file=frontend-app/src/lib/nest-auth-pilot.ts contains=filterPilotSidebarSections
+PASS GlobalCommandCenterâ† file=frontend-app/src/components/command-center/GlobalCommandCenter.tsx contains=recordInvestigationJump
+PASS design-system barrel exports EnterpriseAiBadge+EnterpriseStatusBadge
+

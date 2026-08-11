@@ -1,0 +1,10 @@
+﻿SOURCE = R3F1_EXTERNAL_READ_ONLY_VERIFICATION
+SOURCE_TASK = R0-7D-C3-S2-R3F1
+SOURCE_RESULT = PASS
+
+vitest_status=NOT_RUN_TOOLCHAIN_ABSENT
+typescript_build_status=NOT_RUN_TOOLCHAIN_ABSENT
+dependency_install_performed=false
+runtime_validation_claimed_as_pass_without_execution=false
+node_modules_present=False
+

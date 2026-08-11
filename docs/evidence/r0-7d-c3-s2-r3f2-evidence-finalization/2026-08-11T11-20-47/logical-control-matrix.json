@@ -1,0 +1,73 @@
+﻿{
+    "task_id":  "R0-7D-C3-S2-R3F1",
+    "logical_control_count":  8,
+    "logical_controls_passed":  8,
+    "logical_controls_failed":  0,
+    "logical_controls_not_run":  0,
+    "controls":  [
+                     {
+                         "control_id":  "TEST-C3S2-01",
+                         "validation_method":  "git cat-file existence at corrected head",
+                         "input_refs":  "frontend-app/src/design-system/index.tsx,frontend-app/src/index.css,frontend-app/src/lib/app-workspace.ts,frontend-app/src/lib/inactive-feature-visibility.ts,frontend-app/src/lib/workspace-continuity/index.ts",
+                         "result":  "PASS",
+                         "evidence_files":  "summary.json",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-02",
+                         "validation_method":  "static export/contract inspection of design-system, app-workspace, inactive-feature-visibility, workspace-continuity",
+                         "input_refs":  "design-system/index.tsx,enterprise-badges.tsx,app-workspace.ts,inactive-feature-visibility.ts,workspace-continuity/index.ts",
+                         "result":  "PASS",
+                         "evidence_files":  "caller-resolution.txt",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-03",
+                         "validation_method":  "importer static search + barrel export check",
+                         "input_refs":  "CommandAiSuggestions,CommandEntityRow,main,DashboardLayout,nest-auth-pilot,MyCertificates,GlobalCommandCenter",
+                         "result":  "PASS",
+                         "evidence_files":  "caller-resolution.txt",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-04",
+                         "validation_method":  "static inspection of inactive-feature-visibility.ts",
+                         "input_refs":  "frontend-app/src/lib/inactive-feature-visibility.ts",
+                         "result":  "PASS",
+                         "evidence_files":  "security-boundary.txt",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-05",
+                         "validation_method":  "static inspection of workspace-continuity/index.ts",
+                         "input_refs":  "frontend-app/src/lib/workspace-continuity/index.ts",
+                         "result":  "PASS",
+                         "evidence_files":  "security-boundary.txt",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-06",
+                         "validation_method":  "blob equality App/sidebar + scan added production files for Route/to:",
+                         "input_refs":  "PRE..AUTH production delta; appSame=True sideSame=True",
+                         "result":  "PASS",
+                         "evidence_files":  "security-boundary.txt",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-07",
+                         "validation_method":  "enumerate production files changed PRE..AUTH against authorized T017-T048 set (+ enterprise-badges T017 completion)",
+                         "input_refs":  "frontend-app/src/design-system/enterprise-badges.tsx,frontend-app/src/design-system/index.tsx,frontend-app/src/index.css,frontend-app/src/lib/__tests__/foundation-runtime.test.ts,frontend-app/src/lib/app-workspace.ts,frontend-app/src/lib/inactive-feature-visibility.ts,frontend-app/src/lib/workspace-continuity/index.ts",
+                         "result":  "PASS",
+                         "evidence_files":  "summary.json",
+                         "failure_reason":  ""
+                     },
+                     {
+                         "control_id":  "TEST-C3S2-08",
+                         "validation_method":  "Model D CSV aggregates + row-level git cat-file + set delta",
+                         "input_refs":  "model-D-pre.csv,model-D-post.csv,model-d-*-git-verification.csv,model-d-set-delta.txt",
+                         "result":  "PASS",
+                         "evidence_files":  "model-d-pre-git-verification.csv,model-d-post-git-verification.csv,model-d-set-delta.txt",
+                         "failure_reason":  ""
+                     }
+                 ]
+}

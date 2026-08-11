@@ -1,0 +1,14 @@
+﻿required_file_count = 28
+present_file_count = 28
+missing_file_count = 0
+unexpected_file_count = 0
+missing_files = (none)
+unexpected_files = (none)
+summary_json_parses = true
+logical_control_matrix_parses = true
+PRE_inventory_rows = 69
+POST_inventory_rows = 64
+PRE_git_verification_rows = 69
+POST_git_verification_rows = 64
+logical_control_records = 8
+logical_control_pass_count = 8

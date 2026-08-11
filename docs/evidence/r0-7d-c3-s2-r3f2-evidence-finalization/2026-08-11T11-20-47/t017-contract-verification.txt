@@ -1,0 +1,10 @@
+﻿SOURCE = R3F2_LIVE_READ_AT_888fb762672680356dfed1cf3f81389ce683d300
+EnterpriseAiBadge_in_index = True
+EnterpriseStatusBadge_in_index = True
+EnterpriseAiBadge_in_enterprise_badges = True
+EnterpriseStatusBadge_in_enterprise_badges = True
+CommandAiSuggestions_imports_EnterpriseAiBadge = True
+CommandEntityRow_imports_EnterpriseStatusBadge = True
+T017_PRESENTATIONAL_ONLY = true
+new_dependency_count = 0
+new_missing_local_target_count_from_badges = 0

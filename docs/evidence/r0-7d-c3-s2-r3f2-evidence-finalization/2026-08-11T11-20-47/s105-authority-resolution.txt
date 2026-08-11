@@ -1,0 +1,5 @@
+﻿RULE = ACTUAL_TRACKED_IMPORT_EDGE_WINS
+S105_CANONICAL_TARGET = frontend-app/src/pages/iso/IsoStaticPages.tsx
+S105_STATUS = MISSING_MB_E
+IsoReportsPage_substitution_performed = false
+S105_source_mutation_performed = false
