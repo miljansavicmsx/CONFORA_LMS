@@ -1,0 +1,8 @@
+RBAC_WEAKENED=false
+TENANT_ISOLATION_WEAKENED=false
+AUTHENTICATION_WEAKENED=false
+AUTHORIZATION_WEAKENED=false
+SOD_WEAKENED=false
+NEW_ROUTE_AUTHORITY_ADDED=false
+NEW_NAVIGATION_AUTHORITY_ADDED=false
+Continuity is in-memory only; no identity, token, tenant, server, or network state.

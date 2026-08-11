@@ -1,0 +1,8 @@
+approved_surface_count=29
+missing_targets=65
+MB-E=61
+MB-B=4
+authorized_MB_E_implemented=5
+unauthorized_MB_E_implemented=0
+new_unresolved_local_target_count=0
+unexpected_requirement_change_count=0

@@ -1,0 +1,2 @@
+build_diagnostic_status=EXPECTED_RUNTIME_INCOMPLETE
+Toolchain unavailable and dependency installation prohibited. Remaining prerequisites: 61 MB-E and 4 MB-B.

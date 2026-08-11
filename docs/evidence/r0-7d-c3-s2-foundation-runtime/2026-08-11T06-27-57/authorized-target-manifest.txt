@@ -1,0 +1,5 @@
+T017=frontend-app/src/design-system/index.tsx
+T018=frontend-app/src/index.css
+T032=frontend-app/src/lib/app-workspace.ts
+T039=frontend-app/src/lib/inactive-feature-visibility.ts
+T048=frontend-app/src/lib/workspace-continuity/index.ts

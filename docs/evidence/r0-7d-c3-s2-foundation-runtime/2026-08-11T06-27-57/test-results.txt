@@ -1,0 +1,5 @@
+TEST-C3S2-01..07=STATIC_CONTROLS_PASSED
+TEST-C3S2-08=65/61/4
+vitest=NOT_RUN (toolchain absent; install prohibited)
+tsc=NOT_RUN (toolchain absent; install prohibited)
+git_diff_check=PASS
