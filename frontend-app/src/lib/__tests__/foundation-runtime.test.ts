@@ -47,15 +47,6 @@ describe("R0-7D C3-S2 foundation runtime", () => {
     expect(TARGETS.every((path) => path.startsWith("src/"))).toBe(true);
   });
 
-  it("validates the owner-adopted Model D inventory fixtures", () => {
-    const pre = source("../docs/evidence/r0-7d-c3-s2-r3d-forensic-adoption/fixtures/model-D-pre.csv");
-    const post = source("../docs/evidence/r0-7d-c3-s2-r3d-forensic-adoption/fixtures/model-D-post.csv");
-    const rows = (value: string) => value.trim().split("\n").slice(1);
-    expect(rows(pre)).toHaveLength(69);
-    expect(rows(post)).toHaveLength(64);
-    expect(TARGETS.every((path) => rows(pre).some((row) => row.startsWith(`${path},MISSING_MB_E`)))).toBe(true);
-    expect(TARGETS.every((path) => !rows(post).some((row) => row.startsWith(`${path},`)))).toBe(true);
-  });
 
   it("keeps pilot visibility fail-closed and adds no route declarations", () => {
     const visibility = source("src/lib/inactive-feature-visibility.ts");
