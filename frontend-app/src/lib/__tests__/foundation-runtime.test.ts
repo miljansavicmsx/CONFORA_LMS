@@ -21,10 +21,40 @@ describe("R0-7D C3-S2 foundation runtime", () => {
   });
 
   it("provides the contracts imported by approved callers", () => {
-    expect(source("src/design-system/index.tsx")).toContain("export function TrustHero");
+    const designSystem = source("src/design-system/index.tsx");
+    expect(designSystem).toContain("EnterpriseAiBadge");
+    expect(designSystem).toContain("EnterpriseStatusBadge");
     expect(source("src/lib/app-workspace.ts")).toContain("export type AppWorkspaceId");
     expect(source("src/lib/inactive-feature-visibility.ts")).toContain("export function filterPilotSidebarSections");
     expect(source("src/lib/workspace-continuity/index.ts")).toContain("export function recordInvestigationJump");
+  });
+
+  it("keeps the approved shell badge callers compatible", () => {
+    expect(source("src/components/command-center/CommandAiSuggestions.tsx")).toContain('import { EnterpriseAiBadge } from "@/design-system"');
+    expect(source("src/components/command-center/CommandEntityRow.tsx")).toContain("EnterpriseStatusBadge");
+    expect(source("src/design-system/enterprise-badges.tsx")).toContain("humanApprovalRequired");
+    expect(source("src/design-system/enterprise-badges.tsx")).toContain("severity:");
+  });
+
+  it("does not add route or navigation authority in the C3-S2 production delta", () => {
+    const production = TARGETS.map(source).join("\n");
+    expect(production).not.toContain("<Route");
+    expect(production).not.toMatch(/\b(to|navigate)\s*[:(]/);
+  });
+
+  it("limits production targets to the authorized C3-S2 set", () => {
+    expect(TARGETS).toHaveLength(5);
+    expect(TARGETS.every((path) => path.startsWith("src/"))).toBe(true);
+  });
+
+  it("validates the owner-adopted Model D inventory fixtures", () => {
+    const pre = source("../docs/evidence/r0-7d-c3-s2-r3d-forensic-adoption/fixtures/model-D-pre.csv");
+    const post = source("../docs/evidence/r0-7d-c3-s2-r3d-forensic-adoption/fixtures/model-D-post.csv");
+    const rows = (value: string) => value.trim().split("\n").slice(1);
+    expect(rows(pre)).toHaveLength(69);
+    expect(rows(post)).toHaveLength(64);
+    expect(TARGETS.every((path) => rows(pre).some((row) => row.startsWith(`${path},MISSING_MB_E`)))).toBe(true);
+    expect(TARGETS.every((path) => !rows(post).some((row) => row.startsWith(`${path},`)))).toBe(true);
   });
 
   it("keeps pilot visibility fail-closed and adds no route declarations", () => {

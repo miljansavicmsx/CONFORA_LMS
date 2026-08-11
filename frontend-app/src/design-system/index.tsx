@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
+export { EnterpriseAiBadge, EnterpriseStatusBadge } from "./enterprise-badges";
+
 type ChildrenProps = { readonly children: ReactNode; readonly className?: string };
 
 export const ds = {
