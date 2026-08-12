@@ -1,0 +1,4 @@
+Eight static acceptance controls executed: 8 PASS, 0 FAIL, 0 NOT_RUN.
+Vitest=NOT_RUN_TOOLCHAIN_ABSENT
+TypeScript_build=NOT_RUN_TOOLCHAIN_ABSENT
+dependency_install_performed=false

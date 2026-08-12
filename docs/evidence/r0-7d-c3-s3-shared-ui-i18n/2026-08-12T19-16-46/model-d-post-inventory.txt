@@ -1,0 +1,2 @@
+MODEL_D_POST=60/57/3
+POST is the validated PRE inventory excluding exactly T008,T014,T015,T016; all four targets now exist and their only local import is tracked lib/utils.

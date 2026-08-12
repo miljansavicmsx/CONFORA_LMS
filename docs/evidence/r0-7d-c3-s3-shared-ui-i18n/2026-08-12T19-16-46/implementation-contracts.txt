@@ -1,0 +1,1 @@
+All implementations are forward-only, use existing React/cn authority, add no dependencies, network, authentication, authorization, tenant, route, navigation, persistence, or business logic.

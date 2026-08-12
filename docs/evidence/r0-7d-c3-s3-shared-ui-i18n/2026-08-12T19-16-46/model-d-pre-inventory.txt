@@ -1,0 +1,3 @@
+SOURCE=INDEPENDENT_CURSOR_R1A
+MODEL_D_PRE=64/61/3
+The accepted 64-row inventory is retained in C:\CONFORA_R0D_C3S3_R1A_VERIFY\model-d-pre-c3-s3-inventory.csv (read-only input).

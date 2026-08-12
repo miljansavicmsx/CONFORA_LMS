@@ -1,0 +1,1 @@
+Card is non-interactive. Input uses native input with forwarded ref/ARIA props. Logo supports presentational aria-hidden and labelled non-presentational use. Disclosure uses section, heading, and list.
