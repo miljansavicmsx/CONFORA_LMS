@@ -1,0 +1,1 @@
+ContextRibbon is a pure section/list renderer. No API, auth, authorization, tenant, storage, routing, navigation, or certification-workflow behavior.

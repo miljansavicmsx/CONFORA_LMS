@@ -1,0 +1,1 @@
+R1D owner authorization. Base a4388fd00b64d1bd2727119456bd55c954b95cfa. Scope T008,T014,T015,T016 only; no PR, merge, C3-S4, R0-7E, or deployment.

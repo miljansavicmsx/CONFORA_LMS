@@ -1,0 +1,1 @@
+No i18n package change or translation authority. Disclosure renders caller-supplied text only; no new localizable prose was introduced.

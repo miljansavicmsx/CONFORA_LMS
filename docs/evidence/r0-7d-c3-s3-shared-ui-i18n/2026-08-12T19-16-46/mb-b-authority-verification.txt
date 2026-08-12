@@ -1,0 +1,4 @@
+T001 packages/i18n/src/index.ts authority present.
+T002 packages/i18n/src/react.tsx authority present.
+T004 packages/ui/src/styles.css authority present.
+No MB-B output or package source was changed. T003 remains deferred.
