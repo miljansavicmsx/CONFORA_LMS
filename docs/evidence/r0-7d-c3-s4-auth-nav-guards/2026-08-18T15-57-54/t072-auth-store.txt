@@ -1,0 +1,6 @@
+STATIC_SEMANTIC=PASS
+OWNER_T072_PERSISTED_AUTH_CONTRACT_AUTHORIZATION=GRANTED
+T072_persistence_namespace=confora-auth
+T072_access_token_persistence_authorized=true
+T072_refresh_token_persistence_authorized=true
+Invalid, absent, or incomplete persisted tokens merge to an unauthenticated empty state. login rejects incomplete tokens. logout clears tokens, user, groups, and authenticated state. No role is fabricated or trusted from arbitrary input; no token logging occurs.

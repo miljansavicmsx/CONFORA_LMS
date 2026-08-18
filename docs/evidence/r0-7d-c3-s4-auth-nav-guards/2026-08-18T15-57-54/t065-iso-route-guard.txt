@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Missing auth fails closed to fixed local login; denied UI navigation uses fixed local /unauthorized. The source does not claim server authorization.

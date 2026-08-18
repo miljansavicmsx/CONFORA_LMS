@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+T022 delegates base URL selection to the existing endpoint registry. T027 has no network behavior. New endpoint count=0; new external destination count=0.

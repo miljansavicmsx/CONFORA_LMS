@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+DashboardOutletContext is render typing only; it creates no auth, authorization, tenant, or mutable global authority.

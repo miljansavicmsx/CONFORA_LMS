@@ -1,0 +1,10 @@
+source_commit=b67b60d593b3610ef753db32d118f1aa4d2fe7c0
+production_changed_file_count=13
+production_changed_paths=EXACT_ADOPTED_13_TARGET_SET
+test_changed_file_count=0
+unauthorized_production_file_count=0
+package_source_change_count=0
+manifest_change_count=0
+lockfile_change_count=0
+workflow_change_count=0
+configuration_change_count=0

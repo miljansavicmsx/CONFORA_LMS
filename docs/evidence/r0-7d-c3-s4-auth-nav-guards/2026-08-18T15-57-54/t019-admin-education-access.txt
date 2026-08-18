@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Explicit allow-list only; missing/unknown role returns false. UI visibility is not server authorization.

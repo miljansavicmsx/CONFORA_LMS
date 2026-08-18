@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Access predicates use explicit role membership and unknown roles deny. Navigation visibility is not described as endpoint authorization.

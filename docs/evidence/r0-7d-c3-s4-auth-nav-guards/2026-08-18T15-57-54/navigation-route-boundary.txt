@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+App.tsx is unchanged; target sources contain zero route declarations and add no sidebar entries or destinations. T036/T046/T047 are absent.

@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+DashboardHome consumes render context only and declares no route, navigation destination, privilege, tenant, or network authority.

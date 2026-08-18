@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Explicit report-navigation role allow-list only; no tenant or export authority is granted.

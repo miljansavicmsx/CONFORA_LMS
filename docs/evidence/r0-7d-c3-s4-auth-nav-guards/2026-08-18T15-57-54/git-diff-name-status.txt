@@ -1,0 +1,13 @@
+A frontend-app/src/lib/admin-education-access.ts
+A frontend-app/src/lib/admin-reports-access.ts
+A frontend-app/src/lib/api.ts
+A frontend-app/src/lib/api/reports-export.util.ts
+A frontend-app/src/lib/iso-navigation-access.ts
+A frontend-app/src/lib/staff-identity-review-access.ts
+A frontend-app/src/lib/sys-admin-access.ts
+A frontend-app/src/pages/dashboard/DashboardHome.tsx
+A frontend-app/src/pages/dashboard/DashboardLayoutRoute.tsx
+A frontend-app/src/pages/dashboard/IsoRouteGuard.tsx
+A frontend-app/src/pages/dashboard/dashboard-outlet-context.tsx
+A frontend-app/src/pages/iso/IsoPageShell.tsx
+A frontend-app/src/stores/authStore.ts

@@ -1,0 +1,16 @@
+T019 sidebar-sections:evaluateAdminEducationAccess
+T021 sidebar-sections:evaluateAdminReportsAccess
+T022 Login/admin reports/certificates/exams/remote courses:api; VerifyLookup:verifyPublicCertificateByReference,isNormalizedApiError
+T027 admin-reports-api:requiresExportReason
+T040 App/sidebar/command center:IsoNavContext and navigation predicates
+T044 sidebar-sections:canReadStaffIdentityQueue,canPerformStaffIdentityReview
+T045 sidebar-sections:evaluateSysAdminAccess
+T061 App:default DashboardHome
+T062 App:DashboardLayoutRoute
+T063 StaffAppealsComplaintsGuard:DashboardOutletContext
+T065 App:IsoRouteGuard
+T066 ComplaintsIsoPage,IsoReportsPage:IsoPageShell
+T072 Login/layout/sidebar/command center/ISO pages:useAuthStore
+caller_contracts_reconstructed=13
+ambiguous_caller_contract_count=0
+conflicting_caller_contract_count=0

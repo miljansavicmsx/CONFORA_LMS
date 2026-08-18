@@ -1,0 +1,2 @@
+MODEL_D_POST=47/44/3
+The exact adopted 13 MB-E paths now exist in source_commit b67b60d593b3610ef753db32d118f1aa4d2fe7c0. The three MB-B package outputs remain unresolved and unchanged.

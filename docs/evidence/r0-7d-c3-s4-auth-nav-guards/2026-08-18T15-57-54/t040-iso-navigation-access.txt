@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+ISO predicates use explicit normalized roles for navigation visibility. They neither call APIs nor claim server authorization.

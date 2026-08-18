@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Redirects are fixed local paths only. Existing owner-authorized confora-auth is used; no competing storage namespace or token URL exposure is introduced.

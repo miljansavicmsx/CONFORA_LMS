@@ -1,0 +1,13 @@
+T019=frontend-app/src/lib/admin-education-access.ts
+T021=frontend-app/src/lib/admin-reports-access.ts
+T022=frontend-app/src/lib/api.ts
+T027=frontend-app/src/lib/api/reports-export.util.ts
+T040=frontend-app/src/lib/iso-navigation-access.ts
+T044=frontend-app/src/lib/staff-identity-review-access.ts
+T045=frontend-app/src/lib/sys-admin-access.ts
+T061=frontend-app/src/pages/dashboard/DashboardHome.tsx
+T062=frontend-app/src/pages/dashboard/DashboardLayoutRoute.tsx
+T063=frontend-app/src/pages/dashboard/dashboard-outlet-context.tsx
+T065=frontend-app/src/pages/dashboard/IsoRouteGuard.tsx
+T066=frontend-app/src/pages/iso/IsoPageShell.tsx
+T072=frontend-app/src/stores/authStore.ts
