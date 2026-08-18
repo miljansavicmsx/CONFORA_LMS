@@ -4,7 +4,7 @@ import { authorizationHeaderValue } from "@/lib/api/auth-token-provider";
 import { isNormalizedApiError, normalizeApiError } from "@/lib/api/api-error";
 import { resolveApiBaseUrl } from "@/lib/api/api-provider";
 
-export { isNormalizedApiError, normalizeApiError };
+export { isNormalizedApiError };
 
 /** Existing shared client boundary. It selects only endpoints already classified by the endpoint registry. */
 export const api = axios.create();

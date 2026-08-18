@@ -20,6 +20,7 @@ export function isCertificationCommitteeMember(ctx: IsoNavContext): boolean { re
 export function isCertificationCandidate(ctx: IsoNavContext): boolean { return hasAny(ctx, ["candidate", "learner", "usr_cand", "usr_cert", "certified"]); }
 /** Navigation filters only; protected APIs retain the actual authorization boundary. */
 export function canAccessReportsDomain(ctx: IsoNavContext): boolean { return hasAny(ctx, ["admin", "sys_admin", "staff_sysadm", "director", "staff_dir", "quality_manager", "auditor", "staff_aud", "technical_committee", "com_tech"]); }
+export function canAccessAppealsDomain(ctx: IsoNavContext): boolean { return hasAny(ctx, ["admin", "sys_admin", "staff_sysadm", "director", "staff_dir", "quality_manager", "auditor", "staff_aud", "appeals_committee", "com_app", "com_imp"]); }
 export function canAccessComplaintsDomain(ctx: IsoNavContext): boolean { return hasAny(ctx, ["admin", "sys_admin", "staff_sysadm", "director", "staff_dir", "quality_manager", "auditor", "staff_aud", "appeals_committee", "com_app", "com_imp"]); }
 export function canAccessCertificationApplicationsNav(ctx: IsoNavContext): boolean { return hasAny(ctx, ["admin", "sys_admin", "staff_sysadm", "certification_committee", "com_cert", "training_admin", "staff_trainadm"]); }
 export function canAccessKnowledgeWorkspace(ctx: IsoNavContext): boolean { return !isCertificationCandidate(ctx) && roles(ctx).size > 0; }
