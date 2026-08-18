@@ -1,0 +1,5 @@
+normalizeApiError_public_reexport_removed=true
+T022_required_export_count=3
+T022_actual_external_contract_export_count=3
+T022_speculative_export_count=0
+Internal normalizeApiError use is retained for verification error normalization.

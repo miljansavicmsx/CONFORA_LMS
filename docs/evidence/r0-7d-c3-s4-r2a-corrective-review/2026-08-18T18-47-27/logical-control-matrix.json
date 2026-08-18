@@ -1,0 +1,16 @@
+[
+{"control_id":"CONTROL-C3S4-01","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-02","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":true,"prior_R2_result":"FAIL","corrective_evidence":"control-02-corrective-proof.txt"},
+{"control_id":"CONTROL-C3S4-03","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":true,"prior_R2_result":"FAIL","corrective_evidence":"control-03-corrective-proof.txt"},
+{"control_id":"CONTROL-C3S4-04","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-05","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-06","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-07","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-08","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-09","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-10","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-11","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-12","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-13","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true},
+{"control_id":"CONTROL-C3S4-14","control_type":"STATIC_SEMANTIC","execution_status":"EXECUTED","result":"PASS","corrective_control":false,"regression_recheck":true}
+]

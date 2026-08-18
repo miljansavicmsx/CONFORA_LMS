@@ -1,0 +1,4 @@
+rejected_history_used_as_implementation_authority=false
+rejected_source_copied=false
+cherry_pick_performed=false
+restore_performed=false

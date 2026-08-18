@@ -1,0 +1,3 @@
+R2_MAJOR=T040 missing canAccessAppealsDomain export
+R2_MINOR=T022 speculative normalizeApiError public re-export
+R2_RESULT=FAIL; both findings reproduced before correction.

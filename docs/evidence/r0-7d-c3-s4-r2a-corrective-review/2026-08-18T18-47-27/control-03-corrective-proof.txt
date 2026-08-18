@@ -1,0 +1,4 @@
+CONTROL-C3S4-03=PASS
+caller_contract_failure_count=0
+speculative_authority_finding_count=0
+T040 exact caller export supplied; T022 speculative normalizeApiError re-export removed.

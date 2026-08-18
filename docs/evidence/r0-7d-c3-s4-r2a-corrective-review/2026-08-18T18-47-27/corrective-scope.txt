@@ -1,0 +1,6 @@
+corrective_production_file_count=2
+frontend-app/src/lib/iso-navigation-access.ts
+frontend-app/src/lib/api.ts
+corrective_out_of_scope_production_file_count=0
+sidebar_sections_modified=false
+T072_modified_in_corrective_commit=false
