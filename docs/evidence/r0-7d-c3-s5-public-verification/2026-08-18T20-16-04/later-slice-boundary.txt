@@ -1,0 +1,5 @@
+non_target_missing_dependencies_implemented=0
+later_slice_implementation_required=false
+T025_public_verification_client=not_modified
+T026_reports_client=not_modified
+historical_CI_debt_modified_by_C3_S5=false

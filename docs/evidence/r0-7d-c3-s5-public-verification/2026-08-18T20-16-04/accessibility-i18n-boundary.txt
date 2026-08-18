@@ -1,0 +1,7 @@
+semantic_heading=true
+form_or_status_messages_use_roles=true
+links_and_controls_are_keyboard_native=true
+status_not_color_only=true
+new_i18n_package_mutation=false
+ACCESSIBILITY_BOUNDARY_WEAKENED=false
+USER_FACING_TEXT_CONVENTION_WEAKENED=false

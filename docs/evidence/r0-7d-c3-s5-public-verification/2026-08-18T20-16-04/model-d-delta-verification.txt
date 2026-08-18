@@ -1,0 +1,6 @@
+MODEL_D_PRE=47/44/3
+MODEL_D_POST=42/39/3
+PRE_minus_POST=T007,T013,T028,T037,T071
+PRE_minus_POST_count=5
+POST_minus_PRE_count=0
+new_required_missing_target_count=0

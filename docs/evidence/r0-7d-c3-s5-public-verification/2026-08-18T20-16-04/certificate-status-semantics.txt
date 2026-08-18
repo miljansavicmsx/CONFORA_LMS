@@ -1,0 +1,8 @@
+status_source=existing verifyCertificate response
+effectiveStatus_preferred=true
+verificationResult_preserved=true
+fallback_status_preserved=true
+REVOKED_PRESENTED_AS_VALID_COUNT=0
+EXPIRED_PRESENTED_AS_VALID_COUNT=0
+SUSPENDED_PRESENTED_AS_VALID_COUNT=0
+CERTIFICATE_STATUS_SEMANTICS_WEAKENED=false

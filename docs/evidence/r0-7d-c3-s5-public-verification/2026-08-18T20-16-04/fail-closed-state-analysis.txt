@@ -1,0 +1,8 @@
+invalid_hash=invalid state, no validity confirmation
+not_found=not-found state, no validity confirmation
+api_error=error state, no validity confirmation
+unknown_status=displayed from trusted response, never mapped to valid
+UNKNOWN_STATE_DEFAULTS_VALID=false
+API_ERROR_DEFAULTS_VALID=false
+MISSING_RECORD_DEFAULTS_VALID=false
+LOCAL_VALIDITY_FABRICATION_COUNT=0

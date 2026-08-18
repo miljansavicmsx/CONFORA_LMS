@@ -1,0 +1,9 @@
+source_commit=26b9beeb827df6a05af1bae8f53ed6ff1ff5d761
+A frontend-app/src/components/entity-relations.tsx
+A frontend-app/src/components/public/PublicTrustMessaging.tsx
+A frontend-app/src/lib/api/reports-types.ts
+A frontend-app/src/lib/entity-relationships.ts
+A frontend-app/src/pages/public/VerifyCertificate.tsx
+production_file_count=5
+test_file_count=0
+out_of_scope_file_count=0

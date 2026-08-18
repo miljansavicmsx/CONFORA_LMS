@@ -1,0 +1,6 @@
+network_dependency=existing verifyCertificate client contract only
+new_api_endpoint_count=0
+new_external_destination_count=0
+COMPETING_API_CLIENT_CREATED=false
+TOKEN_LOGGING_COUNT=0
+SECRET_LOGGING_COUNT=0

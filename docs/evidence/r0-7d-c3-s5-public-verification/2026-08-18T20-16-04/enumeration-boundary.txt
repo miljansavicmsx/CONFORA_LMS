@@ -1,0 +1,4 @@
+lookup_contract=single existing verification hash route
+NEW_PUBLIC_BULK_ENUMERATION_CAPABILITY=false
+NEW_PUBLIC_DIRECTORY_CAPABILITY=false
+NEW_WILDCARD_VERIFICATION_QUERY=false

@@ -1,0 +1,4 @@
+dependency_install_performed=false
+new_dependency_count=0
+package_manifest_modified=false
+package_source_modified=false

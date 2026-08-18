@@ -1,0 +1,5 @@
+App_tsx_modified=false
+new_route_declaration_count=0
+new_navigation_destination_count=0
+ROUTE_AUTHORITY_EXPANDED=false
+NAVIGATION_AUTHORITY_EXPANDED=false

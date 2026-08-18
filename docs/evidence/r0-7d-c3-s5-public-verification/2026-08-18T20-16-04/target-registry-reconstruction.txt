@@ -1,0 +1,8 @@
+recovered_rule=MB-B T001-T004 followed by alphabetically ordered MB-E registry including C3-S1 removed targets
+T007=frontend-app/src/components/entity-relations.tsx|entity-relations.tsx|EXACT
+T013=frontend-app/src/components/public/PublicTrustMessaging.tsx|PublicTrustMessaging.tsx|EXACT
+T028=frontend-app/src/lib/api/reports-types.ts|reports-types.ts|EXACT
+T037=frontend-app/src/lib/entity-relationships.ts|entity-relationships.ts|EXACT
+T071=frontend-app/src/pages/public/VerifyCertificate.tsx|VerifyCertificate.tsx|EXACT
+mapped_target_count=5
+EXACT_count=5
