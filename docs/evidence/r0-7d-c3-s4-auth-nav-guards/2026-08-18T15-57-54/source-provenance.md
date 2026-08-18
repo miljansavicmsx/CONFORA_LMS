@@ -1,0 +1,1 @@
+All 13 production targets were newly authored forward-only from current tracked importers and the owner-adopted target registry. Rejected experimental commits were not used as implementation authority and no external source was copied. T072 uses only the explicitly owner-authorized existing `confora-auth` persistence namespace.

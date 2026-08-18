@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Existing owner-authorized confora-auth persistence is the only auth namespace. Default authenticated state=false; logout is fail-closed; token logging count=0.

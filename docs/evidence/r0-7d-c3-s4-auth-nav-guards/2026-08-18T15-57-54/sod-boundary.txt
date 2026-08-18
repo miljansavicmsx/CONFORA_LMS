@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+No target changes certification decisions, committee decision flows, self-approval paths, or staff/admin server boundaries.

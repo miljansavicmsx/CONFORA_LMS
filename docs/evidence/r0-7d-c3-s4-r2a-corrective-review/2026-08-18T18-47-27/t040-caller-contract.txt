@@ -1,0 +1,5 @@
+T040_canAccessAppealsDomain_importer_count=1
+importer=frontend-app/src/components/layout/sidebar-sections.tsx
+call_signature=canAccessAppealsDomain(ctx)
+argument_contract=IsoNavContext
+return_contract=boolean navigation visibility predicate

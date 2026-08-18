@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+No target introduces tenant state, tenant inference, global fallback, or cross-tenant fallback.

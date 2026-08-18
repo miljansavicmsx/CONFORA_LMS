@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Read and perform privileges are separate explicit allow-lists; unknown roles fail closed.

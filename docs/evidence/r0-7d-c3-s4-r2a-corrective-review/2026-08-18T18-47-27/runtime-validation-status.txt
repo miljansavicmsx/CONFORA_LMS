@@ -1,0 +1,5 @@
+vitest_status=NOT_RUN_TOOLCHAIN_ABSENT
+typescript_build_status=NOT_RUN_TOOLCHAIN_ABSENT
+runtime_validation_complete=false
+runtime_validation_claimed_pass=false
+dependency_install_performed=false

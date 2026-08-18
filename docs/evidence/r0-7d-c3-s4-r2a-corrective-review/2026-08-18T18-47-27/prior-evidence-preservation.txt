@@ -1,0 +1,5 @@
+original_evidence_package=docs/evidence/r0-7d-c3-s4-auth-nav-guards/2026-08-18T15-57-54
+original_evidence_package_modified=false
+original_evidence_package_deleted=false
+CONTROL-C3S4-02=SUPERSEDED_BY_R2A_CORRECTION
+CONTROL-C3S4-03=SUPERSEDED_BY_R2A_CORRECTION

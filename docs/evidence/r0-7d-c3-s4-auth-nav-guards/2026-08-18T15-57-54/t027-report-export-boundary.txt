@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+requiresExportReason is a caller utility only. It performs no network call, redirect, authorization decision, or sensitive-data logging.

@@ -1,0 +1,4 @@
+MODEL_D_PRE=60/57/3
+adopted_target_membership_count=13
+adopted_target_membership_failure_count=0
+Input authority=owner-adopted R1A Model D inventory at b124788

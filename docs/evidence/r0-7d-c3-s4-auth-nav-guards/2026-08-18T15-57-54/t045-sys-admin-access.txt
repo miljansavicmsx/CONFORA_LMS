@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Only sys_admin and staff_sysadm match. There is no admin wildcard or implicit administrator fallback.

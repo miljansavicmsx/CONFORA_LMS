@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Missing authenticated/token state redirects to the fixed local /login?reason=session path. Client guard is documented as non-server authorization.

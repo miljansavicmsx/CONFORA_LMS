@@ -1,0 +1,6 @@
+MODEL_D_PRE=60/57/3
+MODEL_D_POST=47/44/3
+PRE_minus_POST_count=13
+POST_minus_PRE_count=0
+new_required_missing_target_count=0
+PRE_minus_POST=exact owner-adopted 13-target registry

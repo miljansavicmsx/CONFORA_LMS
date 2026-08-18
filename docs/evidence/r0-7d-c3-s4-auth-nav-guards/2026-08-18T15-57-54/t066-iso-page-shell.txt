@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+Accessible structural shell only; no route, navigation, authorization, tenant, or network authority.

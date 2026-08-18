@@ -1,0 +1,2 @@
+normalizeApiError_external_importer_count=0
+All tracked normalizeApiError imports resolve directly to ./api-error or @/lib/api/api-error, not @/lib/api.

@@ -1,0 +1,5 @@
+T040_canAccessAppealsDomain_export_present=true
+T040_sidebar_import_resolves=true
+T040_caller_contract_satisfied=true
+Unknown role/context fails closed through explicit role membership.
+Navigation visibility is not server authorization.

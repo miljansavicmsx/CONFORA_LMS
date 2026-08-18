@@ -1,0 +1,2 @@
+STATIC_SEMANTIC=PASS
+api uses existing endpoint registry resolution and existing confora-auth token reader. Existing public verification endpoint is /api/public/certificates/verify. No endpoint or external destination was invented; tokens are not logged.
