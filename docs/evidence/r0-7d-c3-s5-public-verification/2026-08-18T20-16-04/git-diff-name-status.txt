@@ -1,0 +1,6 @@
+source_commit_parent=a52d3adccb4db2f5077cedc74c2dfa98b1a3ebed
+A frontend-app/src/components/entity-relations.tsx
+A frontend-app/src/components/public/PublicTrustMessaging.tsx
+A frontend-app/src/lib/api/reports-types.ts
+A frontend-app/src/lib/entity-relationships.ts
+A frontend-app/src/pages/public/VerifyCertificate.tsx

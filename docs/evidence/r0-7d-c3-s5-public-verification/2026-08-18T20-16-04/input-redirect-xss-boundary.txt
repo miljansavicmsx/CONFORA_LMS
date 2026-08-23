@@ -1,0 +1,5 @@
+hash_validation=64 hexadecimal characters
+untrusted_html_rendering=false
+untrusted_url_execution_count=0
+OPEN_REDIRECT_RISK_INTRODUCED=false
+XSS_RISK_INTRODUCED=false

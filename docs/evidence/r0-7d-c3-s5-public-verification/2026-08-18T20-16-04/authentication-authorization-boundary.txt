@@ -1,0 +1,5 @@
+public_route_auth_requirement_fabricated=false
+PUBLIC_ACCESS_USED_AS_PRIVILEGED_AUTHORIZATION=false
+AUTHENTICATION_WEAKENED=false
+AUTHORIZATION_WEAKENED=false
+certificate_or_admin_mutation=false

@@ -1,0 +1,7 @@
+task_id=R0-7D-C3-S5-R1
+owner_authorization=GRANTED
+canonical_model=D
+implementation_branch=governance/r0-7d-c3-s5-public-verification
+PR_created=false
+merge_performed=false
+C3_S6_started=false

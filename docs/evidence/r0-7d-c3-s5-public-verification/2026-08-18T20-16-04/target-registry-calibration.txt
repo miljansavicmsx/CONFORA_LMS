@@ -1,0 +1,11 @@
+registry_calibration_passed=true
+T008=frontend-app/src/components/information-disclosure.tsx
+T014=frontend-app/src/components/ui/card.tsx
+T015=frontend-app/src/components/ui/ConforaLogo.tsx
+T016=frontend-app/src/components/ui/input.tsx
+T019=frontend-app/src/lib/admin-education-access.ts
+T021=frontend-app/src/lib/admin-reports-access.ts
+T022=frontend-app/src/lib/api.ts
+T027=frontend-app/src/lib/api/reports-export.util.ts
+T040=frontend-app/src/lib/iso-navigation-access.ts
+T072=frontend-app/src/stores/authStore.ts

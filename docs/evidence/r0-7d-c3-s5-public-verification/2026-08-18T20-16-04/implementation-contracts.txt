@@ -1,0 +1,6 @@
+T007=exports EntityLineagePanel; no network, state mutation, or navigation
+T013=exports PublicTrustMessaging; no network, state mutation, or navigation
+T028=exports ReportKey and ExportFormat types; no runtime authority
+T037=exports EntityKind, EntityRelationshipEdge, buildTrustNavigationExplainerEdges; static data only
+T071=default component; uses existing verifyCertificate trusted client contract; loading/result/not_found/invalid/error states
+active_target_caller_contracts_reconstructed=5

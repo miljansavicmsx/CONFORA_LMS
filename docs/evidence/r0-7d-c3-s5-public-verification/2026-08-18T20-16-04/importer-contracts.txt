@@ -1,0 +1,7 @@
+T007=VerifyLookupPage.tsx|EntityLineagePanel|read-only explanatory graph
+T013=VerifyLookupPage.tsx|PublicTrustMessaging variant=verification|public boundary disclosure
+T028=AdminReportsPage.tsx,admin-reports-api.ts,IsoReportsPage.tsx|ReportKey,ExportFormat|staff-report type contract only
+T037=VerifyLookupPage.tsx|EntityKind,buildTrustNavigationExplainerEdges|static explanatory edges
+T071=App.tsx|default VerifyCertificate|existing /verify/:verificationHash route
+ambiguous_caller_contract_count=0
+conflicting_caller_contract_count=0

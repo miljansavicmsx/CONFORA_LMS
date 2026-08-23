@@ -1,0 +1,7 @@
+displayed_fields=fullName,credentialTypeLabel_or_certificateKind,courseName,issueDate,expiryDate,status
+source_authority=existing VerifiedCertificatePublic public contract
+NEW_PUBLIC_PII_DISCLOSURE_COUNT=0
+NEW_INTERNAL_ID_DISCLOSURE_COUNT=0
+NEW_TENANT_METADATA_DISCLOSURE_COUNT=0
+NEW_INTERNAL_WORKFLOW_DISCLOSURE_COUNT=0
+TOKEN_DISCLOSURE_COUNT=0
