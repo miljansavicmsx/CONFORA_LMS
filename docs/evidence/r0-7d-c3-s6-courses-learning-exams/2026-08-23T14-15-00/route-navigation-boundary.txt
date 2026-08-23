@@ -1,0 +1,1 @@
+App.tsx and router files unchanged. Catalog links use pre-existing /courses/:courseId route; detail link uses pre-existing /courses route. NEW_ROUTE_COUNT=0; NEW_NAVIGATION_DESTINATION_COUNT=0.

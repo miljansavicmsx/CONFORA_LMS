@@ -1,0 +1,1 @@
+Components use main/section/headings, native buttons, labels, role=status or alert, and text status. No i18n package mutation or status-only color encoding was added.

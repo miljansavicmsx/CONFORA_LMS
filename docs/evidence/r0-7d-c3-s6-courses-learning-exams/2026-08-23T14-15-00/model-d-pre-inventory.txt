@@ -1,0 +1,1 @@
+Canonical resolver from main.tsx and vite.config.ts, including static, literal dynamic, export, type-only, CSS, aliases, and extension rules: missing=42; MB-E=39; MB-B=3. The fourth historical MB-B row lacks a tracked resolver edge and is excluded. MODEL_D_PRE=42/39/3.

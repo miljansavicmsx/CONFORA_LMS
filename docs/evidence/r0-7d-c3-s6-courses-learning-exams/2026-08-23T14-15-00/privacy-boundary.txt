@@ -1,0 +1,1 @@
+No new email, phone, birth date, government identifier, token, internal user ID, tenant metadata, exam evidence, staff note, committee, or audit data is rendered. NEW_PII_DISCLOSURE_COUNT=0.

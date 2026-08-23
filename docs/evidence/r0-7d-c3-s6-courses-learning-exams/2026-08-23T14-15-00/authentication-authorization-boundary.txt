@@ -1,0 +1,1 @@
+No authentication store, persistence namespace, role, permission, implicit login, or authorization behavior was added or changed. AUTHENTICATION_WEAKENED=false; AUTHORIZATION_WEAKENED=false.

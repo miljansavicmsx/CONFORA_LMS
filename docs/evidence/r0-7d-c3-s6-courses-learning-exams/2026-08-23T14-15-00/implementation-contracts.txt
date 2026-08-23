@@ -1,0 +1,1 @@
+The nine production files implement only callers' named/default exports. Enrollment and course UI normalize malformed arrays to empty display data; progress clamps to 0..100; completion requires explicit completed state; completion certificate retrieval returns null because no registered endpoint exists; exam errors display unavailable and never imply pass.

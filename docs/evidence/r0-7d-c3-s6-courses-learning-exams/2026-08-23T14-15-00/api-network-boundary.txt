@@ -1,0 +1,1 @@
+Existing routes only: /api/courses, /v1/me/enrollments, /api/learning/progress, and the pre-existing api-exam-registration client. No new endpoint, external destination, API client, base URL, or token logging.

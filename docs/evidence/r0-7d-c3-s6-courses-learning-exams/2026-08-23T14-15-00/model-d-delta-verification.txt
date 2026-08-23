@@ -1,0 +1,1 @@
+PRE 42/39/3 minus POST 33/30/3 equals exactly 9 active MB-E paths T010,T011,T012,T041,T042,T043,T054,T055,T069. PRE_minus_POST_count=9; POST_minus_PRE_count=0; authorized_target_delta_exact=true; new_required_missing_target_count=0.

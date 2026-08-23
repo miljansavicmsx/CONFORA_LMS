@@ -1,0 +1,1 @@
+C3S5-GOV-DEV-001 is OWNER_ACCEPTED_FOR_THIS_PACKAGE_ONLY. It creates no precedent. C3-S6 requires independent pre-merge GO before any future merge.
