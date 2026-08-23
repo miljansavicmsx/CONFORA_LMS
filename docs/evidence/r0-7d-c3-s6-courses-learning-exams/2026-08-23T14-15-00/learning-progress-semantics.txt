@@ -1,0 +1,1 @@
+Progress normalization accepts only finite numbers and clamps 0..100. Missing/malformed progress becomes 0 and no completion predicate treats progress alone as completed.

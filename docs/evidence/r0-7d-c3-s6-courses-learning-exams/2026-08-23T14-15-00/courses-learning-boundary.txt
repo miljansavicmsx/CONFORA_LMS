@@ -1,0 +1,1 @@
+Read-only catalog/course display and existing learning progress only. New course mutation/publication, certification, committee, appeal, and administration authority: false.

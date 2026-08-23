@@ -1,0 +1,1 @@
+Exam registration uses the established registration client. Server availability/labels are displayed; errors and unknown data are unavailable, not pass. No result, score, session, or proctoring mutation authority added.

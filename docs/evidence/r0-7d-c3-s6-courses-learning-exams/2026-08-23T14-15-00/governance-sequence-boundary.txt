@@ -1,0 +1,1 @@
+Required next lifecycle: independent R2 final review, owner-authorized I1 PR creation, I2 independent pre-merge GO, owner-authorized I3 exact merge, then I4 post-merge verification. PR_CREATED=false; MERGE_PERFORMED=false; C3-S7_STARTED=false; R0-7D remains open; R0-7E and deployment unauthorized.

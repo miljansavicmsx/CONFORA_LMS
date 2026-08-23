@@ -1,0 +1,9 @@
+A frontend-app/src/components/learner/LearnerDashboardNextAction.tsx
+A frontend-app/src/components/learner/LearnerJourneyBoundaryBanner.tsx
+A frontend-app/src/components/learner/LearnerSupportEntryCard.tsx
+A frontend-app/src/lib/learner-education-api.ts
+A frontend-app/src/lib/learner-flow-labels.ts
+A frontend-app/src/lib/learner-polish-labels.ts
+A frontend-app/src/pages/courses/CourseDetailPage.tsx
+A frontend-app/src/pages/courses/CoursesCatalogPage.tsx
+A frontend-app/src/pages/learner/ExamRegistrationPage.tsx

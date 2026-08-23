@@ -1,0 +1,1 @@
+Static semantic review executed. frontend-app/node_modules/.bin/vitest and frontend-app/node_modules/.bin/tsc are absent; no dependencies installed. vitest_status=NOT_RUN_TOOLCHAIN_ABSENT. typescript_build_status=NOT_RUN_TOOLCHAIN_ABSENT. runtime_validation_complete=false.

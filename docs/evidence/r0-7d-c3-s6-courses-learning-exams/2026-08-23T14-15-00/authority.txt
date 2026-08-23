@@ -1,0 +1,1 @@
+Owner C3-S6 planning and conditional implementation authority: granted. Preconditions independently satisfied before mutation. PR, merge, C3-S7+, R0-7D closure, R0-7E, and deployment remain unauthorized.

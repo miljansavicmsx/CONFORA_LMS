@@ -1,0 +1,9 @@
+T010|LearnerDashboardNextAction.tsx|frontend-app/src/components/learner/LearnerDashboardNextAction.tsx|reachable|LearnerEducationPage.tsx|EXACT
+T011|LearnerJourneyBoundaryBanner.tsx|frontend-app/src/components/learner/LearnerJourneyBoundaryBanner.tsx|reachable|LearnerEducationPage.tsx|EXACT
+T012|LearnerSupportEntryCard.tsx|frontend-app/src/components/learner/LearnerSupportEntryCard.tsx|reachable|LearnerEducationPage.tsx|EXACT
+T041|learner-education-api.ts|frontend-app/src/lib/learner-education-api.ts|reachable|LearnerEducationPage.tsx|EXACT
+T042|learner-flow-labels.ts|frontend-app/src/lib/learner-flow-labels.ts|reachable|LearnerEducationPage.tsx|EXACT
+T043|learner-polish-labels.ts|frontend-app/src/lib/learner-polish-labels.ts|reachable|LearnerEducationPage.tsx;admin-gov-ux-labels.ts;use-documents-certificates-labels.ts|EXACT
+T054|CourseDetailPage.tsx|frontend-app/src/pages/courses/CourseDetailPage.tsx|reachable|App.tsx literal dynamic import|EXACT
+T055|CoursesCatalogPage.tsx|frontend-app/src/pages/courses/CoursesCatalogPage.tsx|reachable|App.tsx literal dynamic import|EXACT
+T069|ExamRegistrationPage.tsx|frontend-app/src/pages/learner/ExamRegistrationPage.tsx|reachable|App.tsx static import|EXACT

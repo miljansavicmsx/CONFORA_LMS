@@ -1,0 +1,1 @@
+Training state is display-only. Course completion and module progress do not create certification eligibility, certification, certificate issuance, or client-side certification authority.

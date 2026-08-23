@@ -1,0 +1,1 @@
+All nine planned targets are ACTIVE_MB_E_IMPLEMENTATION because tracked Model D import edges resolve to their exact missing paths. A=9; B=0; D=0.
