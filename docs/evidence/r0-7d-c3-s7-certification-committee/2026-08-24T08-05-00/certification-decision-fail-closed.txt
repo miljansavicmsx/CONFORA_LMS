@@ -1,0 +1,1 @@
+Error, missing and unknown state never grants certification.

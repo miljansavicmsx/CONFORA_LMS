@@ -1,0 +1,1 @@
+No unsafe HTML, redirect, or untrusted execution.
