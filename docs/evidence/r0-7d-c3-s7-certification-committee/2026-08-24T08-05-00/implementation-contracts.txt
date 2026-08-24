@@ -1,0 +1,1 @@
+Minimum exports and fail-closed behavior verified.
