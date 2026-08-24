@@ -1,0 +1,2 @@
+import type { JSX } from "react";
+export default function CertificationDashboard(): JSX.Element { return <main className="mx-auto max-w-4xl px-4 py-10" data-testid="certification-dashboard"><h1 className="text-2xl font-bold text-text-primary">Pregled prijava za certifikaciju</h1><p className="mt-3 text-sm text-text-secondary" role="status">Odluke, podobnost i statusi potiču isključivo iz autoritativnog postupka. Nema dostupnih podataka za prikaz.</p></main>; }
