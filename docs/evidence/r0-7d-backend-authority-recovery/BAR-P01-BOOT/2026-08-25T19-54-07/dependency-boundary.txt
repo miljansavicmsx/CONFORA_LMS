@@ -1,0 +1,5 @@
+E1=PASS
+E1_dependency_provisioning=corepack pnpm@9.14.2 install --frozen-lockfile
+NEW_DEPENDENCY_COUNT=0
+MANIFEST_CHANGE_COUNT=0
+LOCKFILE_CHANGE_COUNT=0

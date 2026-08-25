@@ -1,0 +1,3 @@
+COMMAND=corepack pnpm@9.14.2 --filter @confora/api build
+EXIT_CODE=0
+RESULT=PASS

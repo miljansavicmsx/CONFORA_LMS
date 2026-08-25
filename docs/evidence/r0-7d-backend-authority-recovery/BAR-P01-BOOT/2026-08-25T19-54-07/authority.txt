@@ -1,0 +1,2 @@
+AUTHORITATIVE_BASE=51e938cd3c097f78c28f6d0dad8ef7dba7620057
+BRANCH=governance/r0-7d-bar-p01-boot
