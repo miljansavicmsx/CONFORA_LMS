@@ -1,0 +1,3 @@
+C3_S7_integration_merge=3632a3d9419b9874c60368343822a3a6238493fc
+C3_S8_parent_authority=preserved
+rejected_history_used_as_source_authority=false

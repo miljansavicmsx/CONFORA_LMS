@@ -1,0 +1,8 @@
+ORIGINAL_C3_S8_PLAN=T023,T026,T038,T052,T058,T070
+CORRECTED_C3_S8_PLAN=T023,T038,T052,T058,T070
+corrected_planned_target_count=5
+T023=frontend-app/src/lib/api/appeals-canonical-flag.ts
+T038=frontend-app/src/lib/format-api-error.ts
+T052=frontend-app/src/pages/admin/SupportAdminPage.tsx
+T058=frontend-app/src/pages/dashboard/AppealsCommitteeGuard.tsx
+T070=frontend-app/src/pages/learner/SupportPage.tsx

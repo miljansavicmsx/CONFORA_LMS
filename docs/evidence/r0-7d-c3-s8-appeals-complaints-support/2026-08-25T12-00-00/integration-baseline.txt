@@ -1,0 +1,6 @@
+authoritative_base=3632a3d9419b9874c60368343822a3a6238493fc
+working_tree_clean_before_resume=true
+staged_file_count=0
+unstaged_tracked_file_count=0
+existing_C3_S8_commit_count=0
+branch=governance/r0-7d-c3-s8-appeals-complaints-support

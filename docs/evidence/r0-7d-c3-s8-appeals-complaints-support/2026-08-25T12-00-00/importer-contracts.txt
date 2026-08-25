@@ -1,0 +1,9 @@
+caller_contracts_reviewed=5
+caller_contract_failure_count=0
+unresolved_current_import_count_for_implemented_targets=0
+KNOWN_DEFERRED_T026_UNRESOLVED_IMPORT=true
+T023=named isAppealsCanonicalEnabled():boolean; both importers use it as feature-route selection only.
+T038=named formatApiErrorMessage(error:unknown):string; both importers render returned string on error only.
+T052=default React component; App lazy-import contract satisfied.
+T058=named React guard with children; App wrapper contract satisfied; delegates to existing IsoRouteGuard.
+T070=default React component; App direct-import contract satisfied.
