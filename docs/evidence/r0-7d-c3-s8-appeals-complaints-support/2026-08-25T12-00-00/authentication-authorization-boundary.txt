@@ -1,0 +1,5 @@
+AUTHENTICATION_WEAKENED=false
+AUTHORIZATION_WEAKENED=false
+CLIENT_STATE_USED_AS_SERVER_AUTHORIZATION=false
+SECOND_AUTH_STORE_CREATED=false
+AppealsCommitteeGuard delegates to existing authenticated IsoRouteGuard; server authorization remains authoritative.

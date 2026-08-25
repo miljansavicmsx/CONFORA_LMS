@@ -1,0 +1,7 @@
+MODEL_D_PRE=22/19/3
+PRE_missing=22
+PRE_MB_E=19
+PRE_MB_B=3
+T026_MODEL_D_REACHABLE=true
+T026_MODEL_D_CLASSIFICATION=MB_E
+Resolver calibration uses accepted Model D registry and direct current importer resolution at the authoritative base.

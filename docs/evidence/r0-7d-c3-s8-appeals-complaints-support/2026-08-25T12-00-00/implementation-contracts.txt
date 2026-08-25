@@ -1,0 +1,6 @@
+speculative_export_count=0
+speculative_authority_count=0
+T023 mirrors the existing complaints canonical flag contract.
+T038 accepts unknown and returns safe display text.
+T052,T070 have no network client or mutable workflow contract.
+T058 preserves existing authenticated navigation-only guard semantics.

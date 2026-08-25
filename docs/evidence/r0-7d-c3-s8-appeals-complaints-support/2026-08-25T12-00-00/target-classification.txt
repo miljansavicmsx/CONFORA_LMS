@@ -1,0 +1,14 @@
+mapped_target_count=5
+EXACT_target_count=5
+HIGH_target_count=0
+MEDIUM_target_count=0
+LOW_target_count=0
+UNRESOLVED_target_count=0
+T023=ACTIVE_MB_E_IMPLEMENTATION; importer=StaffAppealsComplaintsPage.tsx,IsoGrievancesAdminPanel.tsx
+T038=ACTIVE_MB_E_IMPLEMENTATION; importer=StaffAppealsComplaintsPage.tsx,IsoGrievancesAdminPanel.tsx
+T052=ACTIVE_MB_E_IMPLEMENTATION; importer=App.tsx
+T058=ACTIVE_MB_E_IMPLEMENTATION; importer=App.tsx
+T070=ACTIVE_MB_E_IMPLEMENTATION; importer=App.tsx
+A=5
+B=0
+D=0

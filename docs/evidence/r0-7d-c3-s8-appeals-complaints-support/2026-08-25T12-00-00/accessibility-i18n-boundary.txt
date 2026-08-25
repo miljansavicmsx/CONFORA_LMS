@@ -1,0 +1,3 @@
+Accessibility: semantic main, headings, labelled sections, and link text are present.
+I18n: scope adds no locale configuration or raw enum display; existing locale infrastructure remains unchanged.
+accessibility_i18n_boundary_preserved=true

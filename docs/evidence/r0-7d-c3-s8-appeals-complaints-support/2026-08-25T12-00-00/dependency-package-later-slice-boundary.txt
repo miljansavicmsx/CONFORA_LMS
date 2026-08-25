@@ -1,0 +1,12 @@
+dependency_install_performed=false
+new_dependency_count=0
+manifest_change_count=0
+lockfile_change_count=0
+workflow_change_count=0
+docker_change_count=0
+terraform_change_count=0
+unrelated_package_source_change_count=0
+C3_S9_started=false
+C3_S9_source_implementation_count=0
+T026_C3_S9_IMPLEMENTED=false
+later_slice_target_implementation_count=0

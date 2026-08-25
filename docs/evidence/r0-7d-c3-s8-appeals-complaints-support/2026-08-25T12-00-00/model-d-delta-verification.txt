@@ -1,0 +1,7 @@
+MODEL_D_PRE=22/19/3
+MODEL_D_POST=17/14/3
+PRE_minus_POST_count=5
+POST_minus_PRE_count=0
+PRE_minus_POST_equals_exact_corrected_C3_S8_registry=true
+T026_PRESENT_IN_POST_MISSING_SET=true
+AUTHORIZED_TARGET_DELTA=MINUS_5

@@ -1,0 +1,3 @@
+registry_calibration_passed=true
+registry_calibration_mismatch_count=0
+Calibrated accepted paths: T009,T010,T019,T022,T024,T025,T028,T033,T034,T041,T043,T049,T053,T059,T060,T068,T069,T071,T072.

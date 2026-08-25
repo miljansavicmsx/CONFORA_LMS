@@ -1,0 +1,7 @@
+vitest_status=NOT_RUN_TOOLCHAIN_ABSENT
+typescript_build_status=NOT_RUN_TOOLCHAIN_ABSENT
+runtime_validation_complete=false
+runtime_validation_overclaimed=false
+focused_test_file_count=0
+out_of_scope_test_file_count=0
+Static validation: git diff scope and whitespace checks passed; required import/export contracts were inspected.
