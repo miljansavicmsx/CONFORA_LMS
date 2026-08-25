@@ -4,5 +4,16 @@
     "outDir": "./dist",
     "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo"
   },
-  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts",
+    "src/auth/actor-db-access.ts",
+    "src/auth/resolve-db-user.ts",
+    "src/cert-governance/recertification.service.ts",
+    "src/cert-wallet/me-certificates.service.ts",
+    "src/prisma/prisma-tenant-extension.ts",
+    "src/prisma/tenant-access-violation.filter.ts"
+  ]
 }
