@@ -1,0 +1,1 @@
+EMAIL_ONLY=true; TOKENS_PERSISTED=false
