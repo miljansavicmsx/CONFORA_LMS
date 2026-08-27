@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id    String @id @default(uuid()) @db.Uuid
+  users User[]
+}
+
+model User {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  tenantId           String                 @db.Uuid
+  email              String
+  tenant             Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  externalIdentities ExternalIdentityLink[]
+
+  @@unique([tenantId, email])
+  @@unique([tenantId, id])
+}
+
+model ExternalIdentityLink {
+  id       String @id @default(uuid()) @db.Uuid
+  tenantId String @db.Uuid
+  userId   String @db.Uuid
+  issuer   String
+  subject  String
+  user     User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, issuer, subject])
+}
