@@ -1,6 +1,10 @@
 ﻿AUTH*GUARD_REGISTRATION_STRATEGY=GLOBAL_APP_GUARD_WITH_EXPLICIT_PUBLIC_DECORATOR
 DEFAULT_ROUTE_AUTH_STATE=PROTECTED
 GET*/v1/health=PUBLIC via @Public()
-HEALTH_ROUTE_AUTH_REQUIRED=false
+HEALTH*ROUTE_AUTH_REQUIRED=false
 PATH_STRING_PUBLIC_BYPASS=false
 BAR_P03_NEW_ROUTE_COUNT=0
+AUTH_30=PASS
+AUTH_30_ORIGINAL_DEFECT=committed_e2e_expected_method_PATH_METADATA_slash_but_Nest_bare*@Get()_exposes_undefined
+AUTH_30_CORRECTION=assert_controller_path_health;bare_Get_PATH_METADATA_undefined_means_controller_root;AppModule_controllers_AppController_only;live_Express\_\_router_productionRoutes_equals_GET_/v1/health
+CANONICAL_PRODUCTION_ROUTE=GET /v1/health
