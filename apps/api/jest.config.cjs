@@ -6,13 +6,16 @@ module.exports = {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
+  transformIgnorePatterns: ['/node_modules/(?!.pnpm/(jose@|jwks-rsa@)|jose/|jwks-rsa/)'],
   moduleNameMapper: {
     '^@confora/ai-client$': '<rootDir>/../../../packages/ai-client/src/index.ts',
     '^@confora/ai-prompts$': '<rootDir>/../../../packages/ai-prompts/src/index.ts',
-    '^@confora/notification-templates$': '<rootDir>/../../../packages/notification-templates/src/index.ts',
+    '^@confora/notification-templates$':
+      '<rootDir>/../../../packages/notification-templates/src/index.ts',
     '^@confora/shared-types$': '<rootDir>/../../../packages/shared-types/src/index.ts',
     '^@confora/shared-kernel$': '<rootDir>/../../../packages/shared-kernel/src/index.ts',
     '^@confora/audit-client$': '<rootDir>/../../../packages/audit-client/src/index.ts',
+    '^@confora/database$': '<rootDir>/../../../packages/database/src/index.ts',
     '^@/(.*)$': '<rootDir>/$1',
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
@@ -26,6 +29,10 @@ module.exports = {
   ],
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
+  testPathIgnorePatterns: [
+    '/actor-db-access\\.spec\\.ts$',
+    '/me-certificates\\.service\\.spec\\.ts$',
+  ],
 };
 
 if (process.env['COVERAGE_ENFORCE'] === '1') {

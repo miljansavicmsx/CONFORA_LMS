@@ -1,0 +1,10 @@
+﻿DISPOSABLE_POSTGRES=pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b
+MIGRATION=existing BAR-P02 migrate deploy only
+AUTH_16 sub never User.id PASS
+AUTH_17 tenantId+issuer+subject resolves User PASS
+AUTH_18 cross-tenant cannot resolve PASS
+AUTH_19 missing ExternalIdentityLink -> 403 PASS
+AUTH_20 missing User -> 403 PASS
+AUTH_21 auth DB writes = 0 PASS
+PRODUCTION_DATABASE_MUTATION_COUNT=0
+SHARED_DATABASE_MUTATION_COUNT=0

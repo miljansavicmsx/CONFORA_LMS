@@ -10,7 +10,6 @@
     "test",
     "**/*.spec.ts",
     "src/auth/actor-db-access.ts",
-    "src/auth/resolve-db-user.ts",
     "src/cert-governance/recertification.service.ts",
     "src/cert-wallet/me-certificates.service.ts",
     "src/prisma/prisma-tenant-extension.ts",

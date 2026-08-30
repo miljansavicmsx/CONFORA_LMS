@@ -1,0 +1,5 @@
+﻿AUTH_BOUNDED_CONTEXT=authentication and canonical identity resolution only
+NO_CERTIFICATION_LOGIC=true
+NO_AUDIT_PERSISTENCE=true
+NO_REPORTING_LOGIC=true
+NO_TENANT_RUNTIME_ENFORCEMENT=true

@@ -65,6 +65,9 @@ importers:
       '@confora/audit-client':
         specifier: workspace:*
         version: link:../../packages/audit-client
+      '@confora/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@confora/notification-templates':
         specifier: workspace:*
         version: link:../../packages/notification-templates
