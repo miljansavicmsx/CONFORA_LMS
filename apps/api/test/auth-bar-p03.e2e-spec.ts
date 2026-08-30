@@ -109,7 +109,11 @@ describe('BAR-P03 auth e2e', () => {
   afterAll(async () => {
     await app.close();
     await prisma.$disconnect();
-    await fixture.stop();
+    try {
+      await fixture.stop();
+    } catch {
+      /* AUTH_15 may already have stopped the synthetic JWKS server. */
+    }
     try {
       execSync(`docker rm -f ${CONTAINER}`, { stdio: 'pipe' });
     } catch {
@@ -209,12 +213,45 @@ describe('BAR-P03 auth e2e', () => {
       target: object,
       propertyKey?: string | symbol,
     ) => unknown;
-    const prefix = getMetadata('path', AppController);
+
+    // Production module registers only AppController (no auth/debug/introspect routes).
+    const moduleControllers = getMetadata('controllers', AppModule) as unknown[] | undefined;
+    expect(moduleControllers).toEqual([AppController]);
+
+    const controllerPath = getMetadata('path', AppController);
     const methodPath = getMetadata('path', AppController.prototype, 'health');
-    expect(prefix).toBe('health');
-    expect(methodPath).toBe('/');
+
+    expect(controllerPath).toBe('health');
+    // Nest bare `@Get()` leaves method PATH_METADATA undefined; that means the controller root path.
+    expect(methodPath).toBeUndefined();
+
     expect(
       Object.getOwnPropertyNames(AppController.prototype).filter((n) => n !== 'constructor'),
     ).toEqual(['health']);
+
+    // Global prefix `v1` + controller `health` + bare GET root → GET /v1/health
+    const normalizedRoute = `GET /v1/${String(controllerPath)}`;
+    expect(normalizedRoute).toBe('GET /v1/health');
+
+    const adapter = app.getHttpAdapter();
+    const instance = adapter.getInstance() as {
+      _router?: { stack?: Array<{ route?: { path: string; methods: Record<string, boolean> } }> };
+    };
+    // Express 4 exposes routes on `_router` only; do not touch deprecated `app.router` getter.
+    const stack = instance._router?.stack ?? [];
+    const productionRoutes = stack
+      .filter((layer) => layer.route !== undefined)
+      .map((layer) => {
+        const route = layer.route as { path: string; methods: Record<string, boolean> };
+        const methods = Object.keys(route.methods)
+          .filter((m) => route.methods[m])
+          .map((m) => m.toUpperCase());
+        return methods.map((m) => `${m} ${route.path}`);
+      })
+      .flat()
+      // ProbeController exists only inside this e2e suite and is not production surface.
+      .filter((entry) => !entry.endsWith('/probe') && !entry.endsWith('/v1/probe'));
+
+    expect(productionRoutes).toEqual(['GET /v1/health']);
   });
 });
