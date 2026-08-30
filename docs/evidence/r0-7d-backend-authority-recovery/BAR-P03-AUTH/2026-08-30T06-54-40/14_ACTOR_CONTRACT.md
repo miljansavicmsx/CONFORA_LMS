@@ -1,0 +1,8 @@
+﻿AUTHENTICATED_ACTOR_FIELDS=userId,tenantId,issuer,subject,email,roles,mfaVerified
+AUTHENTICATED_ACTOR_FIELD_COUNT=7
+ACTOR_PII_FIELD_COUNT=1
+ACTOR_PII_FIELDS=email
+RAW_ACCESS_TOKEN_IN_ACTOR=false
+RAW_JWT_PAYLOAD_IN_ACTOR=false
+AUTHORIZATION_HEADER_IN_ACTOR=false
+PATH=apps/api/src/auth/request-principal.ts::AuthenticatedActor

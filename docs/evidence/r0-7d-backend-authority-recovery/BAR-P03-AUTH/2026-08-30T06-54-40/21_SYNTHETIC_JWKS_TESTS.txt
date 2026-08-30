@@ -1,0 +1,9 @@
+﻿FIXTURE=apps/api/test/helpers/synthetic-jwks.fixture.ts
+TEST_KEY_ALGORITHM=RSA_FOR_RS256
+PRIVATE_TEST_KEY_TRACKED=false
+REAL_KEYCLOAK_REQUIRED=false
+REAL_BEARER_TOKEN_USED=false
+AUTH_13 valid RS256 accepted PASS
+AUTH_14 unknown kid refresh then fail closed PASS
+AUTH_15 JWKS unavailable fail closed PASS
+JWKS_TEST_SERVER_ORPHAN_COUNT=0

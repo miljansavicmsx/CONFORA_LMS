@@ -1,0 +1,12 @@
+﻿AUTH_02 missing Authorization -> 401 PASS (jwt-auth.guard.spec.ts)
+AUTH_03 malformed Bearer -> 401 PASS (jwt-auth.guard.spec.ts)
+AUTH_04 invalid signature -> 401 PASS (auth-bar-p03.e2e-spec.ts)
+AUTH_05 HS256 rejected PASS (jwt.strategy.spec.ts)
+AUTH_06 expired token rejected PASS (jwt.strategy.spec.ts)
+AUTH_07 future nbf rejected PASS (jwt.strategy.spec.ts)
+AUTH_08 wrong issuer rejected PASS (jwt.strategy.spec.ts)
+AUTH_09 wrong audience rejected PASS (jwt.strategy.spec.ts)
+AUTH_10 missing sub rejected PASS (jwt.strategy.spec.ts)
+AUTH_11 missing tenant_id rejected PASS (jwt.strategy.spec.ts)
+AUTH_12 invalid tenant_id rejected PASS (jwt.strategy.spec.ts)
+RAW_TOKEN_EVIDENCE_COUNT=0
