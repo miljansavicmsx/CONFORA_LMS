@@ -1,0 +1,6 @@
+﻿# Canonical Payload
+
+CANONICAL_PAYLOAD_VERSION=CONFORA_AUDIT_PAYLOAD_V1
+CANONICAL_PAYLOAD_FIELD_ORDER=version,id,tenantId,sequence,idempotencyKey,actorUserId,eventType,outcome,resourceType,resourceId,occurredAt,recordedAt,correlationId,metadata
+SEQUENCE_SERIALIZATION=BigInt.toString(10)
+TIMESTAMP_SERIALIZATION=Date.toISOString()
