@@ -12,7 +12,7 @@ describe('tenant-model-policy', () => {
     expect(TENANT_MODEL_OWNERSHIP.ExternalIdentityLink).toBe('tenantId');
   });
 
-  it('P04_TEST_043 unregistered model access is denied (policy predicate)', () => {
+  it('classifies unregistered models as outside tenant model policy', () => {
     expect(isTenantRegisteredModel('Certificate')).toBe(false);
     expect(isTenantRegisteredModel('User')).toBe(true);
   });

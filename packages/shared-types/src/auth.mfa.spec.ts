@@ -27,7 +27,7 @@ test('P04_TEST_026 missing MFA evidence -> false', () => {
   assert.equal(deriveMfaVerified({ sub: 'u1' }), false);
 });
 
-test('P04_TEST_029 PRIVILEGED_ROLES has exactly 15 and equals MFA_MANDATORY_ROLES', () => {
+test('keeps MFA_MANDATORY_ROLES aligned with PRIVILEGED_ROLES', () => {
   assert.equal(PRIVILEGED_ROLES.length, 15);
   assert.equal(MFA_MANDATORY_ROLES, PRIVILEGED_ROLES);
   assert.deepEqual([...MFA_MANDATORY_ROLES], [...PRIVILEGED_ROLES]);
