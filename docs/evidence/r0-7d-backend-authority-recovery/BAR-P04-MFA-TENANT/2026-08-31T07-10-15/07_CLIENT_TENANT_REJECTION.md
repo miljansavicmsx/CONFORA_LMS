@@ -1,0 +1,9 @@
+﻿POLICY=PROHIBITED
+SELECTORS=x-tenant-id,tenant-id,tenant_id,tenantId,org_id
+HTTP=400
+CODE=CLIENT_TENANT_CONTEXT_FORBIDDEN
+APPLIES_TO_PUBLIC=true
+AUTH_25_POST_P04=400 CLIENT_TENANT_CONTEXT_FORBIDDEN; forged value never echoed; without selector actor.tenantId equals JWT tenant_id
+HISTORICAL_BAR_P03_AUTH_25=header ignored as tenant authority; request could continue
+POST_BAR_P04_AUTH_25=header prohibited at transport boundary; request returns 400
+CLIENT_TENANT_REJECTION_CONTRACT=PASS

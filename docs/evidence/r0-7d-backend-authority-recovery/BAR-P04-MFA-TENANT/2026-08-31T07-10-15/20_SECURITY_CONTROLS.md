@@ -1,0 +1,32 @@
+﻿BAR_P04_SECURITY_CONTROL_COUNT=28
+BAR_P04_SECURITY_CONTROL_PASS_COUNT=28
+BAR_P04_SECURITY_CONTROL_FAIL_COUNT=0
+P04_SEC_01=PASS forged client tenant override prohibited
+P04_SEC_02=PASS client selectors -> 400 CLIENT_TENANT_CONTEXT_FORBIDDEN
+P04_SEC_03=PASS trusted tenant=AuthenticatedActor.tenantId
+P04_SEC_04=PASS request-scoped TenantContextStore fail closed
+P04_SEC_05=PASS no ALS/mutable setTenant
+P04_SEC_06=PASS active Tenant PostgreSQL SoT
+P04_SEC_07=PASS active User PostgreSQL SoT
+P04_SEC_08=PASS JWT != active Tenant/User
+P04_SEC_09=PASS active failures indistinguishable
+P04_SEC_10=PASS TenantPrisma read-only registered models
+P04_SEC_11=PASS unregistered model DENY
+P04_SEC_12=PASS unique reads tenant-qualified
+P04_SEC_13=PASS writes/nested writes DENY
+P04_SEC_14=PASS transaction DENY
+P04_SEC_15=PASS raw SQL DENY
+P04_SEC_16=PASS raw Prisma allowlist
+P04_SEC_17=PASS foreign record no existence leak
+P04_SEC_18=PASS tenant violation privacy-safe 403
+P04_SEC_19=PASS MFA evidence deriveMfaVerified
+P04_SEC_20=PASS 15 privileged roles global MFA
+P04_SEC_21=PASS learners not globally MFA-forced
+P04_SEC_22=PASS @RequireMfa route assurance
+P04_SEC_23=PASS MFA failure privacy-safe 403
+P04_SEC_24=PASS no system/platform bypass
+P04_SEC_25=PASS zero new production routes
+P04_SEC_26=PASS zero new external dependencies
+P04_SEC_27=PASS migration defaults false / no true backfill
+P04_SEC_28=PASS zero BAR-P05 audit / no cert/report/T026
+AUTH_25_PROVIDES_REGRESSION_FOR=P04_SEC_01,P04_SEC_02

@@ -1,0 +1,5 @@
+﻿SOURCE=PostgreSQL Tenant.isActive
+RULE=exists AND isActive==true
+FAILURE=403 ACCESS_DENIED Access denied.
+JWT_SUBSTITUTE=false
+ACTIVE_TENANT_CONTRACT=PASS

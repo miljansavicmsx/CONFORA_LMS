@@ -1,0 +1,13 @@
+﻿OD1_COUNT=24
+OD1_STATUS=APPROVED
+R1A1_AMENDMENT=GRANTED
+R1A1_PURPOSE=Authorize apps/api/test/auth-bar-p03.e2e-spec.ts for AUTH_25 post-P04 coexistence and active fixture opt-in
+R1A1_STOP=R0D-BAR-P04R1A1-S04 (tsconfig/eslint project boundary; no commit)
+R1A2_AMENDMENT=GRANTED
+R1A2_PURPOSE=Authorize packages/database/tsconfig.json + packages/database/tsconfig.build.json so BAR-P04 database invariant test is in TypeScript projectService while production build emits dist/index.js
+HISTORICAL_R1_STOP_PRESERVED=true
+HISTORICAL_R1A1_STOP_PRESERVED=true
+NO_COMMITS_AT_R1_STOP=true
+NO_COMMITS_AT_R1A1_STOP=true
+NO_PUSH_BEFORE_R1A2_PASS=true
+NO_PR=true

@@ -1,0 +1,3 @@
+﻿ROLLBACK=revert feature branch commits; do not deploy migration to production without separate authorization
+PRODUCTION_DATABASE_MUTATION_AUTHORIZATION=false
+MIGRATION_NOT_APPLIED_TO_PRODUCTION=true
