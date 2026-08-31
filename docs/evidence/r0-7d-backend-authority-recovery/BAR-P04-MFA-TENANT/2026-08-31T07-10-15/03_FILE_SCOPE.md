@@ -1,0 +1,16 @@
+﻿BAR_P04_AUTHORIZED_NON_EVIDENCE_FILE_COUNT=31
+SCOPE_PROGRESSION=28 -> 29 (R1A1) -> 31 (R1A2)
+R1A1_ADDITIONAL_PATH=apps/api/test/auth-bar-p03.e2e-spec.ts
+R1A2_ADDED_PATH_30=packages/database/tsconfig.json
+R1A2_ADDED_PATH_31=packages/database/tsconfig.build.json
+R1A1_STOP_S04=AMENDED_IMPLEMENTATION_REQUIRES_30TH_NON_EVIDENCE_PATH
+R1A1_STOP_REASON_DETAIL=authorized packages/database/test/bar-p04-active-state-invariants.test.ts outside packages/database/tsconfig.json include (projectService:true ESLint parse failure); include-only kept rootDir ./src caused TS6059; dropping rootDir without explicit build rootDir broke dist/index.js emit layout
+SOURCE_OUT_OF_SCOPE_FILE_COUNT=0
+MANIFEST_CHANGE_COUNT=0
+LOCKFILE_CHANGE_COUNT=0
+NEW_EXTERNAL_DEPENDENCY_COUNT=0
+MIGRATION_PATH=packages/database/prisma/migrations/20260830210116_bar_p04_active_tenant_user_baseline/migration.sql
+DATABASE_TSCONFIG_TEST_INCLUDE=src/**/\*.ts + test/**/_.ts
+DATABASE_TSCONFIG_ROOTDIR=REMOVED (no rootDir in general project)
+DATABASE_BUILD_TSCONFIG_ROOTDIR=./src
+DATABASE_BUILD_TSCONFIG_INCLUDE=src/\*\*/_.ts only

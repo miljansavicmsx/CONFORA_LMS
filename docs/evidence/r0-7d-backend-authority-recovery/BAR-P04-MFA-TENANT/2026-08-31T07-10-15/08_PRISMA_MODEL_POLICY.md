@@ -1,0 +1,5 @@
+﻿REGISTERED_MODELS=Tenant,User,ExternalIdentityLink
+Tenant.OWNERSHIP=id==requestTenantId
+User.OWNERSHIP=tenantId==requestTenantId
+ExternalIdentityLink.OWNERSHIP=tenantId==requestTenantId
+UNREGISTERED_MODEL_POLICY=DENY

@@ -1,0 +1,9 @@
+﻿RESULTING_MODEL_COUNT=3
+NEW_MODEL_COUNT=0
+NEW_ENUM_COUNT=0
+Tenant.isActive=Boolean @default(false)
+User.isActive=Boolean @default(false)
+ExternalIdentityLink=NO_CHANGE
+IDENTITY_KEY_CHANGE_COUNT=0
+RELATION_CHANGE_COUNT=0
+UNIQUE_CONSTRAINT_CHANGE_COUNT=0
