@@ -3,10 +3,11 @@ import { PassportModule } from '@nestjs/passport';
 
 import { PrismaModule } from '../prisma/prisma.module';
 import { JwtStrategy } from './jwt.strategy';
+import { MfaAssuranceGuard } from './mfa-assurance.guard';
 
 @Module({
   imports: [PassportModule.register({ defaultStrategy: 'jwt' }), PrismaModule],
-  providers: [JwtStrategy],
-  exports: [PassportModule],
+  providers: [JwtStrategy, MfaAssuranceGuard],
+  exports: [PassportModule, MfaAssuranceGuard],
 })
 export class AuthModule {}

@@ -216,11 +216,7 @@ export const ROUTE_PERMISSIONS = [
   {
     prefix: '/v1/sysadmin',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const,
-    roles: [
-      'STAFF_DIR',
-      'STAFF_SYSADM',
-      'STAFF_AUD',
-    ] as const satisfies readonly RbacRole[],
+    roles: ['STAFF_DIR', 'STAFF_SYSADM', 'STAFF_AUD'] as const satisfies readonly RbacRole[],
   },
   {
     prefix: '/v1/ai/metrics',
@@ -339,21 +335,33 @@ export const ROUTE_PERMISSIONS = [
 
 export type RoutePermissionRule = (typeof ROUTE_PERMISSIONS)[number];
 
-export const MFA_MANDATORY_ROLES: readonly RbacRole[] = [
+/** Canonical privileged / staff roles (BAR-P04 OD-P04-18). Exactly 15. */
+export const PRIVILEGED_ROLES: readonly RbacRole[] = [
   'STAFF_DIR',
   'STAFF_SYSADM',
   'STAFF_TRAINADM',
-  'STAFF_AUD',
+  'ISSUANCE_OFFICER',
+  'LIFECYCLE_OFFICER',
   'COM_TECH',
   'COM_CERT',
   'COM_IMP',
   'COM_APP',
+  'STAFF_AUD',
   'SME',
   'EXAMINER',
   'INVIGILATOR',
   'QUALITY_MANAGER',
   'AI_SECURITY_MANAGER',
 ];
+
+/** Learner / non-privileged roles. Exactly 2. */
+export const LEARNER_ROLES: readonly RbacRole[] = ['USR_CAND', 'USR_CERT'];
+
+/**
+ * Global MFA-mandatory roles. Same source as PRIVILEGED_ROLES (OD-P04-18).
+ * ISSUANCE_OFFICER and LIFECYCLE_OFFICER are included.
+ */
+export const MFA_MANDATORY_ROLES: readonly RbacRole[] = PRIVILEGED_ROLES;
 
 export const MFA_FOR_EXAM_START_ROLES: readonly RbacRole[] = ['USR_CAND', 'USR_CERT'];
 

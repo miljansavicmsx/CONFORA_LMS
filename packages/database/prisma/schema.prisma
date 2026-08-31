@@ -8,14 +8,16 @@ datasource db {
 }
 
 model Tenant {
-  id    String @id @default(uuid()) @db.Uuid
-  users User[]
+  id       String  @id @default(uuid()) @db.Uuid
+  isActive Boolean @default(false)
+  users    User[]
 }
 
 model User {
   id                 String                 @id @default(uuid()) @db.Uuid
   tenantId           String                 @db.Uuid
   email              String
+  isActive           Boolean                @default(false)
   tenant             Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   externalIdentities ExternalIdentityLink[]
 

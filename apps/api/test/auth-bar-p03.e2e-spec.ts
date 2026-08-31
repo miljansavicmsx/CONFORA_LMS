@@ -82,9 +82,9 @@ describe('BAR-P03 auth e2e', () => {
 
     prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } });
     await prisma.$connect();
-    await prisma.tenant.create({ data: { id: tenantId } });
+    await prisma.tenant.create({ data: { id: tenantId, isActive: true } });
     await prisma.user.create({
-      data: { id: userId, tenantId, email: 'e2e@example.test' },
+      data: { id: userId, tenantId, email: 'e2e@example.test', isActive: true },
     });
     await prisma.externalIdentityLink.create({
       data: {
@@ -169,18 +169,33 @@ describe('BAR-P03 auth e2e', () => {
   });
 
   it('AUTH_25 client-supplied tenant header cannot override token tenant_id authority', async () => {
+    // Post-BAR-P04 (OD-P04-02): prohibited client tenant selectors are rejected at the
+    // transport boundary before JwtAuthGuard / actor construction. Historical BAR-P03
+    // AUTH_25 observed header-ignored-as-authority with request continuation; that outer
+    // transport expectation is intentionally evolved. Trusted tenant source remains JWT tenant_id only.
     const token = fixture.signAccessToken({
       sub: subject,
       tenant_id: tenantId,
       realm_access: { roles: ['USR_CAND'] },
     });
     const forgedTenant = randomUUID();
-    const res = await request(httpServer(app))
+    const rejected = await request(httpServer(app))
       .get('/v1/probe')
       .set('Authorization', `Bearer ${token}`)
       .set('x-tenant-id', forgedTenant)
+      .expect(400);
+    expect(rejected.body).toMatchObject({
+      statusCode: 400,
+      code: 'CLIENT_TENANT_CONTEXT_FORBIDDEN',
+    });
+    expect(JSON.stringify(rejected.body)).not.toContain(forgedTenant);
+
+    // Without the prohibited selector, actor tenantId remains the verified JWT tenant_id.
+    const allowed = await request(httpServer(app))
+      .get('/v1/probe')
+      .set('Authorization', `Bearer ${token}`)
       .expect(200);
-    const body = res.body as AuthenticatedActor;
+    const body = allowed.body as AuthenticatedActor;
     expect(body.tenantId).toBe(tenantId);
     expect(body.tenantId).not.toBe(forgedTenant);
   });
