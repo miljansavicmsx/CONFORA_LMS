@@ -8,9 +8,11 @@ datasource db {
 }
 
 model Tenant {
-  id       String  @id @default(uuid()) @db.Uuid
-  isActive Boolean @default(false)
-  users    User[]
+  id            String          @id @default(uuid()) @db.Uuid
+  isActive      Boolean         @default(false)
+  users         User[]
+  auditEvents   AuditEvent[]
+  auditChainHead AuditChainHead?
 }
 
 model User {
@@ -20,6 +22,7 @@ model User {
   isActive           Boolean                @default(false)
   tenant             Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   externalIdentities ExternalIdentityLink[]
+  auditEvents        AuditEvent[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -34,4 +37,44 @@ model ExternalIdentityLink {
   user     User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
 
   @@unique([tenantId, issuer, subject])
+}
+
+enum AuditOutcome {
+  SUCCESS
+  DENIED
+  FAILURE
+}
+
+model AuditEvent {
+  id             String       @id @db.Uuid
+  tenantId       String       @db.Uuid
+  sequence       BigInt
+  idempotencyKey String       @db.Uuid
+  actorUserId    String       @db.Uuid
+  eventType      String       @db.VarChar(128)
+  outcome        AuditOutcome
+  resourceType   String?      @db.VarChar(128)
+  resourceId     String?      @db.VarChar(128)
+  occurredAt     DateTime     @db.Timestamptz(3)
+  recordedAt     DateTime     @db.Timestamptz(3)
+  correlationId  String?      @db.VarChar(128)
+  metadata       Json?
+  prevHash       String       @db.Char(64)
+  payloadHash    String       @db.Char(64)
+  chainHash      String       @db.Char(64)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  actor  User   @relation(fields: [tenantId, actorUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, sequence])
+  @@unique([tenantId, idempotencyKey])
+  @@index([tenantId, recordedAt])
+}
+
+model AuditChainHead {
+  tenantId     String @id @db.Uuid
+  lastSequence BigInt
+  lastHash     String @db.Char(64)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 }
