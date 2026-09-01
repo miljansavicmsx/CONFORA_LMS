@@ -1,0 +1,12 @@
+# Migration
+
+MIGRATION_PATH=packages/database/prisma/migrations/20260901213614_bar_p06_certification_application_self_read_baseline/migration.sql
+MIGRATION_TIMESTAMP=20260901213614
+MIGRATION_NAME=bar_p06_certification_application_self_read_baseline
+MIGRATION_COUNT_FROM_BASE=1
+PRIOR_MIGRATION_DELTA_COUNT=0
+
+P06_TEST_009=PASS
+P06_TEST_010=PASS
+APPLICATION_BACKFILL_COUNT=0
+FAKE_APPLICATION_SEED=false
