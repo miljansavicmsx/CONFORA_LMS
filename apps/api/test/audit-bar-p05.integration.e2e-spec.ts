@@ -11,7 +11,10 @@ import { AuditIntegrityService } from '../src/audit/audit-integrity.service';
 import { AuditRepository } from '../src/audit/audit.repository';
 import { AuditService } from '../src/audit/audit.service';
 import type { TenantContextStore } from '../src/tenant/tenant-context.store';
-import { runSyntheticBusinessWithAudit } from './helpers/audit-transaction.harness';
+import {
+  runSameTransactionAppendThenFail,
+  runSameTransactionDualAppend,
+} from './helpers/audit-transaction.harness';
 
 const IMAGE =
   'pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b';
@@ -409,26 +412,27 @@ describe('BAR-P05 audit integration e2e', () => {
   it('P05_TEST_045 Audit append failure rolls back synthetic business mutation', async () => {
     const service = makeService(tenantA);
     const actor = actorFor(tenantA, userA);
-    const before = await prisma.user.findUniqueOrThrow({
-      where: { tenantId_id: { tenantId: tenantA, id: userA } },
-    });
+    const beforeCount = await prisma.auditEvent.count({ where: { tenantId: tenantA } });
     await expect(
-      runSyntheticBusinessWithAudit(service, actor, {
-        userId: userA,
-        email: 'mutated-should-rollback@example.test',
-        appendInput: {
+      runSameTransactionAppendThenFail(
+        service,
+        actor,
+        {
           idempotencyKey: randomUUID(),
-          eventType: 'UNKNOWN_EVENT',
+          eventType: 'TEST_EVENT',
           outcome: 'SUCCESS',
           occurredAt: new Date('2026-08-31T12:04:00.000Z'),
         },
-      }),
+        {
+          idempotencyKey: randomUUID(),
+          eventType: 'UNKNOWN_EVENT',
+          outcome: 'SUCCESS',
+          occurredAt: new Date('2026-08-31T12:04:01.000Z'),
+        },
+      ),
     ).rejects.toBeInstanceOf(AuditError);
-    const after = await prisma.user.findUniqueOrThrow({
-      where: { tenantId_id: { tenantId: tenantA, id: userA } },
-    });
-    expect(after.email).toBe(before.email);
-    expect(await prisma.auditEvent.count({ where: { tenantId: tenantA } })).toBe(0);
+    expect(await prisma.auditEvent.count({ where: { tenantId: tenantA } })).toBe(beforeCount);
+    expect(await prisma.auditChainHead.count({ where: { tenantId: tenantA } })).toBe(0);
   });
 
   it('P05_TEST_046 Later callback failure rolls back AuditEvent + chain head', async () => {
@@ -452,22 +456,29 @@ describe('BAR-P05 audit integration e2e', () => {
   it('P05_TEST_047 Successful synthetic business mutation + audit commit atomically', async () => {
     const service = makeService(tenantA);
     const actor = actorFor(tenantA, userA);
-    const newEmail = `atomic-${randomUUID()}@example.test`;
-    const view = await runSyntheticBusinessWithAudit(service, actor, {
-      userId: userA,
-      email: newEmail,
-      appendInput: {
-        idempotencyKey: randomUUID(),
+    const firstKey = randomUUID();
+    const secondKey = randomUUID();
+    const result = await runSameTransactionDualAppend(
+      service,
+      actor,
+      {
+        idempotencyKey: firstKey,
         eventType: 'TEST_EVENT',
         outcome: 'SUCCESS',
         occurredAt: new Date('2026-08-31T12:06:00.000Z'),
       },
-    });
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { tenantId_id: { tenantId: tenantA, id: userA } },
-    });
-    expect(user.email).toBe(newEmail);
-    expect(view.sequence).toBe(1n);
-    expect(await prisma.auditEvent.count({ where: { tenantId: tenantA } })).toBe(1);
+      {
+        idempotencyKey: secondKey,
+        eventType: 'TEST_EVENT',
+        outcome: 'SUCCESS',
+        occurredAt: new Date('2026-08-31T12:06:01.000Z'),
+      },
+    );
+    expect(result.first.sequence).toBe(1n);
+    expect(result.second.sequence).toBe(2n);
+    expect(await prisma.auditEvent.count({ where: { tenantId: tenantA } })).toBe(2);
+    const head = await prisma.auditChainHead.findUniqueOrThrow({ where: { tenantId: tenantA } });
+    expect(head.lastSequence).toBe(2n);
+    expect(head.lastHash).toBe(result.second.chainHash);
   });
 });

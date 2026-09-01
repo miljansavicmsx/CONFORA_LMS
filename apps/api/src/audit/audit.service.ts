@@ -93,26 +93,6 @@ export class AuditService {
     );
   }
 
-  /**
-   * Internal entry used by the test harness for same-TX synthetic proofs.
-   * Not exported by AuditModule.
-   */
-  async runSerializableWithApi<T>(
-    actor: AuthenticatedActor,
-    work: (api: AuditPersistenceApi, ops: AuditTransactionOps) => Promise<T>,
-  ): Promise<T> {
-    this.assertActor(actor);
-    this.assertTenantAgreement(actor);
-    return this.withSerializableRetry(async () =>
-      this.repository.runSerializableTransaction(async (api) => {
-        const ops: AuditTransactionOps = {
-          append: (rawInput) => this.appendWithin(api, actor, rawInput),
-        };
-        return work(api, ops);
-      }),
-    );
-  }
-
   private async appendWithin(
     api: AuditPersistenceApi,
     actor: AuthenticatedActor,

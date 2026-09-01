@@ -121,29 +121,6 @@ export class AuditPersistenceApi {
     });
     return result.count === 1;
   }
-
-  async advanceChainHead(
-    tenantId: string,
-    lastSequence: bigint,
-    lastHash: string,
-  ): Promise<AuditChainHeadRow> {
-    const row = await this.tx.auditChainHead.update({
-      where: { tenantId },
-      data: { lastSequence, lastHash },
-    });
-    return row;
-  }
-
-  /**
-   * Sealed companion write for same-transaction proofs / future authorized repos.
-   * Does not expose the transaction client. Limited to a single user email update.
-   */
-  async syntheticUpdateUserEmail(tenantId: string, userId: string, email: string): Promise<void> {
-    await this.tx.user.update({
-      where: { tenantId_id: { tenantId, id: userId } },
-      data: { email },
-    });
-  }
 }
 
 @Injectable()

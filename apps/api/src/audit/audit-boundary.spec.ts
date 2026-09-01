@@ -131,4 +131,28 @@ describe('audit-boundary', () => {
     }
     expect(harnessImporters).toEqual([]);
   });
+
+  it('AuditService public surface is exactly append and executeInTransaction', () => {
+    const serviceSource = stripComments(readFileSync(join(auditDir, 'audit.service.ts'), 'utf8'));
+    const classMatch = serviceSource.match(/export class AuditService[\s\S]*?\n}/);
+    expect(classMatch).not.toBeNull();
+    const classBody = classMatch?.[0] ?? '';
+    expect(classBody.length).toBeGreaterThan(0);
+    const publicAsyncMethods = [
+      ...classBody.matchAll(/^\s{2}(?!(?:private|protected)\s)async\s+(\w+)/gm),
+    ].map((m) => m[1]);
+    expect(publicAsyncMethods.sort()).toEqual(['append', 'executeInTransaction']);
+    expect(classBody).not.toMatch(/\brunSerializableWithApi\b/);
+
+    const auditProduction = walk(auditDir);
+    const forbidden: string[] = [];
+    const forbiddenRe = /\bsyntheticUpdateUserEmail\b|\badvanceChainHead(?!Cas)\s*\(/;
+    for (const file of auditProduction) {
+      const text = stripComments(readFileSync(file, 'utf8'));
+      if (forbiddenRe.test(text)) {
+        forbidden.push(relative(repoRoot, file).replace(/\\/g, '/'));
+      }
+    }
+    expect(forbidden).toEqual([]);
+  });
 });

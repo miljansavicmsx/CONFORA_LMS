@@ -3,20 +3,31 @@ import type { AuditAppendInput, AuditEventView } from '../../src/audit/audit-eve
 import type { AuditService } from '../../src/audit/audit.service';
 
 /**
- * Test-only same-TX harness for BAR-P05 synthetic business + audit proofs.
+ * Test-only same-TX harness for BAR-P05 atomicity proofs via executeInTransaction.
+ * Uses only bounded AuditTransactionOps.append — no production persistence escape hatch.
  * Must never be imported from apps/api/src/** (production import count = 0).
  */
-export async function runSyntheticBusinessWithAudit<T = AuditEventView>(
+export async function runSameTransactionDualAppend(
   auditService: AuditService,
   actor: AuthenticatedActor,
-  params: {
-    userId: string;
-    email: string;
-    appendInput: AuditAppendInput;
-  },
-): Promise<T> {
-  return auditService.runSerializableWithApi(actor, async (api, ops) => {
-    await api.syntheticUpdateUserEmail(actor.tenantId, params.userId, params.email);
-    return (await ops.append(params.appendInput)) as T;
+  firstAppend: AuditAppendInput,
+  secondAppend: AuditAppendInput,
+): Promise<{ first: AuditEventView; second: AuditEventView }> {
+  return auditService.executeInTransaction(actor, async (ops) => {
+    const first = await ops.append(firstAppend);
+    const second = await ops.append(secondAppend);
+    return { first, second };
+  });
+}
+
+export async function runSameTransactionAppendThenFail(
+  auditService: AuditService,
+  actor: AuthenticatedActor,
+  successfulAppend: AuditAppendInput,
+  failingAppend: AuditAppendInput,
+): Promise<void> {
+  await auditService.executeInTransaction(actor, async (ops) => {
+    await ops.append(successfulAppend);
+    await ops.append(failingAppend);
   });
 }

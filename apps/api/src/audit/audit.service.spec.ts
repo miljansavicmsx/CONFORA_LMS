@@ -105,13 +105,7 @@ describe('AuditService', () => {
         lastHash: INITIAL_PREV_HASH,
       }),
       createEvent: jest.fn((data: AuditEventCreateData) => Promise.resolve(toEventRow(data))),
-      advanceChainHead: jest.fn().mockResolvedValue({
-        tenantId: ACTOR.tenantId,
-        lastSequence: 1n,
-        lastHash: 'x'.repeat(64),
-      }),
       advanceChainHeadCas: jest.fn().mockResolvedValue(true),
-      syntheticUpdateUserEmail: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<AuditPersistenceApi>;
 
     repository = {
