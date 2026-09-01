@@ -3,6 +3,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 import { AppController } from './app.controller';
+import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { MfaAssuranceGuard } from './auth/mfa-assurance.guard';
@@ -18,6 +19,7 @@ import { TenantModule } from './tenant/tenant.module';
     PrismaModule,
     AuthModule,
     TenantModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [

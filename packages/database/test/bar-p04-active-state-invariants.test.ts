@@ -22,15 +22,25 @@ test('BAR-P04 Tenant.isActive and User.isActive exist with default false', async
   assert.equal(u2.isActive, false);
 });
 
-test('BAR-P04 model count remains 3 and ExternalIdentityLink unchanged', async () => {
+test('BAR-P04 identity constraints preserved; BAR-P05 additive models/enum exact', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  assert.equal((schema.match(/^model /gm) ?? []).length, 3);
+  const modelMatches = schema.match(/^model /gm) ?? [];
+  const enumMatches = schema.match(/^enum /gm) ?? [];
+  // BAR-P04 baseline models remain; BAR-P05 adds exactly AuditEvent + AuditChainHead.
+  assert.equal(modelMatches.length, 5);
+  assert.match(schema, /model Tenant\b/);
+  assert.match(schema, /model User\b/);
   assert.match(schema, /model ExternalIdentityLink/);
-  assert.doesNotMatch(schema, /\benum\b/);
+  assert.match(schema, /model AuditEvent\b/);
+  assert.match(schema, /model AuditChainHead\b/);
+  // BAR-P05 adds exactly one enum; BAR-P04 had zero enums.
+  assert.equal(enumMatches.length, 1);
+  assert.match(schema, /enum AuditOutcome\b/);
   assert.equal(schema.toLowerCase().includes('status'), false);
   assert.match(schema, /@@unique\(\[tenantId, email\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, id\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, issuer, subject\]\)/);
+  assert.match(schema, /isActive\s+Boolean\s+@default\(false\)/);
 });
 
 test('BAR-P04 can set isActive true explicitly for successful access fixtures', async () => {
