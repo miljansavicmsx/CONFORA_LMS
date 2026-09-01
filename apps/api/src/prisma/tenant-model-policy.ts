@@ -1,4 +1,9 @@
-export const TENANT_REGISTERED_MODELS = ['Tenant', 'User', 'ExternalIdentityLink'] as const;
+export const TENANT_REGISTERED_MODELS = [
+  'Tenant',
+  'User',
+  'ExternalIdentityLink',
+  'CertificationApplication',
+] as const;
 
 export type TenantRegisteredModel = (typeof TENANT_REGISTERED_MODELS)[number];
 
@@ -8,6 +13,7 @@ export const TENANT_MODEL_OWNERSHIP: Readonly<Record<TenantRegisteredModel, Tena
   Tenant: 'id',
   User: 'tenantId',
   ExternalIdentityLink: 'tenantId',
+  CertificationApplication: 'tenantId',
 };
 
 export function isTenantRegisteredModel(model: string): model is TenantRegisteredModel {

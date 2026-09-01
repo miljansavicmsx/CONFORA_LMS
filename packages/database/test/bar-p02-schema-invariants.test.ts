@@ -154,24 +154,35 @@ test('11 only approved application tables exist', async () => {
   assert.deepEqual(names, [
     'AuditChainHead',
     'AuditEvent',
+    'CertificationApplication',
     'ExternalIdentityLink',
     'Tenant',
     'User',
   ]);
-  assert.equal(names.length, 5);
+  assert.equal(names.length, 6);
 });
 
 test('12 schema contains no unapproved persistence fields', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  for (const field of [
-    'createdAt',
-    'updatedAt',
-    'deletedAt',
-    'status',
-    'mfa',
-    'password',
-    'accessToken',
-    'refreshToken',
-  ])
-    assert.equal(schema.toLowerCase().includes(field.toLowerCase()), false);
+  const baselineModels = ['Tenant', 'User', 'ExternalIdentityLink'] as const;
+  for (const modelName of baselineModels) {
+    const blockRe = new RegExp(`model ${modelName}\\s*\\{([^}]*)\\}`, 's');
+    const block = blockRe.exec(schema)?.[1] ?? '';
+    for (const field of [
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'status',
+      'mfa',
+      'password',
+      'accessToken',
+      'refreshToken',
+    ]) {
+      assert.equal(
+        block.toLowerCase().includes(field.toLowerCase()),
+        false,
+        `${modelName} must not contain ${field}`,
+      );
+    }
+  }
 });

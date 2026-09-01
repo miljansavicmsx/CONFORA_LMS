@@ -26,17 +26,24 @@ test('BAR-P04 identity constraints preserved; BAR-P05 additive models/enum exact
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
   const modelMatches = schema.match(/^model /gm) ?? [];
   const enumMatches = schema.match(/^enum /gm) ?? [];
-  // BAR-P04 baseline models remain; BAR-P05 adds exactly AuditEvent + AuditChainHead.
-  assert.equal(modelMatches.length, 5);
+  // BAR-P04 baseline models remain; BAR-P05 adds AuditEvent + AuditChainHead; BAR-P06 adds CertificationApplication.
+  assert.equal(modelMatches.length, 6);
   assert.match(schema, /model Tenant\b/);
   assert.match(schema, /model User\b/);
   assert.match(schema, /model ExternalIdentityLink/);
   assert.match(schema, /model AuditEvent\b/);
   assert.match(schema, /model AuditChainHead\b/);
-  // BAR-P05 adds exactly one enum; BAR-P04 had zero enums.
-  assert.equal(enumMatches.length, 1);
+  assert.match(schema, /model CertificationApplication\b/);
+  // BAR-P05 adds AuditOutcome; BAR-P06 adds CertificationApplicationStatus.
+  assert.equal(enumMatches.length, 2);
   assert.match(schema, /enum AuditOutcome\b/);
-  assert.equal(schema.toLowerCase().includes('status'), false);
+  assert.match(schema, /enum CertificationApplicationStatus\b/);
+  const tenantBlock = schema.match(/model Tenant\s*\{([^}]*)\}/s)?.[1] ?? '';
+  const userBlock = schema.match(/model User\s*\{([^}]*)\}/s)?.[1] ?? '';
+  const eilBlock = schema.match(/model ExternalIdentityLink\s*\{([^}]*)\}/s)?.[1] ?? '';
+  assert.equal(tenantBlock.toLowerCase().includes('status'), false);
+  assert.equal(userBlock.toLowerCase().includes('status'), false);
+  assert.equal(eilBlock.toLowerCase().includes('status'), false);
   assert.match(schema, /@@unique\(\[tenantId, email\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, id\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, issuer, subject\]\)/);

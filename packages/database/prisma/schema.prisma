@@ -8,11 +8,12 @@ datasource db {
 }
 
 model Tenant {
-  id            String          @id @default(uuid()) @db.Uuid
-  isActive      Boolean         @default(false)
-  users         User[]
-  auditEvents   AuditEvent[]
-  auditChainHead AuditChainHead?
+  id                       String                    @id @default(uuid()) @db.Uuid
+  isActive                 Boolean                   @default(false)
+  users                    User[]
+  auditEvents              AuditEvent[]
+  auditChainHead           AuditChainHead?
+  certificationApplications CertificationApplication[]
 }
 
 model User {
@@ -21,8 +22,9 @@ model User {
   email              String
   isActive           Boolean                @default(false)
   tenant             Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  externalIdentities ExternalIdentityLink[]
-  auditEvents        AuditEvent[]
+  externalIdentities         ExternalIdentityLink[]
+  auditEvents                AuditEvent[]
+  certificationApplications  CertificationApplication[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -43,6 +45,31 @@ enum AuditOutcome {
   SUCCESS
   DENIED
   FAILURE
+}
+
+enum CertificationApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model CertificationApplication {
+  id              String                         @id @default(uuid()) @db.Uuid
+  tenantId        String                         @db.Uuid
+  applicantUserId String                         @db.Uuid
+  status          CertificationApplicationStatus
+  schemeRef       String                         @db.VarChar(128)
+  submittedAt     DateTime?                      @db.Timestamptz(3)
+  createdAt       DateTime                       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime                       @updatedAt @db.Timestamptz(3)
+
+  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  applicant User   @relation(fields: [tenantId, applicantUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@index([tenantId, applicantUserId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([tenantId, applicantUserId, status])
 }
 
 model AuditEvent {
