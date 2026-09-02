@@ -9,6 +9,7 @@ import { CertificationApplicationsModule } from './certification-applications/ce
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { MfaAssuranceGuard } from './auth/mfa-assurance.guard';
 import { PrismaModule } from './prisma/prisma.module';
+import { ReportQueryModule } from './report-query/report-query.module';
 import { ActiveAssuranceGuard } from './tenant/active-assurance.guard';
 import { AssuranceExceptionFilter } from './tenant/assurance-exception.filter';
 import { ClientTenantRejectionMiddleware } from './tenant/client-tenant-rejection.middleware';
@@ -22,6 +23,7 @@ import { TenantModule } from './tenant/tenant.module';
     TenantModule,
     AuditModule,
     CertificationApplicationsModule,
+    ReportQueryModule,
   ],
   controllers: [AppController],
   providers: [
