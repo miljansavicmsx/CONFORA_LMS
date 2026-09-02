@@ -1,0 +1,7 @@
+# Role Authority
+
+P07_ALLOWED_ROLE_COUNT=4
+P07_ALLOWED_ROLES=STAFF_DIR|STAFF_SYSADM|STAFF_AUD|QUALITY_MANAGER
+assertReportQueryAuthorized rejects missing actor, missing tenant, and all non-allowlist roles before DB.
+P07_ROLE_CHECK_BEFORE_DATABASE_ACCESS=true
+P07_UNAUTHORIZED_ROLE_DATABASE_QUERY_COUNT=0
