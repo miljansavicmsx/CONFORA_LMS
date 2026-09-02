@@ -197,6 +197,23 @@ export class TenantPrismaService {
     },
   };
 
+  readonly certificationApplication = {
+    findMany: async (args: AggregateArgs = {}) => {
+      const tenantId = this.tenantContext.getRequiredTenantId();
+      return this.prisma.certificationApplication.findMany({
+        ...args,
+        where: forceTenantWhere(args.where, tenantId),
+      });
+    },
+    findFirst: async (args: AggregateArgs = {}) => {
+      const tenantId = this.tenantContext.getRequiredTenantId();
+      return this.prisma.certificationApplication.findFirst({
+        ...args,
+        where: forceTenantWhere(args.where, tenantId),
+      });
+    },
+  };
+
   // Explicit denial surface for contract tests — methods must not exist as writable API.
   create = undefined;
   createMany = undefined;

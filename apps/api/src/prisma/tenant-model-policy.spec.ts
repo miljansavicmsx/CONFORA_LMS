@@ -5,11 +5,17 @@ import {
 } from './tenant-model-policy';
 
 describe('tenant-model-policy', () => {
-  it('registers exactly Tenant, User, ExternalIdentityLink', () => {
-    expect([...TENANT_REGISTERED_MODELS]).toEqual(['Tenant', 'User', 'ExternalIdentityLink']);
+  it('registers exactly Tenant, User, ExternalIdentityLink, CertificationApplication', () => {
+    expect([...TENANT_REGISTERED_MODELS]).toEqual([
+      'Tenant',
+      'User',
+      'ExternalIdentityLink',
+      'CertificationApplication',
+    ]);
     expect(TENANT_MODEL_OWNERSHIP.Tenant).toBe('id');
     expect(TENANT_MODEL_OWNERSHIP.User).toBe('tenantId');
     expect(TENANT_MODEL_OWNERSHIP.ExternalIdentityLink).toBe('tenantId');
+    expect(TENANT_MODEL_OWNERSHIP.CertificationApplication).toBe('tenantId');
   });
 
   it('classifies unregistered models as outside tenant model policy', () => {

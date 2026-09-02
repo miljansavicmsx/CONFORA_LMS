@@ -11,6 +11,8 @@ describe('TenantPrismaService', () => {
   const findManyUser = jest.fn();
   const findUniqueTenant = jest.fn();
   const findUniqueLink = jest.fn();
+  const findManyCertApp = jest.fn();
+  const findFirstCertApp = jest.fn();
 
   const prisma = {
     user: {
@@ -31,6 +33,10 @@ describe('TenantPrismaService', () => {
       count: jest.fn(),
       aggregate: jest.fn(),
       groupBy: jest.fn(),
+    },
+    certificationApplication: {
+      findMany: findManyCertApp,
+      findFirst: findFirstCertApp,
     },
   };
 
@@ -144,5 +150,27 @@ describe('TenantPrismaService', () => {
     expect(service.$executeRaw).toBeUndefined();
     expect(service.$queryRawUnsafe).toBeUndefined();
     expect(service.$executeRawUnsafe).toBeUndefined();
+  });
+
+  it('P06_TEST_063 TenantPrisma certificationApplication exposes only findFirst/findMany', () => {
+    expect(service.certificationApplication.findMany).toBeDefined();
+    expect(service.certificationApplication.findFirst).toBeDefined();
+    expect(
+      (service.certificationApplication as { findUnique?: unknown }).findUnique,
+    ).toBeUndefined();
+    expect((service.certificationApplication as { create?: unknown }).create).toBeUndefined();
+  });
+
+  it('P06_TEST_064 certificationApplication list forces request tenant', async () => {
+    findManyCertApp.mockResolvedValue([]);
+    await service.certificationApplication.findMany({ where: { applicantUserId: userId } });
+    const calls = findManyCertApp.mock.calls as unknown as Array<[{ where: { AND: unknown[] } }]>;
+    expect(calls[0][0].where.AND[0]).toEqual({ tenantId });
+  });
+
+  it('P06_TEST_066 TenantPrisma global write/raw/transaction remains denied', () => {
+    expect(service.create).toBeUndefined();
+    expect(service.$transaction).toBeUndefined();
+    expect(service.$queryRaw).toBeUndefined();
   });
 });

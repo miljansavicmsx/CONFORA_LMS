@@ -2,22 +2,29 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-test('P05_TEST_001 AuditEvent + AuditChainHead exist / resulting model count 5', async () => {
+test('P05_TEST_001 AuditEvent + AuditChainHead exist / resulting model count 6', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  assert.equal((schema.match(/^model /gm) ?? []).length, 5);
+  assert.equal((schema.match(/^model /gm) ?? []).length, 6);
   assert.match(schema, /model AuditEvent\b/);
   assert.match(schema, /model AuditChainHead\b/);
+  assert.match(schema, /model CertificationApplication\b/);
 });
 
 test('P05_TEST_002 AuditOutcome exactly SUCCESS/DENIED/FAILURE', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  assert.equal((schema.match(/^enum /gm) ?? []).length, 1);
+  assert.equal((schema.match(/^enum /gm) ?? []).length, 2);
   const block = schema.match(/enum AuditOutcome\s*\{([^}]*)\}/)?.[1] ?? '';
   const values = block
     .split('\n')
     .map((l) => l.trim())
     .filter((l) => l && !l.startsWith('//'));
   assert.deepEqual(values, ['SUCCESS', 'DENIED', 'FAILURE']);
+  const statusBlock = schema.match(/enum CertificationApplicationStatus\s*\{([^}]*)\}/)?.[1] ?? '';
+  const statusValues = statusBlock
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('//'));
+  assert.deepEqual(statusValues, ['DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED']);
 });
 
 test('P05_TEST_003 Tenant FK is restrictive', async () => {

@@ -267,6 +267,10 @@ describe('BAR-P03 auth e2e', () => {
       // ProbeController exists only inside this e2e suite and is not production surface.
       .filter((entry) => !entry.endsWith('/probe') && !entry.endsWith('/v1/probe'));
 
-    expect(productionRoutes).toEqual(['GET /v1/health']);
+    expect(productionRoutes).toEqual([
+      'GET /v1/health',
+      'GET /v1/me/certification/applications',
+      'GET /v1/me/certification/applications/:id',
+    ]);
   });
 });
