@@ -1,0 +1,10 @@
+# TenantPrisma Operation Boundary
+
+P07_OD1_OPERATION_AUTHORITY_COUNT=2 (count + groupBy class)
+P07_TENANT_PRISMA_NEW_PRISMA_DELEGATE_OPERATION_CLASS_COUNT=2
+P07_TENANT_PRISMA_NEW_CALLABLE_WRAPPER_COUNT=3
+P07_COUNT_WRAPPER=certificationApplication.count
+P07_GROUPBY_WRAPPERS=groupByStatus|groupBySchemeRef
+P07_GENERIC_GROUPBY_EXPOSED=false
+Caller-visible CertificationApplication ops: findFirst|findMany|count|groupByStatus|groupBySchemeRef
+P06_TEST_063 amended as MANDATORY_FORWARD_COMPATIBILITY_TEST_ADAPTATION only.

@@ -13,6 +13,8 @@ describe('TenantPrismaService', () => {
   const findUniqueLink = jest.fn();
   const findManyCertApp = jest.fn();
   const findFirstCertApp = jest.fn();
+  const countCertApp = jest.fn();
+  const groupByCertApp = jest.fn();
 
   const prisma = {
     user: {
@@ -37,6 +39,8 @@ describe('TenantPrismaService', () => {
     certificationApplication: {
       findMany: findManyCertApp,
       findFirst: findFirstCertApp,
+      count: countCertApp,
+      groupBy: groupByCertApp,
     },
   };
 
@@ -152,13 +156,18 @@ describe('TenantPrismaService', () => {
     expect(service.$executeRawUnsafe).toBeUndefined();
   });
 
-  it('P06_TEST_063 TenantPrisma certificationApplication exposes only findFirst/findMany', () => {
+  it('P06_TEST_063 TenantPrisma certificationApplication exposes findFirst|findMany|count|groupByStatus|groupBySchemeRef', () => {
     expect(service.certificationApplication.findMany).toBeDefined();
     expect(service.certificationApplication.findFirst).toBeDefined();
+    expect(service.certificationApplication.count).toBeDefined();
+    expect(service.certificationApplication.groupByStatus).toBeDefined();
+    expect(service.certificationApplication.groupBySchemeRef).toBeDefined();
     expect(
       (service.certificationApplication as { findUnique?: unknown }).findUnique,
     ).toBeUndefined();
     expect((service.certificationApplication as { create?: unknown }).create).toBeUndefined();
+    expect((service.certificationApplication as { groupBy?: unknown }).groupBy).toBeUndefined();
+    expect((service.certificationApplication as { aggregate?: unknown }).aggregate).toBeUndefined();
   });
 
   it('P06_TEST_064 certificationApplication list forces request tenant', async () => {

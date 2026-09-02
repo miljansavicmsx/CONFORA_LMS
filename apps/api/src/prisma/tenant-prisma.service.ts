@@ -1,4 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
+import type { CertificationApplicationStatus } from '@prisma/client';
 
 import { TenantContextStore } from '../tenant/tenant-context.store';
 import { TenantAccessDeniedError } from '../tenant/tenant-errors';
@@ -9,6 +10,45 @@ type AggregateArgs = {
   where?: Record<string, unknown>;
   [key: string]: unknown;
 };
+
+/** Narrow BAR-P07 aggregate filter bag — no caller Prisma where objects. */
+export type CertificationApplicationTenantAggregateFilters = {
+  status?: CertificationApplicationStatus;
+  schemeRef?: string;
+  createdAt?: {
+    gte?: Date;
+    lte?: Date;
+  };
+  submittedAt?: {
+    gte?: Date;
+    lte?: Date;
+  };
+};
+
+function buildCertificationApplicationAggregateWhere(
+  filters: CertificationApplicationTenantAggregateFilters,
+): Record<string, unknown> {
+  const where: Record<string, unknown> = {};
+  if (filters.status !== undefined) {
+    where['status'] = filters.status;
+  }
+  if (filters.schemeRef !== undefined) {
+    where['schemeRef'] = filters.schemeRef;
+  }
+  if (filters.createdAt) {
+    const createdAt: Record<string, Date> = {};
+    if (filters.createdAt.gte !== undefined) createdAt['gte'] = filters.createdAt.gte;
+    if (filters.createdAt.lte !== undefined) createdAt['lte'] = filters.createdAt.lte;
+    where['createdAt'] = createdAt;
+  }
+  if (filters.submittedAt) {
+    const submittedAt: Record<string, Date> = {};
+    if (filters.submittedAt.gte !== undefined) submittedAt['gte'] = filters.submittedAt.gte;
+    if (filters.submittedAt.lte !== undefined) submittedAt['lte'] = filters.submittedAt.lte;
+    where['submittedAt'] = submittedAt;
+  }
+  return where;
+}
 
 function forceTenantWhere(
   where: Record<string, unknown> | undefined,
@@ -211,6 +251,36 @@ export class TenantPrismaService {
         ...args,
         where: forceTenantWhere(args.where, tenantId),
       });
+    },
+    count: async (filters: CertificationApplicationTenantAggregateFilters = {}) => {
+      const tenantId = this.tenantContext.getRequiredTenantId();
+      return this.prisma.certificationApplication.count({
+        where: forceTenantWhere(buildCertificationApplicationAggregateWhere(filters), tenantId),
+      });
+    },
+    groupByStatus: async (filters: CertificationApplicationTenantAggregateFilters = {}) => {
+      const tenantId = this.tenantContext.getRequiredTenantId();
+      const rows = await this.prisma.certificationApplication.groupBy({
+        by: ['status'],
+        where: forceTenantWhere(buildCertificationApplicationAggregateWhere(filters), tenantId),
+        _count: { _all: true },
+      });
+      return rows.map((row) => ({
+        status: row.status,
+        count: row._count._all,
+      }));
+    },
+    groupBySchemeRef: async (filters: CertificationApplicationTenantAggregateFilters = {}) => {
+      const tenantId = this.tenantContext.getRequiredTenantId();
+      const rows = await this.prisma.certificationApplication.groupBy({
+        by: ['schemeRef'],
+        where: forceTenantWhere(buildCertificationApplicationAggregateWhere(filters), tenantId),
+        _count: { _all: true },
+      });
+      return rows.map((row) => ({
+        schemeRef: row.schemeRef,
+        count: row._count._all,
+      }));
     },
   };
 
