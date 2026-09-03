@@ -29,12 +29,16 @@ describe('report-query-boundary', () => {
     expect(text).toMatch(/ReportQueryModule/);
   });
 
-  it('P07_TEST_009 no /v1/staff/reports route registered', () => {
-    const files = walk(apiSrc);
+  it('P07_TEST_009 ReportQueryModule remains free of staff/reports HTTP routes (P08 forward-compat)', () => {
+    // Forward-compatibility: BAR-P08 may register staff/reports outside report-query/.
+    // P07 authority remains controller-free and must not itself register HTTP report routes.
+    const files = walk(moduleDir);
     const hits: string[] = [];
     for (const file of files) {
       const text = readFileSync(file, 'utf8');
-      if (/staff\/reports|\/v1\/staff\/reports/.test(text)) hits.push(relative(repoRoot, file));
+      if (/@Controller\(|staff\/reports|\/v1\/staff\/reports/.test(text)) {
+        hits.push(relative(repoRoot, file));
+      }
     }
     expect(hits).toEqual([]);
   });
@@ -88,9 +92,17 @@ describe('report-query-boundary', () => {
     }
   });
 
-  it('P07_TEST_094 no BAR-P08 reports HTTP module', () => {
+  it('P07_TEST_094 ReportQueryModule stays non-HTTP when ReportsModule exists (P08 forward-compat)', () => {
+    // Forward-compatibility: BAR-P08 may add apps/api/src/reports as a thin HTTP adapter.
+    // P07 semantic authority remains: ReportQueryModule has zero controllers and no HTTP DSL.
+    const meta = Reflect.getMetadata('controllers', ReportQueryModule) as unknown[] | undefined;
+    expect(meta ?? []).toEqual([]);
+    for (const file of walk(moduleDir)) {
+      const text = readFileSync(file, 'utf8');
+      expect(text).not.toMatch(/@Controller\(/);
+      expect(text).not.toMatch(/ReportsController/);
+    }
     const dirs = readdirSync(apiSrc);
-    expect(dirs).not.toContain('reports');
     expect(dirs).not.toContain('staff-reports');
   });
 
