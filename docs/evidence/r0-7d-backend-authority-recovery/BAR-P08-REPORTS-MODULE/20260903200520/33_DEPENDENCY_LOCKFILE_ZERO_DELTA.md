@@ -1,0 +1,8 @@
+# Dependency / Lockfile Zero Delta
+
+P08_NEW_EXTERNAL_DEPENDENCY_COUNT=0
+P08_PACKAGE_MANIFEST_DELTA=0
+P08_LOCKFILE_DELTA=0
+MANIFEST_CHANGED_PATH_COUNT=0
+LOCKFILE_CHANGED_PATH_COUNT=0
+Source commit path list excludes package.json and pnpm-lock.yaml.
