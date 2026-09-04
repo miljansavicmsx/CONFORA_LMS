@@ -16,15 +16,15 @@ Use this register for architecture readers. Binding statuses and decisions remai
 | Field | Value |
 |-------|-------|
 | Contradiction ID | C-02 |
-| Status | OPEN |
-| Verified facts | Nest intended; tracked `apps/api` 20 files; not confirmed buildable; FastAPI untracked |
-| Governing decision | OQ-3 OPEN; FastAPI not canonical |
-| Missing owner decision | Recovery option A/B/C/D (deferred OD-R01B2-6) |
+| Status | CLOSED_ACCEPTED |
+| Verified facts | Historical: Nest intended; tracked `apps/api` sparse; not confirmed buildable; FastAPI untracked. Superseded by accepted BAR-P01..P08 recovery and OQ-3 formal closure: NestJS/`apps/api` buildable canonical backend; FastAPI non-canonical frozen-legacy disposition. |
+| Governing decision | OQ-3 CLOSED_ACCEPTED; FastAPI not canonical |
+| Missing owner decision | None for OQ-3 exit; OD-R01B2-6 lettered A/B/C/D selection not required after Register exit criteria satisfied under OD1/CR1 |
 | Affected | `apps/api`, `backend/`, registry, strangler |
-| Permitted interim | Document incompleteness; Nest-directed new design under Baseline |
-| Prohibited interim | Claim buildable; track FastAPI without OD; close OQ-3 |
-| Target task | Separate OQ-3 remediation |
-| Exit criteria | Owner recovery OD + clean-clone build evidence |
+| Permitted interim | N/A — contradiction closed |
+| Prohibited interim | Treat FastAPI as canonical; claim OQ-3 still OPEN in current normative authority; claim R0-7D/T026/C3-S9/R0-7E/deploy authorized by OQ-3 closure |
+| Target task | OQ-3 formal closure package (this reconciliation) |
+| Exit criteria | Satisfied: buildable canonical backend confirmed; FastAPI disposition decided (Register); clean-clone build evidence via BAR-P01..P08 + OQ-3 CR1 |
 
 ## C-03 — Messaging RabbitMQ vs Kafka
 

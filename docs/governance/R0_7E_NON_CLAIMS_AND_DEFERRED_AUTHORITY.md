@@ -48,9 +48,12 @@ the required authority gate.
 
 ### Backend authentication authority
 
-Tracked `apps/api` remains incomplete and is not confirmed buildable. Backend
-JWT authority is contract-only, not implementation-proven authority. No local
-`backend/**` content may be used to close this gap.
+Historical non-claim that tracked `apps/api` was incomplete and not confirmed
+buildable is **superseded** by accepted BAR-P01..P08 recovery and OQ-3 formal
+closure (`CLOSED_ACCEPTED`). Canonical backend is NestJS / `apps/api`. OQ-3
+closure does **not** authorize R0-7E implementation, deployment, T026, C3-S9,
+or CI-debt closure. No local `backend/**` (FastAPI) content may be treated as
+canonical or used to authorize R0-7E.
 
 ### F4 validation
 
@@ -90,7 +93,7 @@ implementation, dependency, test, or evidence gap.
 
 `FRONTEND_CLEAN_CLONE_BUILD = NOT_VERIFIED`
 
-`BACKEND_JWT_AUTHORITY = CONTRACT_ONLY`
+`BACKEND_JWT_AUTHORITY = IMPLEMENTATION_PROVEN_IN_NEST_APPS_API_VIA_BAR_P03_AND_SUCCESSORS` (OQ-3 CLOSED_ACCEPTED; does not authorize R0-7E)
 
 `NP2_AUTHOR_SELF_REVIEW = NO_GO`
 
@@ -98,7 +101,9 @@ implementation, dependency, test, or evidence gap.
 
 `INDEPENDENT_REREVIEW_REQUIRED = true`
 
-No policy or evidence package claims healthy repository-wide CI, a successful
-clean-clone build, implementation compliance, certification, accreditation,
-production readiness, production access, deployment authorization, TD-006
-closure, or R0-7F commencement.
+No policy or evidence package claims healthy repository-wide CI, frontend
+clean-clone completeness as R0-7E readiness, implementation compliance,
+certification, accreditation, production readiness, production access,
+deployment authorization, TD-006 closure, or R0-7F commencement. OQ-3 Nest
+backend clean-clone buildability is separately CLOSED_ACCEPTED and does not
+authorize R0-7E.

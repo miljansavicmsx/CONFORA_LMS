@@ -30,7 +30,7 @@ It does **not**:
 - outrank [OWNER_DECISION_REGISTER.md](../governance/OWNER_DECISION_REGISTER.md) or the Baseline;
 - supersede ADR-001 (deferred to R0-1B2.2);
 - activate messaging ADRs (C-03 remains `OPEN`);
-- select an OQ-3 recovery strategy;
+- reopen OQ-3 (OQ-3 is `CLOSED_ACCEPTED`; NestJS/`apps/api` is canonical);
 - authorize production deployment.
 
 ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tracks ADR files. Do not treat untracked `docs/architecture/decisions/**` as normative links.
@@ -42,12 +42,12 @@ ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tra
 | Fact | Label |
 |------|-------|
 | Integration tip for R0-1B2.1 work includes R0-1B1 authority chain | `VERIFIED_CURRENT` |
-| Tracked `apps/api` has a sparse subset (20 tracked files); no tracked `src/main.ts`; `app.module.ts` imports modules absent from the tracked tree | `VERIFIED_CURRENT` |
-| Tracked `apps/api` is **not confirmed buildable** on a clean clone | `VERIFIED_CURRENT` |
+| Tracked `apps/api` historically had a sparse subset at R0-1B2.1 (≈20 files); that inventory is superseded by accepted BAR-P01..P08 recovery | `HISTORICAL_SUPERSEDED` |
+| Tracked `apps/api` historically **not confirmed buildable**; superseded by accepted BAR-P01..P08 + OQ-3 CR1 clean-clone buildability | `HISTORICAL_SUPERSEDED` |
 | `frontend-app` has 108 tracked files and uses Vite | `VERIFIED_CURRENT` |
 | `apps/web` and `apps/admin` have **0** tracked files | `VERIFIED_CURRENT` |
 | `backend/` (FastAPI) has **0** tracked files; local tree may exist | `UNVERIFIED_LOCAL_ONLY` / untracked |
-| `packages/database`, `packages/auth`, `packages/audit` have **0** tracked files | `VERIFIED_CURRENT` (absence) |
+| `packages/database` is tracked Prisma/PostgreSQL authority after BAR-P02 (historical R0-1B2.1 absence superseded); `packages/auth` / `packages/audit` package absences may remain separate | `VERIFIED_CURRENT` (post-BAR) |
 | `packages/shared-kernel` has tracked source (9 files) | `VERIFIED_CURRENT` |
 | R0-3 `deploy-backend.yml` is `workflow_dispatch` + Environment `production` containment | `VERIFIED_CURRENT` |
 | Production deployment unauthorized; deny-all branch allowlist; RA-R03-1 temporary | `APPROVED_TARGET` constraints via OQ-6 / OD-R03-* |
@@ -73,8 +73,8 @@ ADR identifiers mentioned below are **plain-text references** until R0-1B2.2 tra
 | Surface | Status | Label |
 |---------|--------|-------|
 | Learner/operator UI | `frontend-app` (Vite + React) is the **operational canonical** frontend for the locked local RC | `VERIFIED_CURRENT` + OQ-4 |
-| API (clean clone) | No complete tracked Nest API suitable as operational SoR | `VERIFIED_CURRENT` |
-| FastAPI | Not approved canonical; untracked if present locally | `OPEN_DECISION` to track as frozen-legacy only |
+| API (clean clone) | NestJS `apps/api` is the canonical backend (OQ-3 CLOSED_ACCEPTED); recovered via BAR-P01..P08 | `VERIFIED_CURRENT` |
+| FastAPI | Not approved canonical; untracked if present locally; frozen-legacy only via separate OD | `APPROVED_TARGET` / disposition decided |
 
 ---
 
@@ -97,11 +97,11 @@ See: [FRONTEND_CANONICALIZATION_GAP_NOTE.md](../governance/FRONTEND_CANONICALIZA
 
 | Statement | Label |
 |-----------|-------|
-| NestJS is the intended canonical backend direction | `APPROVED_TARGET` |
-| Tracked `apps/api` is `INTENDED_CANONICAL_INCOMPLETE` | `VERIFIED_CURRENT` |
-| OQ-3 remains `OPEN`; no A/B/C/D recovery chosen in R0-1B2.1 | `OPEN_DECISION` |
+| NestJS is the canonical backend (`apps/api`) | `APPROVED_TARGET` / `CLOSED_ACCEPTED` (OQ-3) |
+| Tracked `apps/api` historical `INTENDED_CANONICAL_INCOMPLETE` / not-buildable state superseded by BAR-P01..P08 | `HISTORICAL_SUPERSEDED` |
+| OQ-3 is `CLOSED_ACCEPTED` (historical R0-1B2.1 OPEN / deferred A/B/C/D lettering preserved as history only) | `CLOSED_ACCEPTED` |
 | FastAPI `backend/` is not canonical | `APPROVED_TARGET` / owner decision |
-| FastAPI tracking requires a separate owner-approved frozen-legacy task | `OPEN_DECISION` gate |
+| FastAPI tracking requires a separate owner-approved frozen-legacy task | `OPEN_DECISION` gate (unchanged; not OQ-3 re-open) |
 
 ---
 

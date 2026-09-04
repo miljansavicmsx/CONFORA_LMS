@@ -16,13 +16,14 @@
 
 > A requirement stated in this Baseline is **not** evidence of implementation. Implementation claims require repository evidence that distinguishes requirement, implementation, verification, and residual gap (see `STANDARDS_REFERENCE_POLICY.md`).
 
-### 0.1 Backend (OQ-3 — OPEN)
+### 0.1 Backend (OQ-3 — CLOSED_ACCEPTED)
 
-- **NestJS** (`apps/api`) is the **intended canonical backend direction**.
-- Tracked `apps/api` is **currently incomplete and is not confirmed buildable**.
-- **OQ-3 remains OPEN**; the canonical backend decision is not closed.
-- **FastAPI (`backend/`) is not approved as the canonical backend.**
+- **NestJS** (`apps/api`) is the **canonical backend**.
+- Historical Baseline state that tracked `apps/api` was incomplete and not confirmed buildable is **superseded** by accepted BAR-P01..P08 recovery and OQ-3 formal closure (`CLOSED_ACCEPTED`).
+- **OQ-3 is CLOSED_ACCEPTED** (formal package pending integration until merge; see Owner Decision Register OQ-3 and `docs/evidence/r0-7d-oq3-formal-closure/20260904123628/`).
+- **FastAPI (`backend/`) is not approved as the canonical backend** (frozen-legacy only via a separate approved task; physical deletion not required for OQ-3 closure).
 - Any future tracking of `backend/` (FastAPI) must occur through a **separate approved frozen-legacy task** — not this task.
+- OQ-3 closure does **not** close R0-7D, authorize T026/C3-S9/DISP-A, authorize R0-7E, authorize deployment, or close pre-existing CI debt.
 
 ### 0.2 Frontend (OQ-4 — OPEN)
 
@@ -134,9 +135,9 @@ Frontend must not contain certification decision logic. Frontend may display wor
 
 ### 4.2 Backend
 
-> **Approved target / intended canonical direction — not proof of current implementation. See §0.1.** Tracked `apps/api` is **incomplete and not confirmed buildable**; **OQ-3 remains OPEN**. This section states intent, not a verified or approved canonical backend. FastAPI (`backend/`) is not approved as canonical and may only be tracked later via a separate frozen-legacy task.
+> **Canonical backend (OQ-3 CLOSED_ACCEPTED).** See §0.1. NestJS `apps/api` is the canonical backend; buildability confirmed via accepted BAR-P01..P08 and OQ-3 CR1. Historical “incomplete / not confirmed buildable / OQ-3 OPEN” Baseline wording is superseded. FastAPI (`backend/`) is not approved as canonical and may only be tracked later via a separate frozen-legacy task. OQ-3 closure does not authorize R0-7E, deployment, T026, C3-S9, or CI-debt closure.
 
-Target (intended canonical) backend stack:
+Target (canonical) backend stack:
 
 - **NestJS**
 - **REST + optional GraphQL**

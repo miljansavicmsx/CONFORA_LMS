@@ -27,7 +27,7 @@ This package is the owner-facing entry point to CONFORA governance decisions. It
 
 ## 3. Mandatory non-claims (must remain explicit downstream)
 
-1. NestJS is the **intended** canonical backend; tracked `apps/api` is **incomplete and not confirmed buildable**; **OQ-3 is OPEN**.
+1. NestJS (`apps/api`) is the **canonical** backend; historical “incomplete / not confirmed buildable” and **OQ-3 OPEN** package claims are **superseded** by accepted BAR-P01..P08 recovery and OQ-3 formal closure (`CLOSED_ACCEPTED`). OQ-3 closure does not close R0-7D or authorize T026/C3-S9/R0-7E/deployment.
 2. FastAPI (`backend/`) is **not** approved as canonical; any tracking is a **separate frozen-legacy task**.
 3. `frontend-app` is the **current operational** canonical frontend; **ADR-001 is contradicted** and awaits supersession (R0-1B2); **OQ-4 is OPEN**.
 4. R0-3 is **containment only**; **production deployment remains unauthorized**; allowlist is **temporary deny-all**; **administrator bypass is a temporary accepted risk (RA-R03-1)**.
