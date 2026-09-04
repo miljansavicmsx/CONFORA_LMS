@@ -49,14 +49,24 @@ Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` /
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-26 |
-| Status | OPEN |
+| Status | CLOSED_ACCEPTED |
 | Approved option | NestJS intended canonical; recovery/reconstruction required; FastAPI later frozen-legacy only via approved task |
 | Owner | Repository Owner |
-| Rationale | Tracked `apps/api` incomplete/not confirmed buildable; FastAPI not approved canonical |
+| Rationale | Historical: tracked `apps/api` incomplete/not confirmed buildable; FastAPI not approved canonical. Historical state superseded by accepted BAR-P01..P08 recovery and OQ-3 formal closure. |
 | Scope | `apps/api`, `backend/` |
-| Residual risk | No confirmed buildable canonical backend today |
-| Dependencies | Nest recovery discovery |
+| Residual risk | OQ-3 closed; FastAPI not physically deleted; R0-7D remains OPEN_IMPLEMENTATION_BLOCKER; T026/C3-S9 NOT_GRANTED; CI debt remains OPEN (count 4); R0-7E and deployment unauthorized |
+| Dependencies | Nest recovery discovery (satisfied via accepted BAR-P01..P08) |
 | Exit criteria | Buildable canonical backend confirmed; FastAPI disposition decided |
+| Closure date (UTC) | 2026-09-04T12:36:28Z (package timestamp; integration pending independent review until merge) |
+| Closure authority | OWNER_AUTHORIZE_R0_7D_OQ3_FORMAL_CLOSURE (FC1 RETRY 01); OD1 precondition reconciliation APPROVED |
+| Predecessor | R0_7D_OQ3_CR1 = PASS; OQ3-VERDICT-A |
+| Closure basis | EXISTING_P01_P08_ACCEPTED_BACKEND_RECOVERY_AND_FORMAL_FASTAPI_DISPOSITION |
+| Canonical backend | NestJS / `apps/api` |
+| Canonical database / ORM | PostgreSQL / Prisma |
+| FastAPI disposition | Not canonical; frozen-legacy only via separate approved task; physical deletion not required |
+| New implementation required for closure | false |
+| Non-effects | Does not grant T026; does not approve DISP-A; does not resume C3-S9; does not close R0-7D; does not authorize R0-7E; does not authorize deployment; does not close CI debt |
+| Evidence | `docs/evidence/r0-7d-oq3-formal-closure/20260904123628/` |
 | Supersession | — |
 
 ### OQ-4 — Canonical frontend

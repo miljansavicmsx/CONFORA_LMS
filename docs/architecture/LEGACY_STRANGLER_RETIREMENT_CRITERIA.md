@@ -9,9 +9,9 @@
 
 ## Explicit non-claims (mandatory)
 
-1. These criteria do **not** prove current Nest (`apps/api`) readiness or clean-clone buildability.
+1. These criteria do **not** by themselves prove Nest operational completeness beyond OQ-3 exit criteria; OQ-3 buildability is separately CLOSED_ACCEPTED via BAR-P01..P08 + OQ-3 formal closure.
 2. These criteria do **not** approve tracking FastAPI (`backend/`).
-3. These criteria do **not** select an OQ-3 recovery option (A/B/C/D remain deferred).
+3. These criteria do **not** themselves select a historical lettered OQ-3 recovery option A/B/C/D; OQ-3 Register exit criteria are satisfied under CR1/OD1 without requiring that lettering.
 4. Retirement of any legacy surface requires an **owner decision** and **independent verification**.
 
 ## Evidence-based gates
@@ -39,5 +39,6 @@
 
 ## Relationship to OQ-3 / OQ-4
 
-- OQ-3 remains OPEN until a separate recovery OD.
+- OQ-3 is **CLOSED_ACCEPTED** (formal closure package; NestJS/`apps/api` canonical; FastAPI non-canonical frozen-legacy disposition). Historical OPEN statements remain valid as history only.
 - OQ-4 / frontend-app operational status is governed by Gap Note and future ADR-008; strangler criteria do not freeze or delete `frontend-app` early.
+- OQ-3 closure does not close R0-7D, authorize T026/C3-S9/DISP-A, authorize R0-7E, or authorize deployment.
