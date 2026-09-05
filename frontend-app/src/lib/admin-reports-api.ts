@@ -1,17 +1,17 @@
-import { api } from "@/lib/api";
 import {
-  exportReport,
-  getAuditReport,
-  getCertificationPipelineReport,
-  getCertificatesReport,
-  getLifecycleReport,
-  getReportsCatalog,
+  getCertificationApplicationsBySchemeRef,
+  getCertificationApplicationsByStatus,
+  type CertificationApplicationsBySchemeRefResult,
+  type CertificationApplicationsByStatusResult,
+  type CertificationApplicationsReportQuery,
+  type SchemeGroupCell,
+  type StatusGroupCell,
 } from "@/lib/api/reports-client";
-import { requiresExportReason } from "@/lib/api/reports-export.util";
-import type { ReportKey } from "@/lib/api/reports-types";
 
+/** Retained for admin-gov-ux-labels type import (no active dashboard summary fetch). */
 export type ChartDataRow = { readonly label: string; readonly value: number };
 
+/** Retained for admin-gov-ux-labels createAdminPilotEmptyDashboardSummary typing only. */
 export type AdminDashboardSummary = {
   readonly generatedAt: string;
   readonly readOnly: true;
@@ -72,186 +72,53 @@ export type AdminDashboardSummary = {
   readonly boundaryNote: string;
 };
 
-export type AdminAuditEvent = {
-  readonly id: string;
-  readonly occurredAt: string;
-  readonly domain: string;
-  readonly action: string;
-  readonly resourceType: string;
-  readonly resourceId: string | null;
-  readonly actorId: string | null;
-  readonly actorRole: string | null;
-  readonly summary: string;
-};
+/** Frontend-static T026 catalog — exactly two P08 aggregate views. */
+export const T026_REPORT_CATALOG = [
+  { id: "by-status", view: "by-status" },
+  { id: "by-scheme-ref", view: "by-scheme-ref" },
+] as const;
 
-export type AdminCertificationApplicationsReport = {
-  readonly applicationsByStatus: Readonly<Record<string, number>>;
-  readonly eligibilityByStatus?: Readonly<Record<string, number>>;
-};
+export type T026ReportViewId = (typeof T026_REPORT_CATALOG)[number]["id"];
 
-export type AdminCertificationDecisionsReport = {
-  readonly items: readonly {
-    readonly reviewId: string;
-    readonly applicationId: string;
-    readonly status: string;
-    readonly outcome: string | null;
-    readonly quorumConfirmed: boolean;
-    readonly quorumCount: number;
-    readonly requiredQuorum: number;
-  }[];
-};
+export const T026_SMALL_CELL_THRESHOLD = 5;
 
-export type AdminCertificationLifecycleReport = {
-  readonly publicVerificationActivityCount: number;
-  readonly lifecycleByEventType: Readonly<Record<string, number>>;
-};
+export type AdminReportsFilterInput = CertificationApplicationsReportQuery;
 
-export type AdminEvidenceOverview = {
-  readonly documentPreviewCount: number;
-  readonly certificatePdfCount: number;
-  readonly educationCompletionCertificateCount: number;
-  readonly identityDocumentAccess: string;
-};
+export type AdminReportsLoadResult =
+  | { readonly view: "by-status"; readonly data: CertificationApplicationsByStatusResult }
+  | { readonly view: "by-scheme-ref"; readonly data: CertificationApplicationsBySchemeRefResult };
 
-/** Canonical POST export targets for AdminReportsPage (F4-8e). */
-export const ADMIN_REPORT_EXPORT_KEYS = {
-  dashboard: "overview",
-  certificationApplications: "certification-pipeline",
-  certificationDecisions: "overview",
-  certificateLifecycle: "lifecycle",
-  evidenceOverview: "certificates",
-  auditEvents: "audit",
-} as const satisfies Record<string, ReportKey>;
-
-export async function fetchAdminDashboardSummary(): Promise<AdminDashboardSummary> {
-  const { data } = await api.get<AdminDashboardSummary>("/v1/admin/dashboard/summary");
-  return data;
-}
-
-export async function fetchAdminAuditEvents(opts?: {
-  domain?: string;
-  action?: string;
-  take?: number;
-}): Promise<{ readOnly: boolean; items: AdminAuditEvent[] }> {
-  const report = await getAuditReport({ limit: opts?.take ?? 40 });
-  const domainFilter = opts?.domain?.trim().toLowerCase();
-  const items = (report.items ?? [])
-    .filter((row) => !domainFilter || row.domain?.toLowerCase() === domainFilter)
-    .map((row) => ({
-      id: row.id,
-      occurredAt: row.occurredAt,
-      domain: row.domain ?? "governance",
-      action: row.eventType,
-      resourceType: row.targetType ?? "unknown",
-      resourceId: row.targetReference ?? null,
-      actorId: row.actorReference ?? null,
-      actorRole: null,
-      summary: row.outcome ?? row.eventType,
-    }));
-  return { readOnly: true, items };
-}
-
-export async function fetchAdminCertificationApplicationsReport(): Promise<AdminCertificationApplicationsReport> {
-  const data = await getCertificationPipelineReport();
-  return {
-    applicationsByStatus: (data.applicationsByStatus as Record<string, number>) ?? {},
-  };
-}
-
-export async function fetchAdminCertificationCertificatesReport(): Promise<{
-  statusDistribution: Readonly<Record<string, number>>;
-}> {
-  const data = await getCertificatesReport();
-  return { statusDistribution: (data.statusDistribution as Record<string, number>) ?? {} };
+/** Load exactly one of the two approved aggregate views. */
+export async function loadAdminCertificationApplicationsReport(
+  view: T026ReportViewId,
+  filters: AdminReportsFilterInput,
+): Promise<AdminReportsLoadResult> {
+  if (view === "by-status") {
+    const data = await getCertificationApplicationsByStatus(filters);
+    return { view, data };
+  }
+  const data = await getCertificationApplicationsBySchemeRef(filters);
+  return { view, data };
 }
 
 /**
- * Row-level certification decision reviews are not exposed on a dedicated staff report key.
- * Aggregate counts remain on the dashboard summary; detailed rows live on ISO staff reports.
+ * Display helper for P08 small-cell privacy.
+ * suppressed → never rematerialize; count 0 → exact zero; count >=5 → exact.
  */
-export async function fetchAdminCertificationDecisionsReport(): Promise<AdminCertificationDecisionsReport> {
-  return { items: [] };
-}
-
-export async function fetchAdminCertificationLifecycleReport(): Promise<AdminCertificationLifecycleReport> {
-  const data = await getLifecycleReport();
-  return {
-    publicVerificationActivityCount: 0,
-    lifecycleByEventType: (data.eventsByType as Record<string, number>) ?? {},
-  };
-}
-
-export async function fetchAdminEvidenceOverview(): Promise<AdminEvidenceOverview> {
-  const summary = await fetchAdminDashboardSummary();
-  return {
-    documentPreviewCount: summary.evidence.documentPreviewCount,
-    certificatePdfCount: summary.certification.issuedCount,
-    educationCompletionCertificateCount: summary.evidence.educationCompletionCertificateCount,
-    identityDocumentAccess: "staff-only via presign-preview; never public catalogue",
-  };
-}
-
-export async function fetchAdminExportCatalog(): Promise<{
-  readOnly: boolean;
-  exports: readonly { id: string; domain: string; format: string; path: string }[];
-}> {
-  const catalog = await getReportsCatalog();
-  return {
-    readOnly: true,
-    exports: (catalog.reports ?? []).map((entry) => ({
-      id: entry.key,
-      domain: entry.key,
-      format: "json/csv",
-      path: `/v1/staff/reports/${entry.key}`,
-    })),
-  };
-}
-
-function triggerBlobDownload(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-export async function downloadAdminReportExport(
-  reportKey: ReportKey,
-  filename: string,
-  opts?: { readonly reason?: string; readonly includeDetails?: boolean; readonly includeAggregates?: boolean },
-): Promise<void> {
-  const includeDetails = opts?.includeDetails ?? false;
-  const includeAggregates = opts?.includeAggregates ?? true;
-  const reason =
-    opts?.reason ??
-    (requiresExportReason(reportKey, includeDetails) ? "Admin dashboard read-only export" : undefined);
-
-  const result = await exportReport({
-    reportKey,
-    format: "CSV",
-    includeDetails,
-    includeAggregates,
-    ...(reason ? { reason } : {}),
-  });
-
-  if (result.kind !== "csv") {
-    throw new Error("Expected CSV export response");
+export function formatAggregateCountLabel(
+  cell: StatusGroupCell | SchemeGroupCell,
+  suppressedLabel: string,
+): string {
+  if (cell.suppressed) {
+    return suppressedLabel;
   }
-  triggerBlobDownload(result.blob, result.filename ?? filename);
+  return String(cell.count);
 }
 
-export async function downloadAdminAuditEventsCsv(domain?: string): Promise<void> {
-  await downloadAdminReportExport("audit", "admin-audit-events.csv", {
-    includeDetails: true,
-    includeAggregates: false,
-    reason: domain?.trim()
-      ? `Admin audit viewer export (${domain.trim()})`
-      : "Admin audit viewer read-only export",
-  });
-}
-
-/** @deprecated Use downloadAdminReportExport with a ReportKey. */
-export async function downloadAdminReportCsv(_path: string, _filename: string): Promise<void> {
-  throw new Error("LEGACY_GET_EXPORT_REMOVED");
+/** True when backend omitted total (must remain omitted — no rematerialization). */
+export function isTotalOmitted(result: {
+  readonly total?: number;
+  readonly groups?: unknown;
+}): boolean {
+  return !Object.prototype.hasOwnProperty.call(result, "total") || result.total === undefined;
 }

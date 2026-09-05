@@ -1,75 +1,118 @@
 {
-  "assignment": {
-    "panelTitle": "Dodjela recenzenta",
-    "loading": "Učitavanje dodjele…",
-    "status": {
-      "unassigned": "Nedodeljeno",
-      "assigned": "Dodeljeno — čeka prihvatanje",
-      "accepted": "Prihvaćeno",
-      "inReview": "U recenziji",
-      "declined": "Odbijeno",
-      "reassigned": "Preusmereno"
-    },
-    "labels": {
-      "assigneeReference": "Dodeljeni recenzent",
-      "assignedAt": "Datum dodjele",
-      "declineReason": "Razlog odbijanja",
-      "history": "Istorija dodjela",
-      "reviewerId": "ID korisnika recenzenta",
-      "rationale": "Obrazloženje (opciono)"
-    },
-    "actions": {
-      "assign": "Dodeli recenzenta",
-      "accept": "Prihvati dodelu",
-      "decline": "Odbij dodelu",
-      "submitDecline": "Pošalji odbijanje"
-    },
-    "coi": {
-      "declaration": "Izjavljujem da nemam sukob interesa za ovu recenziju."
-    },
-    "success": {
-      "assigned": "Recenzent je dodeljen.",
-      "accepted": "Dodela je prihvaćena.",
-      "declined": "Dodela je odbijena."
-    },
-    "errors": {
-      "forbidden": "Nemate ovlasti za ovu radnju dodele.",
-      "notFound": "Prijava ili dodela nije pronađena.",
-      "conflict": "Dodela je blokirana zbog segregacije dužnosti ili sukoba interesa.",
-      "validation": "Proverite unete podatke i pokušajte ponovo.",
-      "declineReasonRequired": "Razlog odbijanja je obavezan (najmanje 3 karaktera).",
-      "reviewerIdRequired": "Unesite važeći ID korisnika recenzenta.",
-      "network": "Mrežna greška. Pokušajte ponovo.",
-      "generic": "Radnja dodele nije uspela. Pokušajte ponovo."
-    }
-  },
-  "review": {
-    "panelTitle": "Recenzija prijave",
-    "loading": "Učitavanje statusa recenzije…",
-    "status": {
-      "notStarted": "Nije započeto",
-      "inProgress": "U toku"
-    },
-    "labels": {
-      "applicationStatus": "Status prijave",
-      "assignmentStatus": "Status dodele",
-      "reviewStartedAt": "Recenzija započeta"
-    },
-    "actions": {
-      "start": "Započni recenziju"
-    },
-    "success": {
-      "started": "Recenzija je započeta. Prijava je sada u recenziji."
-    },
-    "errors": {
-      "forbidden": "Nemate ovlasti za započinjanje ove recenzije.",
-      "notFound": "Prijava ili status recenzije nije pronađen.",
-      "alreadyInReview": "Recenzija je već započeta za ovu prijavu.",
-      "precondition": "Recenzija se ne može započeti u trenutnom statusu prijave ili dodele.",
-      "conflict": "Recenzija je blokirana zbog segregacije dužnosti ili sukoba interesa.",
-      "validation": "Proverite unete podatke i pokušajte ponovo.",
-      "network": "Mrežna greška. Pokušajte ponovo.",
-      "generic": "Započinjanje recenzije nije uspelo. Pokušajte ponovo."
-    }
-  }
+    "assignment":  {
+                       "panelTitle":  "Dodjela recenzenta",
+                       "loading":  "Učitavanje dodjele…",
+                       "status":  {
+                                      "unassigned":  "Nedodeljeno",
+                                      "assigned":  "Dodeljeno — čeka prihvatanje",
+                                      "accepted":  "Prihvaćeno",
+                                      "inReview":  "U recenziji",
+                                      "declined":  "Odbijeno",
+                                      "reassigned":  "Preusmereno"
+                                  },
+                       "labels":  {
+                                      "assigneeReference":  "Dodeljeni recenzent",
+                                      "assignedAt":  "Datum dodjele",
+                                      "declineReason":  "Razlog odbijanja",
+                                      "history":  "Istorija dodjela",
+                                      "reviewerId":  "ID korisnika recenzenta",
+                                      "rationale":  "Obrazloženje (opciono)"
+                                  },
+                       "actions":  {
+                                       "assign":  "Dodeli recenzenta",
+                                       "accept":  "Prihvati dodelu",
+                                       "decline":  "Odbij dodelu",
+                                       "submitDecline":  "Pošalji odbijanje"
+                                   },
+                       "coi":  {
+                                   "declaration":  "Izjavljujem da nemam sukob interesa za ovu recenziju."
+                               },
+                       "success":  {
+                                       "assigned":  "Recenzent je dodeljen.",
+                                       "accepted":  "Dodela je prihvaćena.",
+                                       "declined":  "Dodela je odbijena."
+                                   },
+                       "errors":  {
+                                      "forbidden":  "Nemate ovlasti za ovu radnju dodele.",
+                                      "notFound":  "Prijava ili dodela nije pronađena.",
+                                      "conflict":  "Dodela je blokirana zbog segregacije dužnosti ili sukoba interesa.",
+                                      "validation":  "Proverite unete podatke i pokušajte ponovo.",
+                                      "declineReasonRequired":  "Razlog odbijanja je obavezan (najmanje 3 karaktera).",
+                                      "reviewerIdRequired":  "Unesite važeći ID korisnika recenzenta.",
+                                      "network":  "Mrežna greška. Pokušajte ponovo.",
+                                      "generic":  "Radnja dodele nije uspela. Pokušajte ponovo."
+                                  }
+                   },
+    "review":  {
+                   "panelTitle":  "Recenzija prijave",
+                   "loading":  "Učitavanje statusa recenzije…",
+                   "status":  {
+                                  "notStarted":  "Nije započeto",
+                                  "inProgress":  "U toku"
+                              },
+                   "labels":  {
+                                  "applicationStatus":  "Status prijave",
+                                  "assignmentStatus":  "Status dodele",
+                                  "reviewStartedAt":  "Recenzija započeta"
+                              },
+                   "actions":  {
+                                   "start":  "Započni recenziju"
+                               },
+                   "success":  {
+                                   "started":  "Recenzija je započeta. Prijava je sada u recenziji."
+                               },
+                   "errors":  {
+                                  "forbidden":  "Nemate ovlasti za započinjanje ove recenzije.",
+                                  "notFound":  "Prijava ili status recenzije nije pronađen.",
+                                  "alreadyInReview":  "Recenzija je već započeta za ovu prijavu.",
+                                  "precondition":  "Recenzija se ne može započeti u trenutnom statusu prijave ili dodele.",
+                                  "conflict":  "Recenzija je blokirana zbog segregacije dužnosti ili sukoba interesa.",
+                                  "validation":  "Proverite unete podatke i pokušajte ponovo.",
+                                  "network":  "Mrežna greška. Pokušajte ponovo.",
+                                  "generic":  "Započinjanje recenzije nije uspelo. Pokušajte ponovo."
+                              }
+               },
+    "reports":  {
+                    "errors":  {
+                                   "unauthorized":  "Potrebna je autentifikacija.",
+                                   "validation":  "Neispravni filtri. Proverite datume.",
+                                   "forbidden":  "Nemate dozvolu za pregled ovih izveštaja.",
+                                   "dateRangeRequired":  "Unesite barem jedan potpuni raspon datuma kreiranja ili podnošenja.",
+                                   "throttled":  "Previše zahteva za izveštaje. Sačekajte i pokušajte ponovo.",
+                                   "generic":  "Nije moguće učitati izveštaj.",
+                                   "dateFormat":  "Datumi moraju biti u formatu YYYY-MM-DD.",
+                                   "network":  "Mrežna greška. Pokušajte ponovo."
+                               },
+                    "subtitle":  "Zbirni brojevi po statusu ili referenci šeme. Izvoz i redovni detalj nisu dostupni.",
+                    "actions":  {
+                                    "run":  "Pokreni izveštaj"
+                                },
+                    "suppressed":  "Skriveno",
+                    "title":  "Izveštaji prijava za sertifikaciju",
+                    "totalOmitted":  "Ukupan zbir izostavljen zbog privatnosti.",
+                    "resultsHeading":  "Rezultati",
+                    "filters":  {
+                                    "submittedTo":  "Podneto do",
+                                    "createdTo":  "Kreirano do",
+                                    "schemeRef":  "Referenca šeme",
+                                    "submittedFrom":  "Podneto od",
+                                    "anyStatus":  "Bilo koji status",
+                                    "createdFrom":  "Kreirano od",
+                                    "status":  "Status"
+                                },
+                    "columns":  {
+                                    "status":  "Status",
+                                    "count":  "Broj",
+                                    "schemeRef":  "Referenca šeme"
+                                },
+                    "idle":  "Izaberite filtre i pokrenite izveštaj.",
+                    "viewLabel":  "Prikaz izveštaja",
+                    "loading":  "Učitavanje izveštaja…",
+                    "empty":  "Nema grupa za ove filtre.",
+                    "views":  {
+                                  "byStatus":  "Prijave po statusu",
+                                  "bySchemeRef":  "Prijave po referenci šeme"
+                              },
+                    "total":  "Ukupno: {{count}}"
+                }
 }
