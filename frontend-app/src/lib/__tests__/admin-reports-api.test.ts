@@ -80,18 +80,86 @@ describe("admin-reports-api (T026 BAR-P08 adapter)", () => {
     expect(schemeResult.view).toBe("by-scheme-ref");
   });
 
-  it("privacy: zero exact, 1..4 suppressed label, >=5 exact, omitted total stays omitted", () => {
-    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 0 }, "Suppressed")).toBe(
-      "0",
-    );
-    expect(formatAggregateCountLabel({ status: "SUBMITTED", suppressed: true }, "Suppressed")).toBe(
-      "Suppressed",
-    );
+  it("PRIVACY_MATRIX_20: defensive small-cell threshold with SafeInteger fail-closed", () => {
+    const label = "Suppressed";
+    // PRIV-01
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 0 }, label)).toBe("0");
+    // PRIV-02..05
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 1 }, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 2 }, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 3 }, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 4 }, label)).toBe(label);
+    // PRIV-06..07 positive controls
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 5 }, label)).toBe("5");
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 6 }, label)).toBe("6");
+    // PRIV-08..12 suppressed=true dominates (cast for adversarial metadata)
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: true, count: 0 } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: true, count: 1 } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: true, count: 4 } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: true, count: 5 } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: true, count: 6 } as never, label)).toBe(label);
+    // PRIV-13..19 malformed / unsafe fail-closed
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: "2" } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: null } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: -1 } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: 2.5 } as never, label)).toBe(label);
+    expect(formatAggregateCountLabel({ status: "DRAFT", suppressed: false, count: Number.NaN } as never, label)).toBe(label);
     expect(
-      formatAggregateCountLabel({ status: "APPROVED", suppressed: false, count: 12 }, "Suppressed"),
-    ).toBe("12");
-    expect(isTotalOmitted({ groups: [] })).toBe(true);
+      formatAggregateCountLabel(
+        { status: "DRAFT", suppressed: false, count: Number.MAX_SAFE_INTEGER + 1 } as never,
+        label,
+      ),
+    ).toBe(label);
+    // PRIV-20 mixed groups + omitted total
+    expect(isTotalOmitted({
+      groups: [
+        { status: "DRAFT", suppressed: false, count: 0 },
+        { status: "SUBMITTED", suppressed: false, count: 2 },
+        { status: "APPROVED", suppressed: true },
+        { status: "REJECTED", suppressed: false, count: 8 },
+      ],
+    })).toBe(true);
     expect(isTotalOmitted({ groups: [], total: 20 })).toBe(false);
+  });
+
+  it("privacy DOM: unsafe false count1..4 never exact; zero preserved; no aria/data-count leak attrs", async () => {
+    vi.spyOn(reportsClient, "getCertificationApplicationsByStatus").mockResolvedValue({
+      groups: [
+        { status: "SUBMITTED", suppressed: false, count: 1 },
+        { status: "APPROVED", suppressed: false, count: 2 },
+        { status: "REJECTED", suppressed: false, count: 3 },
+        { status: "DRAFT", suppressed: false, count: 4 },
+        { status: "UNDER_REVIEW", suppressed: false, count: 0 },
+        { status: "WITHDRAWN" as never, suppressed: false, count: 5 },
+      ],
+    });
+    renderPage();
+    fireEvent.click(screen.getByTestId("admin-reports-run"));
+    await waitFor(() => {
+      expect(screen.getByTestId("admin-reports-results-table")).toBeTruthy();
+    });
+    expect(screen.getByTestId("admin-reports-count-status-SUBMITTED").textContent).toBe("Suppressed");
+    expect(screen.getByTestId("admin-reports-count-status-APPROVED").textContent).toBe("Suppressed");
+    expect(screen.getByTestId("admin-reports-count-status-REJECTED").textContent).toBe("Suppressed");
+    expect(screen.getByTestId("admin-reports-count-status-DRAFT").textContent).toBe("Suppressed");
+    expect(screen.getByTestId("admin-reports-count-status-UNDER_REVIEW").textContent).toBe("0");
+    expect(screen.getByTestId("admin-reports-count-status-WITHDRAWN").textContent).toBe("5");
+    expect(screen.getByTestId("admin-reports-total-omitted")).toBeTruthy();
+    const countCells = screen.getByTestId("admin-reports-results-table").querySelectorAll("td");
+    for (const td of Array.from(countCells)) {
+      expect(td.getAttribute("aria-label")).toBeNull();
+      expect(td.getAttribute("title")).toBeNull();
+      expect(td.getAttribute("data-count")).toBeNull();
+      expect(td.getAttribute("data-value")).toBeNull();
+    }
+  });
+
+  it("privacy helper source enforces Number.isSafeInteger", () => {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const apiSource = readFileSync(resolve(here, "../admin-reports-api.ts"), "utf8");
+    expect(apiSource).toMatch(/Number\.isSafeInteger\(count\)/);
+    expect(apiSource).toMatch(/count < T026_SMALL_CELL_THRESHOLD/);
   });
 
   it("source has no active export, polling, cache, or historical report APIs", () => {

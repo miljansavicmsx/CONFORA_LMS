@@ -102,17 +102,32 @@ export async function loadAdminCertificationApplicationsReport(
 }
 
 /**
- * Display helper for P08 small-cell privacy.
- * suppressed → never rematerialize; count 0 → exact zero; count >=5 → exact.
+ * Display helper for P08 small-cell privacy (defense-in-depth).
+ * suppressed=true always suppressed;
+ * count must be a safe non-negative integer;
+ * count 0 -> exact zero;
+ * count 1..4 -> suppressed even if suppressed=false;
+ * count >=5 -> exact;
+ * malformed/unsafe counts fail closed (no exact disclosure).
  */
 export function formatAggregateCountLabel(
   cell: StatusGroupCell | SchemeGroupCell,
   suppressedLabel: string,
 ): string {
-  if (cell.suppressed) {
+  if (cell.suppressed === true) {
     return suppressedLabel;
   }
-  return String(cell.count);
+  const count = (cell as { readonly count?: unknown }).count;
+  if (typeof count !== "number" || !Number.isSafeInteger(count) || count < 0) {
+    return suppressedLabel;
+  }
+  if (count === 0) {
+    return "0";
+  }
+  if (count > 0 && count < T026_SMALL_CELL_THRESHOLD) {
+    return suppressedLabel;
+  }
+  return String(count);
 }
 
 /** True when backend omitted total (must remain omitted — no rematerialization). */
