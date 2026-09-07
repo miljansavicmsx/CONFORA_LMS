@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "ensure:confora-packages": "npm --prefix ../packages/ui run build && npm --prefix ../packages/i18n run build",
+    "prebuild": "npm run ensure:confora-packages",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -21,6 +23,7 @@
     "seed:pilot-demo": "python ../scripts/seed_pilot_demo.py",
     "seed:demo-full": "python ../scripts/seed_demo_full.py",
     "demo:seed": "npm run seed:demo-full",
+    "prelint:all": "npm run ensure:confora-packages",
     "lint:all": "tsc -b --pretty false",
     "build:all": "npm run build",
     "test:all": "npm run test",

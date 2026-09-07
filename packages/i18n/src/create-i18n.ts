@@ -16,8 +16,9 @@ import {
 import { conforaI18nResources } from './resources.js';
 
 export type CreateConforaI18nOptions = {
-  readonly lng?: SupportedLocale;
-  readonly fallbackLng?: SupportedLocale;
+  /** Preferred locale; unsupported values fall back at runtime. */
+  readonly lng?: string;
+  readonly fallbackLng?: string;
 };
 
 function isSupportedLocale(value: string): value is SupportedLocale {
