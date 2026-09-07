@@ -1,0 +1,7 @@
+# 06_ROLE_AUTHORITY
+
+ALLOW_EXACT4=STAFF_DIR,STAFF_SYSADM,STAFF_AUD,QUALITY_MANAGER
+ALLOW_ALIASES=director,sys_admin,auditor
+DENY_INCLUDES=admin,TRAINADM,USR_CAND,USR_CERT,COM_CERT,ISSUANCE_OFFICER,LIFECYCLE_OFFICER,learner
+ENFORCEMENT=AdminReportsGuard + admin-reports-access
+TEST=AdminReportsGuard.test.tsx + admin-reports-access.test.ts PASS
