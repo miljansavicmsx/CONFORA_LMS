@@ -16,12 +16,12 @@
     "./tokens": "./tokens.ts"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && pnpm run build:css",
+    "build": "tsc -b tsconfig.build.json --force && tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
     "build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
     "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node -e \"console.log('ui: no tests');\""
+    "test": "node ./c3s11-styles-dist-contract.test.cjs"
   },
   "peerDependencies": {
     "react": "^18.3.1",

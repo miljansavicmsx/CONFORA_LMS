@@ -19,10 +19,10 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -b tsconfig.build.json --force",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "jest --runInBand"
+    "test": "npm run build && node ./c3s11-dist-exports-contract.test.cjs && jest --runInBand"
   },
   "dependencies": {
     "i18next": "^24.2.3",
