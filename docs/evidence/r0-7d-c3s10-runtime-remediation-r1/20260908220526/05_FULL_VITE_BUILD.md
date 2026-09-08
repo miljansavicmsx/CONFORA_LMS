@@ -11,6 +11,7 @@ FULL_BUILD_EVIDENCE_ACCURATE = true
 Exact failure (frontend-app/src/index.css):
 @layer base is used but no matching @tailwind base directive is present.
 
-Artifact: 16_FULL_VITE_BUILD_FRONTEND_APP_CWD.log
+Artifact: 16_FULL_VITE_BUILD_FRONTEND_APP_CWD.txt
+(Committed as .txt because repository .gitignore excludes \*.log.)
 This is NOT a wrong-directory missing index.html failure.
 Unrelated Tailwind/PostCSS debt was not fixed in this bounded package.
