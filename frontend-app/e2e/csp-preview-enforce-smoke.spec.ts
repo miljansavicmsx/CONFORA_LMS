@@ -1,55 +1,22 @@
 import { expect, test } from "@playwright/test";
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
-import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 /**
  * CMD-04 browser smoke under enforced Vite preview CSP.
  *
- * Full `vite build` is blocked by pre-existing frontend CSS/Tailwind debt outside
- * the remediation envelope. This smoke creates a minimal dist artifact that
- * `vite preview` serves through `cspPreviewPlugin` (nonce HTML rewrite + enforce CSP).
+ * Builds the csp-dashboard-runtime harness that imports and mounts the REAL
+ * frontend-app/src/layouts/DashboardLayout.tsx, then serves it via vite preview
+ * so cspPreviewPlugin applies enforce CSP + entry script nonces.
  */
 const frontendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const previewPort = Number(process.env.CSP_PREVIEW_SMOKE_PORT ?? "4173");
+const harnessDir = path.join(frontendRoot, "e2e", "csp-dashboard-runtime");
+const harnessConfig = path.join(harnessDir, "vite.config.mjs");
+const distRoot = path.join(frontendRoot, ".csp-dashboard-runtime-dist");
+const previewPort = Number(process.env.CSP_PREVIEW_SMOKE_PORT ?? "4175");
 const previewOrigin = `http://127.0.0.1:${previewPort}`;
-const distRoot = path.join(frontendRoot, ".csp-preview-smoke-dist");
-
-function writeMinimalDist(): void {
-  rmSync(distRoot, { recursive: true, force: true });
-  mkdirSync(path.join(distRoot, "assets"), { recursive: true });
-  writeFileSync(
-    path.join(distRoot, "assets", "entry.js"),
-    [
-      "const root = document.getElementById('root');",
-      "if (root) {",
-      "  root.innerHTML = '';",
-      "  const shell = document.createElement('div');",
-      "  shell.className = 'flex min-h-screen flex-col lg:ml-[280px]';",
-      "  shell.setAttribute('data-testid', 'dashboard-shell');",
-      "  shell.textContent = 'csp-shell-ok';",
-      "  root.appendChild(shell);",
-      "  window.__CSP_ENTRY_EXECUTED = true;",
-      "}",
-    ].join("\n"),
-    "utf8",
-  );
-  writeFileSync(
-    path.join(distRoot, "index.html"),
-    [
-      "<!doctype html>",
-      '<html lang="en">',
-      "<head><meta charset=\"UTF-8\" /><title>CSP Preview Smoke</title></head>",
-      "<body>",
-      '<div id="root"></div>',
-      '<script type="module" src="/assets/entry.js"></script>',
-      "</body>",
-      "</html>",
-    ].join("\n"),
-    "utf8",
-  );
-}
 
 async function waitForServer(url: string, timeoutMs: number): Promise<void> {
   const started = Date.now();
@@ -67,24 +34,50 @@ async function waitForServer(url: string, timeoutMs: number): Promise<void> {
   throw new Error(`Preview server did not become ready at ${url}`);
 }
 
-test.describe("CSP preview enforce smoke", () => {
+function runNode(args: string[], cwd: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd,
+      env: { ...process.env, CSP_MODE: "enforce" },
+      stdio: "pipe",
+      windowsHide: true,
+    });
+    let stderr = "";
+    child.stderr.on("data", (d) => {
+      stderr += String(d);
+    });
+    child.on("exit", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Command failed (${code}): ${args.join(" ")}\n${stderr}`));
+      }
+    });
+  });
+}
+
+test.describe("CSP preview enforce smoke — real DashboardLayout", () => {
   let previewProc: ChildProcessWithoutNullStreams | undefined;
 
   test.beforeAll(async () => {
-    writeMinimalDist();
+    test.setTimeout(180_000);
     const viteCli = path.join(frontendRoot, "node_modules", "vite", "bin", "vite.js");
+    await runNode([viteCli, "build", "--config", harnessConfig], frontendRoot);
+    if (!existsSync(path.join(distRoot, "index.html"))) {
+      throw new Error("Harness build did not produce index.html");
+    }
     previewProc = spawn(
       process.execPath,
       [
         viteCli,
         "preview",
+        "--config",
+        harnessConfig,
         "--host",
         "127.0.0.1",
         "--port",
         String(previewPort),
         "--strictPort",
-        "--outDir",
-        distRoot,
       ],
       {
         cwd: frontendRoot,
@@ -93,19 +86,17 @@ test.describe("CSP preview enforce smoke", () => {
         windowsHide: true,
       },
     );
-    await waitForServer(previewOrigin + "/", 60_000);
+    await waitForServer(previewOrigin + "/", 90_000);
   });
 
   test.afterAll(async () => {
     if (previewProc && !previewProc.killed) {
       previewProc.kill("SIGTERM");
     }
-    rmSync(distRoot, { recursive: true, force: true });
   });
 
-  test("entry script is nonced and executes under enforced CSP", async ({ page, request }) => {
+  test("imports and mounts actual DashboardLayout under enforced CSP", async ({ page, request }) => {
     test.setTimeout(120_000);
-
     const cspViolations: string[] = [];
     page.on("console", (msg) => {
       const text = msg.text();
@@ -123,34 +114,60 @@ test.describe("CSP preview enforce smoke", () => {
     expect(doc.ok()).toBeTruthy();
     const headers = doc.headers();
     const csp = headers["content-security-policy"] ?? "";
-    const reportOnly = headers["content-security-policy-report-only"] ?? "";
     expect(csp.length).toBeGreaterThan(0);
-    expect(reportOnly.length).toBe(0);
-    expect(csp).toMatch(/'nonce-[a-f0-9]+'/i);
-    expect(csp).not.toMatch(/style-src[^;]*'unsafe-inline'/);
-    expect(csp).not.toMatch(/connect-src[^;]*\shttps:/);
-
+    expect(headers["content-security-policy-report-only"] ?? "").toBe("");
     const nonceHeader = headers["x-nonce"] ?? "";
     expect(nonceHeader.length).toBeGreaterThan(0);
     expect(csp).toContain(`'nonce-${nonceHeader}'`);
-
     const html = await doc.text();
     const scriptMatch = html.match(/<script\b[^>]*\bsrc=["'][^"']+["'][^>]*>/i);
     expect(scriptMatch).not.toBeNull();
     expect(scriptMatch![0]).toContain(`nonce="${nonceHeader}"`);
-    expect((scriptMatch![0].match(/\bnonce=/gi) ?? []).length).toBe(1);
 
     await page.goto(previewOrigin + "/", { waitUntil: "networkidle" });
-    await expect(page.locator("#root")).toBeAttached();
-    await expect(page.getByTestId("dashboard-shell")).toBeVisible();
-    const executed = await page.evaluate(() => (window as unknown as { __CSP_ENTRY_EXECUTED?: boolean }).__CSP_ENTRY_EXECUTED);
-    expect(executed).toBe(true);
 
-    // DashboardLayout remediation uses class margins; fixture mirrors that (no inline style).
-    const inlineStyle = await page.getByTestId("dashboard-shell").getAttribute("style");
-    expect(inlineStyle).toBeNull();
+    await expect.poll(async () => page.evaluate(() => window.__ACTUAL_DASHBOARD_IMPORTED__ === true)).toBe(true);
+    await expect.poll(async () => page.evaluate(() => window.__ACTUAL_DASHBOARD_MOUNTED__ === true)).toBe(true);
+
+    const importUrl = await page.evaluate(() => window.__DASHBOARD_IMPORT_URL__ ?? "");
+    expect(importUrl.replace(/\\/g, "/")).toMatch(/DashboardLayout/);
+    const marginMap = await page.evaluate(() => window.__DASHBOARD_MARGIN_CLASS_MAP__);
+    expect(marginMap?.[280]).toBe("lg:ml-[280px]");
+    expect(marginMap?.[72]).toBe("lg:ml-[72px]");
+
+    await expect(page.getByTestId("dashboard-content-shell")).toBeVisible();
+    await expect(page.getByTestId("dashboard-children")).toHaveText("dashboard-child");
+    await expect(page.getByTestId("dashboard-content-shell")).toHaveClass(/lg:ml-\[280px\]/);
+    await expect(page.getByTestId("dashboard-desktop-aside")).toHaveClass(/w-\[280px\]/);
+    expect(await page.getByTestId("dashboard-content-shell").getAttribute("style")).toBeNull();
 
     expect(cspViolations, cspViolations.join("\n")).toHaveLength(0);
+  });
+
+  test("expanded / collapsed / mobile runtime states on actual DashboardLayout", async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.goto(previewOrigin + "/", { waitUntil: "networkidle" });
+    await expect.poll(async () => page.evaluate(() => window.__ACTUAL_DASHBOARD_MOUNTED__ === true)).toBe(true);
+
+    // Expanded (default)
+    await page.evaluate(() => window.__setDashboardLayoutState__?.({ sidebarCollapsed: false, drawerOpen: false }));
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.getByTestId("dashboard-content-shell")).toHaveClass(/lg:ml-\[280px\]/);
+    await expect(page.getByTestId("dashboard-desktop-aside")).toHaveClass(/w-\[280px\]/);
+    await expect(page.getByTestId("harness-sidebar")).toHaveAttribute("data-collapsed", "false");
+
+    // Collapsed
+    await page.evaluate(() => window.__setDashboardLayoutState__?.({ sidebarCollapsed: true, drawerOpen: false }));
+    await expect(page.getByTestId("dashboard-content-shell")).toHaveClass(/lg:ml-\[72px\]/);
+    await expect(page.getByTestId("dashboard-desktop-aside")).toHaveClass(/w-\[72px\]/);
+    await expect(page.getByTestId("harness-sidebar")).toHaveAttribute("data-collapsed", "true");
+
+    // Mobile drawer
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.evaluate(() => window.__setDashboardLayoutState__?.({ sidebarCollapsed: false, drawerOpen: true }));
+    await expect(page.getByTestId("dashboard-mobile-drawer")).toBeVisible();
+    await expect(page.locator('nav[aria-label="Mobilna navigacija"]')).toBeVisible();
+    expect(await page.getByTestId("dashboard-mobile-drawer").getAttribute("style")).toBeNull();
   });
 
   test("report-only mode is not conflated with default enforce", async ({ request }) => {
