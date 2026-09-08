@@ -2,6 +2,7 @@ import { buildContentSecurityPolicy } from '../packages/config/csp/build-csp.mjs
 
 /**
  * Vite preview plugin — production-mode CSP for a11y+CSP CI (nonce + report-uri).
+ * Default mode is enforce (remediates historical report-only default residual).
  */
 export function cspPreviewPlugin() {
   return {
@@ -10,8 +11,7 @@ export function cspPreviewPlugin() {
       server.middlewares.use((req, res, next) => {
         const nonce = crypto.randomUUID().replace(/-/g, '');
         const apiOrigin = process.env.VITE_API_URL ?? 'http://127.0.0.1:8000';
-        const isProd = process.env.NODE_ENV === 'production';
-        const mode = process.env.CSP_MODE ?? 'report-only';
+        const mode = process.env.CSP_MODE ?? 'enforce';
         const { headerName, value } = buildContentSecurityPolicy({
           nonce,
           apiOrigin,
