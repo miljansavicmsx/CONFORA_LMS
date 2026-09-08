@@ -89,13 +89,38 @@ describe("vite-csp-preview bootstrap", () => {
       const mod = (await import(`${href}?t=${Date.now()}-runtime`)) as {
         cspPreviewPlugin: () => {
           configurePreviewServer: (server: {
-            middlewares: { use: (fn: (req: unknown, res: { setHeader: ReturnType<typeof vi.fn>; }, next: () => void) => void) => void };
+            middlewares: {
+              use: (
+                fn: (
+                  req: unknown,
+                  res: {
+                    setHeader: ReturnType<typeof vi.fn>;
+                    getHeader: ReturnType<typeof vi.fn>;
+                    write: ReturnType<typeof vi.fn>;
+                    end: ReturnType<typeof vi.fn>;
+                    headersSent: boolean;
+                  },
+                  next: () => void,
+                ) => void,
+              ) => void;
+            };
           }) => void;
         };
+        injectScriptNonces: (html: string, nonce: string) => string;
       };
       const plugin = mod.cspPreviewPlugin();
       let middleware:
-        | ((req: unknown, res: { setHeader: ReturnType<typeof vi.fn> }, next: () => void) => void)
+        | ((
+            req: unknown,
+            res: {
+              setHeader: ReturnType<typeof vi.fn>;
+              getHeader: ReturnType<typeof vi.fn>;
+              write: ReturnType<typeof vi.fn>;
+              end: ReturnType<typeof vi.fn>;
+              headersSent: boolean;
+            },
+            next: () => void,
+          ) => void)
         | undefined;
       plugin.configurePreviewServer({
         middlewares: {
@@ -105,9 +130,20 @@ describe("vite-csp-preview bootstrap", () => {
         },
       });
       expect(typeof middleware).toBe("function");
-      const setHeader = vi.fn();
+      const headers = new Map<string, string>();
+      const setHeader = vi.fn((k: string, v: string) => {
+        headers.set(String(k).toLowerCase(), String(v));
+      });
+      const getHeader = vi.fn((k: string) => headers.get(String(k).toLowerCase()));
+      const res = {
+        setHeader,
+        getHeader,
+        write: vi.fn(),
+        end: vi.fn(),
+        headersSent: false,
+      };
       const next = vi.fn();
-      middleware!({}, { setHeader }, next);
+      middleware!({}, res, next);
       expect(setHeader).toHaveBeenCalledWith(
         "Content-Security-Policy",
         expect.stringContaining("connect-src 'self'"),
@@ -117,6 +153,11 @@ describe("vite-csp-preview bootstrap", () => {
       const cspCall = setHeader.mock.calls.find((c) => c[0] === "Content-Security-Policy");
       expect(cspCall?.[1]).not.toMatch(/connect-src[^;]*\shttps:/);
       expect(cspCall?.[1]).not.toMatch(/style-src[^;]*'unsafe-inline'/);
+      // Remediation: HTML nonce helper exists and remains preview-only (no configureServer).
+      expect(typeof mod.injectScriptNonces).toBe("function");
+      expect(readFileSync(path.join(frontendRoot, "vite-csp-preview.mjs"), "utf8")).toContain(
+        "injectScriptNonces",
+      );
     } finally {
       if (previousMode === undefined) {
         delete process.env.CSP_MODE;

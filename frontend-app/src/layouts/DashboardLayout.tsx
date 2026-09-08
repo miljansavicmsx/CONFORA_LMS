@@ -1,6 +1,5 @@
 import { SkipToMainLink } from "@confora/ui";
 import { A11Y_NS } from "@confora/i18n";
-import { AnimatePresence, motion } from "framer-motion";
 import { ClipboardList, LayoutDashboard } from "lucide-react";
 import { useSyncExternalStore, type JSX } from "react";
 import { useTranslation } from "react-i18next";
@@ -54,6 +53,17 @@ const MOBILE_NAV = [
   { to: "/dashboard", label: "Dashboard", short: "Dom", icon: LayoutDashboard, end: true },
   { to: "/dashboard/certification/applications", label: "Prijave", short: "Prij.", icon: ClipboardList, end: false },
 ] as const;
+
+/** Tailwind class mirrors of Sidebar width constants (72 / 280). Exported for CSP compat tests. */
+export const DESKTOP_SIDEBAR_WIDTH_CLASS = {
+  [SIDEBAR_WIDTH_COLLAPSED]: "w-[72px]",
+  [SIDEBAR_WIDTH_EXPANDED]: "w-[280px]",
+} as const;
+
+export const DESKTOP_CONTENT_MARGIN_CLASS = {
+  [SIDEBAR_WIDTH_COLLAPSED]: "lg:ml-[72px]",
+  [SIDEBAR_WIDTH_EXPANDED]: "lg:ml-[280px]",
+} as const;
 
 function useMediaMinLg(): boolean {
   return useSyncExternalStore(
@@ -124,17 +134,18 @@ function DashboardLayoutInner({
   const setSearchOpen = useDashboardLayoutStore((s) => s.setSearchOpen);
 
   const sidebarWidth = sidebarCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
+  const desktopAsideWidthClass = DESKTOP_SIDEBAR_WIDTH_CLASS[sidebarWidth];
+  const contentMarginClass = DESKTOP_CONTENT_MARGIN_CLASS[sidebarWidth];
 
   return (
     <TooltipProvider delayDuration={250}>
       <div className="dark min-h-screen bg-surface-primary text-text-primary">
-      {/* Desktop sidebar */}
-      <motion.aside
-        layout
-        initial={false}
-        animate={{ width: sidebarWidth }}
-        transition={{ type: "spring", stiffness: 300, damping: 32 }}
-        className="fixed left-0 top-0 z-30 hidden h-screen overflow-hidden border-r border-border/50 lg:block"
+      {/* Desktop sidebar — class-based width (CSP-safe; no framer CSSOM width). */}
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-30 hidden h-screen overflow-hidden border-r border-border/50 transition-[width] duration-300 ease-out lg:block",
+          desktopAsideWidthClass,
+        )}
       >
         <Sidebar
           collapsed={sidebarCollapsed}
@@ -144,49 +155,39 @@ function DashboardLayoutInner({
           onToggleCollapse={toggleSidebarCollapsed}
           {...(effectivePermissions !== undefined ? { effectivePermissions } : {})}
         />
-      </motion.aside>
+      </aside>
 
-      <AnimatePresence>
-        {drawerOpen && !isLg ? (
-          <>
-            <motion.button
-              type="button"
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-              aria-label={t("close_menu")}
-              onClick={() => setDrawerOpen(false)}
+      {drawerOpen && !isLg ? (
+        <>
+          <button
+            type="button"
+            key="backdrop"
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+            aria-label={t("close_menu")}
+            onClick={() => setDrawerOpen(false)}
+          />
+          <aside
+            key="drawer"
+            className="fixed left-0 top-0 z-50 h-full w-[280px] max-w-[85vw] border-r border-border/50 bg-surface-primary shadow-2xl lg:hidden"
+          >
+            <Sidebar
+              collapsed={false}
+              showCollapse={false}
+              user={user}
+              activeCoursesCount={activeCoursesCount}
+              onNavigate={() => setDrawerOpen(false)}
+              onToggleCollapse={toggleSidebarCollapsed}
+              {...(effectivePermissions !== undefined ? { effectivePermissions } : {})}
             />
-            <motion.aside
-              key="drawer"
-              initial={{ x: -SIDEBAR_WIDTH_EXPANDED }}
-              animate={{ x: 0 }}
-              exit={{ x: -SIDEBAR_WIDTH_EXPANDED }}
-              transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="fixed left-0 top-0 z-50 h-full w-[280px] max-w-[85vw] border-r border-border/50 bg-surface-primary shadow-2xl lg:hidden"
-            >
-              <Sidebar
-                collapsed={false}
-                showCollapse={false}
-                user={user}
-                activeCoursesCount={activeCoursesCount}
-                onNavigate={() => setDrawerOpen(false)}
-                onToggleCollapse={toggleSidebarCollapsed}
-                {...(effectivePermissions !== undefined ? { effectivePermissions } : {})}
-              />
-            </motion.aside>
-          </>
-        ) : null}
-      </AnimatePresence>
+          </aside>
+        </>
+      ) : null}
 
       <div
-        className="flex min-h-screen flex-col transition-[margin] duration-300 ease-out lg:mb-0"
-        style={{
-          marginLeft: isLg ? sidebarWidth : 0,
-        }}
+        className={cn(
+          "flex min-h-screen flex-col transition-[margin] duration-300 ease-out lg:mb-0",
+          contentMarginClass,
+        )}
       >
         <SkipToMainLink label={t("skip_to_main")} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:inline-block focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand/50" />
         <Header
@@ -205,9 +206,9 @@ function DashboardLayoutInner({
             : {})}
         />
 
-        <motion.div layout className="flex-1 px-4 py-6 pb-24 lg:px-6 lg:pb-8">
+        <div className="flex-1 px-4 py-6 pb-24 lg:px-6 lg:pb-8">
           {children}
-        </motion.div>
+        </div>
       </div>
 
       <BottomNavBar role={user.role} />
