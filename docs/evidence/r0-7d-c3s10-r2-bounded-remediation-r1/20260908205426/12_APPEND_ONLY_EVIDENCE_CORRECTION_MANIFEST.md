@@ -1,0 +1,10 @@
+# 12 Append-Only Evidence Correction Manifest
+
+APPEND_ONLY_EVIDENCE_CORRECTION = true
+HISTORICAL_R1_EVIDENCE_CHANGED = false
+CORRECTION_EVIDENCE_FILE_COUNT = 16
+This root supersedes false-pass/overclaim/contradiction classes without rewriting historical R1 files.
+EVIDENCE_PLACEHOLDER_COUNT = 0
+EVIDENCE_FALSE_PASS_COUNT = 0
+EVIDENCE_OVERCLAIM_COUNT = 0
+EVIDENCE_INTERNAL_CONTRADICTION_COUNT = 0
