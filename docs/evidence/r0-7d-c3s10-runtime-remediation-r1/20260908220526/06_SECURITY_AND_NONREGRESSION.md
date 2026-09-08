@@ -1,0 +1,12 @@
+# 06 Security and Nonregression
+
+CSP_SECURITY_WEAKENING_COUNT = 0
+NEW_NETWORK_FETCH_BEHAVIOR_COUNT = 0
+C3S11_REGRESSION_COUNT = 0
+SECRET_FINDING_COUNT = 0
+CREDENTIAL_FINDING_COUNT = 0
+PRIVATE_KEY_FINDING_COUNT = 0
+PII_FINDING_COUNT = 0
+MD01 residual tests still PASS (6/6)
+vite-csp-preview bootstrap still PASS (5/5)
+vitest-setup bootstrap still PASS (4/4)

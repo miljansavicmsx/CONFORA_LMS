@@ -1,0 +1,19 @@
+# 04 Dashboard Runtime Proof
+
+ACTUAL_DASHBOARD_IMPORTED_IN_BROWSER = true
+ACTUAL_DASHBOARD_MOUNTED_IN_BROWSER = true
+
+Proof path:
+browser -> CSP-enforced vite preview (cspPreviewPlugin) -> React entry (e2e/csp-dashboard-runtime/main.tsx) -> import @/layouts/DashboardLayout -> mounted DashboardLayout
+
+DASHBOARD_EXPANDED_RUNTIME_RESULT = PASS
+DASHBOARD_COLLAPSED_RUNTIME_RESULT = PASS
+DASHBOARD_MOBILE_RUNTIME_RESULT = PASS
+
+DASHBOARD_STATIC_GUARD_RESULT = PASS (supplemental only; 4 static tests)
+DASHBOARD_COMPONENT_RUNTIME_RESULT = PASS (3 vitest runtime tests mounting DashboardLayout)
+DASHBOARD_BROWSER_CSP_RUNTIME_RESULT = PASS (3 Playwright tests)
+
+CSP_BROWSER_CONSOLE_VIOLATION_COUNT = 0
+CSP_BROWSER_MATERIAL_REQUIRED_RESOURCE_BLOCK_COUNT = 0
+DASHBOARD_NEW_INLINE_STYLE_REQUIREMENT_COUNT = 0
