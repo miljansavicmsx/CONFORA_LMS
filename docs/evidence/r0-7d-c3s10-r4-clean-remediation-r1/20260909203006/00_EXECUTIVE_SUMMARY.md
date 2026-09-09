@@ -1,0 +1,19 @@
+# 00 Executive Summary
+
+R0_7D_C3S10_R4_BOUNDED_CLEAN_REMEDIATION_R1 technical package recorded here for independent review.
+
+CLEAN_REMEDIATION_BASE = e8cd567167c29466544361d0e5ba361b68b96331
+C3S10_R4CR1_SOURCE_COMMIT_SHA = 86aca155e4f3924617c290bb4771bd188dbefa73
+C3S10_R4CR1_SOURCE_COMMIT_PARENT = e8cd567167c29466544361d0e5ba361b68b96331
+
+This package does NOT claim ACCEPTED / CLOSED_ACCEPTED / integrated.
+C3_S10_STATUS after Cursor PASS = R4_CLEAN_REMEDIATED_PENDING_INDEPENDENT_REVIEW
+
+Historical R3 FAIL/REJECT of e8cd567167c29466544361d0e5ba361b68b96331 is preserved.
+Historical R4 FAIL/REJECT of 06bb55b6bd5424f16a86ead9af41abaa87d301e5 is preserved.
+Rejected tip was not corrected in place; clean remediation descends only from e8cd567167c29466544361d0e5ba361b68b96331.
+
+BAD_PRODUCTION_SHIM_INTRODUCED_PATH_COUNT = 0
+CLEAN_NEW_NORMALIZED_TS_SIGNATURE_COUNT = 0
+CLEAN_NEW_NORMALIZED_BUILD_SIGNATURE_COUNT = 0
+DIRECT Vite build remains baseline-red (pre-existing CSS debt) on base and feature.

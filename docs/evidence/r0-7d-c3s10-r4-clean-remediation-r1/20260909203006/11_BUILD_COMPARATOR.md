@@ -1,0 +1,5 @@
+# 11 Build Comparator
+
+Both base and feature direct Vite builds fail only with PRE_EXISTING_CSS_DEBT.
+CLEAN_NEW_NORMALIZED_BUILD_SIGNATURE_COUNT = 0
+CLEAN_NEW_UNCLASSIFIED_BUILD_REGRESSION_COUNT = 0
