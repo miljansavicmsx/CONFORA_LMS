@@ -142,6 +142,7 @@ function DashboardLayoutInner({
       <div className="dark min-h-screen bg-surface-primary text-text-primary">
       {/* Desktop sidebar — class-based width (CSP-safe; no framer CSSOM width). */}
       <aside
+        data-testid="dashboard-desktop-aside"
         className={cn(
           "fixed left-0 top-0 z-30 hidden h-screen overflow-hidden border-r border-border/50 transition-[width] duration-300 ease-out lg:block",
           desktopAsideWidthClass,
@@ -168,6 +169,7 @@ function DashboardLayoutInner({
           />
           <aside
             key="drawer"
+            data-testid="dashboard-mobile-drawer"
             className="fixed left-0 top-0 z-50 h-full w-[280px] max-w-[85vw] border-r border-border/50 bg-surface-primary shadow-2xl lg:hidden"
           >
             <Sidebar
@@ -184,6 +186,7 @@ function DashboardLayoutInner({
       ) : null}
 
       <div
+        data-testid="dashboard-content-shell"
         className={cn(
           "flex min-h-screen flex-col transition-[margin] duration-300 ease-out lg:mb-0",
           contentMarginClass,
