@@ -20,20 +20,21 @@ export function buildContentSecurityPolicy({ nonce, apiOrigin, isProd, mode }) {
     ? `'self' 'nonce-${nonce}' 'strict-dynamic' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com`
     : `'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://player.vimeo.com`;
 
-  const styleSrc = isProd
-    ? `'self' 'nonce-${nonce}' 'unsafe-inline'`
-    : `'self' 'unsafe-inline'`;
+  // Production style-src uses nonce only (no 'unsafe-inline' residual).
+  const styleSrc = isProd ? `'self' 'nonce-${nonce}'` : `'self' 'unsafe-inline'`;
 
   const reportUri = `${apiOrigin.replace(/\/$/, '')}/api/csp-report`;
+  const connectOrigin = apiOrigin.replace(/\/$/, '');
 
+  // connect-src is fail-closed to 'self' + explicit API origin (no bare https:).
   const value = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
     `style-src ${styleSrc}`,
     "img-src 'self' data: blob: https:",
     "font-src 'self' data: https:",
-    `connect-src 'self' ${apiOrigin.replace(/\/$/, '')} https:`,
-    "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
+    `connect-src 'self' ${connectOrigin}`,
+    'frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com',
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -81,3 +81,7 @@ package-lock.json
 apps/api/build-log*.txt
 scripts/ops/_tmp-repo-health-*.mjs
 *.tsbuildinfo
+
+# C3-S10 R4 clean remediation: browser harness build output
+frontend-app/.csp-dashboard-runtime-dist/
+

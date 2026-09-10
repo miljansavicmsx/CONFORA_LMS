@@ -1,0 +1,32 @@
+﻿# 10_MUTATION_TOPOLOGY_AND_REMOTE_STATE
+
+TOPOLOGY_REQUIRED =
+8a7ff77a1d0e7c891bf99b1268c3dac48f9ff548
+->
+faf8ee7ef2dc50dd821981d198edf9f7291bc1eb
+->
+C3S10_R1_EVIDENCE_COMMIT_SHA (this evidence commit)
+
+C3S10_R1_SOURCE_COMMIT_SHA = faf8ee7ef2dc50dd821981d198edf9f7291bc1eb
+C3S10_R1_SOURCE_COMMIT_PARENT = 8a7ff77a1d0e7c891bf99b1268c3dac48f9ff548
+C3S10_R1_SOURCE_COMMIT_MESSAGE = fix(frontend): close C3-S10 accessibility and CSP residuals
+C3S10_R1_SOURCE_COMMIT_TREE = 40b9a1b12dcb5bec5df39beebff9913e4cb6ad79
+FEATURE_BRANCH = governance/r0-7d-c3s10-residual-closure-r1
+
+SOURCE_COMMIT_COUNT = 1
+SOURCE_COMMIT_MERGE_COUNT = 0
+EVIDENCE_COMMIT_COUNT = 1
+EVIDENCE_COMMIT_MERGE_COUNT = 0
+FEATURE_NEW_COMMIT_COUNT = 2
+FEATURE_NEW_MERGE_COMMIT_COUNT = 0
+
+C3S10_R1_EVIDENCE_COMMIT_MESSAGE = docs(evidence): record C3-S10 residual closure
+C3S10_R1_EVIDENCE_COMMIT_PARENT = faf8ee7ef2dc50dd821981d198edf9f7291bc1eb
+
+PUSH_PERFORMED = false
+FORCE_PUSH_PERFORMED = false
+DIRECT_INTEGRATION_PUSH_PERFORMED = false
+PR_CREATED = false
+MERGE_PERFORMED = false
+
+NOTE = Exact evidence commit SHA equals git rev-parse of the commit that adds this evidence root; recorded in external R1 logs after commit creation.
