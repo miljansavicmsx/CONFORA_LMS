@@ -29,6 +29,10 @@ function testLocalMissingModuleAliases(): Array<{ find: RegExp; replacement: str
       find: /^@\/lib\/permissions$/,
       replacement: path.join(stubs, "permissions.ts"),
     },
+    {
+      find: /^@\/lib\/api-reports$/,
+      replacement: path.join(stubs, "api-reports.ts"),
+    },
   ];
 }
 
