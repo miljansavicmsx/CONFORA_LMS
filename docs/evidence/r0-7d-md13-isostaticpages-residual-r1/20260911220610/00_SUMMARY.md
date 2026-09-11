@@ -1,0 +1,27 @@
+﻿# 00 Summary
+
+PACKAGE_ID = R0-7D-MD13-ISOSTATICPAGES-RESIDUAL-R1
+OWNER_SELECT_RB1_OPTION_A_AND_AUTHORIZE_MD13_ISOSTATICPAGES_NARROW_PACKAGE = CONSUMED
+AUTHORIZATION_SCOPE = C3S9_RESIDUAL_MD13_ISOSTATICPAGES_ONLY
+BASE_SHA = e9cc637aa8d1a6c9a2e565cc8d8340d48853057f
+BRANCH = governance/r0-7d-md13-isostaticpages-residual-r1
+
+MODEL_D_ITEM = MD13
+STATUS = IMPLEMENTATION_COMPLETE_PENDING_INDEPENDENT_REVIEW
+
+CHANGED_PATHS =
+frontend-app/src/pages/iso/IsoStaticPages.tsx
+frontend-app/src/test/__tests__/iso-static-pages.residual.test.ts
+docs/evidence/r0-7d-md13-isostaticpages-residual-r1/20260911220610/**
+
+TARGETED_TEST_RESULT = 3/3 PASS (iso-static-pages.residual.test.ts)
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+OQ_4_STATUS = OPEN
+R0_7D = OPEN_IMPLEMENTATION_BLOCKER
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+CI_GREEN_CLAIMED = false
+FORMAL_MODEL_D_RECONCILIATION = NOT_PERFORMED
+OWNER_DECISION_REGISTER_MUTATION = 0
+
+OBSERVATION = Existing IsoReportsPage.tsx imports @/lib/api-reports which is not tracked; MD13 restores only the App.tsx IsoStaticPages named-export edge and does not remediate api-reports.
