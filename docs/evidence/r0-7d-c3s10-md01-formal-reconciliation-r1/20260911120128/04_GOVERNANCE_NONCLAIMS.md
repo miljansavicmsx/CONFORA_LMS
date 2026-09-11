@@ -1,0 +1,28 @@
+# 04_GOVERNANCE_NONCLAIMS
+
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+C3_S10_STATUS = CLOSED_ACCEPTED
+C3S10_FORMAL_RECONCILIATION_STATUS = COMPLETED_PENDING_INDEPENDENT_REVIEW
+MODEL_D_FORMAL_UPDATE = ACCEPTED
+MD01_FORMALLY_RESOLVED = true
+OQ_4_STATUS = OPEN
+R0_7D = OPEN_IMPLEMENTATION_BLOCKER
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+PRE_EXISTING_CI_DEBT = OPEN
+OPEN_PRE_EXISTING_CI_DEBT_COUNT = 4
+CI_SEED_EXPECTATION_DEBT = OPEN
+CI_FAILURE_WAIVER_GRANTED = false
+CI_GREEN_CLAIMED = false
+
+FR1 does not claim:
+- all Model D items resolved;
+- general C3-S9 resume;
+- OQ-4 / R0-7D closed;
+- R0-7E or deployment authorized;
+- full frontend build green;
+- CI green or the five failed GitHub checks passed;
+- pre-existing CSS or CI debt resolved;
+- MD01 resolved before R6;
+- rejected 06bb55b accepted;
+- earlier alias-collision background job as PASS evidence.

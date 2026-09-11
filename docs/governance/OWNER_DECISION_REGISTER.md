@@ -553,6 +553,71 @@ mandatory before Draft PR consideration.
 
 ---
 
+## Part E — Model D formal register (MD01 … MD17)
+
+This Part is the **authoritative live Model D register** (Governance Hierarchy Level 1). Timestamped evidence packages under `docs/evidence/**` remain Level 7 historical records and do not override this Part.
+
+### Model D aggregate state
+| Field | Value |
+|-------|-------|
+| MODEL_D_FORMAL_UPDATE | ACCEPTED |
+| MODEL_D_TOTAL_ACTUAL | 17 |
+| MODEL_D_RESOLVED_ACTUAL | 7 |
+| MODEL_D_UNRESOLVED_ACTUAL | 10 |
+| MODEL_D_MB_E_COUNT | 10 |
+| MODEL_D_MB_B_COUNT | 0 |
+| MODEL_D_ARITHMETIC_VALID | true (17 = 7 + 10; 10 = 10 + 0) |
+| RESOLVED_ITEM_SET | MD01, MD04, MD11, MD14, MD15, MD16, MD17 |
+| UNRESOLVED_ITEM_SET | MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, MD12, MD13 |
+| Prior formal aggregate (pre-FR1) | 17/6/11/11/0 |
+| Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_FR1_ACTUAL |
+| Last formal reconciliation | R0-7D-C3S10-MD01-FORMAL-RECONCILIATION-FR1 |
+
+### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-09-11T12:01:28Z |
+| Status | CLOSED_ACCEPTED |
+| MD01_FORMALLY_RESOLVED | true |
+| Owner authorization | OWNER_AUTHORIZE_R0_7D_C3S10_POST_R6_FORMAL_RECONCILIATION (FR1; single-use; consumed) |
+| Prerequisite independent review | R0_7D_C3S10_R6_INDEPENDENT_POSTMERGE_REVIEW = PASS / ACCEPT; validation 50/50; Codex mutation 0 |
+| Merge authority | PR 31; MERGE_COMMIT `e60136b993ce199dcc033045049a505c7ec8f6a1`; parents `8a7ff77a1d0e7c891bf99b1268c3dac48f9ff548` + `03c04386ac55cbaa593479418e748a06c64b9ac4`; tree `fd79d27bd1a23929f42d25c801578c0fe2e37041` |
+| Clean remediation source | `86aca155e4f3924617c290bb4771bd188dbefa73` from clean base `e8cd567167c29466544361d0e5ba361b68b96331` |
+| Rejected lineage excluded | `06bb55b6bd5424f16a86ead9af41abaa87d301e5` (and 243944 / 01f1c9) not ancestors of accepted head |
+| Resolution basis | Accepted C3-S10 R4CR1 clean remediation + R5 ACCEPT + I1 merge + R6 postmerge PASS; real DashboardLayout runtime proof; E2E-only stubs; four rejected production shims absent; NEW normalized TS/build = 0; direct Vite baseline-red CSS debt only; CI green not claimed; evidence immutable |
+| C3_S10_STATUS | CLOSED_ACCEPTED |
+| C3S10_FORMAL_RECONCILIATION_STATUS | COMPLETED_PENDING_INDEPENDENT_REVIEW |
+| Newly resolved by FR1 | MD01 only |
+| Non-effects | Does not resolve any other Model D item; does not grant general C3-S9 resume; does not close OQ-4; does not close R0-7D; does not authorize R0-7E; does not authorize deployment; does not close CI debt; does not claim CI green; does not treat the earlier PowerShell alias-collision background job as PASS evidence |
+| Evidence | `docs/evidence/r0-7d-c3s10-md01-formal-reconciliation-r1/20260911120128/` |
+| Supersession | Supersedes pre-FR1 MD01_FORMALLY_RESOLVED=false and prospective-only 17/7/10/10/0 |
+
+### Previously resolved Model D items (preserved; not reopened by FR1)
+| Item | Status |
+|------|--------|
+| MD04 | RESOLVED (pre-FR1) |
+| MD11 | RESOLVED (pre-FR1) |
+| MD14 | RESOLVED (pre-FR1) |
+| MD15 | RESOLVED (pre-FR1) |
+| MD16 | RESOLVED (pre-FR1) |
+| MD17 | RESOLVED (pre-FR1) |
+
+### Preserved governance nonclaims after FR1
+| Field | Value |
+|-------|-------|
+| GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED |
+| OQ_4_STATUS | OPEN |
+| R0_7D | OPEN_IMPLEMENTATION_BLOCKER |
+| R0_7E_IMPLEMENTATION_AUTHORIZATION | false |
+| DEPLOYMENT_AUTHORIZATION | false |
+| PRE_EXISTING_CI_DEBT | OPEN |
+| OPEN_PRE_EXISTING_CI_DEBT_COUNT | 4 |
+| CI_SEED_EXPECTATION_DEBT | OPEN |
+| CI_FAILURE_WAIVER_GRANTED | false |
+| CI_GREEN_CLAIMED | false |
+
+---
+
 ## Maintenance
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
