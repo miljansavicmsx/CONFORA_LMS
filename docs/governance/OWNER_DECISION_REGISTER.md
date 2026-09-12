@@ -562,16 +562,17 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 |-------|-------|
 | MODEL_D_FORMAL_UPDATE | ACCEPTED |
 | MODEL_D_TOTAL_ACTUAL | 17 |
-| MODEL_D_RESOLVED_ACTUAL | 7 |
-| MODEL_D_UNRESOLVED_ACTUAL | 10 |
-| MODEL_D_MB_E_COUNT | 10 |
+| MODEL_D_RESOLVED_ACTUAL | 8 |
+| MODEL_D_UNRESOLVED_ACTUAL | 9 |
+| MODEL_D_MB_E_COUNT | 9 |
 | MODEL_D_MB_B_COUNT | 0 |
-| MODEL_D_ARITHMETIC_VALID | true (17 = 7 + 10; 10 = 10 + 0) |
-| RESOLVED_ITEM_SET | MD01, MD04, MD11, MD14, MD15, MD16, MD17 |
-| UNRESOLVED_ITEM_SET | MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, MD12, MD13 |
-| Prior formal aggregate (pre-FR1) | 17/6/11/11/0 |
-| Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_FR1_ACTUAL |
-| Last formal reconciliation | R0-7D-C3S10-MD01-FORMAL-RECONCILIATION-FR1 |
+| MODEL_D_ARITHMETIC_VALID | true (17 = 8 + 9; 9 = 9 + 0) |
+| RESOLVED_ITEM_SET | MD01, MD04, MD11, MD13, MD14, MD15, MD16, MD17 |
+| UNRESOLVED_ITEM_SET | MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, MD12 |
+| Prior formal aggregate (pre-MD13-FR1) | 17/7/10/10/0 |
+| Earlier formal aggregate (pre-MD01-FR1) | 17/6/11/11/0 |
+| Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
+| Last formal reconciliation | R0-7D-MD13-MODEL-D-FORMAL-RECONCILIATION-R1 |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -592,7 +593,25 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Evidence | `docs/evidence/r0-7d-c3s10-md01-formal-reconciliation-r1/20260911120128/` |
 | Supersession | Supersedes pre-FR1 MD01_FORMALLY_RESOLVED=false and prospective-only 17/7/10/10/0 |
 
-### Previously resolved Model D items (preserved; not reopened by FR1)
+### MD13 — IsoStaticPages residual formal reconciliation
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-09-11T22:09:38Z |
+| Status | CLOSED_ACCEPTED |
+| MD13_FORMALLY_RESOLVED | true |
+| Owner authorization | OWNER_AUTHORIZE_R0_7D_MD13_MODEL_D_FORMAL_RECONCILIATION_R1 (single-use; consumed) |
+| Prerequisite independent review | R0_7D_MD13_ISOSTATICPAGES_I2_POSTMERGE_REVIEW = PASS / ACCEPT; validation 36/36; Codex mutation 0 |
+| Merge authority | PR 33; MERGE_COMMIT `453ba1599317fcfb1d836ea24e1771ba7db2acd9`; parents `e9cc637aa8d1a6c9a2e565cc8d8340d48853057f` + `f5e43e3ccfd0cd42f9c058e270fae6e2b0d16219`; tree `ac0c1cc3933c91af8814a298eb1e2ac410f0d504` |
+| Accepted lineage | R1 `9b53d5262c395d45401747ea86a522ad3c8f9619`; R2 `f5e43e3ccfd0cd42f9c058e270fae6e2b0d16219`; historical R1 rejection preserved; R2 remediation accepted |
+| Resolution basis | PR 33 integrated the exact ten-path MD13 residual package; merge tree equals the accepted R2 tree; independent post-merge review passed 36/36; real `IsoReportsPage` identity test passed 3/3; Vitest-only `api-reports` alias preserved; production shim absent; evidence immutable |
+| MD13_STATUS | CLOSED_ACCEPTED |
+| MD13_FORMAL_RECONCILIATION_STATUS | COMPLETED_PENDING_INDEPENDENT_REVIEW |
+| Newly resolved by MD13 FR1 | MD13 only |
+| Non-effects | Does not resolve MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E or deployment; does not close CI debt; does not claim CI green |
+| Evidence | `docs/evidence/r0-7d-md13-model-d-formal-reconciliation-r1/20260911220938/` |
+| Supersession | Supersedes only the formal MD13 unresolved MB_E state at aggregate 17/7/10/10/0 |
+
+### Previously resolved Model D items (preserved; not reopened by MD13 FR1)
 | Item | Status |
 |------|--------|
 | MD04 | RESOLVED (pre-FR1) |
@@ -602,7 +621,7 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | MD16 | RESOLVED (pre-FR1) |
 | MD17 | RESOLVED (pre-FR1) |
 
-### Preserved governance nonclaims after FR1
+### Preserved governance nonclaims after MD13 FR1
 | Field | Value |
 |-------|-------|
 | GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED |
