@@ -639,4 +639,21 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 
 ## Maintenance
 
+### HD06 — Dejana Taušan account binding
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-09-13 |
+| Status | DEFERRED_PENDING_ACCOUNT_BINDING_EVIDENCE |
+| Approved option | DEFER; account binding is not approved |
+| Owner | Miljan Savić, Repository Owner |
+| Rationale | Account existence, identity provider, immutable identifier, tenant binding, roles and attributable evidence are unverified |
+| Scope | Dejana Taušan account binding; HD07 readiness; DPO mandate effectiveness; 04B electronic attestation; AD1C |
+| Residual risk | Identity and account binding remain unverified; no access or authority granted |
+| Dependencies | Independently verifiable account binding and HD07 authentication-control verification |
+| Exit criteria | All ten conditions in the linked decision record, followed by an explicit owner approval |
+| Supersession | None; no implementation authorization |
+
+Full owner-supplied decision and conditions: [HD06 decision, 2026-09-13](./HD06_DEJANA_ACCOUNT_BINDING_DECISION_2026-09-13.md). Source: Repository Owner's message in this task. Recording this decision does not establish an authenticated account, an electronic signature, or independent verification.
+
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.

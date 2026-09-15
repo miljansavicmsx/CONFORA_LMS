@@ -24,6 +24,7 @@ This package is the owner-facing entry point to CONFORA governance decisions. It
 | Open questions | OQ-1 … OQ-7 | Register Part A |
 | Deployment containment | OD-R03-1 … OD-R03-5 | Register Part B (+ R0-3 evidence) |
 | Governance promotion | OD-R01-1 … OD-R01-10 | Register Part C |
+| Dejana account binding | HD06 — DEFER (2026-09-13) | [Decision record](./HD06_DEJANA_ACCOUNT_BINDING_DECISION_2026-09-13.md); Register HD06 |
 
 ## 3. Mandatory non-claims (must remain explicit downstream)
 
