@@ -1,0 +1,7 @@
+REQUIRED_EXPORTS_PRESENT =
+applicationStatusLabel
+decisionReviewStatusLabel
+decisionOutcomeLabel
+OPTIONAL_EXPORTS_PRESENT = none
+IMPORTS_API_GOVERNANCE = false
+IMPORTS_CANDIDATE_CERTIFICATION = false
