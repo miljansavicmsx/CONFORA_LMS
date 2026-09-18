@@ -562,17 +562,18 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 |-------|-------|
 | MODEL_D_FORMAL_UPDATE | ACCEPTED |
 | MODEL_D_TOTAL_ACTUAL | 17 |
-| MODEL_D_RESOLVED_ACTUAL | 8 |
-| MODEL_D_UNRESOLVED_ACTUAL | 9 |
-| MODEL_D_MB_E_COUNT | 9 |
+| MODEL_D_RESOLVED_ACTUAL | 9 |
+| MODEL_D_UNRESOLVED_ACTUAL | 8 |
+| MODEL_D_MB_E_COUNT | 8 |
 | MODEL_D_MB_B_COUNT | 0 |
-| MODEL_D_ARITHMETIC_VALID | true (17 = 8 + 9; 9 = 9 + 0) |
-| RESOLVED_ITEM_SET | MD01, MD04, MD11, MD13, MD14, MD15, MD16, MD17 |
-| UNRESOLVED_ITEM_SET | MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, MD12 |
-| Prior formal aggregate (pre-MD13-FR1) | 17/7/10/10/0 |
+| MODEL_D_ARITHMETIC_VALID | true (17 = 9 + 8; 8 = 8 + 0) |
+| RESOLVED_ITEM_SET | MD01, MD04, MD08, MD11, MD13, MD14, MD15, MD16, MD17 |
+| UNRESOLVED_ITEM_SET | MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12 |
+| Prior formal aggregate (pre-MD08-FR2) | 17/8/9/9/0 |
+| Earlier formal aggregate (pre-MD13-FR1) | 17/7/10/10/0 |
 | Earlier formal aggregate (pre-MD01-FR1) | 17/6/11/11/0 |
 | Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
-| Last formal reconciliation | R0-7D-MD13-MODEL-D-FORMAL-RECONCILIATION-R1 |
+| Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -611,20 +612,60 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Evidence | `docs/evidence/r0-7d-md13-model-d-formal-reconciliation-r1/20260911220938/` |
 | Supersession | Supersedes only the formal MD13 unresolved MB_E state at aggregate 17/7/10/10/0 |
 
-### Previously resolved Model D items (preserved; not reopened by MD13 FR1)
+### MD08 — certification-ops-labels residual formal reconciliation (FR2 clean reissuance)
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-09-17T17:26:49Z |
+| Status | CLOSED_ACCEPTED |
+| MD08_FORMALLY_RESOLVED | true |
+| Owner authorization | OWNER_AUTHORIZE_R0_7D_MD08_MODEL_D_FR2_CLEAN_REISSUANCE (single-use; consumed) |
+| Prerequisite independent review | R0_7D_MD08_CERTIFICATION_OPS_LABELS_R1_EC1_I2_POSTMERGE_REVIEW = PASS / ACCEPT; QUESTION_COUNT = 40; QUESTION_PASS_COUNT = 40; REVIEW_VALIDATION_STEP_COUNT = 40; REVIEW_VALIDATION_PASS_COUNT = 40; Codex mutation 0 |
+| F09_REMEDIATION_STATUS | CLOSED_ACCEPTED |
+| Historical F09 lineage | Initial implementation R1 failed the independent F09 exact-path gate; rejected history preserved; EC1 cured the exact-path defect and was accepted; do not erase or rewrite the historical F09 failure |
+| Merge authority | PR 37; MERGE_COMMIT `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_1 `a4e4329d7ab086569c2c19c5a4289253ea8826df`; MERGE_PARENT_2 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260`; MERGE_TREE `f2212dfae62b9557be8b76f6578cd80593327dd3`; MERGE_METHOD = MERGE_COMMIT |
+| Accepted implementation lineage | R1 `43d805bdc1231c2695e822fcb6398e772f7af27d`; EC1 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260` |
+| Eight-path implementation scope | Exact eight-path MD08 residual package (R1 + EC1) integrated by PR 37; self-contained string-map contract; `api-governance.ts` production restore count = 0 |
+| Targeted test result | Real-target Vitest 3/3 PASS |
+| Formal transition | 17/8/9/9/0 → 17/9/8/8/0 |
+| Resolution basis | PR 37 integrated the accepted MD08 residual package; merge tree equals accepted candidate tree; independent post-merge I2 review PASS/ACCEPT 40/40; F09 CLOSED_ACCEPTED via EC1 cure; evidence immutable |
+| MD08_STATUS | CLOSED_ACCEPTED |
+| MD08_FORMAL_RECONCILIATION_STATUS | FR2_CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
+| Newly resolved by MD08 FR2 | MD08 only |
+| FR1 historical lineage (nonintegrated) | Provisional FR1 commit `dd06ff13636f92d00081b1f607d23994c9a30a19`; recreated FR1 branch commit `147790c1a76685fdb05a72e41bbf850d57992d8f`; FR1 independent review = STOPPED_BLOCKED; neither FR1 attempt is accepted integration authority; FR1 was not concluded REJECT on technical content because review stopped before that conclusion |
+| FR1 branch-mutation statement | FR2 does not retroactively authorize the R1 branch deletion/recreation operation; FR1_RETROACTIVE_AUTHORIZATION_GRANTED = false |
+| Non-effects | Does not resolve MD02, MD03, MD05, MD06, MD07, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E, deployment, HD07, FR1 integration, FR2 PR, or FR2 merge; does not close CI debt; does not claim CI green |
+| Evidence | `docs/evidence/r0-7d-md08-model-d-formal-reconciliation-r2/20260917172649/` |
+| Supersession | Supersedes only the formal MD08 unresolved MB_E state at aggregate 17/8/9/9/0 on this FR2 candidate; does not erase FR1 history |
+
+### Previously resolved Model D items (preserved; not reopened by MD08 FR2)
 | Item | Status |
 |------|--------|
+| MD01 | RESOLVED (MD01 FR1) |
 | MD04 | RESOLVED (pre-FR1) |
 | MD11 | RESOLVED (pre-FR1) |
+| MD13 | RESOLVED (MD13 FR1) |
 | MD14 | RESOLVED (pre-FR1) |
 | MD15 | RESOLVED (pre-FR1) |
 | MD16 | RESOLVED (pre-FR1) |
 | MD17 | RESOLVED (pre-FR1) |
 
-### Preserved governance nonclaims after MD13 FR1
+### Preserved governance nonclaims after MD08 FR2
 | Field | Value |
 |-------|-------|
+| MD02_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD03_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD05_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD06_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD07_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD09_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD10_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
+| MD12_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
 | GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED |
+| EDUCATION_CLUSTER_MD02_MD03_MD10_STATUS | DEFERRED_PENDING_AD1C_AND_VERIFIABLE_IDENTITY_AUTHORITY |
+| HD06_DECISION | KEEP_DEFERRED |
+| HD06_BINDING_APPROVED | false |
+| DEJANA_ACCOUNT_BINDING_VERIFIED | false |
+| HD07_READY | false |
 | OQ_4_STATUS | OPEN |
 | R0_7D | OPEN_IMPLEMENTATION_BLOCKER |
 | R0_7E_IMPLEMENTATION_AUTHORIZATION | false |
@@ -634,6 +675,14 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | CI_SEED_EXPECTATION_DEBT | OPEN |
 | CI_FAILURE_WAIVER_GRANTED | false |
 | CI_GREEN_CLAIMED | false |
+| PR37_CI_CHECKS_AT_I2 | compliance-iso:FAILURE; quality:FAILURE; f4-frontend-cutover:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED |
+| PR37_CI_CHECK_STATUS | 5_FAILURE_1_SKIPPED |
+| FR1_RETROACTIVE_AUTHORIZATION_GRANTED | false |
+| FR1_INTEGRATION_AUTHORIZATION_GRANTED | false |
+| FR1_INTEGRATED | false |
+| FR2_PR_AUTHORIZATION_GRANTED | false |
+| FR2_MERGE_AUTHORIZATION_GRANTED | false |
+| MD08_FORMALLY_RESOLVED_ON_INTEGRATION | false |
 
 ---
 
