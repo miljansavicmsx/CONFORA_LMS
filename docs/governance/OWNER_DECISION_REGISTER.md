@@ -574,6 +574,7 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Earlier formal aggregate (pre-MD01-FR1) | 17/6/11/11/0 |
 | Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
 | Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
+| Last Part E status alignment | R0-7D-MD08-POST-INTEGRATION-STATUS-ALIGNMENT-R1 |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -618,24 +619,30 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Date (UTC) | 2026-09-17T17:26:49Z |
 | Status | CLOSED_ACCEPTED |
 | MD08_FORMALLY_RESOLVED | true |
+| MD08_FORMALLY_RESOLVED_ON_INTEGRATION | true |
 | Owner authorization | OWNER_AUTHORIZE_R0_7D_MD08_MODEL_D_FR2_CLEAN_REISSUANCE (single-use; consumed) |
+| Post-integration status alignment | OWNER_AUTHORIZE_R0_7D_MD08_POST_INTEGRATION_STATUS_ALIGNMENT_R1 (single-use; consumed) |
 | Prerequisite independent review | R0_7D_MD08_CERTIFICATION_OPS_LABELS_R1_EC1_I2_POSTMERGE_REVIEW = PASS / ACCEPT; QUESTION_COUNT = 40; QUESTION_PASS_COUNT = 40; REVIEW_VALIDATION_STEP_COUNT = 40; REVIEW_VALIDATION_PASS_COUNT = 40; Codex mutation 0 |
 | F09_REMEDIATION_STATUS | CLOSED_ACCEPTED |
 | Historical F09 lineage | Initial implementation R1 failed the independent F09 exact-path gate; rejected history preserved; EC1 cured the exact-path defect and was accepted; do not erase or rewrite the historical F09 failure |
-| Merge authority | PR 37; MERGE_COMMIT `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_1 `a4e4329d7ab086569c2c19c5a4289253ea8826df`; MERGE_PARENT_2 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260`; MERGE_TREE `f2212dfae62b9557be8b76f6578cd80593327dd3`; MERGE_METHOD = MERGE_COMMIT |
+| Merge authority (implementation residual) | PR 37; MERGE_COMMIT `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_1 `a4e4329d7ab086569c2c19c5a4289253ea8826df`; MERGE_PARENT_2 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260`; MERGE_TREE `f2212dfae62b9557be8b76f6578cd80593327dd3`; MERGE_METHOD = MERGE_COMMIT |
+| Formal reconciliation integration | PR 38; MERGE_COMMIT `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`; MERGE_PARENT_1 `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_2 `051e49fed5199991e6c0755d2f2479d1133d4262`; MERGE_TREE `e03bb6bc7ceab9161fc074bcdfc16e83b2f7c33a`; MERGE_METHOD = MERGE_COMMIT |
 | Accepted implementation lineage | R1 `43d805bdc1231c2695e822fcb6398e772f7af27d`; EC1 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260` |
 | Eight-path implementation scope | Exact eight-path MD08 residual package (R1 + EC1) integrated by PR 37; self-contained string-map contract; `api-governance.ts` production restore count = 0 |
 | Targeted test result | Real-target Vitest 3/3 PASS |
 | Formal transition | 17/8/9/9/0 → 17/9/8/8/0 |
-| Resolution basis | PR 37 integrated the accepted MD08 residual package; merge tree equals accepted candidate tree; independent post-merge I2 review PASS/ACCEPT 40/40; F09 CLOSED_ACCEPTED via EC1 cure; evidence immutable |
+| Resolution basis | PR 37 integrated the accepted MD08 residual package; PR 38 MERGE_COMMIT placed the FR2+EC1 tree on `fix/ca-h01-frontend-f4-cutover` with Model D 17/9/8/8/0 and MD08 in RESOLVED_ITEM_SET; merge tree equals accepted candidate tree `e03bb6bc7ceab9161fc074bcdfc16e83b2f7c33a`; independent labels I2 PASS/ACCEPT 40/40 remains the implementation residual authority; F09 CLOSED_ACCEPTED via EC1 cure; FR2+EC1 I2 post-merge review was not performed (pre-gate STOP: PACKAGE_2 inaccessible; I2 authorization not consumed); evidence immutable |
 | MD08_STATUS | CLOSED_ACCEPTED |
-| MD08_FORMAL_RECONCILIATION_STATUS | FR2_CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
+| MD08_FORMAL_RECONCILIATION_STATUS | FR2_INTEGRATED_PENDING_I2_POSTMERGE_REVIEW |
+| I2_POSTMERGE_REVIEW_STATUS | NOT_PERFORMED_PREGATE_STOPPED_PACKAGE_2_INACCESSIBLE |
+| Historical I1 post-merge FAIL | PRESERVED; FAIL_CODE = CANDIDATE_BRANCH_DELETED; RECORD_UTC = 2026-09-18T21:00:01Z; GitHub `head_ref_deleted` 2026-09-18T19:52:18Z; later owner-authorized restoration `head_ref_restored` 2026-09-18T21:20:04Z at `051e49fed5199991e6c0755d2f2479d1133d4262`; original merge instant was not fully conforming |
 | Newly resolved by MD08 FR2 | MD08 only |
+| Newly resolved by this alignment | none (status alignment only; Model D arithmetic unchanged) |
 | FR1 historical lineage (nonintegrated) | Provisional FR1 commit `dd06ff13636f92d00081b1f607d23994c9a30a19`; recreated FR1 branch commit `147790c1a76685fdb05a72e41bbf850d57992d8f`; FR1 independent review = STOPPED_BLOCKED; neither FR1 attempt is accepted integration authority; FR1 was not concluded REJECT on technical content because review stopped before that conclusion |
 | FR1 branch-mutation statement | FR2 does not retroactively authorize the R1 branch deletion/recreation operation; FR1_RETROACTIVE_AUTHORIZATION_GRANTED = false |
-| Non-effects | Does not resolve MD02, MD03, MD05, MD06, MD07, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E, deployment, HD07, FR1 integration, FR2 PR, or FR2 merge; does not close CI debt; does not claim CI green |
-| Evidence | `docs/evidence/r0-7d-md08-model-d-formal-reconciliation-r2/20260917172649/` |
-| Supersession | Supersedes only the formal MD08 unresolved MB_E state at aggregate 17/8/9/9/0 on this FR2 candidate; does not erase FR1 history |
+| Non-effects | Does not resolve MD02, MD03, MD05, MD06, MD07, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E, deployment, or HD07; does not close CI debt; does not claim CI green; does not claim I2 PASS; does not erase the historical I1 FAIL or claim that branch preservation was satisfied at the original merge instant |
+| Evidence | `docs/evidence/r0-7d-md08-model-d-formal-reconciliation-r2/20260917172649/` (immutable FR2+EC1); `docs/evidence/r0-7d-md08-post-integration-status-alignment-r1/20260919060756/` (this alignment) |
+| Supersession | Supersedes only the stale in-tree candidate fields `MD08_FORMALLY_RESOLVED_ON_INTEGRATION=false`, `FR2_PR_AUTHORIZATION_GRANTED=false`, and `FR2_MERGE_AUTHORIZATION_GRANTED=false` after PR 38 MERGE_COMMIT; does not erase FR1 history, FR2/EC1 artifacts, or the original I1 FAIL |
 
 ### Previously resolved Model D items (preserved; not reopened by MD08 FR2)
 | Item | Status |
@@ -680,9 +687,15 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | FR1_RETROACTIVE_AUTHORIZATION_GRANTED | false |
 | FR1_INTEGRATION_AUTHORIZATION_GRANTED | false |
 | FR1_INTEGRATED | false |
-| FR2_PR_AUTHORIZATION_GRANTED | false |
-| FR2_MERGE_AUTHORIZATION_GRANTED | false |
-| MD08_FORMALLY_RESOLVED_ON_INTEGRATION | false |
+| FR2_PR_AUTHORIZATION_GRANTED | true (consumed; PR 38) |
+| FR2_MERGE_AUTHORIZATION_GRANTED | true (consumed; MERGE_COMMIT `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`) |
+| MD08_FORMALLY_RESOLVED_ON_INTEGRATION | true |
+| I2_POSTMERGE_REVIEW_STATUS | NOT_PERFORMED_PREGATE_STOPPED_PACKAGE_2_INACCESSIBLE |
+| I1_HISTORICAL_FAIL_PRESERVED | true |
+| I1_HISTORICAL_FAIL_CODE | CANDIDATE_BRANCH_DELETED |
+| PR38_CI_CHECKS_RECORDED | compliance-iso:FAILURE; quality:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED |
+| PR38_CI_CHECK_STATUS | 4_FAILURE_1_SKIPPED |
+| MERGE_COMMIT_CHECK_RUNS | none recorded on `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97` |
 
 ---
 
