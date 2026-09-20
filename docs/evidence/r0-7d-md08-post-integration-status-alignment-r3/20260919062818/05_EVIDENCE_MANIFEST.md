@@ -1,0 +1,20 @@
+# Evidence manifest
+
+Evidence root:
+docs/evidence/r0-7d-md08-post-integration-status-alignment-r3/20260919062818/
+
+Files:
+00_SUMMARY.md
+01_AUTHORITY_AND_LINEAGE.md
+02_LIVE_VERIFICATION_AND_ALIGNMENT.md
+03_SCOPE_PRESERVATION_AND_NONCLAIMS.md
+04_VALIDATION.md
+05_EVIDENCE_MANIFEST.md
+
+FILE_COUNT = 6
+REGISTER_PATH = docs/governance/OWNER_DECISION_REGISTER.md
+IMMUTABLE_FR2_EC1_ROOT_UNCHANGED = docs/evidence/r0-7d-md08-model-d-formal-reconciliation-r2/20260917172649/
+ALIGNMENT_R1_AND_R2_EVIDENCE_NOT_PRESENT_ON_THIS_BRANCH = true
+ALIGNMENT_R1_BRANCH_UNCHANGED = cursor/md08-post-integration-status-alignment-996d @ a843d9dde7cf8c8133fe12cb70ab15143f04b21e
+ALIGNMENT_R2_BRANCH_UNCHANGED = cursor/r0-7d-md08-post-integration-status-alignment-r2-996d @ db36be62cbcb356559be5e58e8db43566535d002
+I2_PACKAGE_SHA256 = 3f2e037299b33856ae73507df15b88bdeed68e09dfbe5e25efe4dca109337941
