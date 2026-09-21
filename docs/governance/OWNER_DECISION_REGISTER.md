@@ -575,6 +575,7 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
 | Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
 | Last Part E status alignment | R0-7D-MD08-POST-INTEGRATION-STATUS-ALIGNMENT-R3 |
+| Last unresolved-item definition freeze | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1 |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -704,6 +705,60 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | PR38_CI_CHECKS_RECORDED | compliance-iso:FAILURE; quality:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED |
 | PR38_CI_CHECK_STATUS | 4_FAILURE_1_SKIPPED |
 | MERGE_COMMIT_CHECK_RUNS | none recorded on `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97` |
+| UNRESOLVED_ITEM_DEFINITION_FREEZE_R1 | FROZEN_PROSPECTIVE |
+| DEFINITION_ORIGIN | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MAPPING_RULE | H1_H2_PLUS_INVENTORY_ORDER_WITHIN_FUNCTIONAL_GROUP |
+| HISTORICAL_MAPPING_RECOVERED | false |
+| HISTORICAL_MAPPING_CLAIMED | false |
+| ORIGINAL_DEFINITION_AUTHORITY_FOUND | false |
+| DEFINITION_FREEZE_PERFORMED | true |
+| MODEL_D_MUTATION_COUNT | 0 |
+| NEWLY_RESOLVED_ITEM_COUNT | 0 |
+| ADDITIONAL_PATH_COUNT | 0 |
+| IMPLEMENTATION_AUTHORIZATION | false |
+| MD06_IS_NOT_HD06 | true |
+| MD07_IS_NOT_HD07 | true |
+| MANUAL_IDENTITY_REVIEW_PANEL_STATUS | OUTSIDE_PROSPECTIVE_MODEL_D_EIGHT_PATH_FREEZE |
+
+### Unresolved item definition freeze R1 (prospective owner map 2026)
+
+This subsection freezes PRIMARY_PATH definitions for the eight unresolved Model D items. It does **not** resolve those items, does not change MODEL_D = 17/9/8/8/0, and does not authorize implementation.
+
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-09-20T18:54:28Z |
+| Status | FROZEN_PROSPECTIVE |
+| DEFINITION_FREEZE_PERFORMED | true |
+| DEFINITION_ORIGIN | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MAPPING_RULE | H1_H2_PLUS_INVENTORY_ORDER_WITHIN_FUNCTIONAL_GROUP |
+| HISTORICAL_MAPPING_RECOVERED | false |
+| HISTORICAL_MAPPING_CLAIMED | false |
+| ORIGINAL_DEFINITION_AUTHORITY_FOUND | false |
+| Owner map approval | OWNER_APPROVE_R0_7D_MODEL_D_PROSPECTIVE_DEFINITION_MAP_R1 (single-use; consumed) |
+| Owner freeze authorization | OWNER_AUTHORIZE_R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1 (single-use; consumed) |
+| Recovery predecessor | R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_RECOVERY_R1 = STOPPED_BLOCKED / STOPPED_BLOCKED_ORIGINAL_DEFINITION_AUTHORITY_NOT_FOUND; ZIP SHA-256 `0c0d7a129fe87c0c5e41e29f6e66c433ace9ad33412c315e627a579079e47b69` |
+| MODEL_D | 17/9/8/8/0 |
+| MODEL_D_MUTATION_COUNT | 0 |
+| NEWLY_RESOLVED_ITEM_COUNT | 0 |
+| ADDITIONAL_PATH_COUNT | 0 |
+| IMPLEMENTATION_AUTHORIZATION | false |
+| GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED |
+| Evidence | `docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/` |
+| Decision record | `docs/governance/R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md` |
+| Supersession | Supersedes only the undefined PRIMARY_PATH state of the eight unresolved IDs; does not supersede MD08 FR2, R3 alignment, HD06 DEFER, or HD07_READY = false |
+
+| MD_ID | TITLE | PRIMARY_PATH | ADDITIONAL_PATHS | DEFINITION_STATUS | DEFINITION_ORIGIN |
+|-------|-------|--------------|------------------|-------------------|-------------------|
+| MD02 | EducationCharts residual | `frontend-app/src/components/education/EducationCharts.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD03 | admin-education-api residual | `frontend-app/src/lib/admin-education-api.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD05 | api-grievances residual | `frontend-app/src/lib/api-grievances.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD06 | IdentityReviewPage residual | `frontend-app/src/pages/admin/IdentityReviewPage.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD07 | IdentityReviewGuard residual | `frontend-app/src/pages/dashboard/IdentityReviewGuard.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD09 | api-recertification residual | `frontend-app/src/lib/api-recertification.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD10 | AdminEducationGuard residual | `frontend-app/src/pages/dashboard/AdminEducationGuard.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD12 | api-staff-cert-registry residual | `frontend-app/src/lib/api-staff-cert-registry.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+
+MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIdentityReviewPanel.tsx` remains outside this eight-path freeze.
 
 ---
 
@@ -725,5 +780,22 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Supersession | None; no implementation authorization |
 
 Full owner-supplied decision and conditions: [HD06 decision, 2026-09-13](./HD06_DEJANA_ACCOUNT_BINDING_DECISION_2026-09-13.md). Source: Repository Owner's message in this task. Recording this decision does not establish an authenticated account, an electronic signature, or independent verification.
+
+### Unresolved Model D item definition freeze R1
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-09-20 |
+| Status | FROZEN_PROSPECTIVE |
+| Approved option | Freeze the eight unresolved PRIMARY_PATH mappings as a prospective owner definition; do not resolve items; do not implement |
+| Owner | Miljan Savić, Repository Owner |
+| Rationale | Original historical MD numbering was not recoverable; owner approved a prospective map under an explicit numbering rule so later residual work can be scoped without inventing IDs ad hoc |
+| Scope | PRIMARY_PATH freeze for MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12 only |
+| Residual risk | Prospective numbering is not a recovered historical fact; education cluster remains deferred; HD06/HD07 remain unready; paths remain missing on integration |
+| Dependencies | Separate implementation authorization per item; AD1C for MD02/MD03/MD10; HD06/HD07 remain independent of MD06/MD07 |
+| Exit criteria | Each frozen item remains unresolved until a later owner-authorized residual package is independently reviewed and integrated |
+| Supersession | None for Model D arithmetic; supersedes only the undefined-path state of the eight IDs |
+
+Full owner-supplied freeze: [Unresolved item definition freeze R1](./R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md). Recording this freeze does not restore source files, grant C3-S9 resume, or close R0-7D.
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.

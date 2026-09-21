@@ -1,0 +1,52 @@
+# Scope and nonclaims
+
+## Exact changed paths (this freeze record)
+
+1. docs/governance/OWNER_DECISION_REGISTER.md
+2. docs/governance/OWNER_DECISION_PACKAGE.md
+3. docs/governance/R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md
+4. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/00_SUMMARY.md
+5. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/01_AUTHORITY.md
+6. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/02_APPROVED_MAP.md
+7. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/03_FREEZE_TABLE.md
+8. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/04_SCOPE_AND_NONCLAIMS.md
+9. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/05_DEFERRALS_AND_DISCLAIMERS.md
+10. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/06_VALIDATION.md
+11. docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/07_EVIDENCE_MANIFEST.md
+
+TOTAL_CHANGED_PATH_COUNT = 11
+PRODUCTION_SOURCE_CHANGED_PATH_COUNT = 0
+FRONTEND_APP_CHANGED_PATH_COUNT = 0
+EIGHT_PRIMARY_PATH_RESTORED_COUNT = 0
+
+## Model D
+
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+NEWLY_RESOLVED_ITEM_COUNT = 0
+UNRESOLVED_ITEM_SET = MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12
+MD08_REOPENED = false
+MD01_REOPENED = false
+MD13_REOPENED = false
+
+MD02_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD03_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD05_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD06_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD07_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD09_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD10_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+MD12_FORMALLY_RESOLVED_BY_THIS_PACKAGE = false
+
+## Authorizations not granted
+
+IMPLEMENTATION_AUTHORIZATION = false
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+CI_GREEN_CLAIMED = false
+CI_FAILURE_WAIVER_GRANTED = false
+OQ_4_STATUS = OPEN
+R0_7D = OPEN_IMPLEMENTATION_BLOCKER
+HD06_BINDING_APPROVED = false
+HD07_READY = false

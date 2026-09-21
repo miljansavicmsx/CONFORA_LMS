@@ -1,0 +1,30 @@
+# Authority
+
+OWNER_APPROVE_R0_7D_MODEL_D_PROSPECTIVE_DEFINITION_MAP_R1 = CONSUMED
+OWNER_AUTHORIZE_R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1 = CONSUMED
+AUTHORIZATION_STATUS = CONSUMED
+GOVERNANCE_HIERARCHY_LEVEL = 1
+
+The map approval supplies the eight PRIMARY_PATH bindings and numbering
+rule. The freeze authorization places those bindings into the live Part E
+register as FROZEN_PROSPECTIVE definitions.
+
+NOT_CONSUMED_BY_THIS_PACKAGE =
+OWNER_AUTHORIZE_R0_7D_MODEL_D_NEXT_ITEM_SCOPE_AND_DEPENDENCY_REVIEW_R1
+(already consumed earlier; result STOPPED_BLOCKED preserved)
+
+Predecessor recovery (not converted to PASS):
+
+R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_RECOVERY_R1 = STOPPED_BLOCKED
+RECOVERY_RESULT = STOPPED_BLOCKED_ORIGINAL_DEFINITION_AUTHORITY_NOT_FOUND
+RECOVERY_ZIP_SHA256 =
+0c0d7a129fe87c0c5e41e29f6e66c433ace9ad33412c315e627a579079e47b69
+
+Frozen integration identity at freeze recording:
+
+REMOTE_INTEGRATION_HEAD = 65d3263a8e998f8b4ea332eed54dc9e725e7d05a
+REMOTE_INTEGRATION_TREE = 4cc8c700937adc930249eccbe9fefa81aa1e8e13
+REMOTE_DRIFT = false
+
+This package does not independently review MD08 R3, does not implement
+residuals, and does not grant general C3-S9 resume.
