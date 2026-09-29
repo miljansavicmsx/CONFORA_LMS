@@ -1,0 +1,23 @@
+# Nonclaims
+
+RECORD_UTC = 2026-09-29T15:44:27Z
+
+IMPLEMENTATION_AUTHORIZATION = false
+MD05_IMPLEMENTATION_AUTHORIZATION = false
+MD05_SCOPE_EXPANSION_ADOPTED = false
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+CI_GREEN_CLAIMED = false
+CI_FAILURE_WAIVER_GRANTED = false
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+NEWLY_RESOLVED_ITEM_COUNT = 0
+MD08_REOPENED = false
+SOD_MATRIX_FROZEN = false
+BACKEND_READY_CLAIMED = false
+PR_41_MERGE_AUTHORIZED = false
+
+Recording alternative A does not create `cert-appeals` or `cert-complaints`,
+does not restore `api-grievances.ts`, and does not add additional paths
+to the prospective eight-path freeze.
