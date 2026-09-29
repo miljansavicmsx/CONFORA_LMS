@@ -576,6 +576,7 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
 | Last Part E status alignment | R0-7D-MD08-POST-INTEGRATION-STATUS-ALIGNMENT-R3 |
 | Last unresolved-item definition freeze | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1 |
+| MD05 architecture decision freeze R2 | Alternative A candidate pending independent review; not integration authority; Model D unchanged |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -760,6 +761,47 @@ This subsection freezes PRIMARY_PATH definitions for the eight unresolved Model 
 
 MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIdentityReviewPanel.tsx` remains outside this eight-path freeze.
 
+### MD05 canonical architecture alternative A — decision freeze R2 clean reissuance
+
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-09-29T19:58:02Z |
+| Owner decision status | ADOPTED |
+| Candidate record status | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
+| Integration authority | false |
+| Approved option | Alternative A: separate canonical appeals and complaints modules |
+| Owner authorization | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for this candidate record only) |
+| Owner | Repository Owner |
+| Rationale | ISO/IEC 17024 clauses 9.8 and 9.9 require separate appeal and complaint processes and an appeal decision-maker who was not involved in the original certification decision |
+| Scope | Architecture selection for unresolved MD05 only |
+| Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` |
+| Design package SHA-256 | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` |
+| Clean reissuance base | `9623a2f45612e5aa843ac73b87cd34957dac48ab` |
+| MD05 status | UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE |
+| MD05 remains a single Model D item | true |
+| Additional-path boundary | PENDING_GOVERNANCE_FREEZE |
+| Detailed RBAC and SoD matrix | PENDING_GOVERNANCE_FREEZE |
+| Scope expansion adopted | false |
+| Implementation authorization | false |
+| Legacy `/v1` aliases canonical | false |
+| Commit `a277a19` implementation authority | false |
+| Pull request #41 | HISTORICAL_NONAUTHORITATIVE_DESIGN_NOTE_NOT_TO_BE_MERGED |
+| Historical R1 commit | `6e3a3118164a48e143e607a6eb5846c2b82c2a8c` |
+| Historical R1 pull request | 42 |
+| Historical R1 status | PRESERVED_UNMERGED_NONAUTHORITATIVE_ATTEMPT |
+| Pull request #42 merge, modification, or deletion | false |
+| This candidate pull request authorization | false |
+| This candidate merge authorization | false |
+| Independent review performed by this package | false |
+| Model D | 17/9/8/8/0; mutation count 0 |
+| Newly resolved item count | 0 |
+| Residual risk | Path boundary and role matrix are not frozen; backend modules do not exist on integration `9623a2f`; this candidate is not the live register |
+| Dependencies | Independent review of this candidate, then a separate owner authorization before any pull request or merge |
+| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
+| Supersession | Supersedes only the unselected state of the three design alternatives as an owner selection. Does not supersede the eight-path freeze, MD08 FR2, or Model D arithmetic. Does not make historical R1 or pull request #42 authoritative |
+
+Full owner-supplied decision: [MD05 canonical architecture alternative A decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`. This candidate does not restore source files, expand MD05, grant C3-S9 resume, open a pull request, or close R0-7D.
+
 ---
 
 ## Maintenance
@@ -797,5 +839,22 @@ Full owner-supplied decision and conditions: [HD06 decision, 2026-09-13](./HD06_
 | Supersession | None for Model D arithmetic; supersedes only the undefined-path state of the eight IDs |
 
 Full owner-supplied freeze: [Unresolved item definition freeze R1](./R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md). Recording this freeze does not restore source files, grant C3-S9 resume, or close R0-7D.
+
+### MD05 canonical architecture alternative A — decision freeze R2
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-09-29 |
+| Status | ADOPTED_CANDIDATE_PENDING_INDEPENDENT_REVIEW |
+| Approved option | Alternative A: separate canonical appeals and complaints modules |
+| Owner | Repository Owner |
+| Rationale | Clean reissuance of the adopted MD05 architecture from integration `9623a2f`; historical R1 remains a preserved non-authoritative attempt |
+| Scope | Architecture selection for unresolved MD05 only; no path expansion and no implementation |
+| Residual risk | Candidate is not integration authority; path boundary and role matrix remain unfrozen |
+| Dependencies | Independent review before any pull request or merge |
+| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
+| Supersession | None for Model D arithmetic; historical pull request #42 is not modified, merged, or deleted |
+
+Full candidate record: [MD05 decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`.
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
