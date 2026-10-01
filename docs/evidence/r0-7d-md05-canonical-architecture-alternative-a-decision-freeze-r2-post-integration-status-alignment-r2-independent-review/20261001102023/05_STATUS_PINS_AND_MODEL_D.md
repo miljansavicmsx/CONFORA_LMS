@@ -1,0 +1,45 @@
+# Status pins and Model D
+
+```text
+REVIEW_UTC = 2026-10-01T10:20:23Z
+```
+
+Owner-supplied status pins verified live on subject `028fee9…`:
+
+```text
+MD05_DECISION_FREEZE_R2_STATUS =
+R2_INTEGRATED_PENDING_INDEPENDENT_I2_POSTMERGE_REVIEW
+PREMERGE_INDEPENDENT_REVIEW_RESULT = PASS_ACCEPT
+POSTMERGE_I2_REVIEW_RESULT = NOT_PERFORMED
+CLOSED_ACCEPTED_CLAIMED = false
+```
+
+Part E and package summary wording after alignment:
+
+- aggregate MD05 R2 summary records Alternative A integrated via PR 45,
+  premerge PASS_ACCEPT, pending independent I2 postmerge review;
+- last Part E status alignment =
+  `R0-7D-MD05-CANONICAL-ARCHITECTURE-ALTERNATIVE-A-DECISION-FREEZE-R2-POST-INTEGRATION-STATUS-ALIGNMENT-R2`;
+- historical alignment R1 / PR #46 preserved as
+  `PRESERVED_UNMERGED_NONAUTHORITATIVE_OVERCLAIM` for
+  `R2_INTEGRATED_INDEPENDENT_REVIEW_CLOSED_ACCEPTED`.
+
+Model D and MD05 residual state:
+
+```text
+MODEL_D_TOTAL_ACTUAL = 17
+MODEL_D_RESOLVED_ACTUAL = 9
+MODEL_D_UNRESOLVED_ACTUAL = 8
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+NEWLY_RESOLVED_ITEM_COUNT = 0
+UNRESOLVED_ITEM_SET =
+MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12
+MD05_STATUS = UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE
+MD05_FORMALLY_RESOLVED = false
+MD05_IMPLEMENTATION_AUTHORIZATION = false
+MD05_REMAINS_SINGLE_MODEL_D_ITEM = true
+```
+
+The subject corrects the historical R1 overclaim without claiming I2
+postmerge closure or formal MD05 resolution.
