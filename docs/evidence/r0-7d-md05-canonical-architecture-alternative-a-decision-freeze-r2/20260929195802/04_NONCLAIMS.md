@@ -1,0 +1,35 @@
+# Nonclaims
+
+RECORD_UTC = 2026-09-29T19:58:02Z
+
+IMPLEMENTATION_AUTHORIZATION = false
+MD05_IMPLEMENTATION_AUTHORIZATION = false
+MD05_SCOPE_EXPANSION_ADOPTED = false
+MD05_FORMALLY_RESOLVED = false
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+CI_GREEN_CLAIMED = false
+CI_FAILURE_WAIVER_GRANTED = false
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+NEWLY_RESOLVED_ITEM_COUNT = 0
+ADDITIONAL_PATH_COUNT = 0
+MD08_REOPENED = false
+SOD_MATRIX_FROZEN = false
+ADDITIONAL_PATH_BOUNDARY_FROZEN = false
+BACKEND_READY_CLAIMED = false
+PR_41_MERGE_AUTHORIZED = false
+PR_42_MERGE_AUTHORIZED = false
+PR_42_MODIFICATION_AUTHORIZED = false
+PR_42_DELETION_AUTHORIZED = false
+THIS_CANDIDATE_PR_AUTHORIZATION = false
+THIS_CANDIDATE_MERGE_AUTHORIZATION = false
+INDEPENDENT_REVIEW_PASS_CLAIMED = false
+
+Recording alternative A does not create `cert-appeals` or `cert-complaints`,
+does not restore `api-grievances.ts`, and does not add additional paths
+to the prospective eight-path freeze.
+
+Rollback boundary: revert this candidate commit. Rollback must not delete
+or rewrite commit `6e3a3118` or pull request #42.
