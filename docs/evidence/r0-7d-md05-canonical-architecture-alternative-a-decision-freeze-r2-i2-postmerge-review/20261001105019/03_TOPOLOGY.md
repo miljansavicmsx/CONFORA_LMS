@@ -1,0 +1,36 @@
+# Merge topology and ancestry
+
+```text
+REVIEW_UTC = 2026-10-01T10:50:19Z
+
+DECISION_FREEZE_MERGE_COMMIT = 426cc1ec8ab442e126678c84bb4a3586244c6d7c
+MERGE_PARENT_1 = 9623a2f45612e5aa843ac73b87cd34957dac48ab
+MERGE_PARENT_2 = ad8aa5a16c05907a441ece20fe425544745a96f4
+MERGE_TREE = ad8eed62e66fd0db319dbcf524864a75a3dc6013
+CANDIDATE_TREE = ad8eed62e66fd0db319dbcf524864a75a3dc6013
+MERGE_TREE_EQUALS_CANDIDATE_TREE = true
+MERGE_METHOD = MERGE_COMMIT
+MERGE_TOPOLOGY_VALID = true
+MERGE_IS_ANCESTOR_OF_INTEGRATION_HEAD = true
+
+INTEGRATION_HEAD = 3805dba2ceb70d64b7ba967de6beb78beab67e9e
+STATUS_ALIGNMENT_R2_MERGE_PARENT_1 = 426cc1ec8ab442e126678c84bb4a3586244c6d7c
+STATUS_ALIGNMENT_R2_MERGE_PARENT_2 = 028fee9d633de81f7bf42f95c34ae2cd04a06a37
+STATUS_ALIGNMENT_R2_MERGE_TREE = 357d41026223b05582a93b26b84e6d8cbba90f35
+
+DECISION_FREEZE_FILE_UNCHANGED_BY_ALIGNMENT = true
+DECISION_FREEZE_EVIDENCE_UNCHANGED_BY_ALIGNMENT = true
+
+HISTORICAL_DECISION_FREEZE_R1_IS_ANCESTOR_OF_MERGE = false
+HISTORICAL_ALIGNMENT_R1_IS_ANCESTOR_OF_INTEGRATION = false
+```
+
+Live checks confirm:
+
+- PR #45 MERGE_COMMIT preserved the exact reviewed candidate tree;
+- decision-freeze R2 governance/evidence content is unchanged by later
+  status-alignment R2;
+- historical decision-freeze R1 / PR #42 remains an open draft and is not
+  an ancestor of the merge;
+- historical alignment R1 / PR #46 remains an open draft and is not an
+  ancestor of integration.

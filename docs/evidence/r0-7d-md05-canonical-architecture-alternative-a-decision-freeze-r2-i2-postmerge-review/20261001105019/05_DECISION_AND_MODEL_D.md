@@ -1,0 +1,51 @@
+# Decision content and Model D
+
+```text
+REVIEW_UTC = 2026-10-01T10:50:19Z
+
+OWNER_DECISION_STATUS = ADOPTED
+SELECTED_ALTERNATIVE = A
+MD05_CANONICAL_ARCHITECTURE =
+SEPARATE_CANONICAL_APPEALS_AND_COMPLAINTS_MODULES
+CANONICAL_BACKEND_OWNERSHIP =
+apps/api/src/cert-appeals/
+apps/api/src/cert-complaints/
+```
+
+Verified live on integration `3805dba…`:
+
+```text
+MODEL_D_TOTAL_ACTUAL = 17
+MODEL_D_RESOLVED_ACTUAL = 9
+MODEL_D_UNRESOLVED_ACTUAL = 8
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+NEWLY_RESOLVED_ITEM_COUNT = 0
+UNRESOLVED_ITEM_SET =
+MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12
+
+MD05_PRIMARY_PATH = frontend-app/src/lib/api-grievances.ts
+MD05_ADDITIONAL_PATHS = none
+MD05_DEFINITION_STATUS = FROZEN_PROSPECTIVE
+MD05_STATUS = UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE
+MD05_REMAINS_SINGLE_MODEL_D_ITEM = true
+MD05_SCOPE_EXPANSION_ADOPTED = false
+MD05_FORMALLY_RESOLVED = false
+MD05_IMPLEMENTATION_AUTHORIZATION = false
+
+LEGACY_V1_ALIAS_ROUTING_CANONICAL = false
+HISTORICAL_COMMIT_A277A19_IMPLEMENTATION_AUTHORITY = false
+DETAILED_RBAC_SOD_MATRIX_STATUS = PENDING_GOVERNANCE_FREEZE
+MD05_ADDITIONAL_PATH_BOUNDARY_STATUS = PENDING_GOVERNANCE_FREEZE
+
+api-grievances.ts on integration = MISSING
+apps/api/src/cert-appeals/ on integration = ABSENT
+apps/api/src/cert-complaints/ on integration = ABSENT
+```
+
+ISO/IEC 17024-aligned architecture constraints remain recorded as decision
+facts only (separate appeals/complaints modules; original certification
+decision-maker may not approve appeal; administrator is not a case decision
+role; auditor is not a case mutation role; immutable case audit and tenant
+isolation required). Those constraints are not implemented and are not
+verified as runtime enforcement by this I2 review.
