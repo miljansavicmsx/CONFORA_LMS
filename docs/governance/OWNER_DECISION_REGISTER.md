@@ -574,9 +574,9 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Earlier formal aggregate (pre-MD01-FR1) | 17/6/11/11/0 |
 | Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
 | Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
-| Last Part E status alignment | R0-7D-MD08-POST-INTEGRATION-STATUS-ALIGNMENT-R3 |
+| Last Part E status alignment | R0-7D-MD05-CANONICAL-ARCHITECTURE-ALTERNATIVE-A-DECISION-FREEZE-R2-POST-INTEGRATION-STATUS-ALIGNMENT |
 | Last unresolved-item definition freeze | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1 |
-| MD05 architecture decision freeze R2 | Alternative A candidate pending independent review; not integration authority; Model D unchanged |
+| MD05 architecture decision freeze R2 | Alternative A integrated via PR 45 MERGE_COMMIT; independent review PASS/ACCEPT; MD05 remains unresolved; Model D unchanged |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -761,24 +761,31 @@ This subsection freezes PRIMARY_PATH definitions for the eight unresolved Model 
 
 MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIdentityReviewPanel.tsx` remains outside this eight-path freeze.
 
-### MD05 canonical architecture alternative A — decision freeze R2 clean reissuance
+### MD05 canonical architecture alternative A — decision freeze R2
 
 | Field | Value |
 |-------|-------|
-| Date (UTC) | 2026-09-29T19:58:02Z |
+| Date (UTC) | 2026-09-29T19:58:02Z (candidate); 2026-10-01T08:15:43Z (post-integration status alignment) |
 | Owner decision status | ADOPTED |
-| Candidate record status | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
-| Integration authority | false |
+| Integration status | R2_INTEGRATED_INDEPENDENT_REVIEW_CLOSED_ACCEPTED |
+| Pre-alignment classification | PENDING_POSTMERGE_SCOPE_AND_STATE_VERIFICATION |
+| Integration authority on live register after alignment | true (architecture decision record only; not implementation authority) |
 | Approved option | Alternative A: separate canonical appeals and complaints modules |
-| Owner authorization | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for this candidate record only) |
+| Owner authorization (candidate) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for candidate record) |
+| Owner authorization (PR) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_PR (single-use; consumed; PR 45) |
+| Owner authorization (merge) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_MERGE (single-use; consumed; MERGE_COMMIT `426cc1e`) |
+| Owner authorization (this alignment) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT (single-use; consumed) |
+| Independent review | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_REVIEW = CONSUMED; RESULT = PASS; RECOMMENDATION = ACCEPT; EXECUTION_ENGINE = CURSOR; REVIEWER_INDEPENDENCE_VERIFIED = true; validation 28 PASS / 0 FAIL / 2 NOT_VERIFIED; review zip SHA-256 `485a9e7d4daef9edb97ce509d5db4b27e27f988d0940bdb9cb5a64a9db1373cd` |
 | Owner | Repository Owner |
 | Rationale | ISO/IEC 17024 clauses 9.8 and 9.9 require separate appeal and complaint processes and an appeal decision-maker who was not involved in the original certification decision |
 | Scope | Architecture selection for unresolved MD05 only |
-| Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` |
+| Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; directories not created) |
 | Design package SHA-256 | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` |
 | Clean reissuance base | `9623a2f45612e5aa843ac73b87cd34957dac48ab` |
+| Merge authority | PR 45; MERGE_COMMIT `426cc1ec8ab442e126678c84bb4a3586244c6d7c`; MERGE_PARENT_1 `9623a2f45612e5aa843ac73b87cd34957dac48ab`; MERGE_PARENT_2 `ad8aa5a16c05907a441ece20fe425544745a96f4`; MERGE_TREE `ad8eed62e66fd0db319dbcf524864a75a3dc6013`; MERGE_METHOD = MERGE_COMMIT; MERGE_TOPOLOGY_VALID = true |
 | MD05 status | UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE |
 | MD05 remains a single Model D item | true |
+| MD05 formally resolved | false |
 | Additional-path boundary | PENDING_GOVERNANCE_FREEZE |
 | Detailed RBAC and SoD matrix | PENDING_GOVERNANCE_FREEZE |
 | Scope expansion adopted | false |
@@ -790,17 +797,14 @@ MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIde
 | Historical R1 pull request | 42 |
 | Historical R1 status | PRESERVED_UNMERGED_NONAUTHORITATIVE_ATTEMPT |
 | Pull request #42 merge, modification, or deletion | false |
-| This candidate pull request authorization | false |
-| This candidate merge authorization | false |
-| Independent review performed by this package | false |
 | Model D | 17/9/8/8/0; mutation count 0 |
 | Newly resolved item count | 0 |
-| Residual risk | Path boundary and role matrix are not frozen; backend modules do not exist on integration `9623a2f`; this candidate is not the live register |
-| Dependencies | Independent review of this candidate, then a separate owner authorization before any pull request or merge |
+| Residual risk | Path boundary and role matrix remain unfrozen; backend modules still absent; architecture decision is integrated but residual implementation is unauthorized |
+| Dependencies | Later owner authorization for additional-path/SoD matrix freeze and any MD05 residual implementation |
 | Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Supersession | Supersedes only the unselected state of the three design alternatives as an owner selection. Does not supersede the eight-path freeze, MD08 FR2, or Model D arithmetic. Does not make historical R1 or pull request #42 authoritative |
+| Supersession | Supersedes only stale in-tree candidate-status fields (`CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW`, `Integration authority = false`, Maintenance status `ADOPTED_CANDIDATE_PENDING_INDEPENDENT_REVIEW`, and aggregate summary “pending independent review; not integration authority”) after PR 45 MERGE_COMMIT and independent review PASS/ACCEPT. Does not supersede the eight-path freeze, MD08 FR2, or Model D arithmetic. Does not make historical R1 or pull request #42 authoritative |
 
-Full owner-supplied decision: [MD05 canonical architecture alternative A decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`. This candidate does not restore source files, expand MD05, grant C3-S9 resume, open a pull request, or close R0-7D.
+Full owner-supplied decision: [MD05 canonical architecture alternative A decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Post-integration alignment: [Status alignment](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT.md). Candidate evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`. Alignment evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment/20261001081543/`. This alignment does not restore source files, expand MD05, grant C3-S9 resume, or close R0-7D.
 
 ---
 
@@ -844,17 +848,17 @@ Full owner-supplied freeze: [Unresolved item definition freeze R1](./R0_7D_MODEL
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-29 |
-| Status | ADOPTED_CANDIDATE_PENDING_INDEPENDENT_REVIEW |
+| Date | 2026-09-29 (candidate); 2026-10-01 (post-integration status alignment) |
+| Status | R2_INTEGRATED_INDEPENDENT_REVIEW_CLOSED_ACCEPTED |
 | Approved option | Alternative A: separate canonical appeals and complaints modules |
 | Owner | Repository Owner |
-| Rationale | Clean reissuance of the adopted MD05 architecture from integration `9623a2f`; historical R1 remains a preserved non-authoritative attempt |
-| Scope | Architecture selection for unresolved MD05 only; no path expansion and no implementation |
-| Residual risk | Candidate is not integration authority; path boundary and role matrix remain unfrozen |
-| Dependencies | Independent review before any pull request or merge |
+| Rationale | Align live Part E after PR 45 MERGE_COMMIT and independent review PASS/ACCEPT; historical R1 / PR 42 remain preserved non-authoritative |
+| Scope | Architecture-decision status alignment for unresolved MD05 only; no path expansion and no implementation |
+| Residual risk | Path boundary and role matrix remain unfrozen; residual implementation unauthorized |
+| Dependencies | Later owner authorization for path/SoD freeze and any MD05 residual implementation |
 | Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Supersession | None for Model D arithmetic; historical pull request #42 is not modified, merged, or deleted |
+| Supersession | Supersedes only stale candidate-status wording after merge and PASS/ACCEPT review; none for Model D arithmetic |
 
-Full candidate record: [MD05 decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`.
+Full decision and alignment: [MD05 decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md); [Post-integration status alignment](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`; `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment/20261001081543/`.
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
