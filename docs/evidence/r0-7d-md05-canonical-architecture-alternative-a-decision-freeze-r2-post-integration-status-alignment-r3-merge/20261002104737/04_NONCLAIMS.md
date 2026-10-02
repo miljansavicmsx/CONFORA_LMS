@@ -1,0 +1,42 @@
+# Nonclaims
+
+```text
+RECORD_UTC = 2026-10-02T10:47:37Z
+
+IMPLEMENTATION_AUTHORIZATION = false
+MD05_IMPLEMENTATION_AUTHORIZATION = false
+MD05_FORMALLY_RESOLVED = false
+MD05_SCOPE_EXPANSION_ADOPTED = false
+MD05_ADDITIONAL_PATH_EXPANSION_ADOPTED = false
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+NEWLY_RESOLVED_ITEM_COUNT = 0
+I2_NOT_VERIFIED_CONVERTED_TO_PASS = false
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+CI_GREEN_CLAIMED = false
+CI_FAILURE_WAIVER_GRANTED = false
+SOD_MATRIX_FROZEN = false
+ADDITIONAL_PATH_BOUNDARY_FROZEN = false
+BACKEND_READY_CLAIMED = false
+PR_46_MERGE_AUTHORIZED = false
+PR_46_MODIFICATION_AUTHORIZED = false
+PR_46_DELETION_AUTHORIZED = false
+NONAUTHORITATIVE_I2_CLAIM_1eaae91_PROMOTED = false
+PRODUCTION_SOURCE_CHANGED_BY_MERGE_BEYOND_CANDIDATE = false
+```
+
+Merging the status-alignment R3 candidate places live Part E pins for
+architecture-decision CLOSED_ACCEPTED after authoritative I2 PASS_ACCEPT.
+It does not formally resolve MD05, does not convert I2 NOT_VERIFIED to
+PASS, and does not authorize implementation.
+
+```text
+NEXT_ACTION =
+OWNER_DEFINE_NEXT_MD05_RESIDUAL_AUTHORIZATION
+```
+
+That next-action placeholder is not an authorization grant. Residual
+path-boundary / SoD freeze and any MD05 implementation remain
+unauthorized until separately owner-authorized.

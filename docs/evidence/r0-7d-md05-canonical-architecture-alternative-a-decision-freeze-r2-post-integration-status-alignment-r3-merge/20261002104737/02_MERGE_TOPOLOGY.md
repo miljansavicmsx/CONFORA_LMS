@@ -1,0 +1,59 @@
+# Merge topology
+
+```text
+RECORD_UTC = 2026-10-02T10:47:37Z
+
+PR_NUMBER = 49
+PR_URL = https://github.com/miljansavicmsx/CONFORA_LMS/pull/49
+PR_TITLE =
+docs(governance): align MD05 Alternative A R2 status after I2 acceptance
+MERGE_METHOD = MERGE_COMMIT
+MERGED_AT = 2026-10-02T10:47:18Z
+MERGED_BY = app/cursor
+
+HEAD_BRANCH = cursor/r0-7d-md05-alt-a-r2-status-alignment-r3-703a
+HEAD_COMMIT = ad505f5188b923f83b2b6adbda2ceb894efeb90e
+BASE_BRANCH = fix/ca-h01-frontend-f4-cutover
+PRE_MERGE_BASE_HEAD = 3805dba2ceb70d64b7ba967de6beb78beab67e9e
+
+MERGE_COMMIT = 1c2f649d0d73c800bdf563ef6ce5027169a4e816
+MERGE_PARENT_1 = 3805dba2ceb70d64b7ba967de6beb78beab67e9e
+MERGE_PARENT_2 = ad505f5188b923f83b2b6adbda2ceb894efeb90e
+MERGE_TREE = 68ebd509592ddb99113a6e7c60a1158f689e6449
+CANDIDATE_TREE = 68ebd509592ddb99113a6e7c60a1158f689e6449
+MERGE_TREE_EQUALS_CANDIDATE_TREE = true
+MERGE_TOPOLOGY_VALID = true
+CHANGED_PATH_COUNT = 9
+
+POST_MERGE_INTEGRATION_HEAD = 1c2f649d0d73c800bdf563ef6ce5027169a4e816
+
+OWNER_IDENTITY_PIN_AT_MERGE =
+BASE_BRANCH = fix/ca-h01-frontend-f4-cutover
+EXPECTED_BASE_HEAD = 3805dba2ceb70d64b7ba967de6beb78beab67e9e
+HEAD_BRANCH = cursor/r0-7d-md05-alt-a-r2-status-alignment-r3-703a
+HEAD_COMMIT = ad505f5188b923f83b2b6adbda2ceb894efeb90e
+CANDIDATE_PARENT = 3805dba2ceb70d64b7ba967de6beb78beab67e9e
+INDEPENDENT_REVIEW_RESULT = PASS_ACCEPT
+INDEPENDENT_REVIEW_COMMIT = 3e3de589030a587e73c443c09312845b3070fc46
+INDEPENDENT_REVIEW_EC1_COMMIT = afe504b8082de1224f21bfafe73c6a09d6ef4eb0
+IDENTITY_PIN_VERIFIED_BEFORE_MERGE = true
+
+HISTORICAL_ALIGNMENT_R1_COMMIT =
+c335f7bfdb1f9d5ab04c07e8718f299364a354ca
+HISTORICAL_ALIGNMENT_R1_PR = 46
+HISTORICAL_ALIGNMENT_R1_PR_STATE_AFTER_MERGE = OPEN_DRAFT
+HISTORICAL_R1_IS_ANCESTOR_OF_MERGE_PARENT_2 = false
+
+AUTHORITATIVE_I2_REVIEW_COMMIT =
+8b97f8aa4354ccf7db95aff0678a33bd7540d020
+I2_IS_ANCESTOR_OF_MERGE = false
+
+PR_POINTER_BRANCH =
+cursor/r0-7d-md05-alt-a-r2-status-alignment-r3-pr-3706
+PR_POINTER_EQUALS_REVIEWED_COMMIT = true
+```
+
+Merge was executed as a local `git merge --no-ff` of the exact candidate
+head onto the exact pre-merge base head, then pushed to
+`fix/ca-h01-frontend-f4-cutover`. GitHub recorded PR #49 as MERGED with
+merge commit `1c2f649…`.
