@@ -1,0 +1,37 @@
+# Nonclaims
+
+```text
+RECORD_UTC = 2026-10-02T07:42:01Z
+
+AUTHORIZATION_STATUS = RECEIVED_NOT_CONSUMED
+PR_OPENED = false
+MERGE_AUTHORIZATION = false
+MERGE_PERFORMED = false
+IMPLEMENTATION_AUTHORIZATION = false
+MD05_IMPLEMENTATION_AUTHORIZATION = false
+MD05_FORMALLY_RESOLVED = false
+MD05_SCOPE_EXPANSION_ADOPTED = false
+MODEL_D = 17/9/8/8/0
+MODEL_D_MUTATION_COUNT = 0
+GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION = NOT_GRANTED
+R0_7E_IMPLEMENTATION_AUTHORIZATION = false
+DEPLOYMENT_AUTHORIZATION = false
+CI_GREEN_CLAIMED = false
+CI_FAILURE_WAIVER_GRANTED = false
+CANDIDATE_COMMIT_AMENDED = false
+PART_E_PROMOTED_TO_LIVE_INTEGRATION_BY_THIS_PACKAGE = false
+INDEPENDENT_REVIEW_PASS_REVOKED = false
+```
+
+This package records a blocked draft-PR opening attempt only. It does not
+consume the PR authorization, does not merge the candidate, and does not
+change live Part E on integration.
+
+```text
+NEXT_ACTION =
+OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3_PR
+```
+
+Retry with write collaborator access, using PR pointer branch
+`cursor/r0-7d-md05-alt-a-r2-status-alignment-r3-pr-3706` (or candidate
+branch `...-r3-703a`) at head `ad505f5…`.
