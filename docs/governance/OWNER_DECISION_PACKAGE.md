@@ -26,7 +26,7 @@ This package is the owner-facing entry point to CONFORA governance decisions. It
 | Governance promotion | OD-R01-1 … OD-R01-10 | Register Part C |
 | Dejana account binding | HD06 — DEFER (2026-09-13) | [Decision record](./HD06_DEJANA_ACCOUNT_BINDING_DECISION_2026-09-13.md); Register HD06 |
 | Unresolved Model D definition freeze | MD02/MD03/MD05/MD06/MD07/MD09/MD10/MD12 — FROZEN_PROSPECTIVE (2026-09-20) | [Freeze record](./R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md); Register Part E freeze R1 |
-| MD05 canonical architecture | Alternative A integrated via PR 45; premerge PASS_ACCEPT; pending independent I2 postmerge review (2026-10-01); MD05 remains unresolved | [Decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md); [Status alignment R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2.md); Register Part E |
+| MD05 canonical architecture | Alternative A architecture decision CLOSED_ACCEPTED via authoritative I2 PASS_ACCEPT (31/0/1 NOT_VERIFIED retained); MD05 remains unresolved (2026-10-01) | [Decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md); [Status alignment R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2.md); [Status alignment R3](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3.md); Register Part E |
 
 ## 3. Mandatory non-claims (must remain explicit downstream)
 
