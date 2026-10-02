@@ -575,8 +575,10 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
 | Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
 | Last Part E status alignment | R0-7D-MD05-CANONICAL-ARCHITECTURE-ALTERNATIVE-A-DECISION-FREEZE-R2-POST-INTEGRATION-STATUS-ALIGNMENT-R3 |
+| Last MD05 exact scope freeze | R0-7D-MD05-ALTERNATIVE-A-IMPLEMENTATION-BLUEPRINT-AND-EXACT-SCOPE-FREEZE-R1 (candidate pending independent review) |
 | Last unresolved-item definition freeze | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1 |
 | MD05 architecture decision freeze R2 | Alternative A architecture decision CLOSED_ACCEPTED via authoritative I2 PASS_ACCEPT (31/0/1); MD05 remains unresolved; Model D unchanged |
+| MD05 blueprint and exact scope freeze R1 | Path boundary frozen at ADDITIONAL_PATHS = none; SoD matrix frozen; implementation blueprint recorded; implementation unauthorized; Model D unchanged |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
 | Field | Value |
@@ -789,12 +791,12 @@ MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIde
 | Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; directories not created) |
 | Design package SHA-256 | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` |
 | Alignment R3 base | `3805dba2ceb70d64b7ba967de6beb78beab67e9e` (tree `357d41026223b05582a93b26b84e6d8cbba90f35`); I2 review branch not used as parent |
-| Merge authority | PR 45; MERGE_COMMIT `426cc1ec8ab442e126678c84bb4a3586244c6d7c`; MERGE_PARENT_1 `9623a2f45612e5aa843ac73b87cd34957dac48ab`; MERGE_PARENT_2 `ad8aa5a16c05907a441ece20fe425544745a96f4`; MERGE_TREE `ad8eed62e66fd0db319dbcf524864a75a3dc6013`; MERGE_METHOD = MERGE_COMMIT; MERGE_TOPOLOGY_VALID = true. Status alignment R2 integrated via PR 47 MERGE_COMMIT `3805dba2ceb70d64b7ba967de6beb78beab67e9e` |
-| MD05 status | UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE |
+| Merge authority | PR 45; MERGE_COMMIT `426cc1ec8ab442e126678c84bb4a3586244c6d7c`; MERGE_PARENT_1 `9623a2f45612e5aa843ac73b87cd34957dac48ab`; MERGE_PARENT_2 `ad8aa5a16c05907a441ece20fe425544745a96f4`; MERGE_TREE `ad8eed62e66fd0db319dbcf524864a75a3dc6013`; MERGE_METHOD = MERGE_COMMIT; MERGE_TOPOLOGY_VALID = true. Status alignment R2 integrated via PR 47 MERGE_COMMIT `3805dba2ceb70d64b7ba967de6beb78beab67e9e`. Status alignment R3 integrated via PR 49 MERGE_COMMIT `1c2f649d0d73c800bdf563ef6ce5027169a4e816` |
+| MD05 status (architecture phase) | UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE (superseded as live status by blueprint/scope freeze R1 candidate below) |
 | MD05 remains a single Model D item | true |
 | MD05 formally resolved | false |
-| Additional-path boundary | PENDING_GOVERNANCE_FREEZE |
-| Detailed RBAC and SoD matrix | PENDING_GOVERNANCE_FREEZE |
+| Additional-path boundary (architecture phase) | Was PENDING_GOVERNANCE_FREEZE; live freeze recorded in blueprint/scope freeze R1 candidate |
+| Detailed RBAC and SoD matrix (architecture phase) | Was PENDING_GOVERNANCE_FREEZE; live freeze recorded in blueprint/scope freeze R1 candidate |
 | Scope expansion adopted | false |
 | Implementation authorization | false |
 | Legacy `/v1` aliases canonical | false |
@@ -808,16 +810,56 @@ MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIde
 | Historical status-alignment R1 pull request | 46 |
 | Historical status-alignment R1 status | PRESERVED_UNMERGED_NONAUTHORITATIVE_OVERCLAIM (`R2_INTEGRATED_INDEPENDENT_REVIEW_CLOSED_ACCEPTED`) |
 | Pull request #46 merge, modification, or deletion | false |
-| Status alignment R2 | INTEGRATED_PRIOR_STATUS_PHASE via PR 47 / `3805dba…`; live pins superseded by this R3 |
+| Status alignment R2 | INTEGRATED_PRIOR_STATUS_PHASE via PR 47 / `3805dba…`; live pins superseded by R3 |
 | Pull request #48 | OPEN draft STOP evidence only; not review authority; not mutated |
 | Model D | 17/9/8/8/0; mutation count 0 |
 | Newly resolved item count | 0 |
-| Residual risk | Path boundary and role matrix remain unfrozen; residual implementation unauthorized; I2 design-zip binary rehash remains NOT_VERIFIED |
-| Dependencies | Later owner authorization for path/SoD freeze and any MD05 residual implementation; independent review of this R3 candidate before PR/merge |
+| Residual risk | Residual implementation unauthorized; complaint-handler role unnamed; privacy basis unrecorded; backends absent; I2 design-zip binary rehash remains NOT_VERIFIED |
+| Dependencies | Independent review and integration of blueprint/scope freeze R1; later owner authorization for any MD05 residual implementation and out-of-freeze prerequisites |
 | Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
 | Supersession | Supersedes live R2 pins that recorded postmerge I2 as NOT_PERFORMED. Does not erase alignment R1 / PR 46, alignment R2 / PR 47, or non-authoritative I2 claim `1eaae91`. Does not supersede the eight-path freeze, MD08 FR2, or Model D arithmetic. Does not formally resolve MD05 |
 
 Full owner-supplied decision: [MD05 canonical architecture alternative A decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Post-integration alignment R2: [Status alignment R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2.md). Post-integration alignment R3: [Status alignment R3](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3.md). Candidate evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`. Alignment R2 evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r2/20261001082349/`. Alignment R3 evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r3/20261001121517/`. Authoritative I2 evidence (side branch commit `8b97f8a…`): `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-i2-postmerge-review/20261001112719/`. This alignment does not restore source files, expand MD05, grant C3-S9 resume, or close R0-7D.
+
+### MD05 Alternative A — implementation blueprint and exact scope freeze R1
+
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-10-02T20:05:52Z |
+| Status | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
+| Owner authorization (candidate) | OWNER_AUTHORIZE_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1 (single-use; consumed for candidate record) |
+| Owner | Repository Owner |
+| Approved option | Freeze MD05 additional-path boundary at ADDITIONAL_PATHS = none; freeze detailed RBAC/SoD matrix under Alternative A; record implementation blueprint; do not authorize implementation |
+| Rationale | Close the Alternative A PENDING path-boundary and SoD-matrix governance freezes without expanding MD05, without creating backends, and without granting residual implementation |
+| Scope | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 Alternative A only |
+| Base | `1c2f649d0d73c800bdf563ef6ce5027169a4e816` (tree `68ebd509592ddb99113a6e7c60a1158f689e6449`) |
+| MD05_ARCHITECTURE_DECISION | ALTERNATIVE_A_CLOSED_ACCEPTED (predecessor; unchanged) |
+| MD05 status | UNRESOLVED_SCOPE_FROZEN_PENDING_IMPLEMENTATION_AUTHORIZATION |
+| MD05 remains a single Model D item | true |
+| MD05 formally resolved | false |
+| PRIMARY_PATH | `frontend-app/src/lib/api-grievances.ts` |
+| ADDITIONAL_PATHS | none |
+| ADDITIONAL_PATH_COUNT | 0 |
+| Additional-path boundary | FROZEN |
+| Scope expansion adopted | false |
+| Detailed RBAC and SoD matrix | FROZEN |
+| SOD_COMPLETE_CLAIMED | false |
+| OQ-5 | DIRECTIONAL |
+| COMPLAINT_HANDLER_ROLE | NOT_NAMED |
+| Implementation blueprint recorded | true |
+| Implementation authorization | false |
+| Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; outside MD05 path freeze; directories not created) |
+| Design package SHA-256 | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` (binary rehash NOT_PERFORMED; I2 NOT_VERIFIED retained) |
+| Model D | 17/9/8/8/0; mutation count 0 |
+| Newly resolved item count | 0 |
+| Production / schema / test / configuration mutations | 0 |
+| Residual risk | Backends absent; appeals-client helpers absent; complaint handler unnamed; privacy basis unrecorded; staff access allow-list remains broader than frozen matrix; residual implementation unauthorized |
+| Dependencies | Independent review of this candidate; later owner authorization for residual implementation and for out-of-freeze prerequisites (backends, complaint-handler naming, privacy basis, any path expansion) |
+| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
+| Next action | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1_REVIEW (not granted by this package) |
+| Supersession | Supersedes only the live MD05 pins `MD05_ADDITIONAL_PATH_BOUNDARY_STATUS = PENDING_GOVERNANCE_FREEZE`, `DETAILED_RBAC_SOD_MATRIX_STATUS = PENDING_GOVERNANCE_FREEZE`, and `MD05_STATUS = UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE`. Does not supersede Alternative A architecture CLOSED_ACCEPTED, eight-path freeze, MD08 FR2, Model D arithmetic, or PR 41/42/46 historical statuses. Does not formally resolve MD05 |
+
+Full owner-authorized freeze: [Blueprint and exact scope freeze R1](./R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1.md). Evidence: `docs/evidence/r0-7d-md05-alternative-a-implementation-blueprint-and-exact-scope-freeze-r1/20261002200552/`.
 
 ---
 
@@ -871,11 +913,28 @@ Full owner-supplied freeze: [Unresolved item definition freeze R1](./R0_7D_MODEL
 | Owner | Repository Owner |
 | Rationale | Align live Part E after authoritative I2 PASS_ACCEPT; architecture decision CLOSED_ACCEPTED; MD05 remains formally unresolved |
 | Scope | Architecture-decision status alignment for unresolved MD05 only; no path expansion and no implementation |
-| Residual risk | Path boundary and role matrix remain unfrozen; I2 design-zip binary rehash remains NOT_VERIFIED |
-| Dependencies | Independent review of this R3 candidate; later owner authorization for path/SoD freeze and residual implementation |
+| Residual risk | Residual implementation unauthorized; I2 design-zip binary rehash remains NOT_VERIFIED |
+| Dependencies | Blueprint/scope freeze R1 independent review; later owner authorization for residual implementation |
 | Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
 | Supersession | Supersedes live R2 I2-NOT_PERFORMED pins; preserves R1/PR 46 overclaim history, R2/PR 47 prior phase, and non-authoritative I2 claim `1eaae91`; none for Model D arithmetic |
 
 Full decision and alignments: [MD05 decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md); [Status alignment R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2.md); [Status alignment R3](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`; `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r2/20261001082349/`; `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r3/20261001121517/`.
+
+### MD05 Alternative A — implementation blueprint and exact scope freeze R1
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-10-02 |
+| Status | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
+| Approved option | Freeze MD05 path boundary at ADDITIONAL_PATHS = none; freeze SoD matrix; record implementation blueprint; do not implement |
+| Owner | Repository Owner |
+| Rationale | Close PENDING path-boundary and SoD-matrix freezes under Alternative A without expanding MD05 or authorizing residual implementation |
+| Scope | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 only |
+| Residual risk | Backends absent; complaint handler unnamed; privacy basis unrecorded; implementation unauthorized |
+| Dependencies | Independent review of this candidate; later residual implementation authorization and out-of-freeze prerequisites |
+| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
+| Supersession | Supersedes only live PENDING path-boundary / SoD-matrix pins and MD05_STATUS PENDING_SCOPE_FREEZE; none for Model D arithmetic or Alternative A CLOSED_ACCEPTED |
+
+Full freeze: [Blueprint and exact scope freeze R1](./R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1.md). Evidence: `docs/evidence/r0-7d-md05-alternative-a-implementation-blueprint-and-exact-scope-freeze-r1/20261002200552/`.
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
