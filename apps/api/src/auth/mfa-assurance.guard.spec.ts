@@ -57,9 +57,9 @@ describe('MfaAssuranceGuard', () => {
     ).toBe(true);
   });
 
-  it('P04_TEST_029 all 15 privileged roles are globally MFA-required', () => {
+  it('P04_TEST_029 all privileged roles are globally MFA-required', () => {
     mockMeta(false, false);
-    expect(PRIVILEGED_ROLES).toHaveLength(15);
+    expect(PRIVILEGED_ROLES).toHaveLength(17);
     for (const role of PRIVILEGED_ROLES) {
       expect(() =>
         guard.canActivate(ctx(actor({ roles: [role], mfaVerified: false })) as never),

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export * from './roles.js';
 export * from './auth.js';
+export * from './role-administration.js';
 
 export const healthResponseSchema = z.object({
   status: z.literal('ok'),

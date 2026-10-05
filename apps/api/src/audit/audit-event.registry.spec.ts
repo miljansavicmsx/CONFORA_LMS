@@ -4,7 +4,7 @@ import { AuditEventRegistry } from './audit-event.registry';
 describe('AuditEventRegistry', () => {
   it('P05_TEST_017 Unknown event -> AUDIT_EVENT_NOT_REGISTERED', () => {
     const registry = AuditEventRegistry.production();
-    expect(registry.size()).toBe(0);
+    expect(registry.size()).toBe(10);
     expect(registry.has('TEST_EVENT')).toBe(false);
     expect(() => registry.get('TEST_EVENT')).toThrow(AuditError);
     try {

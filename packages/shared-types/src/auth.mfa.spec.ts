@@ -28,11 +28,13 @@ test('P04_TEST_026 missing MFA evidence -> false', () => {
 });
 
 test('keeps MFA_MANDATORY_ROLES aligned with PRIVILEGED_ROLES', () => {
-  assert.equal(PRIVILEGED_ROLES.length, 15);
+  assert.equal(PRIVILEGED_ROLES.length, 17);
   assert.equal(MFA_MANDATORY_ROLES, PRIVILEGED_ROLES);
   assert.deepEqual([...MFA_MANDATORY_ROLES], [...PRIVILEGED_ROLES]);
   assert.ok(PRIVILEGED_ROLES.includes('ISSUANCE_OFFICER'));
   assert.ok(PRIVILEGED_ROLES.includes('LIFECYCLE_OFFICER'));
+  assert.ok(PRIVILEGED_ROLES.includes('COMPLAINT_HANDLER'));
+  assert.ok(PRIVILEGED_ROLES.includes('STAFF_ROLEADM'));
 });
 
 test('learner roles are exactly USR_CAND and USR_CERT', () => {
