@@ -1,0 +1,61 @@
+# 10 — Validation
+
+```text
+R0_7D_MD05_PKG00_EXECUTABLE_RBAC_AND_ROLE_AUDIT_CONTRACT_R1_EC1 = PASS
+EC1_RESULT = CORRECTIVE_CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW
+ORIGINAL_CANDIDATE_RESULT = FAIL_REJECT_PRESERVED
+
+EC1_BRANCH = cursor/r0-7d-md05-pkg00-executable-rbac-audit-contract-r1-ec1
+EC1_PARENT = c32b423088c57b40635ef400e185392a5de350e3
+EC1_COMMIT = RECORDED_AFTER_COMMIT_IN_EXTERNAL_PACKAGE
+EC1_TREE = RECORDED_AFTER_COMMIT_IN_EXTERNAL_PACKAGE
+FINAL_CANDIDATE_COMMIT_COUNT_FROM_BASE = 2
+FINAL_CANDIDATE_MERGE_COMMIT_COUNT = 0
+
+ROLE_CONTRACT_RESULT = PASS
+TARGET_ROLE_RESTRICTION_RESULT = PASS
+AUTHORITY_ROLE_RESTRICTION_RESULT = PASS
+GRANT_FOUR_EYES_RESULT = PASS
+REVOKE_INDEPENDENT_REVIEWER_RESULT = PASS
+TENANT_ISOLATION_CONTRACT_RESULT = PASS
+AUDIT_REQUIRED_METADATA_RESULT = PASS
+AUDIT_FORBIDDEN_METADATA_RESULT = PASS
+
+NEGATIVE_TEST_COUNT = 36
+NEGATIVE_TEST_PASS_COUNT = 36
+REGRESSION_TEST_RESULT = PASS
+TYPECHECK_RESULT = PASS
+DIFF_CHECK_RESULT = PASS
+SECURITY_PRIVACY_RESULT = PASS
+
+MODEL_D = 17/9/8/8/0
+MD05_FORMALLY_RESOLVED = false
+MD05_SCOPE_READY = false
+PRIMARY_PATH_MUTATED = false
+PR_CREATED = false
+MERGE_PERFORMED = false
+INTEGRATION_AUTHORIZATION = false
+IMPLEMENTATION_AUTHORIZATION_BEYOND_PKG00 = false
+EC1_CURE_PENDING_INDEPENDENT_REVIEW = true
+
+NEXT_ACTION =
+OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_PKG00_EXECUTABLE_RBAC_AND_ROLE_AUDIT_CONTRACT_R1_EC1_REVIEW
+```
+
+Implementation paths changed from the rejected candidate:
+
+1. `packages/shared-types/src/role-administration.ts`
+2. `apps/api/src/audit/audit-event.registry.ts`
+
+Test paths changed:
+
+3. `packages/shared-types/src/md05-pkg00-rbac-role-audit.spec.ts`
+4. `apps/api/src/audit/md05-pkg00-role-audit-contract.spec.ts`
+
+`apps/api/src/audit/audit-event.registry.spec.ts` did not require a change. `packages/shared-types/src/index.ts` did not require a change.
+
+The evidence path added by this commit is:
+
+`docs/evidence/r0-7d-md05-pkg00-executable-rbac-role-audit-contract-r1-ec1/20261005T185155Z/`
+
+`EC1_CHANGED_PATH_COUNT` is the count of paths in the EC1 commit and is recorded with the commit SHA in the external package.
