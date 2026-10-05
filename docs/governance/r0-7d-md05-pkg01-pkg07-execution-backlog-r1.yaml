@@ -1,0 +1,534 @@
+version: 1
+authority:
+  token: OWNER_AUTHORIZE_R0_7D_MD05_PKG01_TO_PKG07_MACHINE_READABLE_EXECUTION_BACKLOG_AND_FIRST_READY_PACKAGE_IMPLEMENTATION_R1
+  origin: PROSPECTIVE_OWNER_DELEGATED_TECHNICAL_BACKLOG_2026
+  base_commit: 577f16f3541729e10ce09a60b834a1a808103916
+  historical_mapping_recovered: false
+  historical_mapping_claimed: false
+global_invariants:
+  model_d: '17/9/8/8/0'
+  md05_formally_resolved: false
+  md05_scope_ready: false
+  primary_path: frontend-app/src/lib/api-grievances.ts
+  additional_paths: []
+  canonical_role_source: EXTERNAL_OIDC_IDP_CANONICAL
+  complaint_handler_role: COMPLAINT_HANDLER
+  role_administrator_role: STAFF_ROLEADM
+  tenant_isolation_required: true
+  immutable_audit_required: true
+  implementation_authorization_limited_to_selected_package: true
+  local_database_role_authority: false
+  deployment_authorization: false
+  r0_7e_implementation_authorization: false
+  general_c3_s9_implementation_resume_authorization: NOT_GRANTED
+  open_pkg00_observations:
+    - id: O01
+      statement: The serializable transaction starts before appendWithin.
+      closed: false
+    - id: O02
+      statement: The PT24H anchor is metadata.occurredAt.
+      closed: false
+    - id: O03
+      statement: Authority is enforced on metadata roles rather than actor.roles.
+      closed: false
+selection:
+  selected_package_id: PKG-01
+  selected_package_title: Executable role-administration application boundary
+  selection_basis: Earliest package in dependency order whose status is READY, whose dependencies are satisfied by integration HEAD, and which does not require an unresolved owner or DPO decision, a credential, or external-system access.
+  dependencies_satisfied_by: PKG-00 merged at 577f16f3541729e10ce09a60b834a1a808103916
+packages:
+  - id: PKG-01
+    title: Executable role-administration application boundary
+    purpose: Bind the authenticated actor to a PKG-00 role-administration contract snapshot and return a fail-closed policy decision. The boundary reads actor.roles, actor tenant, and nonempty actor identity. It does not grant or revoke a role, call an identity provider, append an audit event, or persist assignment state.
+    status: READY
+    depends_on: []
+    production_paths:
+      - apps/api/src/app.module.ts
+      - apps/api/src/role-administration/
+      - apps/api/src/role-administration/role-administration.module.ts
+      - apps/api/src/role-administration/role-administration-boundary.service.ts
+      - apps/api/src/role-administration/role-administration-boundary.types.ts
+      - apps/api/src/role-administration/role-administration-legacy-aliases.ts
+    test_paths:
+      - apps/api/src/role-administration/role-administration-boundary.service.spec.ts
+    schema_paths: []
+    migration_paths: []
+    prohibited_paths:
+      - apps/api/src/audit/
+      - apps/api/src/audit/audit.service.ts
+      - apps/api/src/audit/audit-event.registry.ts
+      - apps/api/src/cert-appeals/
+      - apps/api/src/cert-complaints/
+      - apps/api/src/auth/mfa-assurance.guard.ts
+      - apps/api/src/auth/jwt.strategy.ts
+      - packages/shared-types/src/roles.ts
+      - packages/shared-types/src/role-administration.ts
+      - packages/shared-types/src/auth.ts
+      - packages/database/prisma/schema.prisma
+      - frontend-app/src/lib/api-grievances.ts
+      - frontend-app/src/lib/staff-appeals-complaints-access.ts
+      - frontend-app/src/lib/api/complaints-client.ts
+    allowed_mutation_classes:
+      - application_service
+      - nest_module_registration
+      - unit_test
+    data_classes:
+      - authenticated_user_identifier
+      - external_subject_identifier
+      - tenant_identifier
+      - role_code
+      - reason_code
+      - correlation_identifier
+    privacy_basis_status: NO_NEW_PROCESSING_ACTIVITY
+    privacy_note: In-memory evaluation of identifier fields already specified by the frozen PKG-00 contract. No new store, retention period, disclosure, or statutory basis is created or claimed.
+    roles:
+      managed_role: COMPLAINT_HANDLER
+      grant_authority: STAFF_ROLEADM
+      revoke_authority: STAFF_ROLEADM
+      authority_source: actor.roles
+    sod_rules:
+      - STAFF_ROLEADM self-management remains forbidden.
+      - COMPLAINT_HANDLER cannot satisfy grant or revoke authority.
+      - The authenticated actor must be the decision party for the submitted decision.
+      - Self-assignment and self-revocation remain forbidden.
+      - Cross-tenant parties remain forbidden.
+      - Holding STAFF_ROLEADM does not grant complaint-case mutation.
+    audit_events: []
+    observations_in_scope:
+      - id: O03
+        effect: APPLICATION_BOUNDARY_REQUIRES_ACTOR_ROLES
+        observation_closed: false
+        audit_service_unchanged: true
+    preconditions:
+      - PKG-00 role-administration contract is present on integration HEAD.
+      - rbacRoleSchema contains COMPLAINT_HANDLER and STAFF_ROLEADM.
+      - No schema migration is required.
+    acceptance_tests:
+      - Happy-path grant request by the initiator is accepted and performs no mutation.
+      - Happy-path grant approval by a different approver is accepted.
+      - Missing actor is rejected.
+      - Wrong actor role is rejected even when metadata roles say STAFF_ROLEADM.
+      - Missing MFA is rejected.
+      - Actor tenant mismatch and cross-tenant target are rejected.
+      - Empty actor user id and empty subject are rejected.
+      - Self-assignment is rejected.
+      - Invalid applied-state pairing is rejected.
+      - Repeating the same command returns the same decision.
+      - No audit event is created.
+      - Result contains no command payload, token, or narrative.
+      - Legacy role aliases are rejected.
+      - Rejection performs no persistence call.
+    test_commands:
+      - pnpm --dir apps/api exec jest --runInBand src/role-administration/role-administration-boundary.service.spec.ts --no-coverage
+      - pnpm --dir apps/api exec jest --runInBand src/audit src/auth/mfa-assurance.guard.spec.ts --no-coverage
+      - pnpm --dir packages/shared-types exec tsx --test src/health.test.ts src/auth.mfa.spec.ts src/md05-pkg00-rbac-role-audit.spec.ts
+    typecheck_commands:
+      - pnpm --dir packages/shared-types typecheck
+      - pnpm --dir apps/api typecheck
+    build_commands:
+      - pnpm --dir packages/shared-types build
+      - pnpm --dir apps/api build
+    stop_conditions:
+      - STOP if a path outside the allowlist becomes necessary.
+      - STOP if implementation would append audit, persist a role, or call a network.
+      - STOP if implementation would modify the audit service and thereby reinterpret O01, O02, or O03.
+    risk: MEDIUM_POLICY_GATE_WITHOUT_PERSISTENCE
+    implementation_order_reason: The integrated PKG-00 contract can be enforced at the application boundary before any identity-provider port, workflow store, or case module exists.
+    owner_decision_required: []
+  - id: PKG-02
+    title: External identity-provider role-management port without a provider adapter
+    purpose: Define a provider-neutral port that a later workflow can call to request an external role change, plus an unbound adapter that fails closed and stores no credential. This package does not select a provider and does not apply a role.
+    status: READY
+    depends_on:
+      - PKG-01
+    production_paths:
+      - apps/api/src/role-administration/
+      - apps/api/src/role-administration/external-idp-role-management.port.ts
+      - apps/api/src/role-administration/unbound-external-idp-role-management.adapter.ts
+      - apps/api/src/role-administration/role-administration.module.ts
+    test_paths:
+      - apps/api/src/role-administration/unbound-external-idp-role-management.adapter.spec.ts
+    schema_paths: []
+    migration_paths: []
+    prohibited_paths:
+      - apps/api/src/audit/audit.service.ts
+      - packages/database/prisma/schema.prisma
+      - frontend-app/src/lib/api-grievances.ts
+    allowed_mutation_classes:
+      - port_interface
+      - fail_closed_unbound_adapter
+      - unit_test
+    data_classes:
+      - authenticated_user_identifier
+      - external_subject_identifier
+      - tenant_identifier
+      - role_code
+    privacy_basis_status: NO_NEW_PROCESSING_ACTIVITY
+    privacy_note: The unbound adapter returns before any network call and writes nothing. No provider credential field is declared.
+    roles:
+      managed_role: COMPLAINT_HANDLER
+      grant_authority: STAFF_ROLEADM
+      revoke_authority: STAFF_ROLEADM
+    sod_rules:
+      - The port must not accept a target role other than COMPLAINT_HANDLER.
+      - The port must not accept STAFF_ROLEADM as a managed role.
+    audit_events: []
+    preconditions:
+      - PKG-01 boundary result type exists.
+      - No external IdP credential is present in the repository change.
+    acceptance_tests:
+      - Unbound adapter rejects grant and revoke before any network or persistence call.
+      - Adapter configuration object cannot carry a secret, token, or client credential.
+      - Target role other than COMPLAINT_HANDLER is rejected.
+    test_commands:
+      - pnpm --dir apps/api exec jest --runInBand src/role-administration/unbound-external-idp-role-management.adapter.spec.ts --no-coverage
+    typecheck_commands:
+      - pnpm --dir apps/api typecheck
+    build_commands:
+      - pnpm --dir apps/api build
+    stop_conditions:
+      - STOP if a concrete provider, host, realm, or credential is required.
+    risk: LOW_UNBOUND_PORT
+    implementation_order_reason: The workflow cannot depend on a provider SDK. The port must exist, and fail closed, before any apply step is authorized.
+    owner_decision_required: []
+  - id: PKG-03
+    title: Role grant and revoke workflow with immutable audit
+    purpose: Orchestrate four-eyes grant, immediate revoke, PT24H post-review, and the ten PKG-00 audit events by calling the PKG-01 boundary and the PKG-02 port. Application of a role remains an external identity-provider effect.
+    status: BLOCKED_POLICY
+    depends_on:
+      - PKG-01
+      - PKG-02
+    production_paths:
+      - apps/api/src/role-administration/
+      - apps/api/src/role-administration/role-administration-workflow.service.ts
+      - apps/api/src/role-administration/role-administration.controller.ts
+      - apps/api/src/role-administration/dto/role-administration-command.dto.ts
+    test_paths:
+      - apps/api/src/role-administration/role-administration-workflow.service.spec.ts
+      - apps/api/src/role-administration/role-administration.controller.spec.ts
+    schema_paths: []
+    migration_paths: []
+    prohibited_paths:
+      - packages/database/prisma/schema.prisma
+      - apps/api/src/audit/audit.service.ts
+      - frontend-app/src/lib/api-grievances.ts
+    allowed_mutation_classes:
+      - workflow_service
+      - authenticated_controller
+      - unit_test
+    data_classes:
+      - authenticated_user_identifier
+      - external_subject_identifier
+      - tenant_identifier
+      - role_code
+      - reason_code
+      - audit_metadata
+    privacy_basis_status: REQUIRES_OWNER_OR_DPO_CONFIRMATION
+    roles:
+      managed_role: COMPLAINT_HANDLER
+      grant_authority: STAFF_ROLEADM
+      revoke_authority: STAFF_ROLEADM
+    sod_rules:
+      - Grant initiator and approver must differ and both hold STAFF_ROLEADM.
+      - Revoke post-review actor must differ from the revoke actor.
+      - STAFF_ROLEADM must not gain complaint-case mutation through this workflow.
+    audit_events:
+      - ROLE_GRANT_REQUESTED
+      - ROLE_GRANT_APPROVED
+      - ROLE_GRANT_APPLIED
+      - ROLE_GRANT_REJECTED
+      - ROLE_GRANT_FAILED
+      - ROLE_REVOKE_REQUESTED
+      - ROLE_REVOKE_APPLIED
+      - ROLE_REVOKE_REVIEWED
+      - ROLE_REVOKE_REJECTED
+      - ROLE_REVOKE_FAILED
+    preconditions:
+      - Owner or DPO confirms the privacy basis for persisting workflow records of identifiers.
+      - Owner fixes a retention period for workflow records. None is frozen.
+      - Owner selects the external IdP provider and credential custody for the apply step.
+    acceptance_tests:
+      - Not authorized until the blocking decisions are recorded.
+    test_commands:
+      - pnpm --dir apps/api exec jest --runInBand src/role-administration/role-administration-workflow.service.spec.ts src/role-administration/role-administration.controller.spec.ts --no-coverage
+    typecheck_commands:
+      - pnpm --dir apps/api typecheck
+    build_commands:
+      - pnpm --dir apps/api build
+    stop_conditions:
+      - Do not implement while privacy basis, retention, or provider custody is undecided.
+      - Do not add a local role column.
+      - Do not close O01, O02, or O03 unless a later authorization names that observation as scope.
+    risk: HIGH_UNTIL_PRIVACY_RETENTION_AND_PROVIDER_ARE_DECIDED
+    implementation_order_reason: Workflow persistence and external apply sit after the in-memory boundary and the unbound port, and they need decisions this run cannot make.
+    owner_decision_required:
+      - Statutory privacy basis for role-administration workflow records.
+      - Retention period for those records.
+      - External IdP provider and credential custody.
+  - id: PKG-04
+    title: Canonical complaints domain module
+    purpose: Create apps/api/src/cert-complaints/ as a complaints-only domain module with its own state model and server-side authorization. It must not import or become the appeals module.
+    status: BLOCKED_POLICY
+    depends_on: []
+    production_paths:
+      - apps/api/src/cert-complaints/
+      - apps/api/src/cert-complaints/cert-complaints.module.ts
+      - apps/api/src/cert-complaints/complaint-case.types.ts
+      - apps/api/src/cert-complaints/complaint-case.policy.ts
+      - apps/api/src/app.module.ts
+    test_paths:
+      - apps/api/src/cert-complaints/complaint-case.policy.spec.ts
+    schema_paths: []
+    migration_paths: []
+    prohibited_paths:
+      - apps/api/src/cert-appeals/
+      - packages/database/prisma/schema.prisma
+      - frontend-app/src/lib/api-grievances.ts
+      - frontend-app/src/lib/api/complaints-client.ts
+    allowed_mutation_classes:
+      - domain_module
+      - policy_service
+      - unit_test
+    data_classes:
+      - authenticated_user_identifier
+      - tenant_identifier
+      - complaint_content
+      - public_reference
+      - internal_case_identifier
+      - evidence_attachment_metadata
+    privacy_basis_status: REQUIRES_OWNER_OR_DPO_CONFIRMATION
+    roles:
+      intake_actor: AUTHENTICATED_LEARNER_OR_UNAUTHENTICATED_PUBLIC_INTAKE
+      handler_role: COMPLAINT_HANDLER
+      decision_authority: NOT_SEPARATELY_AUTHORIZED
+    sod_rules:
+      - One actor must not intake, investigate, and finally decide the same complaint.
+      - STAFF_ROLEADM, STAFF_AUD, STAFF_DIR, and STAFF_SYSADM are not complaint mutation roles.
+      - COMPLAINT_HANDLER cannot grant or revoke roles.
+    audit_events: []
+    preconditions:
+      - Owner or DPO records the privacy basis for complaint content and evidence metadata.
+      - Owner fixes retention for complaint records.
+      - Owner assigns complaint acknowledge, investigate, recommend, and final-decision authority. Naming COMPLAINT_HANDLER did not grant those operations.
+    acceptance_tests:
+      - Not authorized until the blocking decisions are recorded.
+    test_commands:
+      - pnpm --dir apps/api exec jest --runInBand src/cert-complaints/complaint-case.policy.spec.ts --no-coverage
+    typecheck_commands:
+      - pnpm --dir apps/api typecheck
+    build_commands:
+      - pnpm --dir apps/api build
+    stop_conditions:
+      - Do not invent a complaint decision authority.
+      - Do not mix appeal types into this module.
+      - Do not copy commit a277a19.
+    risk: HIGH_PERSONAL_DATA_AND_UNASSIGNED_DECISION_AUTHORITY
+    implementation_order_reason: Complaints are a separate canonical module. Case behavior waits on privacy, retention, and decision-authority decisions and does not wait on the role-administration port.
+    owner_decision_required:
+      - Statutory privacy basis for complaint content, public reference, and evidence metadata.
+      - Retention period for complaint records.
+      - Complaint acknowledge, investigation, recommendation, and final-decision authority.
+  - id: PKG-05
+    title: Canonical appeals domain module
+    purpose: Create apps/api/src/cert-appeals/ as an appeals-only domain module with a separate state model. Appeal outcome recording requires a server-proven committee reference and must refuse the original certification decision-maker.
+    status: BLOCKED_POLICY
+    depends_on: []
+    production_paths:
+      - apps/api/src/cert-appeals/
+      - apps/api/src/cert-appeals/cert-appeals.module.ts
+      - apps/api/src/cert-appeals/appeal-case.types.ts
+      - apps/api/src/cert-appeals/appeal-case.policy.ts
+      - apps/api/src/app.module.ts
+    test_paths:
+      - apps/api/src/cert-appeals/appeal-case.policy.spec.ts
+    schema_paths: []
+    migration_paths: []
+    prohibited_paths:
+      - apps/api/src/cert-complaints/
+      - packages/database/prisma/schema.prisma
+      - frontend-app/src/lib/api-grievances.ts
+    allowed_mutation_classes:
+      - domain_module
+      - policy_service
+      - unit_test
+    data_classes:
+      - authenticated_user_identifier
+      - tenant_identifier
+      - appeal_content
+      - certification_decision_reference
+      - committee_identifier
+      - internal_case_identifier
+    privacy_basis_status: REQUIRES_OWNER_OR_DPO_CONFIRMATION
+    roles:
+      appellant: AUTHENTICATED_LEARNER_OR_CANDIDATE
+      committee_authority: NOT_SEPARATELY_AUTHORIZED
+      original_decision_maker_may_approve: false
+    sod_rules:
+      - The original certification decision-maker cannot acknowledge, void, start, or record the appeal outcome.
+      - A role-label string is not a committee identifier.
+      - Auditor and administrator roles are not appeal mutation roles.
+      - appeals_committee is not a canonical rbacRoleSchema member and must not be added by inference.
+    audit_events: []
+    preconditions:
+      - Owner or DPO records the privacy basis for appeal content and certification-decision linkage.
+      - Owner fixes retention for appeal records.
+      - Owner defines how a constituted committee identifier is proven. That authority is not delegated.
+    acceptance_tests:
+      - Not authorized until the blocking decisions are recorded.
+    test_commands:
+      - pnpm --dir apps/api exec jest --runInBand src/cert-appeals/appeal-case.policy.spec.ts --no-coverage
+    typecheck_commands:
+      - pnpm --dir apps/api typecheck
+    build_commands:
+      - pnpm --dir apps/api build
+    stop_conditions:
+      - Do not invent a committee role or committee constitution rule.
+      - Do not merge this module with cert-complaints.
+      - Do not copy commit a277a19.
+    risk: HIGH_COMMITTEE_AUTHORITY_AND_PERSONAL_DATA
+    implementation_order_reason: Appeals are a separate canonical module. The frozen matrix requires a committee identifier that this run cannot define.
+    owner_decision_required:
+      - Statutory privacy basis for appeal content and certification-decision linkage.
+      - Retention period for appeal records.
+      - Appeal committee constitution and proof of committee identifier.
+  - id: PKG-06
+    title: Tenant-scoped complaints and appeals persistence
+    purpose: Add separate tenant-owned ComplaintCase and AppealCase persistence, with indexes and uniqueness constrained by tenant, and reversible additive migrations. Audit rows stay immutable. No local role authority is introduced.
+    status: BLOCKED_POLICY
+    depends_on:
+      - PKG-04
+      - PKG-05
+    production_paths: []
+    test_paths:
+      - packages/database/test/md05-complaint-appeal-schema.test.ts
+    schema_paths:
+      - packages/database/prisma/schema.prisma
+    migration_paths:
+      - packages/database/prisma/migrations/20261005120000_md05_complaints_appeals_cases/migration.sql
+    prohibited_paths:
+      - apps/api/src/role-administration/
+      - frontend-app/src/lib/api-grievances.ts
+    prohibited_schema_rule: A role column on User, a shared grievance table, and a destructive migration remain forbidden inside the declared schema and migration paths.
+    allowed_mutation_classes:
+      - additive_prisma_schema
+      - additive_sql_migration
+      - schema_test
+    data_classes:
+      - tenant_identifier
+      - authenticated_user_identifier
+      - complaint_content
+      - appeal_content
+      - certification_decision_reference
+      - committee_identifier
+      - evidence_attachment_metadata
+      - public_reference
+      - internal_case_identifier
+    privacy_basis_status: REQUIRES_OWNER_OR_DPO_CONFIRMATION
+    roles:
+      local_database_role_authority: false
+    sod_rules:
+      - Complaint and appeal rows must not share one table or one state enum.
+      - Tenant identifier is mandatory on both aggregates.
+    audit_events: []
+    preconditions:
+      - PKG-04 and PKG-05 policy models are authorized.
+      - Retention is fixed before durable storage is created.
+      - Privacy basis for the stored fields is recorded.
+    acceptance_tests:
+      - Not authorized until the blocking decisions are recorded.
+    test_commands:
+      - pnpm --dir packages/database exec prisma validate
+      - pnpm --dir packages/database exec tsx --test test/md05-complaint-appeal-schema.test.ts
+    typecheck_commands:
+      - pnpm --dir packages/database typecheck
+    build_commands:
+      - pnpm --dir packages/database build
+    stop_conditions:
+      - No destructive migration.
+      - No database reset.
+      - No production migrate deploy.
+      - No role column and no second role authority.
+    risk: HIGH_DURABLE_PERSONAL_DATA
+    implementation_order_reason: Durable case storage follows the two domain modules so the schema does not invent a mixed grievance aggregate.
+    owner_decision_required:
+      - Privacy basis and retention inherited from PKG-04 and PKG-05.
+      - Confirmation that complaint and appeal records are separate aggregates.
+  - id: PKG-07
+    title: Canonical grievances facade, consumers, and legacy-alias removal
+    purpose: Restore frontend-app/src/lib/api-grievances.ts as a thin facade over the canonical complaints and appeals APIs, then align consumers and remove legacy /v1/me and /v1/admin grievance aliases. The facade must not write audit, must not blank an authenticated subject, and must surface decision-start 409.
+    status: BLOCKED_POLICY
+    depends_on:
+      - PKG-04
+      - PKG-05
+      - PKG-06
+    production_paths:
+      - frontend-app/src/lib/api-grievances.ts
+      - frontend-app/src/lib/api/complaints-client.ts
+      - frontend-app/src/lib/api/complaints-types.ts
+      - frontend-app/src/lib/api/complaints-category.util.ts
+      - frontend-app/src/lib/api/complaints-canonical-flag.ts
+      - frontend-app/src/lib/api/appeals-canonical-flag.ts
+      - frontend-app/src/lib/api/endpoint-registry.ts
+      - frontend-app/src/lib/staff-appeals-complaints-access.ts
+      - frontend-app/src/pages/staff/StaffAppealsComplaintsPage.tsx
+      - frontend-app/src/pages/learner/AppealsComplaintsPage.tsx
+      - frontend-app/src/pages/dashboard/StaffAppealsComplaintsGuard.tsx
+      - frontend-app/src/pages/dashboard/AppealsCommitteeGuard.tsx
+      - frontend-app/src/pages/iso/ComplaintsIsoPage.tsx
+      - frontend-app/src/components/grievances/FormalComplaintDialog.tsx
+      - frontend-app/src/components/grievances/FormalAppealDialog.tsx
+      - frontend-app/src/components/grievances/CertificationAppealDialog.tsx
+      - frontend-app/src/components/grievances/IsoGrievancesAdminPanel.tsx
+    test_paths:
+      - frontend-app/src/lib/api-grievances.test.ts
+      - frontend-app/src/lib/api/__tests__/complaints-client.test.ts
+      - frontend-app/src/components/grievances/IsoGrievancesAdminPanel.test.tsx
+    schema_paths: []
+    migration_paths: []
+    prohibited_paths:
+      - apps/api/src/audit/audit.service.ts
+      - packages/database/prisma/schema.prisma
+    allowed_mutation_classes:
+      - frontend_facade
+      - consumer_alignment
+      - legacy_alias_removal
+      - frontend_test
+    data_classes:
+      - authenticated_user_identifier
+      - tenant_identifier
+      - complaint_content
+      - appeal_content
+      - public_reference
+      - committee_identifier
+    privacy_basis_status: REQUIRES_OWNER_OR_DPO_CONFIRMATION
+    roles:
+      server_authority: false
+      note: Frontend visibility predicates remain non-authoritative.
+    sod_rules:
+      - evaluateStaffAppealsComplaintsAccess must not grant server authority.
+      - Legacy aliases admin, director, auditor, sys_admin, and appeals_committee must not become canonical roles.
+      - The facade must not call /v1/me/complaints, /v1/admin/complaints, /v1/me/appeals, or /v1/admin/appeals.
+    audit_events: []
+    preconditions:
+      - Canonical complaints and appeals HTTP APIs exist.
+      - Privacy basis for displaying case content is recorded.
+      - MD05 ADDITIONAL_PATHS remains none. Files other than the primary path are package paths, not additional Model D paths.
+    acceptance_tests:
+      - Not authorized until the blocking decisions are recorded.
+      - When authorized, tests must show no legacy alias calls, no blank subject id, forwarded committee reference, and surfaced 409.
+    test_commands:
+      - pnpm --dir frontend-app exec vitest run src/lib/api-grievances.test.ts src/lib/api/__tests__/complaints-client.test.ts src/components/grievances/IsoGrievancesAdminPanel.test.tsx
+    typecheck_commands:
+      - pnpm --dir frontend-app typecheck
+    build_commands:
+      - pnpm --dir frontend-app build
+    stop_conditions:
+      - Do not claim MD05 formally resolved.
+      - Do not expand ADDITIONAL_PATHS.
+      - Do not treat a client guard as server authorization.
+      - Do not copy commit a277a19.
+    risk: HIGH_PRIMARY_PATH_AND_LEGACY_ALIAS_REMOVAL
+    implementation_order_reason: The facade and its consumers are the last step because they require the separate server modules and their tenant-scoped persistence.
+    owner_decision_required:
+      - Privacy basis for presenting complaint and appeal content to authenticated and public clients.
+      - Confirmation that legacy alias removal is in scope for this package and does not expand MD05 ADDITIONAL_PATHS.
