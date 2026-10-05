@@ -576,6 +576,12 @@ This Part is the **authoritative live Model D register** (Governance Hierarchy L
 | Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
 | Last Part E status alignment | R0-7D-MD05-CANONICAL-ARCHITECTURE-ALTERNATIVE-A-DECISION-FREEZE-R2-POST-INTEGRATION-STATUS-ALIGNMENT-R3 |
 | Last MD05 exact scope freeze | R0-7D-MD05-ALTERNATIVE-A-IMPLEMENTATION-BLUEPRINT-AND-EXACT-SCOPE-FREEZE-R1 (candidate pending independent review) |
+| Last MD05 phase 0 role-authority freeze | R0-7D-MD05-PHASE0-PREREQUISITE-AUTHORITY-FREEZE-R2 (candidate pending independent review) |
+| COMPLAINT_HANDLER_ROLE | COMPLAINT_HANDLER (adopted; not implemented) |
+| STAFF_ROLEADM | adopted as RBAC Role Administrator; not implemented |
+| ROLE_AUTHORITY_SOURCE | EXTERNAL_OIDC_IDP_CANONICAL |
+| ROLE_GRANT_REVOKE_AUTHORITY | FROZEN to STAFF_ROLEADM; not implemented |
+| LOCAL_DATABASE_ROLE_AUTHORITY | false |
 | Last unresolved-item definition freeze | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1 |
 | MD05 architecture decision freeze R2 | Alternative A architecture decision CLOSED_ACCEPTED via authoritative I2 PASS_ACCEPT (31/0/1); MD05 remains unresolved; Model D unchanged |
 | MD05 blueprint and exact scope freeze R1 | Path boundary frozen at ADDITIONAL_PATHS = none; SoD matrix frozen; implementation blueprint recorded; implementation unauthorized; Model D unchanged |
@@ -845,7 +851,7 @@ Full owner-supplied decision: [MD05 canonical architecture alternative A decisio
 | Detailed RBAC and SoD matrix | FROZEN |
 | SOD_COMPLETE_CLAIMED | false |
 | OQ-5 | DIRECTIONAL |
-| COMPLAINT_HANDLER_ROLE | NOT_NAMED |
+| COMPLAINT_HANDLER_ROLE | NOT_NAMED at blueprint time; live selection superseded by Phase 0 prerequisite authority freeze R2 |
 | Implementation blueprint recorded | true |
 | Implementation authorization | false |
 | Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; outside MD05 path freeze; directories not created) |
@@ -853,13 +859,64 @@ Full owner-supplied decision: [MD05 canonical architecture alternative A decisio
 | Model D | 17/9/8/8/0; mutation count 0 |
 | Newly resolved item count | 0 |
 | Production / schema / test / configuration mutations | 0 |
-| Residual risk | Backends absent; appeals-client helpers absent; complaint handler unnamed; privacy basis unrecorded; staff access allow-list remains broader than frozen matrix; residual implementation unauthorized |
+| Residual risk | Backends absent; appeals-client helpers absent; complaint handler unnamed at blueprint time (live identifier superseded by Phase 0 R2); privacy basis unrecorded; staff access allow-list remains broader than frozen matrix; residual implementation unauthorized |
 | Dependencies | Independent review of this candidate; later owner authorization for residual implementation and for out-of-freeze prerequisites (backends, complaint-handler naming, privacy basis, any path expansion) |
 | Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
 | Next action | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1_REVIEW (not granted by this package) |
 | Supersession | Supersedes only the live MD05 pins `MD05_ADDITIONAL_PATH_BOUNDARY_STATUS = PENDING_GOVERNANCE_FREEZE`, `DETAILED_RBAC_SOD_MATRIX_STATUS = PENDING_GOVERNANCE_FREEZE`, and `MD05_STATUS = UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE`. Does not supersede Alternative A architecture CLOSED_ACCEPTED, eight-path freeze, MD08 FR2, Model D arithmetic, or PR 41/42/46 historical statuses. Does not formally resolve MD05 |
 
 Full owner-authorized freeze: [Blueprint and exact scope freeze R1](./R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1.md). Evidence: `docs/evidence/r0-7d-md05-alternative-a-implementation-blueprint-and-exact-scope-freeze-r1/20261002200552/`.
+
+### MD05 Phase 0 — prerequisite role-administration authority freeze R2
+
+| Field | Value |
+|-------|-------|
+| Date (UTC) | 2026-10-03T06:27:10Z |
+| Status | ROLE_AUTHORITY_FROZEN_PENDING_INDEPENDENT_REVIEW |
+| Owner authorization | OWNER_SELECT_R0_7D_MD05_ROLE_ADMINISTRATION_OPTION_1_STAFF_ROLEADM_AND_AUTHORIZE_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for this candidate record) |
+| Owner | Repository Owner |
+| Approved option | OPTION_1_DEDICATED_AUTHORITY |
+| Rationale | Discovery found no implemented grant or revoke authority. The owner selected a dedicated role-administration authority and named it `STAFF_ROLEADM`, separate from complaint handling |
+| Scope | Governance adoption of `COMPLAINT_HANDLER` and `STAFF_ROLEADM`, and freeze of grant, revoke, tenant, four-eyes, post-review, and prospective audit-event contract. No implementation |
+| Base | `72a8935d48cfaef7fe8c2273554a79aa584a1741` (tree `c7d594c53bc2986eb68365a1c3e2c116c855761f`) |
+| R1 disposition | `cursor/r0-7d-md05-phase0-role-freeze-r1-71b5` at `7f6e2ba05f0abe569111a90594689519fec96304` remains preserved, is not the parent, and is an incomplete non-authoritative attempt because grant and revoke authority were NOT_NAMED |
+| COMPLAINT_HANDLER_ROLE | COMPLAINT_HANDLER |
+| COMPLAINT_HANDLER_ROLE_ADOPTED | true |
+| COMPLAINT_HANDLER_ROLE_IMPLEMENTED | false |
+| ROLE_ADMINISTRATOR_ROLE | STAFF_ROLEADM |
+| ROLE_ADMINISTRATOR_LABEL | RBAC Role Administrator |
+| ROLE_ADMINISTRATOR_ROLE_ADOPTED | true |
+| ROLE_ADMINISTRATOR_ROLE_IMPLEMENTED | false |
+| ROLE_AUTHORITY_SOURCE | EXTERNAL_OIDC_IDP_CANONICAL |
+| LOCAL_DATABASE_ROLE_AUTHORITY | false |
+| ROLE_GRANT_AUTHORITY | STAFF_ROLEADM |
+| ROLE_REVOKE_AUTHORITY | STAFF_ROLEADM |
+| GRANT_FOUR_EYES_REQUIRED | true |
+| REVOKE_FOUR_EYES_REQUIRED | false |
+| REVOKE_POST_REVIEW_REQUIRED | true |
+| REVOKE_POST_REVIEW_DUE_PERIOD | PROSPECTIVE_POLICY_VALUE_NOT_YET_FIXED |
+| SELF_ASSIGNMENT_ALLOWED | false |
+| SELF_REVOCATION_ALLOWED | false |
+| CROSS_TENANT_ASSIGNMENT_ALLOWED | false |
+| CROSS_TENANT_REVOCATION_ALLOWED | false |
+| STAFF_ROLEADM_SELF_MANAGEMENT | forbidden |
+| STAFF_ROLEADM_BOOTSTRAP_AUTHORITY | OWNER_CONTROLLED_EXTERNAL_IDP_ADMINISTRATION |
+| STAFF_ROLEADM_BOOTSTRAP_IMPLEMENTATION | OUTSIDE_THIS_PACKAGE |
+| PRIMARY_PATH | `frontend-app/src/lib/api-grievances.ts` |
+| ADDITIONAL_PATHS | none |
+| MD05 formally resolved | false |
+| MD05_SCOPE_READY | false |
+| Implementation authorization | false |
+| Model D | 17/9/8/8/0; mutation count 0 |
+| Newly resolved item count | 0 |
+| Production / schema / test / configuration mutations | 0 |
+| Residual risk | Neither role is in `rbacRoleSchema`; no grant or revoke path exists; production audit registry is empty; current `AuditEvent` columns do not store the full prospective field set; external IdP bootstrap mechanism is not implemented in this repository; privacy basis remains unrecorded; MD05 remains unresolved |
+| Dependencies | Independent review of this candidate; a later separately authorized package before any enum, IdP, audit, or case-operation change |
+| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
+| Next action | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2_REVIEW (not granted by this package) |
+| Supersession | Supersedes only the live pin `COMPLAINT_HANDLER_ROLE = NOT_NAMED`. Does not supersede the MD05 path freeze, Alternative A CLOSED_ACCEPTED, Model D arithmetic, or implementation-unauthorized pins. Does not adopt R1 |
+
+Full owner-authorized freeze: [Phase 0 prerequisite authority freeze R2](./R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-phase0-prerequisite-authority-freeze-r2/20261003062710/`.
 
 ---
 
@@ -930,11 +987,28 @@ Full decision and alignments: [MD05 decision freeze R2](./R0_7D_MD05_CANONICAL_A
 | Owner | Repository Owner |
 | Rationale | Close PENDING path-boundary and SoD-matrix freezes under Alternative A without expanding MD05 or authorizing residual implementation |
 | Scope | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 only |
-| Residual risk | Backends absent; complaint handler unnamed; privacy basis unrecorded; implementation unauthorized |
+| Residual risk | Backends absent; complaint handler unnamed at blueprint time (live identifier superseded by Phase 0 R2); privacy basis unrecorded; implementation unauthorized |
 | Dependencies | Independent review of this candidate; later residual implementation authorization and out-of-freeze prerequisites |
 | Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
 | Supersession | Supersedes only live PENDING path-boundary / SoD-matrix pins and MD05_STATUS PENDING_SCOPE_FREEZE; none for Model D arithmetic or Alternative A CLOSED_ACCEPTED |
 
 Full freeze: [Blueprint and exact scope freeze R1](./R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1.md). Evidence: `docs/evidence/r0-7d-md05-alternative-a-implementation-blueprint-and-exact-scope-freeze-r1/20261002200552/`.
+
+### MD05 Phase 0 — prerequisite role-administration authority freeze R2
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-10-03 |
+| Status | ROLE_AUTHORITY_FROZEN_PENDING_INDEPENDENT_REVIEW |
+| Approved option | OPTION_1_DEDICATED_AUTHORITY; `STAFF_ROLEADM` is the RBAC Role Administrator |
+| Owner | Repository Owner |
+| Rationale | No existing repository role has an implemented grant or revoke authority. Role administration is frozen to a dedicated authority, separate from complaint handling |
+| Scope | Governance adoption and grant/revoke contract only. `COMPLAINT_HANDLER` and `STAFF_ROLEADM` are not implemented |
+| Residual risk | Roles are absent from the executable enum; IdP bootstrap and audit-event persistence are outside this package; MD05 remains unresolved |
+| Dependencies | Independent review; later separate authorization before implementation |
+| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
+| Supersession | Supersedes only the live pin `COMPLAINT_HANDLER_ROLE = NOT_NAMED`. Preserves incomplete R1 `7f6e2ba05f0abe569111a90594689519fec96304` as non-authoritative. None for Model D or the MD05 path freeze |
+
+Full freeze: [Phase 0 prerequisite authority freeze R2](./R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-phase0-prerequisite-authority-freeze-r2/20261003062710/`.
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
