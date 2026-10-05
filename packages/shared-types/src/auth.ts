@@ -335,7 +335,12 @@ export const ROUTE_PERMISSIONS = [
 
 export type RoutePermissionRule = (typeof ROUTE_PERMISSIONS)[number];
 
-/** Canonical privileged / staff roles (BAR-P04 OD-P04-18). Exactly 15. */
+/**
+ * Canonical privileged / staff roles.
+ * Historical BAR-P04 OD-P04-18 set of 15 stays in its existing order.
+ * PKG-00 appends COMPLAINT_HANDLER and STAFF_ROLEADM. Count is 17.
+ * Membership does not grant a route or an operation.
+ */
 export const PRIVILEGED_ROLES: readonly RbacRole[] = [
   'STAFF_DIR',
   'STAFF_SYSADM',
@@ -352,6 +357,8 @@ export const PRIVILEGED_ROLES: readonly RbacRole[] = [
   'INVIGILATOR',
   'QUALITY_MANAGER',
   'AI_SECURITY_MANAGER',
+  'COMPLAINT_HANDLER',
+  'STAFF_ROLEADM',
 ];
 
 /** Learner / non-privileged roles. Exactly 2. */

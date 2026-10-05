@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable, Optional, Scope } from '@nestjs/common';
 import { Prisma } from '@confora/database';
+import { isRevokePostReviewDuePeriod } from '@confora/shared-types';
 
 import type { AuthenticatedActor } from '../auth/request-principal';
 import { TenantContextStore } from '../tenant/tenant-context.store';
@@ -9,10 +10,16 @@ import {
   AUDIT_ACTOR_REQUIRED,
   AUDIT_APPEND_FAILED,
   AUDIT_IDEMPOTENCY_CONFLICT,
+  AUDIT_METADATA_INVALID,
   AUDIT_RETRY_EXHAUSTED,
   AUDIT_TENANT_CONTEXT_MISMATCH,
 } from './audit-errors';
-import { AuditEventRegistry } from './audit-event.registry';
+import {
+  AuditEventRegistry,
+  ROLE_ADMINISTRATION_AUDIT_EVENT_TYPES,
+  validateRoleAdministrationAuditMetadata,
+  type RoleAdministrationAuditEventType,
+} from './audit-event.registry';
 import {
   INITIAL_PREV_HASH,
   MAX_SERIALIZABLE_RETRIES,
@@ -32,6 +39,51 @@ import {
 } from './audit-validators';
 
 export const AUDIT_EVENT_REGISTRY = 'AUDIT_EVENT_REGISTRY' as const;
+
+function isRoleAdministrationAuditEvent(
+  eventType: string,
+): eventType is RoleAdministrationAuditEventType {
+  return (ROLE_ADMINISTRATION_AUDIT_EVENT_TYPES as readonly string[]).includes(eventType);
+}
+
+/**
+ * PKG-00 events keep the generic allowlist and then the role-administration
+ * semantic validator. Other events return the allowlisted metadata unchanged.
+ * Actor-tenant agreement and the PT24H revoke deadline are enforced here,
+ * before any persistence call.
+ */
+function enforceRoleAdministrationAuditMetadata(
+  eventType: string,
+  rawMetadata: unknown,
+  allowlistedMetadata: unknown,
+  actorTenantId: string,
+): unknown {
+  if (!isRoleAdministrationAuditEvent(eventType)) {
+    return allowlistedMetadata;
+  }
+  const semantic = validateRoleAdministrationAuditMetadata(eventType, rawMetadata);
+  if (semantic['tenantId'] !== actorTenantId) {
+    throw new AuditError(
+      AUDIT_METADATA_INVALID,
+      'Role audit metadata tenant does not match the actor tenant.',
+    );
+  }
+  if (eventType === 'ROLE_REVOKE_APPLIED') {
+    const occurredAt = semantic['occurredAt'];
+    const reviewDueAt = semantic['reviewDueAt'];
+    if (
+      typeof occurredAt !== 'string' ||
+      typeof reviewDueAt !== 'string' ||
+      !isRevokePostReviewDuePeriod(occurredAt, reviewDueAt)
+    ) {
+      throw new AuditError(
+        AUDIT_METADATA_INVALID,
+        'Revoke review deadline must equal PT24H after occurredAt.',
+      );
+    }
+  }
+  return semantic;
+}
 
 function isPrismaKnownRequestError(error: unknown): error is Prisma.PrismaClientKnownRequestError {
   return (
@@ -111,7 +163,13 @@ export class AuditService {
       input.correlationId === ''
         ? null
         : input.correlationId;
-    const metadata = validateMetadataForEvent(definition, input.metadata);
+    const allowlistedMetadata = validateMetadataForEvent(definition, input.metadata);
+    const metadata = enforceRoleAdministrationAuditMetadata(
+      input.eventType,
+      input.metadata,
+      allowlistedMetadata,
+      actor.tenantId,
+    );
 
     const fingerprint = buildIdempotencyFingerprint({
       actorUserId: actor.userId,
