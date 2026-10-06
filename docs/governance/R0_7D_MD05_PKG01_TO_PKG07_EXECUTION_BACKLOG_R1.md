@@ -143,29 +143,45 @@ Risk: low.
 
 ## PKG-03 — Role grant and revoke workflow with immutable audit
 
-Status: BLOCKED_POLICY. Depends on PKG-01 and PKG-02.
+Status: IMPLEMENTED_PENDING_INDEPENDENT_REVIEW. Depends on PKG-01 and PKG-02.
+
+Owner selection: A1, B1, C1R, D1. The policy record is
+`docs/governance/R0_7D_MD05_PKG03_POLICY_AND_SCOPE_FREEZE_R1.md`.
 
 Purpose: four-eyes grant, immediate revoke, PT24H post-review, and the ten
-PKG-00 audit events. Apply stays an external identity-provider effect.
+PKG-00 audit events. Apply stays an external identity-provider effect. This
+slice appends the existing audit ledger only and leaves PKG-02 unbound.
 
-This package is blocked because it would create a new persistent processing
-activity, and the following decisions are missing:
+Adopted processing: no new workflow store and no new retention clock. Personal
+data in this package is limited to the existing audit-event metadata.
+Retention inherits the platform audit-log policy of 10 years. Statutory
+article citation is not fixed. DPO or controller validation is required before
+production deployment and does not block implementation. No identity-provider
+provider, host, realm, or credential is selected.
 
-- statutory privacy basis for workflow records of identifiers;
-- retention period for those records;
-- external IdP provider and credential custody.
-
-Prospective production files:
+Production paths:
 
 - `apps/api/src/role-administration/role-administration-workflow.service.ts`
 - `apps/api/src/role-administration/role-administration.controller.ts`
 - `apps/api/src/role-administration/dto/role-administration-command.dto.ts`
+- `apps/api/src/role-administration/role-administration.module.ts`
+
+Test paths:
+
+- `apps/api/src/role-administration/role-administration-workflow.service.spec.ts`
+- `apps/api/src/role-administration/role-administration.controller.spec.ts`
 
 Schema: none. A local role column is forbidden. The audit service file is
 forbidden, so O01, O02, and O03 stay open unless a later authorization names
-them.
+them. `apps/api/src/app.module.ts` stays unchanged because
+`RoleAdministrationModule` is already imported.
 
-Risk: high until those decisions exist.
+`PROVIDER_UNBOUND` appends `ROLE_GRANT_FAILED` or `ROLE_REVOKE_FAILED` and
+does not append an applied event. An unapplied revoke creates no post-review
+deadline.
+
+Risk: medium. The slice writes the existing audit ledger and cannot change an
+external role while the port is unbound.
 
 ## PKG-04 — Canonical complaints domain module
 
