@@ -335,7 +335,23 @@ describe('RoleAdministrationWorkflowService', () => {
     expect(portSpy).not.toHaveBeenCalled();
   });
 
-  it('rejects an incorrect PT24H deadline before audit or PKG-02', async () => {
+  it('rejects a direct internal grant APPLIED command before audit or PKG-02', async () => {
+    const result = await workflow.execute(
+      approverActor(),
+      grantApproved({
+        decision: 'APPLIED',
+        previousState: 'PENDING',
+        resultingState: 'ACTIVE',
+        appliedAt: REQUESTED_AT,
+      }),
+    );
+    expect(result.recorded).toBe(false);
+    expect(result.codes).toEqual(['CLIENT_APPLIED_DECISION_FORBIDDEN']);
+    expect(events).toEqual([]);
+    expect(portSpy).not.toHaveBeenCalled();
+  });
+
+  it('rejects a direct internal revoke APPLIED command before audit or PKG-02', async () => {
     const result = await workflow.execute(
       initiatorActor(),
       revokeRequested({
@@ -343,10 +359,30 @@ describe('RoleAdministrationWorkflowService', () => {
         previousState: 'ACTIVE',
         resultingState: 'REVOKED',
         appliedAt: REQUESTED_AT,
-        reviewDueAt: '2026-10-05T11:00:00.000Z',
+        reviewDueAt: REVIEW_DUE_AT,
       }),
     );
-    expect(result.codes).toContain('REVOKE_POST_REVIEW_DUE_PERIOD_INVALID');
+    expect(result.recorded).toBe(false);
+    expect(result.codes).toEqual(['CLIENT_APPLIED_DECISION_FORBIDDEN']);
+    expect(result.reviewObligationCreated).toBe(false);
+    expect(events).toEqual([]);
+    expect(portSpy).not.toHaveBeenCalled();
+  });
+
+  it('rejects mixed-case applied without normalizing it into a client command', async () => {
+    const result = await workflow.execute(approverActor(), {
+      ...grantApproved(),
+      decision: 'Applied',
+    });
+    expect(result.codes).toEqual(['CLIENT_APPLIED_DECISION_FORBIDDEN']);
+    expect(events).toEqual([]);
+    expect(portSpy).not.toHaveBeenCalled();
+  });
+
+  it('fails closed on a direct malformed internal command', async () => {
+    const result = await workflow.execute(initiatorActor(), { operation: 'TRANSFER' });
+    expect(result.recorded).toBe(false);
+    expect(result.codes).toContain('COMMAND_SCHEMA_REJECTED');
     expect(events).toEqual([]);
     expect(portSpy).not.toHaveBeenCalled();
   });

@@ -4,10 +4,28 @@ import {
 } from '@confora/shared-types';
 
 /**
- * Body fields that must never authenticate the caller or configure a provider.
- * Actor identity, roles, and tenant authority come from the server principal.
+ * Stable rejection for a client decision that only the server may record
+ * after a confirmed external effect.
+ */
+export const CLIENT_APPLIED_DECISION_FORBIDDEN = 'CLIENT_APPLIED_DECISION_FORBIDDEN' as const;
+
+/**
+ * Body fields that must never authenticate the caller, select a tenant,
+ * or configure a provider. Actor identity, roles, and tenant authority come
+ * from the server principal.
  */
 export const ROLE_ADMINISTRATION_FORBIDDEN_COMMAND_KEYS = [
+  'tenantId',
+  'tenant_id',
+  'actorTenantId',
+  'initiatorTenantId',
+  'approverTenantId',
+  'targetTenantId',
+  'reviewerTenantId',
+  'tenant',
+  'organizationId',
+  'orgId',
+  'org_id',
   'provider',
   'providerType',
   'host',
@@ -35,6 +53,41 @@ export const ROLE_ADMINISTRATION_FORBIDDEN_COMMAND_KEYS = [
 
 const FORBIDDEN_KEYS: ReadonlySet<string> = new Set(ROLE_ADMINISTRATION_FORBIDDEN_COMMAND_KEYS);
 
+/**
+ * Client decisions. APPLIED and FAILED are server terminal states.
+ * REVIEWED remains a client post-review request and is refused by the
+ * workflow until a real applied revoke exists.
+ */
+const PUBLIC_DECISIONS: ReadonlySet<string> = new Set([
+  'REQUESTED',
+  'APPROVED',
+  'REJECTED',
+  'REVIEWED',
+]);
+
+const TRUSTED_TENANT_KEYS = [
+  'tenantId',
+  'initiatorTenantId',
+  'approverTenantId',
+  'targetTenantId',
+  'actorTenantId',
+  'reviewerTenantId',
+] as const;
+
+export type RoleAdministrationCommandCode =
+  | 'COMMAND_FIELD_FORBIDDEN'
+  | 'COMMAND_SCHEMA_REJECTED'
+  | typeof CLIENT_APPLIED_DECISION_FORBIDDEN
+  | 'ACTOR_TENANT_EMPTY';
+
+export type RoleAdministrationCommandParseResult =
+  | { readonly ok: true; readonly command: RoleAdministrationContract }
+  | { readonly ok: false; readonly codes: readonly [RoleAdministrationCommandCode] };
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 function containsForbiddenKey(value: unknown, depth: number): boolean {
   if (depth > 4 || value === null || typeof value !== 'object') {
     return false;
@@ -51,27 +104,55 @@ function containsForbiddenKey(value: unknown, depth: number): boolean {
   return false;
 }
 
-export type RoleAdministrationCommandParseResult =
-  | { readonly ok: true; readonly command: RoleAdministrationContract }
-  | {
-      readonly ok: false;
-      readonly codes: readonly ['COMMAND_FIELD_FORBIDDEN'] | readonly ['COMMAND_SCHEMA_REJECTED'];
-    };
+/**
+ * APPLIED is never a client command. Case variants are rejected rather than
+ * normalized into the server decision.
+ */
+export function isClientAppliedDecision(value: unknown): boolean {
+  if (!isPlainObject(value)) {
+    return false;
+  }
+  const decision = value['decision'];
+  return typeof decision === 'string' && decision.trim().toLowerCase() === 'applied';
+}
+
+function rejected(code: RoleAdministrationCommandCode): RoleAdministrationCommandParseResult {
+  return { ok: false, codes: [code] };
+}
 
 /**
- * PKG-03 command parser.
- * Unknown contract fields fail closed. Provider, secret, and actor-authority
- * fields are rejected before schema diagnostics are returned.
+ * PKG-03 public command parser.
+ * The client cannot supply tenant authority. The trusted actor tenant is
+ * written onto the internal PKG-00 command after forbidden fields are refused.
  */
 export function parseRoleAdministrationCommandDto(
   body: unknown,
+  trustedTenantId: string,
 ): RoleAdministrationCommandParseResult {
-  if (containsForbiddenKey(body, 0)) {
-    return { ok: false, codes: ['COMMAND_FIELD_FORBIDDEN'] };
+  if (trustedTenantId.trim().length === 0) {
+    return rejected('ACTOR_TENANT_EMPTY');
   }
-  const parsed = roleAdministrationContractSchema.safeParse(body);
+  if (containsForbiddenKey(body, 0)) {
+    return rejected('COMMAND_FIELD_FORBIDDEN');
+  }
+  if (isClientAppliedDecision(body)) {
+    return rejected(CLIENT_APPLIED_DECISION_FORBIDDEN);
+  }
+  if (!isPlainObject(body)) {
+    return rejected('COMMAND_SCHEMA_REJECTED');
+  }
+  const decision = body['decision'];
+  if (typeof decision === 'string' && !PUBLIC_DECISIONS.has(decision)) {
+    return rejected('COMMAND_SCHEMA_REJECTED');
+  }
+
+  const bound: Record<string, unknown> = { ...body };
+  for (const key of TRUSTED_TENANT_KEYS) {
+    bound[key] = trustedTenantId;
+  }
+  const parsed = roleAdministrationContractSchema.safeParse(bound);
   if (!parsed.success) {
-    return { ok: false, codes: ['COMMAND_SCHEMA_REJECTED'] };
+    return rejected('COMMAND_SCHEMA_REJECTED');
   }
   return { ok: true, command: parsed.data };
 }

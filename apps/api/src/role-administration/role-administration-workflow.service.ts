@@ -12,6 +12,10 @@ import { AuditService } from '../audit/audit.service';
 import type { RoleAdministrationAuditEventType } from '../audit/audit-event.registry';
 import type { AuditOutcomeLiteral } from '../audit/audit-event.types';
 import type { AuthenticatedActor } from '../auth/request-principal';
+import {
+  CLIENT_APPLIED_DECISION_FORBIDDEN,
+  isClientAppliedDecision,
+} from './dto/role-administration-command.dto';
 import { ExternalIdpRoleManagementPort } from './external-idp-role-management.port';
 import { RoleAdministrationBoundaryService } from './role-administration-boundary.service';
 
@@ -84,6 +88,10 @@ export class RoleAdministrationWorkflowService {
     actor: AuthenticatedActor | null | undefined,
     command: unknown,
   ): Promise<RoleAdministrationWorkflowResult> {
+    if (isClientAppliedDecision(command)) {
+      return closed([CLIENT_APPLIED_DECISION_FORBIDDEN]);
+    }
+
     const boundaryResult = this.boundary.evaluate(actor, command);
     if (!boundaryResult.accepted || actor == null) {
       return closed(boundaryResult.accepted ? ['ACTOR_NOT_AUTHENTICATED'] : boundaryResult.codes);
@@ -124,10 +132,11 @@ export class RoleAdministrationWorkflowService {
       return closed([], true, 'NONE', ['ROLE_GRANT_REJECTED']);
     }
 
-    if (
-      contract.operation === 'GRANT' &&
-      (contract.decision === 'APPROVED' || contract.decision === 'APPLIED')
-    ) {
+    if (contract.decision === 'APPLIED') {
+      return closed([CLIENT_APPLIED_DECISION_FORBIDDEN]);
+    }
+
+    if (contract.operation === 'GRANT' && contract.decision === 'APPROVED') {
       return this.failClosedApply(actor, command, contract, 'GRANT');
     }
 
@@ -136,10 +145,7 @@ export class RoleAdministrationWorkflowService {
       return closed([], true, 'NONE', ['ROLE_REVOKE_REJECTED']);
     }
 
-    if (
-      contract.operation === 'REVOKE' &&
-      (contract.decision === 'REQUESTED' || contract.decision === 'APPLIED')
-    ) {
+    if (contract.operation === 'REVOKE' && contract.decision === 'REQUESTED') {
       return this.failClosedApply(actor, command, contract, 'REVOKE');
     }
 
@@ -152,6 +158,10 @@ export class RoleAdministrationWorkflowService {
     contract: RoleAdministrationContract,
     operation: 'GRANT' | 'REVOKE',
   ): Promise<RoleAdministrationWorkflowResult> {
+    if (contract.decision === 'APPLIED') {
+      return closed([CLIENT_APPLIED_DECISION_FORBIDDEN]);
+    }
+
     const occurredAt =
       operation === 'GRANT' ? (contract.decidedAt ?? contract.requestedAt) : contract.requestedAt;
     const events: string[] = [];

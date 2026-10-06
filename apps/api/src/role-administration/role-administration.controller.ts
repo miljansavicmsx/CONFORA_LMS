@@ -75,7 +75,7 @@ export class RoleAdministrationController {
   ): Promise<RoleAdministrationWorkflowResult> {
     const actor = getRequestPrincipal(request);
     assertServerActor(actor);
-    const parsed = parseRoleAdministrationCommandDto(body);
+    const parsed = parseRoleAdministrationCommandDto(body, actor.tenantId);
     if (!parsed.ok) {
       throw new UnprocessableEntityException(denied(parsed.codes));
     }
