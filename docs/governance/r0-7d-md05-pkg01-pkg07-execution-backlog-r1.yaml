@@ -193,16 +193,22 @@ packages:
     owner_decision_required: []
   - id: PKG-03
     title: Role grant and revoke workflow with immutable audit
-    purpose: Orchestrate four-eyes grant, immediate revoke, PT24H post-review, and the ten PKG-00 audit events by calling the PKG-01 boundary and the PKG-02 port. Application of a role remains an external identity-provider effect.
-    status: BLOCKED_POLICY
+    purpose: Orchestrate four-eyes grant, immediate revoke, PT24H post-review, and the ten PKG-00 audit events by calling the PKG-01 boundary and the PKG-02 port. Application of a role remains an external identity-provider effect. The adopted slice appends the existing audit ledger only and leaves PKG-02 unbound.
+    status: READY_FOR_IMPLEMENTATION
     depends_on:
       - PKG-01
       - PKG-02
+    owner_selected_options:
+      - A1
+      - B1
+      - C1R
+      - D1
+    policy_record: docs/governance/R0_7D_MD05_PKG03_POLICY_AND_SCOPE_FREEZE_R1.md
     production_paths:
-      - apps/api/src/role-administration/
       - apps/api/src/role-administration/role-administration-workflow.service.ts
       - apps/api/src/role-administration/role-administration.controller.ts
       - apps/api/src/role-administration/dto/role-administration-command.dto.ts
+      - apps/api/src/role-administration/role-administration.module.ts
     test_paths:
       - apps/api/src/role-administration/role-administration-workflow.service.spec.ts
       - apps/api/src/role-administration/role-administration.controller.spec.ts
@@ -212,18 +218,38 @@ packages:
       - packages/database/prisma/schema.prisma
       - apps/api/src/audit/audit.service.ts
       - frontend-app/src/lib/api-grievances.ts
+      - apps/api/src/app.module.ts
     allowed_mutation_classes:
       - workflow_service
       - authenticated_controller
       - unit_test
+      - nest_module_registration
     data_classes:
       - authenticated_user_identifier
       - external_subject_identifier
       - tenant_identifier
+      - target_user_identifier
+      - target_external_subject_identifier
       - role_code
+      - request_identifier
       - reason_code
-      - audit_metadata
-    privacy_basis_status: REQUIRES_OWNER_OR_DPO_CONFIRMATION
+      - initiator_identifier
+      - approver_identifier
+      - revoke_actor_identifier
+      - revoke_reviewer_identifier
+      - timestamps_and_review_deadline
+      - operation_outcome
+    privacy_basis_status: EXISTING_AUDIT_LEDGER_SECURITY_ACCOUNTABILITY
+    privacy_note: No new workflow store. Processing is limited to the existing audit ledger for security and access-control accountability. Statutory article citation is not fixed. DPO or controller validation is required before production deployment and does not block this implementation.
+    persistence_model: EXISTING_AUDIT_EVENT_APPEND_ONLY
+    new_workflow_store: false
+    new_database_table: false
+    new_local_role_column: false
+    audit_retention_policy: INHERIT_PLATFORM_10_YEAR_AUDIT_POLICY
+    pkg03_specific_retention_period: none
+    new_retention_clock: false
+    external_idp_provider: NONE_SELECTED
+    pkg02_remains_unbound: true
     roles:
       managed_role: COMPLAINT_HANDLER
       grant_authority: STAFF_ROLEADM
@@ -232,6 +258,8 @@ packages:
       - Grant initiator and approver must differ and both hold STAFF_ROLEADM.
       - Revoke post-review actor must differ from the revoke actor.
       - STAFF_ROLEADM must not gain complaint-case mutation through this workflow.
+      - Post-review period is PT24H, meaning 24 elapsed hours.
+      - ROLE_REVOKE_REVIEWED is permitted only for a previously applied revoke.
     audit_events:
       - ROLE_GRANT_REQUESTED
       - ROLE_GRANT_APPROVED
@@ -244,11 +272,18 @@ packages:
       - ROLE_REVOKE_REJECTED
       - ROLE_REVOKE_FAILED
     preconditions:
-      - Owner or DPO confirms the privacy basis for persisting workflow records of identifiers.
-      - Owner fixes a retention period for workflow records. None is frozen.
-      - Owner selects the external IdP provider and credential custody for the apply step.
+      - PKG-01 and PKG-02 are integrated.
+      - Owner selected A1, B1, C1R, and D1.
+      - Audit append uses the existing AuditService public API and the ten PKG-00 events.
+      - DPO or controller legal validation remains required before production deployment.
     acceptance_tests:
-      - Not authorized until the blocking decisions are recorded.
+      - Grant request appends ROLE_GRANT_REQUESTED and does not call PKG-02.
+      - Grant approval calls PKG-02 and, on PROVIDER_UNBOUND, appends ROLE_GRANT_FAILED.
+      - ROLE_GRANT_APPLIED and ROLE_REVOKE_APPLIED are not appended when the port is unbound.
+      - Grant rejection does not call PKG-02.
+      - Revoke request calls PKG-02 and, on PROVIDER_UNBOUND, appends ROLE_REVOKE_FAILED.
+      - An unapplied revoke creates no post-review deadline and no local role state.
+      - PKG-01 rejection appends no audit event and does not call PKG-02.
     test_commands:
       - pnpm --dir apps/api exec jest --runInBand src/role-administration/role-administration-workflow.service.spec.ts src/role-administration/role-administration.controller.spec.ts --no-coverage
     typecheck_commands:
@@ -256,15 +291,14 @@ packages:
     build_commands:
       - pnpm --dir apps/api build
     stop_conditions:
-      - Do not implement while privacy basis, retention, or provider custody is undecided.
-      - Do not add a local role column.
+      - STOP if a new workflow table, schema change, or local role column is required.
+      - STOP if a concrete identity-provider adapter, host, realm, or credential is required.
+      - STOP if audit.service.ts, schema.prisma, api-grievances.ts, or app.module.ts must change.
       - Do not close O01, O02, or O03 unless a later authorization names that observation as scope.
-    risk: HIGH_UNTIL_PRIVACY_RETENTION_AND_PROVIDER_ARE_DECIDED
-    implementation_order_reason: Workflow persistence and external apply sit after the in-memory boundary and the unbound port, and they need decisions this run cannot make.
-    owner_decision_required:
-      - Statutory privacy basis for role-administration workflow records.
-      - Retention period for those records.
-      - External IdP provider and credential custody.
+      - Do not append an APPLIED event unless an external role change is confirmed.
+    risk: MEDIUM_AUDIT_APPEND_WITH_UNBOUND_APPLY
+    implementation_order_reason: The in-memory boundary and unbound port are integrated. This slice records decisions in the existing audit ledger and fails closed when the provider is unbound.
+    owner_decision_required: []
   - id: PKG-04
     title: Canonical complaints domain module
     purpose: Create apps/api/src/cert-complaints/ as a complaints-only domain module with its own state model and server-side authorization. It must not import or become the appeals module.
