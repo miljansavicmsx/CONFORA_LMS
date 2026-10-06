@@ -18,112 +18,119 @@ Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` /
 ## Part A — Open questions (OQ-1 … OQ-7)
 
 ### OQ-1 — Governance corpus tracking
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
-| Approved option | Track the authoritative governance/architecture corpus in Git |
-| Owner | Repository Owner |
-| Rationale | Close authority-chain break (C-01); enable fresh-clone governance |
-| Scope | `docs/governance/**`, `docs/architecture/**` (phased via R0-1B1/B2/B3) |
-| Residual risk | Phased promotion leaves some corpus untracked between waves |
-| Dependencies | — |
-| Exit criteria | Authority chain (R0-1B1) + architecture (R0-1B2) + compliance/templates (R0-1B3) tracked |
-| Supersession | — |
+
+| Field           | Value                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                               |
+| Status          | ACCEPTED                                                                                 |
+| Approved option | Track the authoritative governance/architecture corpus in Git                            |
+| Owner           | Repository Owner                                                                         |
+| Rationale       | Close authority-chain break (C-01); enable fresh-clone governance                        |
+| Scope           | `docs/governance/**`, `docs/architecture/**` (phased via R0-1B1/B2/B3)                   |
+| Residual risk   | Phased promotion leaves some corpus untracked between waves                              |
+| Dependencies    | —                                                                                        |
+| Exit criteria   | Authority chain (R0-1B1) + architecture (R0-1B2) + compliance/templates (R0-1B3) tracked |
+| Supersession    | —                                                                                        |
 
 ### OQ-2 — Cursor rules tracking
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED (DEFERRED) |
+
+| Field           | Value                                                                    |
+| --------------- | ------------------------------------------------------------------------ |
+| Date            | 2026-07-26                                                               |
+| Status          | ACCEPTED (DEFERRED)                                                      |
 | Approved option | Track `.cursor/rules/**` later under a separate controlled **R0-2** task |
-| Owner | Repository Owner |
-| Rationale | Keep agent-rule tracking under dedicated change control |
-| Scope | `.cursor/rules/**` — excluded from R0-1 |
-| Residual risk | Rules remain gitignored/local until R0-2 |
-| Dependencies | OQ-1 |
-| Exit criteria | R0-2 executed |
-| Supersession | — |
+| Owner           | Repository Owner                                                         |
+| Rationale       | Keep agent-rule tracking under dedicated change control                  |
+| Scope           | `.cursor/rules/**` — excluded from R0-1                                  |
+| Residual risk   | Rules remain gitignored/local until R0-2                                 |
+| Dependencies    | OQ-1                                                                     |
+| Exit criteria   | R0-2 executed                                                            |
+| Supersession    | —                                                                        |
 
 ### OQ-3 — Canonical backend
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | CLOSED_ACCEPTED |
-| Approved option | NestJS intended canonical; recovery/reconstruction required; FastAPI later frozen-legacy only via approved task |
-| Owner | Repository Owner |
-| Rationale | Historical: tracked `apps/api` incomplete/not confirmed buildable; FastAPI not approved canonical. Historical state superseded by accepted BAR-P01..P08 recovery and OQ-3 formal closure. |
-| Scope | `apps/api`, `backend/` |
-| Residual risk | OQ-3 closed; FastAPI not physically deleted; R0-7D remains OPEN_IMPLEMENTATION_BLOCKER; T026/C3-S9 NOT_GRANTED; CI debt remains OPEN (count 4); R0-7E and deployment unauthorized |
-| Dependencies | Nest recovery discovery (satisfied via accepted BAR-P01..P08) |
-| Exit criteria | Buildable canonical backend confirmed; FastAPI disposition decided |
-| Closure date (UTC) | 2026-09-04T12:36:28Z (package timestamp; integration pending independent review until merge) |
-| Closure authority | OWNER_AUTHORIZE_R0_7D_OQ3_FORMAL_CLOSURE (FC1 RETRY 01); OD1 precondition reconciliation APPROVED |
-| Predecessor | R0_7D_OQ3_CR1 = PASS; OQ3-VERDICT-A |
-| Closure basis | EXISTING_P01_P08_ACCEPTED_BACKEND_RECOVERY_AND_FORMAL_FASTAPI_DISPOSITION |
-| Canonical backend | NestJS / `apps/api` |
-| Canonical database / ORM | PostgreSQL / Prisma |
-| FastAPI disposition | Not canonical; frozen-legacy only via separate approved task; physical deletion not required |
-| New implementation required for closure | false |
-| Non-effects | Does not grant T026; does not approve DISP-A; does not resume C3-S9; does not close R0-7D; does not authorize R0-7E; does not authorize deployment; does not close CI debt |
-| Evidence | `docs/evidence/r0-7d-oq3-formal-closure/20260904123628/` |
-| Supersession | — |
+
+| Field                                   | Value                                                                                                                                                                                     |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date                                    | 2026-07-26                                                                                                                                                                                |
+| Status                                  | CLOSED_ACCEPTED                                                                                                                                                                           |
+| Approved option                         | NestJS intended canonical; recovery/reconstruction required; FastAPI later frozen-legacy only via approved task                                                                           |
+| Owner                                   | Repository Owner                                                                                                                                                                          |
+| Rationale                               | Historical: tracked `apps/api` incomplete/not confirmed buildable; FastAPI not approved canonical. Historical state superseded by accepted BAR-P01..P08 recovery and OQ-3 formal closure. |
+| Scope                                   | `apps/api`, `backend/`                                                                                                                                                                    |
+| Residual risk                           | OQ-3 closed; FastAPI not physically deleted; R0-7D remains OPEN_IMPLEMENTATION_BLOCKER; T026/C3-S9 NOT_GRANTED; CI debt remains OPEN (count 4); R0-7E and deployment unauthorized         |
+| Dependencies                            | Nest recovery discovery (satisfied via accepted BAR-P01..P08)                                                                                                                             |
+| Exit criteria                           | Buildable canonical backend confirmed; FastAPI disposition decided                                                                                                                        |
+| Closure date (UTC)                      | 2026-09-04T12:36:28Z (package timestamp; integration pending independent review until merge)                                                                                              |
+| Closure authority                       | OWNER_AUTHORIZE_R0_7D_OQ3_FORMAL_CLOSURE (FC1 RETRY 01); OD1 precondition reconciliation APPROVED                                                                                         |
+| Predecessor                             | R0_7D_OQ3_CR1 = PASS; OQ3-VERDICT-A                                                                                                                                                       |
+| Closure basis                           | EXISTING_P01_P08_ACCEPTED_BACKEND_RECOVERY_AND_FORMAL_FASTAPI_DISPOSITION                                                                                                                 |
+| Canonical backend                       | NestJS / `apps/api`                                                                                                                                                                       |
+| Canonical database / ORM                | PostgreSQL / Prisma                                                                                                                                                                       |
+| FastAPI disposition                     | Not canonical; frozen-legacy only via separate approved task; physical deletion not required                                                                                              |
+| New implementation required for closure | false                                                                                                                                                                                     |
+| Non-effects                             | Does not grant T026; does not approve DISP-A; does not resume C3-S9; does not close R0-7D; does not authorize R0-7E; does not authorize deployment; does not close CI debt                |
+| Evidence                                | `docs/evidence/r0-7d-oq3-formal-closure/20260904123628/`                                                                                                                                  |
+| Supersession                            | —                                                                                                                                                                                         |
 
 ### OQ-4 — Canonical frontend
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | OPEN |
+
+| Field           | Value                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                  |
+| Status          | OPEN                                                                                        |
 | Approved option | `frontend-app` is current operational canonical frontend pending an ADR superseding ADR-001 |
-| Owner | Repository Owner |
-| Rationale | Pilot operational truth diverges from ADR-001; see Frontend Canonicalization Gap Note |
-| Scope | `frontend-app`, `apps/web`, `apps/admin`, ADR-001 |
-| Residual risk | ADR-001 contradiction remains until superseded |
-| Dependencies | R0-1B2 ADR supersession |
-| Exit criteria | Superseding ADR accepted; parity migration criteria met |
-| Supersession | Pending (R0-1B2) |
+| Owner           | Repository Owner                                                                            |
+| Rationale       | Pilot operational truth diverges from ADR-001; see Frontend Canonicalization Gap Note       |
+| Scope           | `frontend-app`, `apps/web`, `apps/admin`, ADR-001                                           |
+| Residual risk   | ADR-001 contradiction remains until superseded                                              |
+| Dependencies    | R0-1B2 ADR supersession                                                                     |
+| Exit criteria   | Superseding ADR accepted; parity migration criteria met                                     |
+| Supersession    | Pending (R0-1B2)                                                                            |
 
 ### OQ-5 — Identity / RBAC / SoD
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | DIRECTIONAL |
+
+| Field           | Value                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                              |
+| Status          | DIRECTIONAL                                                                                             |
 | Approved option | Canonical identity/RBAC/SoD end-state in the canonical stack with a controlled transitional parity gate |
-| Owner | Repository Owner |
-| Rationale | Transitional surfaces exist; end-state must not fork identity truth |
-| Scope | Identity & Access context |
-| Residual risk | Transitional enforcement not equal to end-state |
-| Dependencies | OQ-3 |
-| Exit criteria | Canonical enforcement verified with evidence |
-| Supersession | — |
+| Owner           | Repository Owner                                                                                        |
+| Rationale       | Transitional surfaces exist; end-state must not fork identity truth                                     |
+| Scope           | Identity & Access context                                                                               |
+| Residual risk   | Transitional enforcement not equal to end-state                                                         |
+| Dependencies    | OQ-3                                                                                                    |
+| Exit criteria   | Canonical enforcement verified with evidence                                                            |
+| Supersession    | —                                                                                                       |
 
 ### OQ-6 — Deployment containment
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | MERGED_WITH_CONDITIONS |
-| Approved option | R0-3 deployment containment merged; production deployment unauthorized |
-| Owner | Repository Owner |
-| Rationale | Contain unsafe auto-deploy of untracked backend |
-| Scope | `.github/workflows/deploy-backend.yml`, GitHub Environment `production` |
-| Residual risk | Admin bypass (RA-R03-1); empty deny-all allowlist |
-| Dependencies | OD-R03-1…OD-R03-5 |
-| Exit criteria | See OD-R03-1 exit; independent release reviewer + bypass disabled before prod deploy |
-| Supersession | — |
+
+| Field           | Value                                                                                |
+| --------------- | ------------------------------------------------------------------------------------ |
+| Date            | 2026-07-26                                                                           |
+| Status          | MERGED_WITH_CONDITIONS                                                               |
+| Approved option | R0-3 deployment containment merged; production deployment unauthorized               |
+| Owner           | Repository Owner                                                                     |
+| Rationale       | Contain unsafe auto-deploy of untracked backend                                      |
+| Scope           | `.github/workflows/deploy-backend.yml`, GitHub Environment `production`              |
+| Residual risk   | Admin bypass (RA-R03-1); empty deny-all allowlist                                    |
+| Dependencies    | OD-R03-1…OD-R03-5                                                                    |
+| Exit criteria   | See OD-R03-1 exit; independent release reviewer + bypass disabled before prod deploy |
+| Supersession    | —                                                                                    |
 
 ### OQ-7 — Tenant isolation and audit
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | OPEN |
+
+| Field           | Value                                                                                          |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                     |
+| Status          | OPEN                                                                                           |
 | Approved option | Treat tenant isolation and audit controls as partially verified; separate remediation required |
-| Owner | Repository Owner |
-| Rationale | Controls exist as requirements; verification incomplete |
-| Scope | Multi-tenancy standard, audit ledger |
-| Residual risk | Cross-tenant/audit gaps until remediated |
-| Dependencies | — |
-| Exit criteria | Remediation with isolation/audit evidence |
-| Supersession | — |
+| Owner           | Repository Owner                                                                               |
+| Rationale       | Controls exist as requirements; verification incomplete                                        |
+| Scope           | Multi-tenancy standard, audit ledger                                                           |
+| Residual risk   | Cross-tenant/audit gaps until remediated                                                       |
+| Dependencies    | —                                                                                              |
+| Exit criteria   | Remediation with isolation/audit evidence                                                      |
+| Supersession    | —                                                                                              |
 
 ---
 
@@ -132,76 +139,81 @@ Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` /
 Recorded in the R0-3 evidence package `docs/evidence/governance/2026-07-26T10-05-37-r0-3-deploy-containment/OWNER_DECISIONS.md`.
 
 ### OD-R03-1 — Administrator bypass
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED (temporary risk — RA-R03-1; **not permanent**) |
-| Approved option | Preferred `can_admins_bypass=false` not applied in that task; `can_admins_bypass: true` accepted **temporarily** as RA-R03-1 |
-| Owner | Repository Owner |
-| Rationale | Single-maintainer; layered fail-closed controls prevent deploy today |
-| Scope | GitHub Environment `production` |
-| Residual risk | Admin can bypass reviewer gate on a future run |
+
+| Field                | Value                                                                                                                                                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date                 | 2026-07-26                                                                                                                                                                                                        |
+| Status               | ACCEPTED (temporary risk — RA-R03-1; **not permanent**)                                                                                                                                                           |
+| Approved option      | Preferred `can_admins_bypass=false` not applied in that task; `can_admins_bypass: true` accepted **temporarily** as RA-R03-1                                                                                      |
+| Owner                | Repository Owner                                                                                                                                                                                                  |
+| Rationale            | Single-maintainer; layered fail-closed controls prevent deploy today                                                                                                                                              |
+| Scope                | GitHub Environment `production`                                                                                                                                                                                   |
+| Residual risk        | Admin can bypass reviewer gate on a future run                                                                                                                                                                    |
 | Review / expiry date | **2026-08-26** (30 days), or immediately upon OQ-3 resolution or any attempt to enable production deployment — whichever comes first. Acceptance lapses at the review date unless explicitly renewed in evidence. |
-| Dependencies | Independent release reviewer |
-| Exit criteria | Disable administrator bypass (`can_admins_bypass=false`) **and** add an independent release reviewer distinct from the deploying admin, both **before** production deployment is enabled |
-| Non-affected | OQ-3 remains OPEN; production deployment remains unauthorized; this acceptance grants no deployment authorization |
-| Supersession | — |
+| Dependencies         | Independent release reviewer                                                                                                                                                                                      |
+| Exit criteria        | Disable administrator bypass (`can_admins_bypass=false`) **and** add an independent release reviewer distinct from the deploying admin, both **before** production deployment is enabled                          |
+| Non-affected         | OQ-3 remains OPEN; production deployment remains unauthorized; this acceptance grants no deployment authorization                                                                                                 |
+| Supersession         | —                                                                                                                                                                                                                 |
 
 ### OD-R03-2 — Deployment branch policy
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
-| Approved option | Keep empty custom allowlist as intentional temporary deny-all |
-| Owner | Repository Owner |
-| Rationale | No legitimate production source until OQ-3 resolved |
-| Scope | Environment `production` branch policy |
-| Residual risk | Legitimate deploys blocked until populated (intended) |
-| Dependencies | OQ-3 |
-| Exit criteria | OQ-3 resolved; tracked source approved; branch/tag pattern decided; policy independently reviewed |
-| Supersession | — |
+
+| Field           | Value                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                        |
+| Status          | ACCEPTED                                                                                          |
+| Approved option | Keep empty custom allowlist as intentional temporary deny-all                                     |
+| Owner           | Repository Owner                                                                                  |
+| Rationale       | No legitimate production source until OQ-3 resolved                                               |
+| Scope           | Environment `production` branch policy                                                            |
+| Residual risk   | Legitimate deploys blocked until populated (intended)                                             |
+| Dependencies    | OQ-3                                                                                              |
+| Exit criteria   | OQ-3 resolved; tracked source approved; branch/tag pattern decided; policy independently reviewed |
+| Supersession    | —                                                                                                 |
 
 ### OD-R03-3 — Canonical backend (deploy view)
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| Date            | 2026-07-26                                                                                             |
+| Status          | ACCEPTED                                                                                               |
 | Approved option | OQ-3 remains open; R0-3 selects no canonical backend, approves no `backend/`, authorizes no deployment |
-| Owner | Repository Owner |
-| Rationale | Containment must not smuggle architecture decisions |
-| Scope | Deploy pipeline |
-| Residual risk | Untracked `backend/` persists (blocked from pipeline) |
-| Dependencies | OQ-3 |
-| Exit criteria | OQ-3 decision |
-| Supersession | — |
+| Owner           | Repository Owner                                                                                       |
+| Rationale       | Containment must not smuggle architecture decisions                                                    |
+| Scope           | Deploy pipeline                                                                                        |
+| Residual risk   | Untracked `backend/` persists (blocked from pipeline)                                                  |
+| Dependencies    | OQ-3                                                                                                   |
+| Exit criteria   | OQ-3 decision                                                                                          |
+| Supersession    | —                                                                                                      |
 
 ### OD-R03-4 — CI remediation
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                           |
+| --------------- | --------------------------------------------------------------- |
+| Date            | 2026-07-26                                                      |
+| Status          | ACCEPTED                                                        |
 | Approved option | R0-7 remains the approved task for repairing other CI workflows |
-| Owner | Repository Owner |
-| Rationale | Keep R0-3 single-purpose |
-| Scope | Non-deploy CI workflows |
-| Residual risk | Broken CI on fresh clone until R0-7 |
-| Dependencies | — |
-| Exit criteria | R0-7 completion |
-| Supersession | — |
+| Owner           | Repository Owner                                                |
+| Rationale       | Keep R0-3 single-purpose                                        |
+| Scope           | Non-deploy CI workflows                                         |
+| Residual risk   | Broken CI on fresh clone until R0-7                             |
+| Dependencies    | —                                                               |
+| Exit criteria   | R0-7 completion                                                 |
+| Supersession    | —                                                               |
 
 ### OD-R03-5 — Merge interpretation
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
-| Approved option | PR #1 merged as containment control only |
-| Owner | Repository Owner |
-| Rationale | Merge is not readiness/go-live/OQ-3 closure/backend approval/accreditation |
-| Scope | PR #1 (merged `1f141fe1`) |
-| Residual risk | Misinterpretation (mitigated by record) |
-| Dependencies | — |
-| Exit criteria | Standing interpretation rule |
-| Supersession | — |
+
+| Field           | Value                                                                      |
+| --------------- | -------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                 |
+| Status          | ACCEPTED                                                                   |
+| Approved option | PR #1 merged as containment control only                                   |
+| Owner           | Repository Owner                                                           |
+| Rationale       | Merge is not readiness/go-live/OQ-3 closure/backend approval/accreditation |
+| Scope           | PR #1 (merged `1f141fe1`)                                                  |
+| Residual risk   | Misinterpretation (mitigated by record)                                    |
+| Dependencies    | —                                                                          |
+| Exit criteria   | Standing interpretation rule                                               |
+| Supersession    | —                                                                          |
 
 ---
 
@@ -210,144 +222,154 @@ Recorded in the R0-3 evidence package `docs/evidence/governance/2026-07-26T10-05
 Approved for this R0-1 governance promotion sequence.
 
 ### OD-R01-1 — Wave split
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                                                  |
+| Status          | ACCEPTED                                                                                                                    |
 | Approved option | Reject monolithic 26-item Wave A; split into R0-1B1 (authority chain), R0-1B2 (architecture), R0-1B3 (compliance/templates) |
-| Owner | Repository Owner |
-| Rationale | Controlled, reviewable promotion |
-| Scope | R0-1 promotion sequencing |
-| Residual risk | Corpus partially tracked between waves |
-| Dependencies | OQ-1 |
-| Exit criteria | B1+B2+B3 complete |
-| Supersession | Supersedes R0-1A single-Wave-A proposal |
+| Owner           | Repository Owner                                                                                                            |
+| Rationale       | Controlled, reviewable promotion                                                                                            |
+| Scope           | R0-1 promotion sequencing                                                                                                   |
+| Residual risk   | Corpus partially tracked between waves                                                                                      |
+| Dependencies    | OQ-1                                                                                                                        |
+| Exit criteria   | B1+B2+B3 complete                                                                                                           |
+| Supersession    | Supersedes R0-1A single-Wave-A proposal                                                                                     |
 
 ### OD-R01-2 — Evidence tracking
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                                         |
+| --------------- | ----------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                    |
+| Status          | ACCEPTED                                                                      |
 | Approved option | Track three governance evidence packages as **evidence only** (non-normative) |
-| Owner | Repository Owner |
-| Rationale | Auditability without making PROPOSED_* normative |
-| Scope | rebaseline, owner-decision, R0-1A inventory packages |
-| Residual risk | Evidence misread as normative (mitigated by status notices) |
-| Dependencies | — |
-| Exit criteria | Packages tracked with notices |
-| Supersession | — |
+| Owner           | Repository Owner                                                              |
+| Rationale       | Auditability without making PROPOSED\_\* normative                            |
+| Scope           | rebaseline, owner-decision, R0-1A inventory packages                          |
+| Residual risk   | Evidence misread as normative (mitigated by status notices)                   |
+| Dependencies    | —                                                                             |
+| Exit criteria   | Packages tracked with notices                                                 |
+| Supersession    | —                                                                             |
 
 ### OD-R01-3 — Path/naming and AI merges
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED (DEFERRED to R0-1B2) |
+
+| Field           | Value                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                         |
+| Status          | ACCEPTED (DEFERRED to R0-1B2)                                                                      |
 | Approved option | ADR path move and architecture renames deferred to R0-1B2; AI companion merging deferred to R0-1B2 |
-| Owner | Repository Owner |
-| Rationale | Keep R0-1B1 to authority chain |
-| Scope | ADRs, `STRUCTURE.md`, AI companion docs |
-| Residual risk | Dual paths until B2 |
-| Dependencies | R0-1B2 |
-| Exit criteria | B2 executes moves/merges |
-| Supersession | — |
+| Owner           | Repository Owner                                                                                   |
+| Rationale       | Keep R0-1B1 to authority chain                                                                     |
+| Scope           | ADRs, `STRUCTURE.md`, AI companion docs                                                            |
+| Residual risk   | Dual paths until B2                                                                                |
+| Dependencies    | R0-1B2                                                                                             |
+| Exit criteria   | B2 executes moves/merges                                                                           |
+| Supersession    | —                                                                                                  |
 
 ### OD-R01-4 — Compliance/security merges
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED (DEFERRED to R0-1B3) |
+
+| Field           | Value                                                   |
+| --------------- | ------------------------------------------------------- |
+| Date            | 2026-07-26                                              |
+| Status          | ACCEPTED (DEFERRED to R0-1B3)                           |
 | Approved option | Defer compliance and security document merges to R0-1B3 |
-| Owner | Repository Owner |
-| Rationale | Merges require copyright scan and consolidation |
-| Scope | ISO mappings, traceability, security cluster |
-| Residual risk | Duplicates remain untracked until B3 |
-| Dependencies | R0-1B3 |
-| Exit criteria | B3 executes merges |
-| Supersession | — |
+| Owner           | Repository Owner                                        |
+| Rationale       | Merges require copyright scan and consolidation         |
+| Scope           | ISO mappings, traceability, security cluster            |
+| Residual risk   | Duplicates remain untracked until B3                    |
+| Dependencies    | R0-1B3                                                  |
+| Exit criteria   | B3 executes merges                                      |
+| Supersession    | —                                                       |
 
 ### OD-R01-5 — Author missing authority-chain docs
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
-| Approved option | Author minimum missing authority-chain documents in R0-1B1 |
-| Owner | Repository Owner |
-| Rationale | Self-contained authority chain requires constitution, change control, register/package, standards policy |
-| Scope | `docs/governance/*` authored files |
-| Residual risk | Newly authored text must avoid overclaiming |
-| Dependencies | OD-R01-9 |
-| Exit criteria | Files authored and validated |
-| Supersession | — |
+
+| Field           | Value                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                               |
+| Status          | ACCEPTED                                                                                                 |
+| Approved option | Author minimum missing authority-chain documents in R0-1B1                                               |
+| Owner           | Repository Owner                                                                                         |
+| Rationale       | Self-contained authority chain requires constitution, change control, register/package, standards policy |
+| Scope           | `docs/governance/*` authored files                                                                       |
+| Residual risk   | Newly authored text must avoid overclaiming                                                              |
+| Dependencies    | OD-R01-9                                                                                                 |
+| Exit criteria   | Files authored and validated                                                                             |
+| Supersession    | —                                                                                                        |
 
 ### OD-R01-6 — G3–G6 exclusion
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                          |
+| --------------- | -------------------------------------------------------------- |
+| Date            | 2026-07-26                                                     |
+| Status          | ACCEPTED                                                       |
 | Approved option | Exclude G3–G6 analysis documents from the authoritative corpus |
-| Owner | Repository Owner |
-| Rationale | Analysis/report material, not Baseline-class SoR |
-| Scope | `docs/architecture/G*.md` |
-| Residual risk | Analysis remains local/untracked |
-| Dependencies | — |
-| Exit criteria | — |
-| Supersession | — |
+| Owner           | Repository Owner                                               |
+| Rationale       | Analysis/report material, not Baseline-class SoR               |
+| Scope           | `docs/architecture/G*.md`                                      |
+| Residual risk   | Analysis remains local/untracked                               |
+| Dependencies    | —                                                              |
+| Exit criteria   | —                                                              |
+| Supersession    | —                                                              |
 
 ### OD-R01-7 — Root reference markdown
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                |
+| --------------- | ---------------------------------------------------- |
+| Date            | 2026-07-26                                           |
+| Status          | ACCEPTED                                             |
 | Approved option | Root `CONFORA_*.md` reference files remain untracked |
-| Owner | Repository Owner |
-| Rationale | Non-normative product context; potential conflicts |
-| Scope | Root `CONFORA_*.md` |
-| Residual risk | Context remains local-only |
-| Dependencies | — |
-| Exit criteria | — |
-| Supersession | — |
+| Owner           | Repository Owner                                     |
+| Rationale       | Non-normative product context; potential conflicts   |
+| Scope           | Root `CONFORA_*.md`                                  |
+| Residual risk   | Context remains local-only                           |
+| Dependencies    | —                                                    |
+| Exit criteria   | —                                                    |
+| Supersession    | —                                                    |
 
 ### OD-R01-8 — Root binaries
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                   |
+| Status          | ACCEPTED                                                                                     |
 | Approved option | Root PDF/DOCX remain DO_NOT_TRACK; no full copyrighted standard PDFs without verified rights |
-| Owner | Repository Owner |
-| Rationale | Avoid binary SoR and licence risk |
-| Scope | Root `*.pdf`, `*.docx` |
-| Residual risk | Requirements trapped in binaries until extracted |
-| Dependencies | Standards Reference Policy |
-| Exit criteria | Optional later markdown extraction |
-| Supersession | — |
+| Owner           | Repository Owner                                                                             |
+| Rationale       | Avoid binary SoR and licence risk                                                            |
+| Scope           | Root `*.pdf`, `*.docx`                                                                       |
+| Residual risk   | Requirements trapped in binaries until extracted                                             |
+| Dependencies    | Standards Reference Policy                                                                   |
+| Exit criteria   | Optional later markdown extraction                                                           |
+| Supersession    | —                                                                                            |
 
 ### OD-R01-9 — Non-claims acknowledgement
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                           |
+| --------------- | --------------------------------------------------------------- |
+| Date            | 2026-07-26                                                      |
+| Status          | ACCEPTED                                                        |
 | Approved option | All mandatory non-claims remain explicit in promoted governance |
-| Owner | Repository Owner |
-| Rationale | Prevent false completion/compliance claims |
-| Scope | All rebaselined governance |
-| Residual risk | None if enforced |
-| Dependencies | — |
-| Exit criteria | Non-claims validated (see `non_claims_validation.md`) |
-| Supersession | — |
+| Owner           | Repository Owner                                                |
+| Rationale       | Prevent false completion/compliance claims                      |
+| Scope           | All rebaselined governance                                      |
+| Residual risk   | None if enforced                                                |
+| Dependencies    | —                                                               |
+| Exit criteria   | Non-claims validated (see `non_claims_validation.md`)           |
+| Supersession    | —                                                               |
 
 ### OD-R01-10 — Change-control roles
-| Field | Value |
-|-------|-------|
-| Date | 2026-07-26 |
-| Status | ACCEPTED |
+
+| Field           | Value                                                                                                                                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                                                                                          |
+| Status          | ACCEPTED                                                                                                                                                            |
 | Approved option | Document governance change-control roles (Baseline: Owner+Architecture; ADR supersession: Architecture draft + Owner approval; compliance: Compliance+Architecture) |
-| Owner | Repository Owner |
-| Rationale | Controlled edits after tracking |
-| Scope | `CHANGE_CONTROL.md` |
-| Residual risk | Role-combination requires recorded independent review |
-| Dependencies | — |
-| Exit criteria | Roles documented in Change Control |
-| Supersession | — |
+| Owner           | Repository Owner                                                                                                                                                    |
+| Rationale       | Controlled edits after tracking                                                                                                                                     |
+| Scope           | `CHANGE_CONTROL.md`                                                                                                                                                 |
+| Residual risk   | Role-combination requires recorded independent review                                                                                                               |
+| Dependencies    | —                                                                                                                                                                   |
+| Exit criteria   | Roles documented in Change Control                                                                                                                                  |
+| Supersession    | —                                                                                                                                                                   |
 
 ---
 
@@ -368,188 +390,196 @@ After NP1D correction, a genuinely separate reviewer execution identity remains
 mandatory before Draft PR consideration.
 
 ### OD-R07E-1 — Bounded R0-7E scope
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed only; effective repository-wide after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Adopt R0-7E as a bounded CI quality and honest-compliance governance phase |
-| Owner | Repository Owner |
-| Rationale | Establish an honest recovery boundary without converting planning into implementation authority |
-| Scope | Tracked quality recovery, six-lane reporting, policy/implementation validation separation, and preparation for later R0-7F planning |
-| Limitations | No source or workflow change; no R0-7D closure; no database resolution; no implementation-conformity or R0-7F authorization |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_SCOPE_AND_AUTHORITY.md` |
-| Deferred dependency | R0-7D closure and package-specific owner authorization |
-| Dependencies | R0-7D closure and package-specific owner authorizations |
-| Exit criteria | Separately authorized work packages are implemented, evidenced, independently reviewed, and merged |
-| Supersession | Supersedes only the unresolved OD-R07E-1 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                               |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Date                         | 2026-08-05                                                                                                                          |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                                   |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                              |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                                 |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                                   |
+| Normative effect             | Proposed only; effective repository-wide after genuinely independent review and separately authorized reviewed merge                |
+| Approved option              | Adopt R0-7E as a bounded CI quality and honest-compliance governance phase                                                          |
+| Owner                        | Repository Owner                                                                                                                    |
+| Rationale                    | Establish an honest recovery boundary without converting planning into implementation authority                                     |
+| Scope                        | Tracked quality recovery, six-lane reporting, policy/implementation validation separation, and preparation for later R0-7F planning |
+| Limitations                  | No source or workflow change; no R0-7D closure; no database resolution; no implementation-conformity or R0-7F authorization         |
+| Implementation authorization | false                                                                                                                               |
+| Merge authorization          | false                                                                                                                               |
+| Deployment authorization     | false                                                                                                                               |
+| Related governance document  | `docs/governance/R0_7E_SCOPE_AND_AUTHORITY.md`                                                                                      |
+| Deferred dependency          | R0-7D closure and package-specific owner authorization                                                                              |
+| Dependencies                 | R0-7D closure and package-specific owner authorizations                                                                             |
+| Exit criteria                | Separately authorized work packages are implemented, evidenced, independently reviewed, and merged                                  |
+| Supersession                 | Supersedes only the unresolved OD-R07E-1 recommendation state in the corrected planning package                                     |
 
 ### OD-R07E-2 — Six-lane CI model
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed only; effective repository-wide after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Adopt the six named CI lanes with visible blocked, unavailable, and missing-authority states |
-| Owner | Repository Owner |
-| Rationale | Prevent silent exclusions, skipped-success semantics, and local-only authority |
-| Scope | Lane names, authority boundaries, result semantics, and evidence requirements |
-| Limitations | Reporting policy only; no workflow, validator, or passing result is authorized |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_CI_LANE_POLICY.md` |
-| Deferred dependency | R0-7D closure and complete tracked authority for each executable lane |
-| Dependencies | OD-R07E-1, OD-R07E-4, OD-R07E-5, OD-R07E-8 |
-| Exit criteria | Separately authorized lane implementation produces deterministic clean-clone evidence |
-| Supersession | Supersedes only the unresolved OD-R07E-2 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Date                         | 2026-08-05                                                                                                           |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                    |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                               |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                  |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                    |
+| Normative effect             | Proposed only; effective repository-wide after genuinely independent review and separately authorized reviewed merge |
+| Approved option              | Adopt the six named CI lanes with visible blocked, unavailable, and missing-authority states                         |
+| Owner                        | Repository Owner                                                                                                     |
+| Rationale                    | Prevent silent exclusions, skipped-success semantics, and local-only authority                                       |
+| Scope                        | Lane names, authority boundaries, result semantics, and evidence requirements                                        |
+| Limitations                  | Reporting policy only; no workflow, validator, or passing result is authorized                                       |
+| Implementation authorization | false                                                                                                                |
+| Merge authorization          | false                                                                                                                |
+| Deployment authorization     | false                                                                                                                |
+| Related governance document  | `docs/governance/R0_7E_CI_LANE_POLICY.md`                                                                            |
+| Deferred dependency          | R0-7D closure and complete tracked authority for each executable lane                                                |
+| Dependencies                 | OD-R07E-1, OD-R07E-4, OD-R07E-5, OD-R07E-8                                                                           |
+| Exit criteria                | Separately authorized lane implementation produces deterministic clean-clone evidence                                |
+| Supersession                 | Supersedes only the unresolved OD-R07E-2 recommendation state in the corrected planning package                      |
 
 ### OD-R07E-3 — Database disposition
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY |
-| Normative effect | Explicit blocking state only; no database disposition becomes effective or implementation-ready |
-| Approved option | None; no database disposition is adopted, approved, resolved, or implementation-ready |
-| Owner | Repository Owner |
-| Rationale | Approved tracked source authority for `packages/database/**` is absent |
-| Scope | Database-dependent implementation remains `BLOCKED_MISSING_TRACKED_AUTHORITY`; local-only reconstruction is prohibited |
-| Limitations | Governance-policy validation may continue only within its documented policy scope |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md` |
-| Deferred dependency | Approved tracked `packages/database/**` source authority and a separate recovery decision |
-| Dependencies | Separate approved database source authority and owner recovery decision |
-| Exit criteria | Owner records the source, exact path scope, controls, tests, reviewers, evidence, and successor authorization |
-| Supersession | Supersedes only the unresolved OD-R07E-3 recommendation state; it adopts no database option |
+
+| Field                        | Value                                                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Date                         | 2026-08-05                                                                                                             |
+| Status                       | DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY                                                                    |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                 |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                    |
+| Disposition                  | DEFERRED_PENDING_APPROVED_DATABASE_SOURCE_AUTHORITY                                                                    |
+| Normative effect             | Explicit blocking state only; no database disposition becomes effective or implementation-ready                        |
+| Approved option              | None; no database disposition is adopted, approved, resolved, or implementation-ready                                  |
+| Owner                        | Repository Owner                                                                                                       |
+| Rationale                    | Approved tracked source authority for `packages/database/**` is absent                                                 |
+| Scope                        | Database-dependent implementation remains `BLOCKED_MISSING_TRACKED_AUTHORITY`; local-only reconstruction is prohibited |
+| Limitations                  | Governance-policy validation may continue only within its documented policy scope                                      |
+| Implementation authorization | false                                                                                                                  |
+| Merge authorization          | false                                                                                                                  |
+| Deployment authorization     | false                                                                                                                  |
+| Related governance document  | `docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md`                                                           |
+| Deferred dependency          | Approved tracked `packages/database/**` source authority and a separate recovery decision                              |
+| Dependencies                 | Separate approved database source authority and owner recovery decision                                                |
+| Exit criteria                | Owner records the source, exact path scope, controls, tests, reviewers, evidence, and successor authorization          |
+| Supersession                 | Supersedes only the unresolved OD-R07E-3 recommendation state; it adopts no database option                            |
 
 ### OD-R07E-4 — R0-7D prerequisite
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed prerequisite policy only; effective after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Keep a forward-only R0-7D closure as a prerequisite to all R0-7E implementation |
-| Owner | Repository Owner |
-| Rationale | Deterministic frontend dependency, lockfile, build, preview, and accessibility authority must exist first |
-| Scope | Sequencing policy only |
-| Limitations | No R0-7D implementation path or rejected experimental history is authorized |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md` |
-| Deferred dependency | Separately authorized and merged R0-7D closure |
-| Dependencies | Separate exact R0-7D authorization, evidence, independent review, and merge |
-| Exit criteria | R0-7D closure is verified and merged into the authoritative integration branch |
-| Supersession | Supersedes only the unresolved OD-R07E-4 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Date                         | 2026-08-05                                                                                                               |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                        |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                   |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                      |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                        |
+| Normative effect             | Proposed prerequisite policy only; effective after genuinely independent review and separately authorized reviewed merge |
+| Approved option              | Keep a forward-only R0-7D closure as a prerequisite to all R0-7E implementation                                          |
+| Owner                        | Repository Owner                                                                                                         |
+| Rationale                    | Deterministic frontend dependency, lockfile, build, preview, and accessibility authority must exist first                |
+| Scope                        | Sequencing policy only                                                                                                   |
+| Limitations                  | No R0-7D implementation path or rejected experimental history is authorized                                              |
+| Implementation authorization | false                                                                                                                    |
+| Merge authorization          | false                                                                                                                    |
+| Deployment authorization     | false                                                                                                                    |
+| Related governance document  | `docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md`                                                      |
+| Deferred dependency          | Separately authorized and merged R0-7D closure                                                                           |
+| Dependencies                 | Separate exact R0-7D authorization, evidence, independent review, and merge                                              |
+| Exit criteria                | R0-7D closure is verified and merged into the authoritative integration branch                                           |
+| Supersession                 | Supersedes only the unresolved OD-R07E-4 recommendation state in the corrected planning package                          |
 
 ### OD-R07E-5 — Compliance-validation semantics
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed result and claim policy only; effective after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Adopt separate `governance-policy-validation` and `implementation-compliance-validation` lanes |
-| Owner | Repository Owner |
-| Rationale | Policy validation must not be represented as implementation conformity |
-| Scope | Qualified names, states, evidence boundaries, and prohibited claims |
-| Limitations | No validator, implementation result, ISO conformity, accreditation, or production-readiness claim |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_COMPLIANCE_VALIDATION_POLICY.md` |
-| Deferred dependency | Complete tracked authority for every implementation control under test |
-| Dependencies | OD-R07E-1, OD-R07E-2, OD-R07E-3 where database-dependent, OD-R07E-8 |
-| Exit criteria | Separately authorized validators deterministically emit only qualified results and pass independent review |
-| Supersession | Supersedes only the unresolved OD-R07E-5 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Date                         | 2026-08-05                                                                                                                   |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                            |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                       |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                          |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                            |
+| Normative effect             | Proposed result and claim policy only; effective after genuinely independent review and separately authorized reviewed merge |
+| Approved option              | Adopt separate `governance-policy-validation` and `implementation-compliance-validation` lanes                               |
+| Owner                        | Repository Owner                                                                                                             |
+| Rationale                    | Policy validation must not be represented as implementation conformity                                                       |
+| Scope                        | Qualified names, states, evidence boundaries, and prohibited claims                                                          |
+| Limitations                  | No validator, implementation result, ISO conformity, accreditation, or production-readiness claim                            |
+| Implementation authorization | false                                                                                                                        |
+| Merge authorization          | false                                                                                                                        |
+| Deployment authorization     | false                                                                                                                        |
+| Related governance document  | `docs/governance/R0_7E_COMPLIANCE_VALIDATION_POLICY.md`                                                                      |
+| Deferred dependency          | Complete tracked authority for every implementation control under test                                                       |
+| Dependencies                 | OD-R07E-1, OD-R07E-2, OD-R07E-3 where database-dependent, OD-R07E-8                                                          |
+| Exit criteria                | Separately authorized validators deterministically emit only qualified results and pass independent review                   |
+| Supersession                 | Supersedes only the unresolved OD-R07E-5 recommendation state in the corrected planning package                              |
 
 ### OD-R07E-6 — Separate F4 prerequisite
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed separation policy only; effective after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Keep F4 validation restoration as a separate focused prerequisite |
-| Owner | Repository Owner |
-| Rationale | Prevent F4 restoration from silently expanding R0-7E quality or compliance packages |
-| Scope | Authority, path, test, evidence, review, and merge separation |
-| Limitations | No F4 source, helper, workflow, or implementation change is authorized |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md` |
-| Deferred dependency | Approved R0-7D frontend authority and separate F4 source authority |
-| Dependencies | R0-7D frontend authority and separate exact F4 authorization |
-| Exit criteria | A tracked reproducible F4 validator is independently reviewed and merged |
-| Supersession | Supersedes only the unresolved OD-R07E-6 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Date                         | 2026-08-05                                                                                                             |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                      |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                 |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                    |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                      |
+| Normative effect             | Proposed separation policy only; effective after genuinely independent review and separately authorized reviewed merge |
+| Approved option              | Keep F4 validation restoration as a separate focused prerequisite                                                      |
+| Owner                        | Repository Owner                                                                                                       |
+| Rationale                    | Prevent F4 restoration from silently expanding R0-7E quality or compliance packages                                    |
+| Scope                        | Authority, path, test, evidence, review, and merge separation                                                          |
+| Limitations                  | No F4 source, helper, workflow, or implementation change is authorized                                                 |
+| Implementation authorization | false                                                                                                                  |
+| Merge authorization          | false                                                                                                                  |
+| Deployment authorization     | false                                                                                                                  |
+| Related governance document  | `docs/governance/R0_7E_IMPLEMENTATION_AND_WORK_PACKAGE_BOUNDARY.md`                                                    |
+| Deferred dependency          | Approved R0-7D frontend authority and separate F4 source authority                                                     |
+| Dependencies                 | R0-7D frontend authority and separate exact F4 authorization                                                           |
+| Exit criteria                | A tracked reproducible F4 validator is independently reviewed and merged                                               |
+| Supersession                 | Supersedes only the unresolved OD-R07E-6 recommendation state in the corrected planning package                        |
 
 ### OD-R07E-7 — Technical-debt authority restoration
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed restoration boundary only; effective after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Treat absent `docs/governance/TECH_DEBT.md` as a separate governance-restoration gap |
-| Owner | Repository Owner |
-| Rationale | Prevent inferred, synthesized, or local-only technical-debt authority |
-| Scope | Separate source reconciliation and restoration only |
-| Limitations | This decision does not create `TECH_DEBT.md`, authorize a dependent validator, or close TD-006 |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md` |
-| Deferred dependency | Approved technical-debt source reconciliation and separate restoration task |
-| Dependencies | Approved source reconciliation and separate exact authorization |
-| Exit criteria | Canonical debt authority is independently reviewed and merged through its own task |
-| Supersession | Supersedes only the unresolved OD-R07E-7 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Date                         | 2026-08-05                                                                                                                |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                         |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                    |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                       |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                         |
+| Normative effect             | Proposed restoration boundary only; effective after genuinely independent review and separately authorized reviewed merge |
+| Approved option              | Treat absent `docs/governance/TECH_DEBT.md` as a separate governance-restoration gap                                      |
+| Owner                        | Repository Owner                                                                                                          |
+| Rationale                    | Prevent inferred, synthesized, or local-only technical-debt authority                                                     |
+| Scope                        | Separate source reconciliation and restoration only                                                                       |
+| Limitations                  | This decision does not create `TECH_DEBT.md`, authorize a dependent validator, or close TD-006                            |
+| Implementation authorization | false                                                                                                                     |
+| Merge authorization          | false                                                                                                                     |
+| Deployment authorization     | false                                                                                                                     |
+| Related governance document  | `docs/governance/R0_7E_NON_CLAIMS_AND_DEFERRED_AUTHORITY.md`                                                              |
+| Deferred dependency          | Approved technical-debt source reconciliation and separate restoration task                                               |
+| Dependencies                 | Approved source reconciliation and separate exact authorization                                                           |
+| Exit criteria                | Canonical debt authority is independently reviewed and merged through its own task                                        |
+| Supersession                 | Supersedes only the unresolved OD-R07E-7 recommendation state in the corrected planning package                           |
 
 ### OD-R07E-8 — Immutable action and artifact pinning
-| Field | Value |
-|-------|-------|
-| Date | 2026-08-05 |
-| Status | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Decision source | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05 |
-| Independent-review source | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be` |
-| Disposition | ADOPTED_WITH_RECORDED_LIMITATIONS |
-| Normative effect | Proposed supply-chain policy only; effective after genuinely independent review and separately authorized reviewed merge |
-| Approved option | Require immutable identities, provenance, integrity verification, evidence, and rollback for future covered changes |
-| Owner | Repository Owner |
-| Rationale | Establish auditable supply-chain control and fail-closed artifact handling |
-| Scope | Third-party and first-party actions, containers, downloads, package dependencies, and generated lockfiles |
-| Limitations | Applies only when a later package is separately authorized; no current workflow or artifact change |
-| Implementation authorization | false |
-| Merge authorization | false |
-| Deployment authorization | false |
-| Related governance document | `docs/governance/R0_7E_ACTION_AND_ARTIFACT_PINNING_POLICY.md` |
-| Deferred dependency | Package-specific authorization and independently reviewed immutable artifact authority |
-| Dependencies | Package-specific owner authorization and independent supply-chain review |
-| Exit criteria | Every touched artifact is verified and rollback-tested or covered by a time-bounded owner exception |
-| Supersession | Supersedes only the unresolved OD-R07E-8 recommendation state in the corrected planning package |
+
+| Field                        | Value                                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Date                         | 2026-08-05                                                                                                               |
+| Status                       | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                        |
+| Decision source              | Owner Decision — R0-7E Governance and Planning Disposition, 2026-08-05                                                   |
+| Independent-review source    | `R0_7E_P2_R2_INDEPENDENT_REVIEW = GO` at `5987e35ff8931b91a7f38dbc4fc214f1f4e4d9be`                                      |
+| Disposition                  | ADOPTED_WITH_RECORDED_LIMITATIONS                                                                                        |
+| Normative effect             | Proposed supply-chain policy only; effective after genuinely independent review and separately authorized reviewed merge |
+| Approved option              | Require immutable identities, provenance, integrity verification, evidence, and rollback for future covered changes      |
+| Owner                        | Repository Owner                                                                                                         |
+| Rationale                    | Establish auditable supply-chain control and fail-closed artifact handling                                               |
+| Scope                        | Third-party and first-party actions, containers, downloads, package dependencies, and generated lockfiles                |
+| Limitations                  | Applies only when a later package is separately authorized; no current workflow or artifact change                       |
+| Implementation authorization | false                                                                                                                    |
+| Merge authorization          | false                                                                                                                    |
+| Deployment authorization     | false                                                                                                                    |
+| Related governance document  | `docs/governance/R0_7E_ACTION_AND_ARTIFACT_PINNING_POLICY.md`                                                            |
+| Deferred dependency          | Package-specific authorization and independently reviewed immutable artifact authority                                   |
+| Dependencies                 | Package-specific owner authorization and independent supply-chain review                                                 |
+| Exit criteria                | Every touched artifact is verified and rollback-tested or covered by a time-bounded owner exception                      |
+| Supersession                 | Supersedes only the unresolved OD-R07E-8 recommendation state in the corrected planning package                          |
 
 ---
 
@@ -558,365 +588,410 @@ mandatory before Draft PR consideration.
 This Part is the **authoritative live Model D register** (Governance Hierarchy Level 1). Timestamped evidence packages under `docs/evidence/**` remain Level 7 historical records and do not override this Part.
 
 ### Model D aggregate state
-| Field | Value |
-|-------|-------|
-| MODEL_D_FORMAL_UPDATE | ACCEPTED |
-| MODEL_D_TOTAL_ACTUAL | 17 |
-| MODEL_D_RESOLVED_ACTUAL | 9 |
-| MODEL_D_UNRESOLVED_ACTUAL | 8 |
-| MODEL_D_MB_E_COUNT | 8 |
-| MODEL_D_MB_B_COUNT | 0 |
-| MODEL_D_ARITHMETIC_VALID | true (17 = 9 + 8; 8 = 8 + 0) |
-| RESOLVED_ITEM_SET | MD01, MD04, MD08, MD11, MD13, MD14, MD15, MD16, MD17 |
-| UNRESOLVED_ITEM_SET | MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12 |
-| Prior formal aggregate (pre-MD08-FR2) | 17/8/9/9/0 |
-| Earlier formal aggregate (pre-MD13-FR1) | 17/7/10/10/0 |
-| Earlier formal aggregate (pre-MD01-FR1) | 17/6/11/11/0 |
-| Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL |
-| Last formal reconciliation | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE |
-| Last Part E status alignment | R0-7D-MD05-CANONICAL-ARCHITECTURE-ALTERNATIVE-A-DECISION-FREEZE-R2-POST-INTEGRATION-STATUS-ALIGNMENT-R3 |
-| Last MD05 exact scope freeze | R0-7D-MD05-ALTERNATIVE-A-IMPLEMENTATION-BLUEPRINT-AND-EXACT-SCOPE-FREEZE-R1 (candidate pending independent review) |
-| Last MD05 phase 0 role-authority freeze | R0-7D-MD05-PHASE0-PREREQUISITE-AUTHORITY-FREEZE-R2 (candidate pending independent review) |
-| COMPLAINT_HANDLER_ROLE | COMPLAINT_HANDLER (adopted; not implemented) |
-| STAFF_ROLEADM | adopted as RBAC Role Administrator; not implemented |
-| ROLE_AUTHORITY_SOURCE | EXTERNAL_OIDC_IDP_CANONICAL |
-| ROLE_GRANT_REVOKE_AUTHORITY | FROZEN to STAFF_ROLEADM; not implemented |
-| LOCAL_DATABASE_ROLE_AUTHORITY | false |
-| Last unresolved-item definition freeze | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1 |
-| MD05 architecture decision freeze R2 | Alternative A architecture decision CLOSED_ACCEPTED via authoritative I2 PASS_ACCEPT (31/0/1); MD05 remains unresolved; Model D unchanged |
-| MD05 blueprint and exact scope freeze R1 | Path boundary frozen at ADDITIONAL_PATHS = none; SoD matrix frozen; implementation blueprint recorded; implementation unauthorized; Model D unchanged |
+
+| Field                                      | Value                                                                                                                                                                                   |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MODEL_D_FORMAL_UPDATE                      | ACCEPTED                                                                                                                                                                                |
+| MODEL_D_TOTAL_ACTUAL                       | 17                                                                                                                                                                                      |
+| MODEL_D_RESOLVED_ACTUAL                    | 9                                                                                                                                                                                       |
+| MODEL_D_UNRESOLVED_ACTUAL                  | 8                                                                                                                                                                                       |
+| MODEL_D_MB_E_COUNT                         | 8                                                                                                                                                                                       |
+| MODEL_D_MB_B_COUNT                         | 0                                                                                                                                                                                       |
+| MODEL_D_ARITHMETIC_VALID                   | true (17 = 9 + 8; 8 = 8 + 0)                                                                                                                                                            |
+| RESOLVED_ITEM_SET                          | MD01, MD04, MD08, MD11, MD13, MD14, MD15, MD16, MD17                                                                                                                                    |
+| UNRESOLVED_ITEM_SET                        | MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12                                                                                                                                          |
+| Prior formal aggregate (pre-MD08-FR2)      | 17/8/9/9/0                                                                                                                                                                              |
+| Earlier formal aggregate (pre-MD13-FR1)    | 17/7/10/10/0                                                                                                                                                                            |
+| Earlier formal aggregate (pre-MD01-FR1)    | 17/6/11/11/0                                                                                                                                                                            |
+| Prior prospective-only marker 17/7/10/10/0 | SUPERSEDED_BY_MD01_FR1_ACTUAL                                                                                                                                                           |
+| Last formal reconciliation                 | R0-7D-MD08-MODEL-D-FR2-CLEAN-REISSUANCE                                                                                                                                                 |
+| Last Part E status alignment               | R0-7D-MD05-CANONICAL-ARCHITECTURE-ALTERNATIVE-A-DECISION-FREEZE-R2-POST-INTEGRATION-STATUS-ALIGNMENT-R3                                                                                 |
+| Last MD05 exact scope freeze               | R0-7D-MD05-ALTERNATIVE-A-IMPLEMENTATION-BLUEPRINT-AND-EXACT-SCOPE-FREEZE-R1 (candidate pending independent review)                                                                      |
+| Last MD05 phase 0 role-authority freeze    | R0-7D-MD05-PHASE0-PREREQUISITE-AUTHORITY-FREEZE-R2 (candidate pending independent review)                                                                                               |
+| COMPLAINT_HANDLER_ROLE                     | COMPLAINT_HANDLER (adopted; not implemented)                                                                                                                                            |
+| STAFF_ROLEADM                              | adopted as RBAC Role Administrator; not implemented                                                                                                                                     |
+| ROLE_AUTHORITY_SOURCE                      | EXTERNAL_OIDC_IDP_CANONICAL                                                                                                                                                             |
+| ROLE_GRANT_REVOKE_AUTHORITY                | FROZEN to STAFF_ROLEADM; not implemented                                                                                                                                                |
+| LOCAL_DATABASE_ROLE_AUTHORITY              | false                                                                                                                                                                                   |
+| Last unresolved-item definition freeze     | R0-7D-MODEL-D-UNRESOLVED-ITEM-DEFINITION-FREEZE-R1                                                                                                                                      |
+| MD05 architecture decision freeze R2       | Alternative A architecture decision CLOSED_ACCEPTED via authoritative I2 PASS_ACCEPT (31/0/1); MD05 remains unresolved; Model D unchanged                                               |
+| MD05 blueprint and exact scope freeze R1   | Path boundary frozen at ADDITIONAL_PATHS = none; SoD matrix frozen; implementation blueprint recorded; implementation unauthorized; Model D unchanged                                   |
+| MD05 PKG-01 to PKG-07 execution backlog    | PROSPECTIVE_OWNER_DELEGATED_TECHNICAL_BACKLOG_2026; historical package map not recovered and not claimed; seven packages; PKG-01 and PKG-02 READY; PKG-03 through PKG-07 BLOCKED_POLICY |
+| Selected first ready package               | PKG-01 executable role-administration application boundary                                                                                                                              |
+| MD05 formally resolved by this backlog     | false                                                                                                                                                                                   |
+| MD05_SCOPE_READY                           | false                                                                                                                                                                                   |
+| Model D mutation by this backlog           | 0; MODEL_D remains 17/9/8/8/0                                                                                                                                                           |
+| Deployment authorization                   | false                                                                                                                                                                                   |
+| R0-7E implementation authorization         | false                                                                                                                                                                                   |
+| General C3-S9 implementation resume        | NOT_GRANTED                                                                                                                                                                             |
 
 ### MD01 — C3-S10 DashboardLayout / CSP runtime formal reconciliation
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-09-11T12:01:28Z |
-| Status | CLOSED_ACCEPTED |
-| MD01_FORMALLY_RESOLVED | true |
-| Owner authorization | OWNER_AUTHORIZE_R0_7D_C3S10_POST_R6_FORMAL_RECONCILIATION (FR1; single-use; consumed) |
-| Prerequisite independent review | R0_7D_C3S10_R6_INDEPENDENT_POSTMERGE_REVIEW = PASS / ACCEPT; validation 50/50; Codex mutation 0 |
-| Merge authority | PR 31; MERGE_COMMIT `e60136b993ce199dcc033045049a505c7ec8f6a1`; parents `8a7ff77a1d0e7c891bf99b1268c3dac48f9ff548` + `03c04386ac55cbaa593479418e748a06c64b9ac4`; tree `fd79d27bd1a23929f42d25c801578c0fe2e37041` |
-| Clean remediation source | `86aca155e4f3924617c290bb4771bd188dbefa73` from clean base `e8cd567167c29466544361d0e5ba361b68b96331` |
-| Rejected lineage excluded | `06bb55b6bd5424f16a86ead9af41abaa87d301e5` (and 243944 / 01f1c9) not ancestors of accepted head |
-| Resolution basis | Accepted C3-S10 R4CR1 clean remediation + R5 ACCEPT + I1 merge + R6 postmerge PASS; real DashboardLayout runtime proof; E2E-only stubs; four rejected production shims absent; NEW normalized TS/build = 0; direct Vite baseline-red CSS debt only; CI green not claimed; evidence immutable |
-| C3_S10_STATUS | CLOSED_ACCEPTED |
-| C3S10_FORMAL_RECONCILIATION_STATUS | COMPLETED_PENDING_INDEPENDENT_REVIEW |
-| Newly resolved by FR1 | MD01 only |
-| Non-effects | Does not resolve any other Model D item; does not grant general C3-S9 resume; does not close OQ-4; does not close R0-7D; does not authorize R0-7E; does not authorize deployment; does not close CI debt; does not claim CI green; does not treat the earlier PowerShell alias-collision background job as PASS evidence |
-| Evidence | `docs/evidence/r0-7d-c3s10-md01-formal-reconciliation-r1/20260911120128/` |
-| Supersession | Supersedes pre-FR1 MD01_FORMALLY_RESOLVED=false and prospective-only 17/7/10/10/0 |
+
+| Field                              | Value                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Date (UTC)                         | 2026-09-11T12:01:28Z                                                                                                                                                                                                                                                                                                     |
+| Status                             | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                          |
+| MD01_FORMALLY_RESOLVED             | true                                                                                                                                                                                                                                                                                                                     |
+| Owner authorization                | OWNER_AUTHORIZE_R0_7D_C3S10_POST_R6_FORMAL_RECONCILIATION (FR1; single-use; consumed)                                                                                                                                                                                                                                    |
+| Prerequisite independent review    | R0_7D_C3S10_R6_INDEPENDENT_POSTMERGE_REVIEW = PASS / ACCEPT; validation 50/50; Codex mutation 0                                                                                                                                                                                                                          |
+| Merge authority                    | PR 31; MERGE_COMMIT `e60136b993ce199dcc033045049a505c7ec8f6a1`; parents `8a7ff77a1d0e7c891bf99b1268c3dac48f9ff548` + `03c04386ac55cbaa593479418e748a06c64b9ac4`; tree `fd79d27bd1a23929f42d25c801578c0fe2e37041`                                                                                                         |
+| Clean remediation source           | `86aca155e4f3924617c290bb4771bd188dbefa73` from clean base `e8cd567167c29466544361d0e5ba361b68b96331`                                                                                                                                                                                                                    |
+| Rejected lineage excluded          | `06bb55b6bd5424f16a86ead9af41abaa87d301e5` (and 243944 / 01f1c9) not ancestors of accepted head                                                                                                                                                                                                                          |
+| Resolution basis                   | Accepted C3-S10 R4CR1 clean remediation + R5 ACCEPT + I1 merge + R6 postmerge PASS; real DashboardLayout runtime proof; E2E-only stubs; four rejected production shims absent; NEW normalized TS/build = 0; direct Vite baseline-red CSS debt only; CI green not claimed; evidence immutable                             |
+| C3_S10_STATUS                      | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                          |
+| C3S10_FORMAL_RECONCILIATION_STATUS | COMPLETED_PENDING_INDEPENDENT_REVIEW                                                                                                                                                                                                                                                                                     |
+| Newly resolved by FR1              | MD01 only                                                                                                                                                                                                                                                                                                                |
+| Non-effects                        | Does not resolve any other Model D item; does not grant general C3-S9 resume; does not close OQ-4; does not close R0-7D; does not authorize R0-7E; does not authorize deployment; does not close CI debt; does not claim CI green; does not treat the earlier PowerShell alias-collision background job as PASS evidence |
+| Evidence                           | `docs/evidence/r0-7d-c3s10-md01-formal-reconciliation-r1/20260911120128/`                                                                                                                                                                                                                                                |
+| Supersession                       | Supersedes pre-FR1 MD01_FORMALLY_RESOLVED=false and prospective-only 17/7/10/10/0                                                                                                                                                                                                                                        |
 
 ### MD13 — IsoStaticPages residual formal reconciliation
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-09-11T22:09:38Z |
-| Status | CLOSED_ACCEPTED |
-| MD13_FORMALLY_RESOLVED | true |
-| Owner authorization | OWNER_AUTHORIZE_R0_7D_MD13_MODEL_D_FORMAL_RECONCILIATION_R1 (single-use; consumed) |
-| Prerequisite independent review | R0_7D_MD13_ISOSTATICPAGES_I2_POSTMERGE_REVIEW = PASS / ACCEPT; validation 36/36; Codex mutation 0 |
-| Merge authority | PR 33; MERGE_COMMIT `453ba1599317fcfb1d836ea24e1771ba7db2acd9`; parents `e9cc637aa8d1a6c9a2e565cc8d8340d48853057f` + `f5e43e3ccfd0cd42f9c058e270fae6e2b0d16219`; tree `ac0c1cc3933c91af8814a298eb1e2ac410f0d504` |
-| Accepted lineage | R1 `9b53d5262c395d45401747ea86a522ad3c8f9619`; R2 `f5e43e3ccfd0cd42f9c058e270fae6e2b0d16219`; historical R1 rejection preserved; R2 remediation accepted |
-| Resolution basis | PR 33 integrated the exact ten-path MD13 residual package; merge tree equals the accepted R2 tree; independent post-merge review passed 36/36; real `IsoReportsPage` identity test passed 3/3; Vitest-only `api-reports` alias preserved; production shim absent; evidence immutable |
-| MD13_STATUS | CLOSED_ACCEPTED |
-| MD13_FORMAL_RECONCILIATION_STATUS | COMPLETED_PENDING_INDEPENDENT_REVIEW |
-| Newly resolved by MD13 FR1 | MD13 only |
-| Non-effects | Does not resolve MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E or deployment; does not close CI debt; does not claim CI green |
-| Evidence | `docs/evidence/r0-7d-md13-model-d-formal-reconciliation-r1/20260911220938/` |
-| Supersession | Supersedes only the formal MD13 unresolved MB_E state at aggregate 17/7/10/10/0 |
+
+| Field                             | Value                                                                                                                                                                                                                                                                                |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Date (UTC)                        | 2026-09-11T22:09:38Z                                                                                                                                                                                                                                                                 |
+| Status                            | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                      |
+| MD13_FORMALLY_RESOLVED            | true                                                                                                                                                                                                                                                                                 |
+| Owner authorization               | OWNER_AUTHORIZE_R0_7D_MD13_MODEL_D_FORMAL_RECONCILIATION_R1 (single-use; consumed)                                                                                                                                                                                                   |
+| Prerequisite independent review   | R0_7D_MD13_ISOSTATICPAGES_I2_POSTMERGE_REVIEW = PASS / ACCEPT; validation 36/36; Codex mutation 0                                                                                                                                                                                    |
+| Merge authority                   | PR 33; MERGE_COMMIT `453ba1599317fcfb1d836ea24e1771ba7db2acd9`; parents `e9cc637aa8d1a6c9a2e565cc8d8340d48853057f` + `f5e43e3ccfd0cd42f9c058e270fae6e2b0d16219`; tree `ac0c1cc3933c91af8814a298eb1e2ac410f0d504`                                                                     |
+| Accepted lineage                  | R1 `9b53d5262c395d45401747ea86a522ad3c8f9619`; R2 `f5e43e3ccfd0cd42f9c058e270fae6e2b0d16219`; historical R1 rejection preserved; R2 remediation accepted                                                                                                                             |
+| Resolution basis                  | PR 33 integrated the exact ten-path MD13 residual package; merge tree equals the accepted R2 tree; independent post-merge review passed 36/36; real `IsoReportsPage` identity test passed 3/3; Vitest-only `api-reports` alias preserved; production shim absent; evidence immutable |
+| MD13_STATUS                       | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                      |
+| MD13_FORMAL_RECONCILIATION_STATUS | COMPLETED_PENDING_INDEPENDENT_REVIEW                                                                                                                                                                                                                                                 |
+| Newly resolved by MD13 FR1        | MD13 only                                                                                                                                                                                                                                                                            |
+| Non-effects                       | Does not resolve MD02, MD03, MD05, MD06, MD07, MD08, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E or deployment; does not close CI debt; does not claim CI green                                                 |
+| Evidence                          | `docs/evidence/r0-7d-md13-model-d-formal-reconciliation-r1/20260911220938/`                                                                                                                                                                                                          |
+| Supersession                      | Supersedes only the formal MD13 unresolved MB_E state at aggregate 17/7/10/10/0                                                                                                                                                                                                      |
 
 ### MD08 — certification-ops-labels residual formal reconciliation (FR2 clean reissuance)
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-09-17T17:26:49Z |
-| Status | CLOSED_ACCEPTED |
-| MD08_FORMALLY_RESOLVED | true |
-| MD08_FORMALLY_RESOLVED_ON_INTEGRATION | true |
-| Owner authorization | OWNER_AUTHORIZE_R0_7D_MD08_MODEL_D_FR2_CLEAN_REISSUANCE (single-use; consumed) |
-| Post-integration status alignment | OWNER_AUTHORIZE_R0_7D_MD08_POST_INTEGRATION_STATUS_ALIGNMENT_R3_CLEAN_REISSUANCE (single-use; consumed) |
-| Prerequisite independent review (implementation residual) | R0_7D_MD08_CERTIFICATION_OPS_LABELS_R1_EC1_I2_POSTMERGE_REVIEW = PASS / ACCEPT; QUESTION_COUNT = 40; QUESTION_PASS_COUNT = 40; REVIEW_VALIDATION_STEP_COUNT = 40; REVIEW_VALIDATION_PASS_COUNT = 40; Codex mutation 0 |
-| FR2+EC1 I2 post-merge review | R0_7D_MD08_MODEL_D_FR2_EC1_I2_POSTMERGE_REVIEW = PASS; REVIEW_RECOMMENDATION = ACCEPT; AUTHORIZATION_STATUS = CONSUMED; EXECUTION_ENGINE = CODEX; REVIEWER_INDEPENDENCE_VERIFIED = true; validation 38 PASS / 0 FAIL / 2 NOT_VERIFIED; CURRENT_BLOCKER_COUNT = 0; CURRENT_MAJOR_COUNT = 0; package SHA-256 `3f2e037299b33856ae73507df15b88bdeed68e09dfbe5e25efe4dca109337941` |
-| F09_REMEDIATION_STATUS | CLOSED_ACCEPTED |
-| Historical F09 lineage | Initial implementation R1 failed the independent F09 exact-path gate; rejected history preserved; EC1 cured the exact-path defect and was accepted; do not erase or rewrite the historical F09 failure |
-| Merge authority (implementation residual) | PR 37; MERGE_COMMIT `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_1 `a4e4329d7ab086569c2c19c5a4289253ea8826df`; MERGE_PARENT_2 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260`; MERGE_TREE `f2212dfae62b9557be8b76f6578cd80593327dd3`; MERGE_METHOD = MERGE_COMMIT |
-| Formal reconciliation integration | PR 38; MERGE_COMMIT `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`; MERGE_PARENT_1 `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_2 `051e49fed5199991e6c0755d2f2479d1133d4262`; MERGE_TREE `e03bb6bc7ceab9161fc074bcdfc16e83b2f7c33a`; MERGE_METHOD = MERGE_COMMIT |
-| Accepted implementation lineage | R1 `43d805bdc1231c2695e822fcb6398e772f7af27d`; EC1 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260` |
-| Eight-path implementation scope | Exact eight-path MD08 residual package (R1 + EC1) integrated by PR 37; self-contained string-map contract; `api-governance.ts` production restore count = 0 |
-| Targeted test result | Real-target Vitest 3/3 PASS |
-| Formal transition | 17/8/9/9/0 → 17/9/8/8/0 |
-| Resolution basis | PR 37 integrated the accepted MD08 residual package (labels I2 PASS/ACCEPT 40/40; F09 CLOSED_ACCEPTED via EC1). PR 38 MERGE_COMMIT placed FR2+EC1 tree `e03bb6bc7ceab9161fc074bcdfc16e83b2f7c33a` on `fix/ca-h01-frontend-f4-cutover` at Model D 17/9/8/8/0 with MD08 in RESOLVED_ITEM_SET. Independent Codex I2 post-merge review PASS/ACCEPT recorded the recovered state as `INTEGRATION_AND_BRANCH_RESTORATION_CLOSED_ACCEPTED` under chronology `MERGED_WITH_POSTMERGE_BRANCH_PRESERVATION_DEFECT_SUBSEQUENTLY_CLOSED`. This R3 package aligns only the stale in-tree integration-status fields to that accepted I2 result. |
-| MD08_STATUS | CLOSED_ACCEPTED |
-| MD08_FORMAL_RECONCILIATION_STATUS | FR2_INTEGRATED_I2_CLOSED_ACCEPTED |
-| MD08_FR2_EC1_I2_REVIEW_RESULT | INTEGRATION_AND_BRANCH_RESTORATION_CLOSED_ACCEPTED |
-| FINAL_CHRONOLOGY_CLASSIFICATION | MERGED_WITH_POSTMERGE_BRANCH_PRESERVATION_DEFECT_SUBSEQUENTLY_CLOSED |
-| Newly resolved by MD08 FR2 | MD08 only |
-| Newly resolved by this alignment | none (status alignment only; Model D arithmetic unchanged) |
-| FR1 historical lineage (nonintegrated) | Provisional FR1 commit `dd06ff13636f92d00081b1f607d23994c9a30a19`; recreated FR1 branch commit `147790c1a76685fdb05a72e41bbf850d57992d8f`; FR1 independent review = STOPPED_BLOCKED; neither FR1 attempt is accepted integration authority; FR1 was not concluded REJECT on technical content because review stopped before that conclusion |
-| FR1 branch-mutation statement | FR2 does not retroactively authorize the R1 branch deletion/recreation operation; FR1_RETROACTIVE_AUTHORIZATION_GRANTED = false |
-| Alignment R1 historical lineage (nonintegrated) | Branch `cursor/md08-post-integration-status-alignment-996d` at `a843d9dde7cf8c8133fe12cb70ab15143f04b21e`; no PR opened; not accepted integration authority |
-| Alignment R2 historical lineage (nonintegrated) | Branch `cursor/r0-7d-md08-post-integration-status-alignment-r2-996d` at `db36be62cbcb356559be5e58e8db43566535d002`; issued before hash-verified I2 PASS intake; no PR opened; not accepted integration authority; R3 does not delete, replace, or mutate R1 or R2 |
-| Historical I1 post-merge FAIL | PRESERVED; FAIL_CODE = CANDIDATE_BRANCH_DELETED; original merge instant was not fully conforming; later restoration closed the named-ref defect; I2 did not convert that instant into a PASS |
-| Non-effects | Does not resolve MD02, MD03, MD05, MD06, MD07, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E, deployment, or HD07; does not close CI debt; does not claim CI green; does not erase the historical I1 FAIL or claim that branch preservation was satisfied at the original merge instant; does not treat the two I2 NOT_VERIFIED historical protection/bypass observations as current blockers or as a CI waiver |
-| Evidence | `docs/evidence/r0-7d-md08-model-d-formal-reconciliation-r2/20260917172649/` (immutable FR2+EC1); `docs/evidence/r0-7d-md08-post-integration-status-alignment-r3/20260919062818/` (this R3 alignment). I2 package SHA-256 `3f2e037299b33856ae73507df15b88bdeed68e09dfbe5e25efe4dca109337941` remains external immutable authority. |
-| Supersession | Supersedes only the stale in-tree candidate fields `MD08_FORMALLY_RESOLVED_ON_INTEGRATION=false`, `FR2_PR_AUTHORIZATION_GRANTED=false`, `FR2_MERGE_AUTHORIZATION_GRANTED=false`, and `MD08_FORMAL_RECONCILIATION_STATUS=FR2_CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW` after PR 38 MERGE_COMMIT and I2 PASS/ACCEPT; does not erase FR1 history, alignment R1/R2 history, FR2/EC1 artifacts, or the original I1 FAIL |
+
+| Field                                                     | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date (UTC)                                                | 2026-09-17T17:26:49Z                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Status                                                    | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| MD08_FORMALLY_RESOLVED                                    | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| MD08_FORMALLY_RESOLVED_ON_INTEGRATION                     | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Owner authorization                                       | OWNER_AUTHORIZE_R0_7D_MD08_MODEL_D_FR2_CLEAN_REISSUANCE (single-use; consumed)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Post-integration status alignment                         | OWNER_AUTHORIZE_R0_7D_MD08_POST_INTEGRATION_STATUS_ALIGNMENT_R3_CLEAN_REISSUANCE (single-use; consumed)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Prerequisite independent review (implementation residual) | R0_7D_MD08_CERTIFICATION_OPS_LABELS_R1_EC1_I2_POSTMERGE_REVIEW = PASS / ACCEPT; QUESTION_COUNT = 40; QUESTION_PASS_COUNT = 40; REVIEW_VALIDATION_STEP_COUNT = 40; REVIEW_VALIDATION_PASS_COUNT = 40; Codex mutation 0                                                                                                                                                                                                                                                                                                                                                                                                            |
+| FR2+EC1 I2 post-merge review                              | R0_7D_MD08_MODEL_D_FR2_EC1_I2_POSTMERGE_REVIEW = PASS; REVIEW_RECOMMENDATION = ACCEPT; AUTHORIZATION_STATUS = CONSUMED; EXECUTION_ENGINE = CODEX; REVIEWER_INDEPENDENCE_VERIFIED = true; validation 38 PASS / 0 FAIL / 2 NOT_VERIFIED; CURRENT_BLOCKER_COUNT = 0; CURRENT_MAJOR_COUNT = 0; package SHA-256 `3f2e037299b33856ae73507df15b88bdeed68e09dfbe5e25efe4dca109337941`                                                                                                                                                                                                                                                    |
+| F09_REMEDIATION_STATUS                                    | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Historical F09 lineage                                    | Initial implementation R1 failed the independent F09 exact-path gate; rejected history preserved; EC1 cured the exact-path defect and was accepted; do not erase or rewrite the historical F09 failure                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Merge authority (implementation residual)                 | PR 37; MERGE_COMMIT `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_1 `a4e4329d7ab086569c2c19c5a4289253ea8826df`; MERGE_PARENT_2 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260`; MERGE_TREE `f2212dfae62b9557be8b76f6578cd80593327dd3`; MERGE_METHOD = MERGE_COMMIT                                                                                                                                                                                                                                                                                                                                                         |
+| Formal reconciliation integration                         | PR 38; MERGE_COMMIT `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`; MERGE_PARENT_1 `e33a56d2b0408ad7c3d90b531bb3cd47e8f268a5`; MERGE_PARENT_2 `051e49fed5199991e6c0755d2f2479d1133d4262`; MERGE_TREE `e03bb6bc7ceab9161fc074bcdfc16e83b2f7c33a`; MERGE_METHOD = MERGE_COMMIT                                                                                                                                                                                                                                                                                                                                                         |
+| Accepted implementation lineage                           | R1 `43d805bdc1231c2695e822fcb6398e772f7af27d`; EC1 `a1d3d186f0a08d0bf1e57d8cc92cceeaaf5d6260`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Eight-path implementation scope                           | Exact eight-path MD08 residual package (R1 + EC1) integrated by PR 37; self-contained string-map contract; `api-governance.ts` production restore count = 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Targeted test result                                      | Real-target Vitest 3/3 PASS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Formal transition                                         | 17/8/9/9/0 → 17/9/8/8/0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Resolution basis                                          | PR 37 integrated the accepted MD08 residual package (labels I2 PASS/ACCEPT 40/40; F09 CLOSED_ACCEPTED via EC1). PR 38 MERGE_COMMIT placed FR2+EC1 tree `e03bb6bc7ceab9161fc074bcdfc16e83b2f7c33a` on `fix/ca-h01-frontend-f4-cutover` at Model D 17/9/8/8/0 with MD08 in RESOLVED_ITEM_SET. Independent Codex I2 post-merge review PASS/ACCEPT recorded the recovered state as `INTEGRATION_AND_BRANCH_RESTORATION_CLOSED_ACCEPTED` under chronology `MERGED_WITH_POSTMERGE_BRANCH_PRESERVATION_DEFECT_SUBSEQUENTLY_CLOSED`. This R3 package aligns only the stale in-tree integration-status fields to that accepted I2 result. |
+| MD08_STATUS                                               | CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| MD08_FORMAL_RECONCILIATION_STATUS                         | FR2_INTEGRATED_I2_CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| MD08_FR2_EC1_I2_REVIEW_RESULT                             | INTEGRATION_AND_BRANCH_RESTORATION_CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| FINAL_CHRONOLOGY_CLASSIFICATION                           | MERGED_WITH_POSTMERGE_BRANCH_PRESERVATION_DEFECT_SUBSEQUENTLY_CLOSED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Newly resolved by MD08 FR2                                | MD08 only                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Newly resolved by this alignment                          | none (status alignment only; Model D arithmetic unchanged)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| FR1 historical lineage (nonintegrated)                    | Provisional FR1 commit `dd06ff13636f92d00081b1f607d23994c9a30a19`; recreated FR1 branch commit `147790c1a76685fdb05a72e41bbf850d57992d8f`; FR1 independent review = STOPPED_BLOCKED; neither FR1 attempt is accepted integration authority; FR1 was not concluded REJECT on technical content because review stopped before that conclusion                                                                                                                                                                                                                                                                                      |
+| FR1 branch-mutation statement                             | FR2 does not retroactively authorize the R1 branch deletion/recreation operation; FR1_RETROACTIVE_AUTHORIZATION_GRANTED = false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Alignment R1 historical lineage (nonintegrated)           | Branch `cursor/md08-post-integration-status-alignment-996d` at `a843d9dde7cf8c8133fe12cb70ab15143f04b21e`; no PR opened; not accepted integration authority                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Alignment R2 historical lineage (nonintegrated)           | Branch `cursor/r0-7d-md08-post-integration-status-alignment-r2-996d` at `db36be62cbcb356559be5e58e8db43566535d002`; issued before hash-verified I2 PASS intake; no PR opened; not accepted integration authority; R3 does not delete, replace, or mutate R1 or R2                                                                                                                                                                                                                                                                                                                                                                |
+| Historical I1 post-merge FAIL                             | PRESERVED; FAIL_CODE = CANDIDATE_BRANCH_DELETED; original merge instant was not fully conforming; later restoration closed the named-ref defect; I2 did not convert that instant into a PASS                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Non-effects                                               | Does not resolve MD02, MD03, MD05, MD06, MD07, MD09, MD10, or MD12; does not grant general C3-S9 resume; does not close OQ-4 or R0-7D; does not authorize R0-7E, deployment, or HD07; does not close CI debt; does not claim CI green; does not erase the historical I1 FAIL or claim that branch preservation was satisfied at the original merge instant; does not treat the two I2 NOT_VERIFIED historical protection/bypass observations as current blockers or as a CI waiver                                                                                                                                               |
+| Evidence                                                  | `docs/evidence/r0-7d-md08-model-d-formal-reconciliation-r2/20260917172649/` (immutable FR2+EC1); `docs/evidence/r0-7d-md08-post-integration-status-alignment-r3/20260919062818/` (this R3 alignment). I2 package SHA-256 `3f2e037299b33856ae73507df15b88bdeed68e09dfbe5e25efe4dca109337941` remains external immutable authority.                                                                                                                                                                                                                                                                                                |
+| Supersession                                              | Supersedes only the stale in-tree candidate fields `MD08_FORMALLY_RESOLVED_ON_INTEGRATION=false`, `FR2_PR_AUTHORIZATION_GRANTED=false`, `FR2_MERGE_AUTHORIZATION_GRANTED=false`, and `MD08_FORMAL_RECONCILIATION_STATUS=FR2_CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW` after PR 38 MERGE_COMMIT and I2 PASS/ACCEPT; does not erase FR1 history, alignment R1/R2 history, FR2/EC1 artifacts, or the original I1 FAIL                                                                                                                                                                                                          |
 
 ### Previously resolved Model D items (preserved; not reopened by MD08 FR2)
-| Item | Status |
-|------|--------|
+
+| Item | Status              |
+| ---- | ------------------- |
 | MD01 | RESOLVED (MD01 FR1) |
-| MD04 | RESOLVED (pre-FR1) |
-| MD11 | RESOLVED (pre-FR1) |
+| MD04 | RESOLVED (pre-FR1)  |
+| MD11 | RESOLVED (pre-FR1)  |
 | MD13 | RESOLVED (MD13 FR1) |
-| MD14 | RESOLVED (pre-FR1) |
-| MD15 | RESOLVED (pre-FR1) |
-| MD16 | RESOLVED (pre-FR1) |
-| MD17 | RESOLVED (pre-FR1) |
+| MD14 | RESOLVED (pre-FR1)  |
+| MD15 | RESOLVED (pre-FR1)  |
+| MD16 | RESOLVED (pre-FR1)  |
+| MD17 | RESOLVED (pre-FR1)  |
 
 ### Preserved governance nonclaims after MD08 FR2
-| Field | Value |
-|-------|-------|
-| MD02_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD03_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD05_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD06_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD07_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD09_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD10_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| MD12_FORMALLY_RESOLVED_BY_THIS_PACKAGE | false |
-| GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED |
-| EDUCATION_CLUSTER_MD02_MD03_MD10_STATUS | DEFERRED_PENDING_AD1C_AND_VERIFIABLE_IDENTITY_AUTHORITY |
-| HD06_DECISION | KEEP_DEFERRED |
-| HD06_BINDING_APPROVED | false |
-| DEJANA_ACCOUNT_BINDING_VERIFIED | false |
-| HD07_READY | false |
-| OQ_4_STATUS | OPEN |
-| R0_7D | OPEN_IMPLEMENTATION_BLOCKER |
-| R0_7E_IMPLEMENTATION_AUTHORIZATION | false |
-| DEPLOYMENT_AUTHORIZATION | false |
-| PRE_EXISTING_CI_DEBT | OPEN |
-| OPEN_PRE_EXISTING_CI_DEBT_COUNT | 4 |
-| CI_SEED_EXPECTATION_DEBT | OPEN |
-| CI_FAILURE_WAIVER_GRANTED | false |
-| CI_GREEN_CLAIMED | false |
-| PR37_CI_CHECKS_AT_I2 | compliance-iso:FAILURE; quality:FAILURE; f4-frontend-cutover:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED |
-| PR37_CI_CHECK_STATUS | 5_FAILURE_1_SKIPPED |
-| FR1_RETROACTIVE_AUTHORIZATION_GRANTED | false |
-| FR1_INTEGRATION_AUTHORIZATION_GRANTED | false |
-| FR1_INTEGRATED | false |
-| ALIGNMENT_R1_INTEGRATED | false |
-| ALIGNMENT_R2_INTEGRATED | false |
-| FR2_PR_AUTHORIZATION_GRANTED | true (consumed; PR 38) |
-| FR2_MERGE_AUTHORIZATION_GRANTED | true (consumed; MERGE_COMMIT `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`) |
-| MD08_FORMALLY_RESOLVED_ON_INTEGRATION | true |
-| I2_PASS_CLAIMED | true (exact merged/recovered MD08 state only; Codex I2 PASS/ACCEPT) |
-| I2_AUTHORIZATION_CONSUMED | true (by independent Codex I2; not by this R3 package) |
-| I1_HISTORICAL_FAIL_PRESERVED | true |
-| I1_HISTORICAL_FAIL_CODE | CANDIDATE_BRANCH_DELETED |
-| I2_NOT_VERIFIED_COUNT | 2 (historical protection/bypass observations; not current blockers) |
-| PR38_CI_CHECKS_RECORDED | compliance-iso:FAILURE; quality:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED |
-| PR38_CI_CHECK_STATUS | 4_FAILURE_1_SKIPPED |
-| MERGE_COMMIT_CHECK_RUNS | none recorded on `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97` |
-| UNRESOLVED_ITEM_DEFINITION_FREEZE_R1 | FROZEN_PROSPECTIVE |
-| DEFINITION_ORIGIN | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MAPPING_RULE | H1_H2_PLUS_INVENTORY_ORDER_WITHIN_FUNCTIONAL_GROUP |
-| HISTORICAL_MAPPING_RECOVERED | false |
-| HISTORICAL_MAPPING_CLAIMED | false |
-| ORIGINAL_DEFINITION_AUTHORITY_FOUND | false |
-| DEFINITION_FREEZE_PERFORMED | true |
-| MODEL_D_MUTATION_COUNT | 0 |
-| NEWLY_RESOLVED_ITEM_COUNT | 0 |
-| ADDITIONAL_PATH_COUNT | 0 |
-| IMPLEMENTATION_AUTHORIZATION | false |
-| MD06_IS_NOT_HD06 | true |
-| MD07_IS_NOT_HD07 | true |
-| MANUAL_IDENTITY_REVIEW_PANEL_STATUS | OUTSIDE_PROSPECTIVE_MODEL_D_EIGHT_PATH_FREEZE |
+
+| Field                                             | Value                                                                                                                         |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| MD02_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD03_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD05_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD06_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD07_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD09_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD10_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| MD12_FORMALLY_RESOLVED_BY_THIS_PACKAGE            | false                                                                                                                         |
+| GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED                                                                                                                   |
+| EDUCATION_CLUSTER_MD02_MD03_MD10_STATUS           | DEFERRED_PENDING_AD1C_AND_VERIFIABLE_IDENTITY_AUTHORITY                                                                       |
+| HD06_DECISION                                     | KEEP_DEFERRED                                                                                                                 |
+| HD06_BINDING_APPROVED                             | false                                                                                                                         |
+| DEJANA_ACCOUNT_BINDING_VERIFIED                   | false                                                                                                                         |
+| HD07_READY                                        | false                                                                                                                         |
+| OQ_4_STATUS                                       | OPEN                                                                                                                          |
+| R0_7D                                             | OPEN_IMPLEMENTATION_BLOCKER                                                                                                   |
+| R0_7E_IMPLEMENTATION_AUTHORIZATION                | false                                                                                                                         |
+| DEPLOYMENT_AUTHORIZATION                          | false                                                                                                                         |
+| PRE_EXISTING_CI_DEBT                              | OPEN                                                                                                                          |
+| OPEN_PRE_EXISTING_CI_DEBT_COUNT                   | 4                                                                                                                             |
+| CI_SEED_EXPECTATION_DEBT                          | OPEN                                                                                                                          |
+| CI_FAILURE_WAIVER_GRANTED                         | false                                                                                                                         |
+| CI_GREEN_CLAIMED                                  | false                                                                                                                         |
+| PR37_CI_CHECKS_AT_I2                              | compliance-iso:FAILURE; quality:FAILURE; f4-frontend-cutover:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED |
+| PR37_CI_CHECK_STATUS                              | 5_FAILURE_1_SKIPPED                                                                                                           |
+| FR1_RETROACTIVE_AUTHORIZATION_GRANTED             | false                                                                                                                         |
+| FR1_INTEGRATION_AUTHORIZATION_GRANTED             | false                                                                                                                         |
+| FR1_INTEGRATED                                    | false                                                                                                                         |
+| ALIGNMENT_R1_INTEGRATED                           | false                                                                                                                         |
+| ALIGNMENT_R2_INTEGRATED                           | false                                                                                                                         |
+| FR2_PR_AUTHORIZATION_GRANTED                      | true (consumed; PR 38)                                                                                                        |
+| FR2_MERGE_AUTHORIZATION_GRANTED                   | true (consumed; MERGE_COMMIT `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`)                                                      |
+| MD08_FORMALLY_RESOLVED_ON_INTEGRATION             | true                                                                                                                          |
+| I2_PASS_CLAIMED                                   | true (exact merged/recovered MD08 state only; Codex I2 PASS/ACCEPT)                                                           |
+| I2_AUTHORIZATION_CONSUMED                         | true (by independent Codex I2; not by this R3 package)                                                                        |
+| I1_HISTORICAL_FAIL_PRESERVED                      | true                                                                                                                          |
+| I1_HISTORICAL_FAIL_CODE                           | CANDIDATE_BRANCH_DELETED                                                                                                      |
+| I2_NOT_VERIFIED_COUNT                             | 2 (historical protection/bypass observations; not current blockers)                                                           |
+| PR38_CI_CHECKS_RECORDED                           | compliance-iso:FAILURE; quality:FAILURE; accessibility:FAILURE; database:FAILURE; docker:SKIPPED                              |
+| PR38_CI_CHECK_STATUS                              | 4_FAILURE_1_SKIPPED                                                                                                           |
+| MERGE_COMMIT_CHECK_RUNS                           | none recorded on `c9ef883d8b4b75f0841595731ce2a0b67e7dcc97`                                                                   |
+| UNRESOLVED_ITEM_DEFINITION_FREEZE_R1              | FROZEN_PROSPECTIVE                                                                                                            |
+| DEFINITION_ORIGIN                                 | PROSPECTIVE_OWNER_DEFINITION_2026                                                                                             |
+| MAPPING_RULE                                      | H1_H2_PLUS_INVENTORY_ORDER_WITHIN_FUNCTIONAL_GROUP                                                                            |
+| HISTORICAL_MAPPING_RECOVERED                      | false                                                                                                                         |
+| HISTORICAL_MAPPING_CLAIMED                        | false                                                                                                                         |
+| ORIGINAL_DEFINITION_AUTHORITY_FOUND               | false                                                                                                                         |
+| DEFINITION_FREEZE_PERFORMED                       | true                                                                                                                          |
+| MODEL_D_MUTATION_COUNT                            | 0                                                                                                                             |
+| NEWLY_RESOLVED_ITEM_COUNT                         | 0                                                                                                                             |
+| ADDITIONAL_PATH_COUNT                             | 0                                                                                                                             |
+| IMPLEMENTATION_AUTHORIZATION                      | false                                                                                                                         |
+| MD06_IS_NOT_HD06                                  | true                                                                                                                          |
+| MD07_IS_NOT_HD07                                  | true                                                                                                                          |
+| MANUAL_IDENTITY_REVIEW_PANEL_STATUS               | OUTSIDE_PROSPECTIVE_MODEL_D_EIGHT_PATH_FREEZE                                                                                 |
 
 ### Unresolved item definition freeze R1 (prospective owner map 2026)
 
 This subsection freezes PRIMARY_PATH definitions for the eight unresolved Model D items. It does **not** resolve those items, does not change MODEL_D = 17/9/8/8/0, and does not authorize implementation.
 
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-09-20T18:54:28Z |
-| Status | FROZEN_PROSPECTIVE |
-| DEFINITION_FREEZE_PERFORMED | true |
-| DEFINITION_ORIGIN | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MAPPING_RULE | H1_H2_PLUS_INVENTORY_ORDER_WITHIN_FUNCTIONAL_GROUP |
-| HISTORICAL_MAPPING_RECOVERED | false |
-| HISTORICAL_MAPPING_CLAIMED | false |
-| ORIGINAL_DEFINITION_AUTHORITY_FOUND | false |
-| Owner map approval | OWNER_APPROVE_R0_7D_MODEL_D_PROSPECTIVE_DEFINITION_MAP_R1 (single-use; consumed) |
-| Owner freeze authorization | OWNER_AUTHORIZE_R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1 (single-use; consumed) |
-| Recovery predecessor | R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_RECOVERY_R1 = STOPPED_BLOCKED / STOPPED_BLOCKED_ORIGINAL_DEFINITION_AUTHORITY_NOT_FOUND; ZIP SHA-256 `0c0d7a129fe87c0c5e41e29f6e66c433ace9ad33412c315e627a579079e47b69` |
-| MODEL_D | 17/9/8/8/0 |
-| MODEL_D_MUTATION_COUNT | 0 |
-| NEWLY_RESOLVED_ITEM_COUNT | 0 |
-| ADDITIONAL_PATH_COUNT | 0 |
-| IMPLEMENTATION_AUTHORIZATION | false |
-| GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED |
-| Evidence | `docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/` |
-| Decision record | `docs/governance/R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md` |
-| Supersession | Supersedes only the undefined PRIMARY_PATH state of the eight unresolved IDs; does not supersede MD08 FR2, R3 alignment, HD06 DEFER, or HD07_READY = false |
+| Field                                             | Value                                                                                                                                                                                                            |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date (UTC)                                        | 2026-09-20T18:54:28Z                                                                                                                                                                                             |
+| Status                                            | FROZEN_PROSPECTIVE                                                                                                                                                                                               |
+| DEFINITION_FREEZE_PERFORMED                       | true                                                                                                                                                                                                             |
+| DEFINITION_ORIGIN                                 | PROSPECTIVE_OWNER_DEFINITION_2026                                                                                                                                                                                |
+| MAPPING_RULE                                      | H1_H2_PLUS_INVENTORY_ORDER_WITHIN_FUNCTIONAL_GROUP                                                                                                                                                               |
+| HISTORICAL_MAPPING_RECOVERED                      | false                                                                                                                                                                                                            |
+| HISTORICAL_MAPPING_CLAIMED                        | false                                                                                                                                                                                                            |
+| ORIGINAL_DEFINITION_AUTHORITY_FOUND               | false                                                                                                                                                                                                            |
+| Owner map approval                                | OWNER_APPROVE_R0_7D_MODEL_D_PROSPECTIVE_DEFINITION_MAP_R1 (single-use; consumed)                                                                                                                                 |
+| Owner freeze authorization                        | OWNER_AUTHORIZE_R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1 (single-use; consumed)                                                                                                                        |
+| Recovery predecessor                              | R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_RECOVERY_R1 = STOPPED_BLOCKED / STOPPED_BLOCKED_ORIGINAL_DEFINITION_AUTHORITY_NOT_FOUND; ZIP SHA-256 `0c0d7a129fe87c0c5e41e29f6e66c433ace9ad33412c315e627a579079e47b69` |
+| MODEL_D                                           | 17/9/8/8/0                                                                                                                                                                                                       |
+| MODEL_D_MUTATION_COUNT                            | 0                                                                                                                                                                                                                |
+| NEWLY_RESOLVED_ITEM_COUNT                         | 0                                                                                                                                                                                                                |
+| ADDITIONAL_PATH_COUNT                             | 0                                                                                                                                                                                                                |
+| IMPLEMENTATION_AUTHORIZATION                      | false                                                                                                                                                                                                            |
+| GENERAL_C3_S9_IMPLEMENTATION_RESUME_AUTHORIZATION | NOT_GRANTED                                                                                                                                                                                                      |
+| Evidence                                          | `docs/evidence/r0-7d-model-d-unresolved-item-definition-freeze-r1/20260920185428/`                                                                                                                               |
+| Decision record                                   | `docs/governance/R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md`                                                                                                                                          |
+| Supersession                                      | Supersedes only the undefined PRIMARY_PATH state of the eight unresolved IDs; does not supersede MD08 FR2, R3 alignment, HD06 DEFER, or HD07_READY = false                                                       |
 
-| MD_ID | TITLE | PRIMARY_PATH | ADDITIONAL_PATHS | DEFINITION_STATUS | DEFINITION_ORIGIN |
-|-------|-------|--------------|------------------|-------------------|-------------------|
-| MD02 | EducationCharts residual | `frontend-app/src/components/education/EducationCharts.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD03 | admin-education-api residual | `frontend-app/src/lib/admin-education-api.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD05 | api-grievances residual | `frontend-app/src/lib/api-grievances.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD06 | IdentityReviewPage residual | `frontend-app/src/pages/admin/IdentityReviewPage.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD07 | IdentityReviewGuard residual | `frontend-app/src/pages/dashboard/IdentityReviewGuard.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD09 | api-recertification residual | `frontend-app/src/lib/api-recertification.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD10 | AdminEducationGuard residual | `frontend-app/src/pages/dashboard/AdminEducationGuard.tsx` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
-| MD12 | api-staff-cert-registry residual | `frontend-app/src/lib/api-staff-cert-registry.ts` | none | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD_ID | TITLE                            | PRIMARY_PATH                                                | ADDITIONAL_PATHS | DEFINITION_STATUS  | DEFINITION_ORIGIN                 |
+| ----- | -------------------------------- | ----------------------------------------------------------- | ---------------- | ------------------ | --------------------------------- |
+| MD02  | EducationCharts residual         | `frontend-app/src/components/education/EducationCharts.tsx` | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD03  | admin-education-api residual     | `frontend-app/src/lib/admin-education-api.ts`               | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD05  | api-grievances residual          | `frontend-app/src/lib/api-grievances.ts`                    | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD06  | IdentityReviewPage residual      | `frontend-app/src/pages/admin/IdentityReviewPage.tsx`       | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD07  | IdentityReviewGuard residual     | `frontend-app/src/pages/dashboard/IdentityReviewGuard.tsx`  | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD09  | api-recertification residual     | `frontend-app/src/lib/api-recertification.ts`               | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD10  | AdminEducationGuard residual     | `frontend-app/src/pages/dashboard/AdminEducationGuard.tsx`  | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
+| MD12  | api-staff-cert-registry residual | `frontend-app/src/lib/api-staff-cert-registry.ts`           | none             | FROZEN_PROSPECTIVE | PROSPECTIVE_OWNER_DEFINITION_2026 |
 
 MD06 is not HD06. MD07 is not HD07. `frontend-app/src/components/admin/ManualIdentityReviewPanel.tsx` remains outside this eight-path freeze.
 
 ### MD05 canonical architecture alternative A — decision freeze R2
 
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-09-29T19:58:02Z (candidate); 2026-10-01T08:23:49Z (status alignment R2); 2026-10-01T12:15:17Z (status alignment R3) |
-| Owner decision status | ADOPTED |
-| MD05_DECISION_FREEZE_R2_STATUS | R2_INTEGRATED_I2_CLOSED_ACCEPTED |
-| PREMERGE_INDEPENDENT_REVIEW_RESULT | PASS_ACCEPT |
-| POSTMERGE_I2_REVIEW_RESULT | PASS_ACCEPT |
-| POSTMERGE_I2_VALIDATION | 31_PASS_0_FAIL_1_NOT_VERIFIED |
-| POSTMERGE_I2_QUESTIONS | 21_PASS_0_FAIL_1_NOT_VERIFIED |
-| MD05_ARCHITECTURE_DECISION | ALTERNATIVE_A_CLOSED_ACCEPTED |
-| Approved option | Alternative A: separate canonical appeals and complaints modules |
-| Owner authorization (candidate) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for candidate record) |
-| Owner authorization (PR) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_PR (single-use; consumed; PR 45) |
-| Owner authorization (merge) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_MERGE (single-use; consumed; MERGE_COMMIT `426cc1e`) |
-| Owner authorization (alignment R2) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2_CLEAN_REISSUANCE (single-use; consumed; PR 47 MERGE_COMMIT `3805dba`) |
-| Owner authorization (this alignment R3) | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3 (single-use; consumed) |
-| Premerge independent review | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_REVIEW = CONSUMED; RESULT = PASS_ACCEPT; EXECUTION_ENGINE = CURSOR; REVIEWER_INDEPENDENCE_VERIFIED = true; validation 28 PASS / 0 FAIL / 2 NOT_VERIFIED; review zip SHA-256 `485a9e7d4daef9edb97ce509d5db4b27e27f988d0940bdb9cb5a64a9db1373cd` |
-| Postmerge I2 review | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_I2_POSTMERGE_REVIEW = CONSUMED; RESULT = PASS_ACCEPT; REVIEWER = `bc-10bbd613-2baa-4910-af68-d3ede652703a`; REVIEW_COMMIT = `8b97f8aa4354ccf7db95aff0678a33bd7540d020`; validation 31 PASS / 0 FAIL / 1 NOT_VERIFIED; questions 21 PASS / 0 FAIL / 1 NOT_VERIFIED |
-| Postmerge I2 NOT_VERIFIED (authoritative) | V32/Q22 original design-zip binary rehash; binary absent on integration; claimed design SHA `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` remains recorded live; not a current blocker; must not be converted to PASS |
-| Non-authoritative prior I2 claim | `1eaae916893d43c8c8aa1dd379073d1cd4848099` — HISTORICAL_NONAUTHORITATIVE_SAME_RUN_AS_ALIGNMENT_R2_REVIEW_AND_MERGE; not review authority |
-| Owner | Repository Owner |
-| Rationale | Align live Part E after authoritative I2 PASS_ACCEPT without resolving MD05; record architecture decision Alternative A as CLOSED_ACCEPTED; preserve R1 overclaim history, R2 prior phase, and non-authoritative I2 claim |
-| Scope | Architecture-decision status alignment for unresolved MD05 only |
-| Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; directories not created) |
-| Design package SHA-256 | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` |
-| Alignment R3 base | `3805dba2ceb70d64b7ba967de6beb78beab67e9e` (tree `357d41026223b05582a93b26b84e6d8cbba90f35`); I2 review branch not used as parent |
-| Merge authority | PR 45; MERGE_COMMIT `426cc1ec8ab442e126678c84bb4a3586244c6d7c`; MERGE_PARENT_1 `9623a2f45612e5aa843ac73b87cd34957dac48ab`; MERGE_PARENT_2 `ad8aa5a16c05907a441ece20fe425544745a96f4`; MERGE_TREE `ad8eed62e66fd0db319dbcf524864a75a3dc6013`; MERGE_METHOD = MERGE_COMMIT; MERGE_TOPOLOGY_VALID = true. Status alignment R2 integrated via PR 47 MERGE_COMMIT `3805dba2ceb70d64b7ba967de6beb78beab67e9e`. Status alignment R3 integrated via PR 49 MERGE_COMMIT `1c2f649d0d73c800bdf563ef6ce5027169a4e816` |
-| MD05 status (architecture phase) | UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE (superseded as live status by blueprint/scope freeze R1 candidate below) |
-| MD05 remains a single Model D item | true |
-| MD05 formally resolved | false |
-| Additional-path boundary (architecture phase) | Was PENDING_GOVERNANCE_FREEZE; live freeze recorded in blueprint/scope freeze R1 candidate |
-| Detailed RBAC and SoD matrix (architecture phase) | Was PENDING_GOVERNANCE_FREEZE; live freeze recorded in blueprint/scope freeze R1 candidate |
-| Scope expansion adopted | false |
-| Implementation authorization | false |
-| Legacy `/v1` aliases canonical | false |
-| Commit `a277a19` implementation authority | false |
-| Pull request #41 | HISTORICAL_NONAUTHORITATIVE_DESIGN_NOTE_NOT_TO_BE_MERGED |
-| Historical decision-freeze R1 commit | `6e3a3118164a48e143e607a6eb5846c2b82c2a8c` |
-| Historical decision-freeze R1 pull request | 42 |
-| Historical decision-freeze R1 status | PRESERVED_UNMERGED_NONAUTHORITATIVE_ATTEMPT |
-| Pull request #42 merge, modification, or deletion | false |
-| Historical status-alignment R1 commit | `c335f7bfdb1f9d5ab04c07e8718f299364a354ca` |
-| Historical status-alignment R1 pull request | 46 |
-| Historical status-alignment R1 status | PRESERVED_UNMERGED_NONAUTHORITATIVE_OVERCLAIM (`R2_INTEGRATED_INDEPENDENT_REVIEW_CLOSED_ACCEPTED`) |
-| Pull request #46 merge, modification, or deletion | false |
-| Status alignment R2 | INTEGRATED_PRIOR_STATUS_PHASE via PR 47 / `3805dba…`; live pins superseded by R3 |
-| Pull request #48 | OPEN draft STOP evidence only; not review authority; not mutated |
-| Model D | 17/9/8/8/0; mutation count 0 |
-| Newly resolved item count | 0 |
-| Residual risk | Residual implementation unauthorized; complaint-handler role unnamed; privacy basis unrecorded; backends absent; I2 design-zip binary rehash remains NOT_VERIFIED |
-| Dependencies | Independent review and integration of blueprint/scope freeze R1; later owner authorization for any MD05 residual implementation and out-of-freeze prerequisites |
-| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Supersession | Supersedes live R2 pins that recorded postmerge I2 as NOT_PERFORMED. Does not erase alignment R1 / PR 46, alignment R2 / PR 47, or non-authoritative I2 claim `1eaae91`. Does not supersede the eight-path freeze, MD08 FR2, or Model D arithmetic. Does not formally resolve MD05 |
+| Field                                             | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date (UTC)                                        | 2026-09-29T19:58:02Z (candidate); 2026-10-01T08:23:49Z (status alignment R2); 2026-10-01T12:15:17Z (status alignment R3)                                                                                                                                                                                                                                                                                                                                                                                  |
+| Owner decision status                             | ADOPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| MD05_DECISION_FREEZE_R2_STATUS                    | R2_INTEGRATED_I2_CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| PREMERGE_INDEPENDENT_REVIEW_RESULT                | PASS_ACCEPT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| POSTMERGE_I2_REVIEW_RESULT                        | PASS_ACCEPT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| POSTMERGE_I2_VALIDATION                           | 31_PASS_0_FAIL_1_NOT_VERIFIED                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| POSTMERGE_I2_QUESTIONS                            | 21_PASS_0_FAIL_1_NOT_VERIFIED                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| MD05_ARCHITECTURE_DECISION                        | ALTERNATIVE_A_CLOSED_ACCEPTED                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Approved option                                   | Alternative A: separate canonical appeals and complaints modules                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Owner authorization (candidate)                   | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for candidate record)                                                                                                                                                                                                                                                                                                                                                           |
+| Owner authorization (PR)                          | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_PR (single-use; consumed; PR 45)                                                                                                                                                                                                                                                                                                                                                                                       |
+| Owner authorization (merge)                       | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_MERGE (single-use; consumed; MERGE_COMMIT `426cc1e`)                                                                                                                                                                                                                                                                                                                                                                   |
+| Owner authorization (alignment R2)                | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2_CLEAN_REISSUANCE (single-use; consumed; PR 47 MERGE_COMMIT `3805dba`)                                                                                                                                                                                                                                                                                                             |
+| Owner authorization (this alignment R3)           | OWNER_AUTHORIZE_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3 (single-use; consumed)                                                                                                                                                                                                                                                                                                                                                            |
+| Premerge independent review                       | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_REVIEW = CONSUMED; RESULT = PASS_ACCEPT; EXECUTION_ENGINE = CURSOR; REVIEWER_INDEPENDENCE_VERIFIED = true; validation 28 PASS / 0 FAIL / 2 NOT_VERIFIED; review zip SHA-256 `485a9e7d4daef9edb97ce509d5db4b27e27f988d0940bdb9cb5a64a9db1373cd`                                                                                                                                                      |
+| Postmerge I2 review                               | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_I2_POSTMERGE_REVIEW = CONSUMED; RESULT = PASS_ACCEPT; REVIEWER = `bc-10bbd613-2baa-4910-af68-d3ede652703a`; REVIEW_COMMIT = `8b97f8aa4354ccf7db95aff0678a33bd7540d020`; validation 31 PASS / 0 FAIL / 1 NOT_VERIFIED; questions 21 PASS / 0 FAIL / 1 NOT_VERIFIED                                                                                                                                   |
+| Postmerge I2 NOT_VERIFIED (authoritative)         | V32/Q22 original design-zip binary rehash; binary absent on integration; claimed design SHA `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` remains recorded live; not a current blocker; must not be converted to PASS                                                                                                                                                                                                                                                                |
+| Non-authoritative prior I2 claim                  | `1eaae916893d43c8c8aa1dd379073d1cd4848099` — HISTORICAL_NONAUTHORITATIVE_SAME_RUN_AS_ALIGNMENT_R2_REVIEW_AND_MERGE; not review authority                                                                                                                                                                                                                                                                                                                                                                  |
+| Owner                                             | Repository Owner                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Rationale                                         | Align live Part E after authoritative I2 PASS_ACCEPT without resolving MD05; record architecture decision Alternative A as CLOSED_ACCEPTED; preserve R1 overclaim history, R2 prior phase, and non-authoritative I2 claim                                                                                                                                                                                                                                                                                 |
+| Scope                                             | Architecture-decision status alignment for unresolved MD05 only                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Canonical backend ownership                       | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; directories not created)                                                                                                                                                                                                                                                                                                                                                                                          |
+| Design package SHA-256                            | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2`                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Alignment R3 base                                 | `3805dba2ceb70d64b7ba967de6beb78beab67e9e` (tree `357d41026223b05582a93b26b84e6d8cbba90f35`); I2 review branch not used as parent                                                                                                                                                                                                                                                                                                                                                                         |
+| Merge authority                                   | PR 45; MERGE_COMMIT `426cc1ec8ab442e126678c84bb4a3586244c6d7c`; MERGE_PARENT_1 `9623a2f45612e5aa843ac73b87cd34957dac48ab`; MERGE_PARENT_2 `ad8aa5a16c05907a441ece20fe425544745a96f4`; MERGE_TREE `ad8eed62e66fd0db319dbcf524864a75a3dc6013`; MERGE_METHOD = MERGE_COMMIT; MERGE_TOPOLOGY_VALID = true. Status alignment R2 integrated via PR 47 MERGE_COMMIT `3805dba2ceb70d64b7ba967de6beb78beab67e9e`. Status alignment R3 integrated via PR 49 MERGE_COMMIT `1c2f649d0d73c800bdf563ef6ce5027169a4e816` |
+| MD05 status (architecture phase)                  | UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE (superseded as live status by blueprint/scope freeze R1 candidate below)                                                                                                                                                                                                                                                                                                                                                                            |
+| MD05 remains a single Model D item                | true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| MD05 formally resolved                            | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Additional-path boundary (architecture phase)     | Was PENDING_GOVERNANCE_FREEZE; live freeze recorded in blueprint/scope freeze R1 candidate                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Detailed RBAC and SoD matrix (architecture phase) | Was PENDING_GOVERNANCE_FREEZE; live freeze recorded in blueprint/scope freeze R1 candidate                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Scope expansion adopted                           | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Implementation authorization                      | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Legacy `/v1` aliases canonical                    | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Commit `a277a19` implementation authority         | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Pull request #41                                  | HISTORICAL_NONAUTHORITATIVE_DESIGN_NOTE_NOT_TO_BE_MERGED                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Historical decision-freeze R1 commit              | `6e3a3118164a48e143e607a6eb5846c2b82c2a8c`                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Historical decision-freeze R1 pull request        | 42                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Historical decision-freeze R1 status              | PRESERVED_UNMERGED_NONAUTHORITATIVE_ATTEMPT                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Pull request #42 merge, modification, or deletion | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Historical status-alignment R1 commit             | `c335f7bfdb1f9d5ab04c07e8718f299364a354ca`                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Historical status-alignment R1 pull request       | 46                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Historical status-alignment R1 status             | PRESERVED_UNMERGED_NONAUTHORITATIVE_OVERCLAIM (`R2_INTEGRATED_INDEPENDENT_REVIEW_CLOSED_ACCEPTED`)                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Pull request #46 merge, modification, or deletion | false                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Status alignment R2                               | INTEGRATED_PRIOR_STATUS_PHASE via PR 47 / `3805dba…`; live pins superseded by R3                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Pull request #48                                  | OPEN draft STOP evidence only; not review authority; not mutated                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Model D                                           | 17/9/8/8/0; mutation count 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Newly resolved item count                         | 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Residual risk                                     | Residual implementation unauthorized; complaint-handler role unnamed; privacy basis unrecorded; backends absent; I2 design-zip binary rehash remains NOT_VERIFIED                                                                                                                                                                                                                                                                                                                                         |
+| Dependencies                                      | Independent review and integration of blueprint/scope freeze R1; later owner authorization for any MD05 residual implementation and out-of-freeze prerequisites                                                                                                                                                                                                                                                                                                                                           |
+| Exit criteria                                     | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                                                                                                                                                                                                                                                                                                                                                                |
+| Supersession                                      | Supersedes live R2 pins that recorded postmerge I2 as NOT_PERFORMED. Does not erase alignment R1 / PR 46, alignment R2 / PR 47, or non-authoritative I2 claim `1eaae91`. Does not supersede the eight-path freeze, MD08 FR2, or Model D arithmetic. Does not formally resolve MD05                                                                                                                                                                                                                        |
 
 Full owner-supplied decision: [MD05 canonical architecture alternative A decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md). Post-integration alignment R2: [Status alignment R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2.md). Post-integration alignment R3: [Status alignment R3](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3.md). Candidate evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`. Alignment R2 evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r2/20261001082349/`. Alignment R3 evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r3/20261001121517/`. Authoritative I2 evidence (side branch commit `8b97f8a…`): `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-i2-postmerge-review/20261001112719/`. This alignment does not restore source files, expand MD05, grant C3-S9 resume, or close R0-7D.
 
 ### MD05 Alternative A — implementation blueprint and exact scope freeze R1
 
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-10-02T20:05:52Z |
-| Status | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
-| Owner authorization (candidate) | OWNER_AUTHORIZE_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1 (single-use; consumed for candidate record) |
-| Owner | Repository Owner |
-| Approved option | Freeze MD05 additional-path boundary at ADDITIONAL_PATHS = none; freeze detailed RBAC/SoD matrix under Alternative A; record implementation blueprint; do not authorize implementation |
-| Rationale | Close the Alternative A PENDING path-boundary and SoD-matrix governance freezes without expanding MD05, without creating backends, and without granting residual implementation |
-| Scope | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 Alternative A only |
-| Base | `1c2f649d0d73c800bdf563ef6ce5027169a4e816` (tree `68ebd509592ddb99113a6e7c60a1158f689e6449`) |
-| MD05_ARCHITECTURE_DECISION | ALTERNATIVE_A_CLOSED_ACCEPTED (predecessor; unchanged) |
-| MD05 status | UNRESOLVED_SCOPE_FROZEN_PENDING_IMPLEMENTATION_AUTHORIZATION |
-| MD05 remains a single Model D item | true |
-| MD05 formally resolved | false |
-| PRIMARY_PATH | `frontend-app/src/lib/api-grievances.ts` |
-| ADDITIONAL_PATHS | none |
-| ADDITIONAL_PATH_COUNT | 0 |
-| Additional-path boundary | FROZEN |
-| Scope expansion adopted | false |
-| Detailed RBAC and SoD matrix | FROZEN |
-| SOD_COMPLETE_CLAIMED | false |
-| OQ-5 | DIRECTIONAL |
-| COMPLAINT_HANDLER_ROLE | NOT_NAMED at blueprint time; live selection superseded by Phase 0 prerequisite authority freeze R2 |
-| Implementation blueprint recorded | true |
-| Implementation authorization | false |
-| Canonical backend ownership | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; outside MD05 path freeze; directories not created) |
-| Design package SHA-256 | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` (binary rehash NOT_PERFORMED; I2 NOT_VERIFIED retained) |
-| Model D | 17/9/8/8/0; mutation count 0 |
-| Newly resolved item count | 0 |
-| Production / schema / test / configuration mutations | 0 |
-| Residual risk | Backends absent; appeals-client helpers absent; complaint handler unnamed at blueprint time (live identifier superseded by Phase 0 R2); privacy basis unrecorded; staff access allow-list remains broader than frozen matrix; residual implementation unauthorized |
-| Dependencies | Independent review of this candidate; later owner authorization for residual implementation and for out-of-freeze prerequisites (backends, complaint-handler naming, privacy basis, any path expansion) |
-| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Next action | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1_REVIEW (not granted by this package) |
-| Supersession | Supersedes only the live MD05 pins `MD05_ADDITIONAL_PATH_BOUNDARY_STATUS = PENDING_GOVERNANCE_FREEZE`, `DETAILED_RBAC_SOD_MATRIX_STATUS = PENDING_GOVERNANCE_FREEZE`, and `MD05_STATUS = UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE`. Does not supersede Alternative A architecture CLOSED_ACCEPTED, eight-path freeze, MD08 FR2, Model D arithmetic, or PR 41/42/46 historical statuses. Does not formally resolve MD05 |
+| Field                                                | Value                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date (UTC)                                           | 2026-10-02T20:05:52Z                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Status                                               | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW                                                                                                                                                                                                                                                                                                                                                                                       |
+| Owner authorization (candidate)                      | OWNER_AUTHORIZE_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1 (single-use; consumed for candidate record)                                                                                                                                                                                                                                                                                             |
+| Owner                                                | Repository Owner                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Approved option                                      | Freeze MD05 additional-path boundary at ADDITIONAL_PATHS = none; freeze detailed RBAC/SoD matrix under Alternative A; record implementation blueprint; do not authorize implementation                                                                                                                                                                                                                                              |
+| Rationale                                            | Close the Alternative A PENDING path-boundary and SoD-matrix governance freezes without expanding MD05, without creating backends, and without granting residual implementation                                                                                                                                                                                                                                                     |
+| Scope                                                | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 Alternative A only                                                                                                                                                                                                                                                                                                                         |
+| Base                                                 | `1c2f649d0d73c800bdf563ef6ce5027169a4e816` (tree `68ebd509592ddb99113a6e7c60a1158f689e6449`)                                                                                                                                                                                                                                                                                                                                        |
+| MD05_ARCHITECTURE_DECISION                           | ALTERNATIVE_A_CLOSED_ACCEPTED (predecessor; unchanged)                                                                                                                                                                                                                                                                                                                                                                              |
+| MD05 status                                          | UNRESOLVED_SCOPE_FROZEN_PENDING_IMPLEMENTATION_AUTHORIZATION                                                                                                                                                                                                                                                                                                                                                                        |
+| MD05 remains a single Model D item                   | true                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| MD05 formally resolved                               | false                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| PRIMARY_PATH                                         | `frontend-app/src/lib/api-grievances.ts`                                                                                                                                                                                                                                                                                                                                                                                            |
+| ADDITIONAL_PATHS                                     | none                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ADDITIONAL_PATH_COUNT                                | 0                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Additional-path boundary                             | FROZEN                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Scope expansion adopted                              | false                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Detailed RBAC and SoD matrix                         | FROZEN                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| SOD_COMPLETE_CLAIMED                                 | false                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| OQ-5                                                 | DIRECTIONAL                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| COMPLAINT_HANDLER_ROLE                               | NOT_NAMED at blueprint time; live selection superseded by Phase 0 prerequisite authority freeze R2                                                                                                                                                                                                                                                                                                                                  |
+| Implementation blueprint recorded                    | true                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Implementation authorization                         | false                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Canonical backend ownership                          | `apps/api/src/cert-appeals/` and `apps/api/src/cert-complaints/` (named ownership only; outside MD05 path freeze; directories not created)                                                                                                                                                                                                                                                                                          |
+| Design package SHA-256                               | `fcc012bf7ff6b2c86fe0b3fd6d41ec6cf3ff733de227c18a26c350fa4f9afad2` (binary rehash NOT_PERFORMED; I2 NOT_VERIFIED retained)                                                                                                                                                                                                                                                                                                          |
+| Model D                                              | 17/9/8/8/0; mutation count 0                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Newly resolved item count                            | 0                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Production / schema / test / configuration mutations | 0                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Residual risk                                        | Backends absent; appeals-client helpers absent; complaint handler unnamed at blueprint time (live identifier superseded by Phase 0 R2); privacy basis unrecorded; staff access allow-list remains broader than frozen matrix; residual implementation unauthorized                                                                                                                                                                  |
+| Dependencies                                         | Independent review of this candidate; later owner authorization for residual implementation and for out-of-freeze prerequisites (backends, complaint-handler naming, privacy basis, any path expansion)                                                                                                                                                                                                                             |
+| Exit criteria                                        | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                                                                                                                                                                                                                                                                                          |
+| Next action                                          | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1_REVIEW (not granted by this package)                                                                                                                                                                                                                                                                                 |
+| Supersession                                         | Supersedes only the live MD05 pins `MD05_ADDITIONAL_PATH_BOUNDARY_STATUS = PENDING_GOVERNANCE_FREEZE`, `DETAILED_RBAC_SOD_MATRIX_STATUS = PENDING_GOVERNANCE_FREEZE`, and `MD05_STATUS = UNRESOLVED_ARCHITECTURE_SELECTED_PENDING_SCOPE_FREEZE`. Does not supersede Alternative A architecture CLOSED_ACCEPTED, eight-path freeze, MD08 FR2, Model D arithmetic, or PR 41/42/46 historical statuses. Does not formally resolve MD05 |
 
 Full owner-authorized freeze: [Blueprint and exact scope freeze R1](./R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1.md). Evidence: `docs/evidence/r0-7d-md05-alternative-a-implementation-blueprint-and-exact-scope-freeze-r1/20261002200552/`.
 
 ### MD05 Phase 0 — prerequisite role-administration authority freeze R2
 
-| Field | Value |
-|-------|-------|
-| Date (UTC) | 2026-10-03T06:27:10Z |
-| Status | ROLE_AUTHORITY_FROZEN_PENDING_INDEPENDENT_REVIEW |
-| Owner authorization | OWNER_SELECT_R0_7D_MD05_ROLE_ADMINISTRATION_OPTION_1_STAFF_ROLEADM_AND_AUTHORIZE_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for this candidate record) |
-| Owner | Repository Owner |
-| Approved option | OPTION_1_DEDICATED_AUTHORITY |
-| Rationale | Discovery found no implemented grant or revoke authority. The owner selected a dedicated role-administration authority and named it `STAFF_ROLEADM`, separate from complaint handling |
-| Scope | Governance adoption of `COMPLAINT_HANDLER` and `STAFF_ROLEADM`, and freeze of grant, revoke, tenant, four-eyes, post-review, and prospective audit-event contract. No implementation |
-| Base | `72a8935d48cfaef7fe8c2273554a79aa584a1741` (tree `c7d594c53bc2986eb68365a1c3e2c116c855761f`) |
-| R1 disposition | `cursor/r0-7d-md05-phase0-role-freeze-r1-71b5` at `7f6e2ba05f0abe569111a90594689519fec96304` remains preserved, is not the parent, and is an incomplete non-authoritative attempt because grant and revoke authority were NOT_NAMED |
-| COMPLAINT_HANDLER_ROLE | COMPLAINT_HANDLER |
-| COMPLAINT_HANDLER_ROLE_ADOPTED | true |
-| COMPLAINT_HANDLER_ROLE_IMPLEMENTED | false |
-| ROLE_ADMINISTRATOR_ROLE | STAFF_ROLEADM |
-| ROLE_ADMINISTRATOR_LABEL | RBAC Role Administrator |
-| ROLE_ADMINISTRATOR_ROLE_ADOPTED | true |
-| ROLE_ADMINISTRATOR_ROLE_IMPLEMENTED | false |
-| ROLE_AUTHORITY_SOURCE | EXTERNAL_OIDC_IDP_CANONICAL |
-| LOCAL_DATABASE_ROLE_AUTHORITY | false |
-| ROLE_GRANT_AUTHORITY | STAFF_ROLEADM |
-| ROLE_REVOKE_AUTHORITY | STAFF_ROLEADM |
-| GRANT_FOUR_EYES_REQUIRED | true |
-| REVOKE_FOUR_EYES_REQUIRED | false |
-| REVOKE_POST_REVIEW_REQUIRED | true |
-| REVOKE_POST_REVIEW_DUE_PERIOD | PROSPECTIVE_POLICY_VALUE_NOT_YET_FIXED |
-| SELF_ASSIGNMENT_ALLOWED | false |
-| SELF_REVOCATION_ALLOWED | false |
-| CROSS_TENANT_ASSIGNMENT_ALLOWED | false |
-| CROSS_TENANT_REVOCATION_ALLOWED | false |
-| STAFF_ROLEADM_SELF_MANAGEMENT | forbidden |
-| STAFF_ROLEADM_BOOTSTRAP_AUTHORITY | OWNER_CONTROLLED_EXTERNAL_IDP_ADMINISTRATION |
-| STAFF_ROLEADM_BOOTSTRAP_IMPLEMENTATION | OUTSIDE_THIS_PACKAGE |
-| PRIMARY_PATH | `frontend-app/src/lib/api-grievances.ts` |
-| ADDITIONAL_PATHS | none |
-| MD05 formally resolved | false |
-| MD05_SCOPE_READY | false |
-| Implementation authorization | false |
-| Model D | 17/9/8/8/0; mutation count 0 |
-| Newly resolved item count | 0 |
-| Production / schema / test / configuration mutations | 0 |
-| Residual risk | Neither role is in `rbacRoleSchema`; no grant or revoke path exists; production audit registry is empty; current `AuditEvent` columns do not store the full prospective field set; external IdP bootstrap mechanism is not implemented in this repository; privacy basis remains unrecorded; MD05 remains unresolved |
-| Dependencies | Independent review of this candidate; a later separately authorized package before any enum, IdP, audit, or case-operation change |
-| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Next action | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2_REVIEW (not granted by this package) |
-| Supersession | Supersedes only the live pin `COMPLAINT_HANDLER_ROLE = NOT_NAMED`. Does not supersede the MD05 path freeze, Alternative A CLOSED_ACCEPTED, Model D arithmetic, or implementation-unauthorized pins. Does not adopt R1 |
+| Field                                                | Value                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date (UTC)                                           | 2026-10-03T06:27:10Z                                                                                                                                                                                                                                                                                                 |
+| Status                                               | ROLE_AUTHORITY_FROZEN_PENDING_INDEPENDENT_REVIEW                                                                                                                                                                                                                                                                     |
+| Owner authorization                                  | OWNER_SELECT_R0_7D_MD05_ROLE_ADMINISTRATION_OPTION_1_STAFF_ROLEADM_AND_AUTHORIZE_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2_CLEAN_REISSUANCE (single-use; consumed for this candidate record)                                                                                                                           |
+| Owner                                                | Repository Owner                                                                                                                                                                                                                                                                                                     |
+| Approved option                                      | OPTION_1_DEDICATED_AUTHORITY                                                                                                                                                                                                                                                                                         |
+| Rationale                                            | Discovery found no implemented grant or revoke authority. The owner selected a dedicated role-administration authority and named it `STAFF_ROLEADM`, separate from complaint handling                                                                                                                                |
+| Scope                                                | Governance adoption of `COMPLAINT_HANDLER` and `STAFF_ROLEADM`, and freeze of grant, revoke, tenant, four-eyes, post-review, and prospective audit-event contract. No implementation                                                                                                                                 |
+| Base                                                 | `72a8935d48cfaef7fe8c2273554a79aa584a1741` (tree `c7d594c53bc2986eb68365a1c3e2c116c855761f`)                                                                                                                                                                                                                         |
+| R1 disposition                                       | `cursor/r0-7d-md05-phase0-role-freeze-r1-71b5` at `7f6e2ba05f0abe569111a90594689519fec96304` remains preserved, is not the parent, and is an incomplete non-authoritative attempt because grant and revoke authority were NOT_NAMED                                                                                  |
+| COMPLAINT_HANDLER_ROLE                               | COMPLAINT_HANDLER                                                                                                                                                                                                                                                                                                    |
+| COMPLAINT_HANDLER_ROLE_ADOPTED                       | true                                                                                                                                                                                                                                                                                                                 |
+| COMPLAINT_HANDLER_ROLE_IMPLEMENTED                   | false                                                                                                                                                                                                                                                                                                                |
+| ROLE_ADMINISTRATOR_ROLE                              | STAFF_ROLEADM                                                                                                                                                                                                                                                                                                        |
+| ROLE_ADMINISTRATOR_LABEL                             | RBAC Role Administrator                                                                                                                                                                                                                                                                                              |
+| ROLE_ADMINISTRATOR_ROLE_ADOPTED                      | true                                                                                                                                                                                                                                                                                                                 |
+| ROLE_ADMINISTRATOR_ROLE_IMPLEMENTED                  | false                                                                                                                                                                                                                                                                                                                |
+| ROLE_AUTHORITY_SOURCE                                | EXTERNAL_OIDC_IDP_CANONICAL                                                                                                                                                                                                                                                                                          |
+| LOCAL_DATABASE_ROLE_AUTHORITY                        | false                                                                                                                                                                                                                                                                                                                |
+| ROLE_GRANT_AUTHORITY                                 | STAFF_ROLEADM                                                                                                                                                                                                                                                                                                        |
+| ROLE_REVOKE_AUTHORITY                                | STAFF_ROLEADM                                                                                                                                                                                                                                                                                                        |
+| GRANT_FOUR_EYES_REQUIRED                             | true                                                                                                                                                                                                                                                                                                                 |
+| REVOKE_FOUR_EYES_REQUIRED                            | false                                                                                                                                                                                                                                                                                                                |
+| REVOKE_POST_REVIEW_REQUIRED                          | true                                                                                                                                                                                                                                                                                                                 |
+| REVOKE_POST_REVIEW_DUE_PERIOD                        | PROSPECTIVE_POLICY_VALUE_NOT_YET_FIXED                                                                                                                                                                                                                                                                               |
+| SELF_ASSIGNMENT_ALLOWED                              | false                                                                                                                                                                                                                                                                                                                |
+| SELF_REVOCATION_ALLOWED                              | false                                                                                                                                                                                                                                                                                                                |
+| CROSS_TENANT_ASSIGNMENT_ALLOWED                      | false                                                                                                                                                                                                                                                                                                                |
+| CROSS_TENANT_REVOCATION_ALLOWED                      | false                                                                                                                                                                                                                                                                                                                |
+| STAFF_ROLEADM_SELF_MANAGEMENT                        | forbidden                                                                                                                                                                                                                                                                                                            |
+| STAFF_ROLEADM_BOOTSTRAP_AUTHORITY                    | OWNER_CONTROLLED_EXTERNAL_IDP_ADMINISTRATION                                                                                                                                                                                                                                                                         |
+| STAFF_ROLEADM_BOOTSTRAP_IMPLEMENTATION               | OUTSIDE_THIS_PACKAGE                                                                                                                                                                                                                                                                                                 |
+| PRIMARY_PATH                                         | `frontend-app/src/lib/api-grievances.ts`                                                                                                                                                                                                                                                                             |
+| ADDITIONAL_PATHS                                     | none                                                                                                                                                                                                                                                                                                                 |
+| MD05 formally resolved                               | false                                                                                                                                                                                                                                                                                                                |
+| MD05_SCOPE_READY                                     | false                                                                                                                                                                                                                                                                                                                |
+| Implementation authorization                         | false                                                                                                                                                                                                                                                                                                                |
+| Model D                                              | 17/9/8/8/0; mutation count 0                                                                                                                                                                                                                                                                                         |
+| Newly resolved item count                            | 0                                                                                                                                                                                                                                                                                                                    |
+| Production / schema / test / configuration mutations | 0                                                                                                                                                                                                                                                                                                                    |
+| Residual risk                                        | Neither role is in `rbacRoleSchema`; no grant or revoke path exists; production audit registry is empty; current `AuditEvent` columns do not store the full prospective field set; external IdP bootstrap mechanism is not implemented in this repository; privacy basis remains unrecorded; MD05 remains unresolved |
+| Dependencies                                         | Independent review of this candidate; a later separately authorized package before any enum, IdP, audit, or case-operation change                                                                                                                                                                                    |
+| Exit criteria                                        | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                                                                                                                                                                           |
+| Next action                                          | OWNER_AUTHORIZE_INDEPENDENT_CURSOR_R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2_REVIEW (not granted by this package)                                                                                                                                                                                           |
+| Supersession                                         | Supersedes only the live pin `COMPLAINT_HANDLER_ROLE = NOT_NAMED`. Does not supersede the MD05 path freeze, Alternative A CLOSED_ACCEPTED, Model D arithmetic, or implementation-unauthorized pins. Does not adopt R1                                                                                                |
 
 Full owner-authorized freeze: [Phase 0 prerequisite authority freeze R2](./R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-phase0-prerequisite-authority-freeze-r2/20261003062710/`.
+
+### MD05 PKG-01 to PKG-07 — owner-delegated technical execution backlog R1
+
+| Field                               | Value                                                                                                                                                                                                          |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date (UTC)                          | 2026-10-05                                                                                                                                                                                                     |
+| Status                              | PROSPECTIVE_OWNER_DELEGATED_TECHNICAL_BACKLOG_2026                                                                                                                                                             |
+| Owner authorization                 | OWNER_AUTHORIZE_R0_7D_MD05_PKG01_TO_PKG07_MACHINE_READABLE_EXECUTION_BACKLOG_AND_FIRST_READY_PACKAGE_IMPLEMENTATION_R1 (single-use; consumed for this candidate)                                               |
+| Definition origin                   | PROSPECTIVE_OWNER_DELEGATED_TECHNICAL_BACKLOG_2026                                                                                                                                                             |
+| Historical package map recovered    | false                                                                                                                                                                                                          |
+| Historical package map claimed      | false                                                                                                                                                                                                          |
+| Base                                | `577f16f3541729e10ce09a60b834a1a808103916` (tree `7806f2dd61dc2e3dfd69f0fce135ced886d64c99`)                                                                                                                   |
+| Package count                       | 7 (PKG-01 through PKG-07)                                                                                                                                                                                      |
+| Ready packages                      | PKG-01, PKG-02                                                                                                                                                                                                 |
+| Blocked packages                    | PKG-03, PKG-04, PKG-05, PKG-06, PKG-07 (BLOCKED_POLICY)                                                                                                                                                        |
+| Deferred packages                   | none                                                                                                                                                                                                           |
+| Selected first ready package        | PKG-01 executable role-administration application boundary                                                                                                                                                     |
+| Selection basis                     | Earliest READY package whose dependencies are satisfied by the merged PKG-00 contract. PKG-02 is also READY and depends on PKG-01, so it is not selected.                                                      |
+| Implementation authorization        | LIMITED_TO_SELECTED_FIRST_READY_PACKAGE_ONLY                                                                                                                                                                   |
+| MD05 formally resolved              | false                                                                                                                                                                                                          |
+| MD05_SCOPE_READY                    | false                                                                                                                                                                                                          |
+| Model D                             | 17/9/8/8/0; mutation count 0                                                                                                                                                                                   |
+| PRIMARY_PATH                        | `frontend-app/src/lib/api-grievances.ts`                                                                                                                                                                       |
+| ADDITIONAL_PATHS                    | none                                                                                                                                                                                                           |
+| Deployment authorization            | false                                                                                                                                                                                                          |
+| R0-7E implementation authorization  | false                                                                                                                                                                                                          |
+| General C3-S9 implementation resume | NOT_GRANTED                                                                                                                                                                                                    |
+| Open PKG-00 observations            | O01, O02, and O03 remain open. PKG-01 may require actor.roles at the application boundary and does not close O03 on the audit path.                                                                            |
+| Non-effects                         | Does not invent a privacy basis, retention period, complaint or appeal decision authority, committee authority, external IdP provider, or credential. Does not authorize deployment or a general C3-S9 resume. |
+
+Human-readable backlog: [PKG-01 to PKG-07 execution backlog R1](./R0_7D_MD05_PKG01_TO_PKG07_EXECUTION_BACKLOG_R1.md). Machine-readable contract: [execution backlog YAML](./r0-7d-md05-pkg01-pkg07-execution-backlog-r1.yaml).
 
 ---
 
@@ -924,91 +999,108 @@ Full owner-authorized freeze: [Phase 0 prerequisite authority freeze R2](./R0_7D
 
 ### HD06 — Dejana Taušan account binding
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-09-13 |
-| Status | DEFERRED_PENDING_ACCOUNT_BINDING_EVIDENCE |
-| Approved option | DEFER; account binding is not approved |
-| Owner | Miljan Savić, Repository Owner |
-| Rationale | Account existence, identity provider, immutable identifier, tenant binding, roles and attributable evidence are unverified |
-| Scope | Dejana Taušan account binding; HD07 readiness; DPO mandate effectiveness; 04B electronic attestation; AD1C |
-| Residual risk | Identity and account binding remain unverified; no access or authority granted |
-| Dependencies | Independently verifiable account binding and HD07 authentication-control verification |
-| Exit criteria | All ten conditions in the linked decision record, followed by an explicit owner approval |
-| Supersession | None; no implementation authorization |
+| Field           | Value                                                                                                                      |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-09-13                                                                                                                 |
+| Status          | DEFERRED_PENDING_ACCOUNT_BINDING_EVIDENCE                                                                                  |
+| Approved option | DEFER; account binding is not approved                                                                                     |
+| Owner           | Miljan Savić, Repository Owner                                                                                             |
+| Rationale       | Account existence, identity provider, immutable identifier, tenant binding, roles and attributable evidence are unverified |
+| Scope           | Dejana Taušan account binding; HD07 readiness; DPO mandate effectiveness; 04B electronic attestation; AD1C                 |
+| Residual risk   | Identity and account binding remain unverified; no access or authority granted                                             |
+| Dependencies    | Independently verifiable account binding and HD07 authentication-control verification                                      |
+| Exit criteria   | All ten conditions in the linked decision record, followed by an explicit owner approval                                   |
+| Supersession    | None; no implementation authorization                                                                                      |
 
 Full owner-supplied decision and conditions: [HD06 decision, 2026-09-13](./HD06_DEJANA_ACCOUNT_BINDING_DECISION_2026-09-13.md). Source: Repository Owner's message in this task. Recording this decision does not establish an authenticated account, an electronic signature, or independent verification.
 
 ### Unresolved Model D item definition freeze R1
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-09-20 |
-| Status | FROZEN_PROSPECTIVE |
-| Approved option | Freeze the eight unresolved PRIMARY_PATH mappings as a prospective owner definition; do not resolve items; do not implement |
-| Owner | Miljan Savić, Repository Owner |
-| Rationale | Original historical MD numbering was not recoverable; owner approved a prospective map under an explicit numbering rule so later residual work can be scoped without inventing IDs ad hoc |
-| Scope | PRIMARY_PATH freeze for MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12 only |
-| Residual risk | Prospective numbering is not a recovered historical fact; education cluster remains deferred; HD06/HD07 remain unready; paths remain missing on integration |
-| Dependencies | Separate implementation authorization per item; AD1C for MD02/MD03/MD10; HD06/HD07 remain independent of MD06/MD07 |
-| Exit criteria | Each frozen item remains unresolved until a later owner-authorized residual package is independently reviewed and integrated |
-| Supersession | None for Model D arithmetic; supersedes only the undefined-path state of the eight IDs |
+| Field           | Value                                                                                                                                                                                     |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-09-20                                                                                                                                                                                |
+| Status          | FROZEN_PROSPECTIVE                                                                                                                                                                        |
+| Approved option | Freeze the eight unresolved PRIMARY_PATH mappings as a prospective owner definition; do not resolve items; do not implement                                                               |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                            |
+| Rationale       | Original historical MD numbering was not recoverable; owner approved a prospective map under an explicit numbering rule so later residual work can be scoped without inventing IDs ad hoc |
+| Scope           | PRIMARY_PATH freeze for MD02, MD03, MD05, MD06, MD07, MD09, MD10, MD12 only                                                                                                               |
+| Residual risk   | Prospective numbering is not a recovered historical fact; education cluster remains deferred; HD06/HD07 remain unready; paths remain missing on integration                               |
+| Dependencies    | Separate implementation authorization per item; AD1C for MD02/MD03/MD10; HD06/HD07 remain independent of MD06/MD07                                                                        |
+| Exit criteria   | Each frozen item remains unresolved until a later owner-authorized residual package is independently reviewed and integrated                                                              |
+| Supersession    | None for Model D arithmetic; supersedes only the undefined-path state of the eight IDs                                                                                                    |
 
 Full owner-supplied freeze: [Unresolved item definition freeze R1](./R0_7D_MODEL_D_UNRESOLVED_ITEM_DEFINITION_FREEZE_R1.md). Recording this freeze does not restore source files, grant C3-S9 resume, or close R0-7D.
 
 ### MD05 canonical architecture alternative A — decision freeze R2
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-09-29 (candidate); 2026-10-01 (status alignment R2); 2026-10-01 (status alignment R3) |
-| Status | R2_INTEGRATED_I2_CLOSED_ACCEPTED |
-| PREMERGE_INDEPENDENT_REVIEW_RESULT | PASS_ACCEPT |
-| POSTMERGE_I2_REVIEW_RESULT | PASS_ACCEPT |
-| POSTMERGE_I2_VALIDATION | 31_PASS_0_FAIL_1_NOT_VERIFIED |
-| MD05_ARCHITECTURE_DECISION | ALTERNATIVE_A_CLOSED_ACCEPTED |
-| Approved option | Alternative A: separate canonical appeals and complaints modules |
-| Owner | Repository Owner |
-| Rationale | Align live Part E after authoritative I2 PASS_ACCEPT; architecture decision CLOSED_ACCEPTED; MD05 remains formally unresolved |
-| Scope | Architecture-decision status alignment for unresolved MD05 only; no path expansion and no implementation |
-| Residual risk | Residual implementation unauthorized; I2 design-zip binary rehash remains NOT_VERIFIED |
-| Dependencies | Blueprint/scope freeze R1 independent review; later owner authorization for residual implementation |
-| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Supersession | Supersedes live R2 I2-NOT_PERFORMED pins; preserves R1/PR 46 overclaim history, R2/PR 47 prior phase, and non-authoritative I2 claim `1eaae91`; none for Model D arithmetic |
+| Field                              | Value                                                                                                                                                                       |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date                               | 2026-09-29 (candidate); 2026-10-01 (status alignment R2); 2026-10-01 (status alignment R3)                                                                                  |
+| Status                             | R2_INTEGRATED_I2_CLOSED_ACCEPTED                                                                                                                                            |
+| PREMERGE_INDEPENDENT_REVIEW_RESULT | PASS_ACCEPT                                                                                                                                                                 |
+| POSTMERGE_I2_REVIEW_RESULT         | PASS_ACCEPT                                                                                                                                                                 |
+| POSTMERGE_I2_VALIDATION            | 31_PASS_0_FAIL_1_NOT_VERIFIED                                                                                                                                               |
+| MD05_ARCHITECTURE_DECISION         | ALTERNATIVE_A_CLOSED_ACCEPTED                                                                                                                                               |
+| Approved option                    | Alternative A: separate canonical appeals and complaints modules                                                                                                            |
+| Owner                              | Repository Owner                                                                                                                                                            |
+| Rationale                          | Align live Part E after authoritative I2 PASS_ACCEPT; architecture decision CLOSED_ACCEPTED; MD05 remains formally unresolved                                               |
+| Scope                              | Architecture-decision status alignment for unresolved MD05 only; no path expansion and no implementation                                                                    |
+| Residual risk                      | Residual implementation unauthorized; I2 design-zip binary rehash remains NOT_VERIFIED                                                                                      |
+| Dependencies                       | Blueprint/scope freeze R1 independent review; later owner authorization for residual implementation                                                                         |
+| Exit criteria                      | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                                  |
+| Supersession                       | Supersedes live R2 I2-NOT_PERFORMED pins; preserves R1/PR 46 overclaim history, R2/PR 47 prior phase, and non-authoritative I2 claim `1eaae91`; none for Model D arithmetic |
 
 Full decision and alignments: [MD05 decision freeze R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2.md); [Status alignment R2](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R2.md); [Status alignment R3](./R0_7D_MD05_CANONICAL_ARCHITECTURE_ALTERNATIVE_A_DECISION_FREEZE_R2_POST_INTEGRATION_STATUS_ALIGNMENT_R3.md). Evidence: `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2/20260929195802/`; `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r2/20261001082349/`; `docs/evidence/r0-7d-md05-canonical-architecture-alternative-a-decision-freeze-r2-post-integration-status-alignment-r3/20261001121517/`.
 
 ### MD05 Alternative A — implementation blueprint and exact scope freeze R1
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-10-02 |
-| Status | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW |
-| Approved option | Freeze MD05 path boundary at ADDITIONAL_PATHS = none; freeze SoD matrix; record implementation blueprint; do not implement |
-| Owner | Repository Owner |
-| Rationale | Close PENDING path-boundary and SoD-matrix freezes under Alternative A without expanding MD05 or authorizing residual implementation |
-| Scope | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 only |
-| Residual risk | Backends absent; complaint handler unnamed at blueprint time (live identifier superseded by Phase 0 R2); privacy basis unrecorded; implementation unauthorized |
-| Dependencies | Independent review of this candidate; later residual implementation authorization and out-of-freeze prerequisites |
-| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Supersession | Supersedes only live PENDING path-boundary / SoD-matrix pins and MD05_STATUS PENDING_SCOPE_FREEZE; none for Model D arithmetic or Alternative A CLOSED_ACCEPTED |
+| Field           | Value                                                                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-02                                                                                                                                                      |
+| Status          | CANDIDATE_COMPLETE_PENDING_INDEPENDENT_REVIEW                                                                                                                   |
+| Approved option | Freeze MD05 path boundary at ADDITIONAL_PATHS = none; freeze SoD matrix; record implementation blueprint; do not implement                                      |
+| Owner           | Repository Owner                                                                                                                                                |
+| Rationale       | Close PENDING path-boundary and SoD-matrix freezes under Alternative A without expanding MD05 or authorizing residual implementation                            |
+| Scope           | Exact path boundary + detailed SoD matrix + implementation blueprint for unresolved MD05 only                                                                   |
+| Residual risk   | Backends absent; complaint handler unnamed at blueprint time (live identifier superseded by Phase 0 R2); privacy basis unrecorded; implementation unauthorized  |
+| Dependencies    | Independent review of this candidate; later residual implementation authorization and out-of-freeze prerequisites                                               |
+| Exit criteria   | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                      |
+| Supersession    | Supersedes only live PENDING path-boundary / SoD-matrix pins and MD05_STATUS PENDING_SCOPE_FREEZE; none for Model D arithmetic or Alternative A CLOSED_ACCEPTED |
 
 Full freeze: [Blueprint and exact scope freeze R1](./R0_7D_MD05_ALTERNATIVE_A_IMPLEMENTATION_BLUEPRINT_AND_EXACT_SCOPE_FREEZE_R1.md). Evidence: `docs/evidence/r0-7d-md05-alternative-a-implementation-blueprint-and-exact-scope-freeze-r1/20261002200552/`.
 
 ### MD05 Phase 0 — prerequisite role-administration authority freeze R2
 
-| Field | Value |
-|-------|-------|
-| Date | 2026-10-03 |
-| Status | ROLE_AUTHORITY_FROZEN_PENDING_INDEPENDENT_REVIEW |
-| Approved option | OPTION_1_DEDICATED_AUTHORITY; `STAFF_ROLEADM` is the RBAC Role Administrator |
-| Owner | Repository Owner |
-| Rationale | No existing repository role has an implemented grant or revoke authority. Role administration is frozen to a dedicated authority, separate from complaint handling |
-| Scope | Governance adoption and grant/revoke contract only. `COMPLAINT_HANDLER` and `STAFF_ROLEADM` are not implemented |
-| Residual risk | Roles are absent from the executable enum; IdP bootstrap and audit-event persistence are outside this package; MD05 remains unresolved |
-| Dependencies | Independent review; later separate authorization before implementation |
-| Exit criteria | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated |
-| Supersession | Supersedes only the live pin `COMPLAINT_HANDLER_ROLE = NOT_NAMED`. Preserves incomplete R1 `7f6e2ba05f0abe569111a90594689519fec96304` as non-authoritative. None for Model D or the MD05 path freeze |
+| Field           | Value                                                                                                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-03                                                                                                                                                                                           |
+| Status          | ROLE_AUTHORITY_FROZEN_PENDING_INDEPENDENT_REVIEW                                                                                                                                                     |
+| Approved option | OPTION_1_DEDICATED_AUTHORITY; `STAFF_ROLEADM` is the RBAC Role Administrator                                                                                                                         |
+| Owner           | Repository Owner                                                                                                                                                                                     |
+| Rationale       | No existing repository role has an implemented grant or revoke authority. Role administration is frozen to a dedicated authority, separate from complaint handling                                   |
+| Scope           | Governance adoption and grant/revoke contract only. `COMPLAINT_HANDLER` and `STAFF_ROLEADM` are not implemented                                                                                      |
+| Residual risk   | Roles are absent from the executable enum; IdP bootstrap and audit-event persistence are outside this package; MD05 remains unresolved                                                               |
+| Dependencies    | Independent review; later separate authorization before implementation                                                                                                                               |
+| Exit criteria   | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                                                           |
+| Supersession    | Supersedes only the live pin `COMPLAINT_HANDLER_ROLE = NOT_NAMED`. Preserves incomplete R1 `7f6e2ba05f0abe569111a90594689519fec96304` as non-authoritative. None for Model D or the MD05 path freeze |
 
 Full freeze: [Phase 0 prerequisite authority freeze R2](./R0_7D_MD05_PHASE0_PREREQUISITE_AUTHORITY_FREEZE_R2.md). Evidence: `docs/evidence/r0-7d-md05-phase0-prerequisite-authority-freeze-r2/20261003062710/`.
+
+### MD05 PKG-01 to PKG-07 — owner-delegated technical execution backlog R1
+
+| Field           | Value                                                                                                                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-05                                                                                                                                                                                        |
+| Status          | PROSPECTIVE_OWNER_DELEGATED_TECHNICAL_BACKLOG_2026                                                                                                                                                |
+| Approved option | Record a prospective seven-package technical backlog and implement only PKG-01                                                                                                                    |
+| Owner           | Repository Owner, by the authorization consumed in this candidate                                                                                                                                 |
+| Rationale       | Alternative A and the PKG-00 contract are integrated. Remaining case, persistence, workflow, and facade work still lacks privacy, retention, decision-authority, committee, or provider decisions |
+| Scope           | Backlog PKG-01 through PKG-07 plus the PKG-01 application boundary only                                                                                                                           |
+| Residual risk   | PKG-03 through PKG-07 remain blocked. O01, O02, and O03 remain open. MD05 remains unresolved                                                                                                      |
+| Dependencies    | Independent review of this candidate. Further packages require the owner decisions named in the backlog                                                                                           |
+| Exit criteria   | MD05 remains unresolved until a later authorized residual package is independently reviewed and integrated                                                                                        |
+| Supersession    | None for Model D arithmetic, ADDITIONAL_PATHS, or MD05 resolution. Package numbers are not a recovered historical map                                                                             |
+
+Full backlog: [PKG-01 to PKG-07 execution backlog R1](./R0_7D_MD05_PKG01_TO_PKG07_EXECUTION_BACKLOG_R1.md).
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
