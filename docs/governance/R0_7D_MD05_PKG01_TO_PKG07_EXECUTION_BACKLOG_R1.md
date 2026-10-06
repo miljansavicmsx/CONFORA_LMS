@@ -143,7 +143,7 @@ Risk: low.
 
 ## PKG-03 — Role grant and revoke workflow with immutable audit
 
-Status: READY_FOR_IMPLEMENTATION. Depends on PKG-01 and PKG-02.
+Status: IMPLEMENTED_PENDING_INDEPENDENT_REVIEW. Depends on PKG-01 and PKG-02.
 
 Owner selection: A1, B1, C1R, D1. The policy record is
 `docs/governance/R0_7D_MD05_PKG03_POLICY_AND_SCOPE_FREEZE_R1.md`.

@@ -194,7 +194,7 @@ packages:
   - id: PKG-03
     title: Role grant and revoke workflow with immutable audit
     purpose: Orchestrate four-eyes grant, immediate revoke, PT24H post-review, and the ten PKG-00 audit events by calling the PKG-01 boundary and the PKG-02 port. Application of a role remains an external identity-provider effect. The adopted slice appends the existing audit ledger only and leaves PKG-02 unbound.
-    status: READY_FOR_IMPLEMENTATION
+    status: IMPLEMENTED_PENDING_INDEPENDENT_REVIEW
     depends_on:
       - PKG-01
       - PKG-02
