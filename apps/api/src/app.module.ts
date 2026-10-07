@@ -13,6 +13,7 @@ import { ReportQueryModule } from './report-query/report-query.module';
 import { ReportsModule } from './reports/reports.module';
 import { RoleAdministrationModule } from './role-administration/role-administration.module';
 import { CertComplaintsModule } from './cert-complaints/cert-complaints.module';
+import { CertAppealsModule } from './cert-appeals/cert-appeals.module';
 import { ActiveAssuranceGuard } from './tenant/active-assurance.guard';
 import { AssuranceExceptionFilter } from './tenant/assurance-exception.filter';
 import { ClientTenantRejectionMiddleware } from './tenant/client-tenant-rejection.middleware';
@@ -30,6 +31,7 @@ import { TenantModule } from './tenant/tenant.module';
     ReportsModule,
     RoleAdministrationModule,
     CertComplaintsModule,
+    CertAppealsModule,
   ],
   controllers: [AppController],
   providers: [
