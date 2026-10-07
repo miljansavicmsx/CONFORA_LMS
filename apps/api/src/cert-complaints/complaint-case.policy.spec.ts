@@ -413,23 +413,38 @@ describe('PKG-04 complaint case policy', () => {
     expect(new Set(COMPLAINT_DATA_CLASSES).size).toBe(6);
   });
 
-  it('registers only the complaints module on the application module', () => {
+  it('registers complaints and appeals as separate sibling modules', () => {
     const source = readFileSync(join(__dirname, '../app.module.ts'), 'utf8');
+    const complaintsModule = readFileSync(join(__dirname, 'cert-complaints.module.ts'), 'utf8');
+    const complaintsPolicy = readFileSync(join(__dirname, 'complaint-case.policy.ts'), 'utf8');
+    const complaintsTypes = readFileSync(join(__dirname, 'complaint-case.types.ts'), 'utf8');
     expect(source).toContain(
       "import { CertComplaintsModule } from './cert-complaints/cert-complaints.module';",
+    );
+    expect(source).toContain(
+      "import { CertAppealsModule } from './cert-appeals/cert-appeals.module';",
     );
     expect(source.match(/CertComplaintsModule/g)).toEqual([
       'CertComplaintsModule',
       'CertComplaintsModule',
     ]);
+    expect(source.match(/CertAppealsModule/g)).toEqual(['CertAppealsModule', 'CertAppealsModule']);
     expect(source).toContain('controllers: [AppController]');
     expect(source).toContain('useClass: JwtAuthGuard');
     expect(source).toContain('useClass: ActiveAssuranceGuard');
     expect(source).toContain('useClass: MfaAssuranceGuard');
     expect(source).toContain("consumer.apply(ClientTenantRejectionMiddleware).forRoutes('*')");
-    expect(source).not.toContain('cert-appeals');
     expect(source).not.toContain('ComplaintCasePolicy');
+    expect(source).not.toContain('AppealCasePolicy');
     expect(source).not.toContain('@Controller');
+    expect(complaintsModule).not.toContain('cert-appeals');
+    expect(complaintsModule).not.toMatch(/from\s+['"][^'"]*appeal/u);
+    expect(complaintsPolicy).not.toContain('cert-appeals');
+    expect(complaintsPolicy).not.toMatch(/from\s+['"][^'"]*appeal/u);
+    expect(complaintsTypes).not.toContain('cert-appeals');
+    expect(complaintsTypes).not.toMatch(/from\s+['"][^'"]*appeal/u);
+    expect(complaintsPolicy).toContain('COMPLAINT_OPERATION_AUTHORITY_NOT_ASSIGNED');
+    expect(complaintsPolicy).toContain('evaluateComplaintCasePolicy');
   });
 
   it('does not import an appeals module', () => {
