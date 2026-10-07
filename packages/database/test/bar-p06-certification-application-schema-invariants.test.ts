@@ -166,9 +166,22 @@ test.before(async () => {
   migrationFixture = await runTwoPhaseMigrationProof();
 });
 
-test('P06_TEST_001 resulting Prisma model count exactly 6', async () => {
+test('P06_TEST_001 CertificationApplication and historical models remain present', async () => {
   const schema = await readFile(schemaPath, 'utf8');
-  assert.equal((schema.match(/^model /gm) ?? []).length, 6);
+  for (const name of [
+    'Tenant',
+    'User',
+    'ExternalIdentityLink',
+    'CertificationApplication',
+    'AuditEvent',
+    'AuditChainHead',
+  ]) {
+    assert.match(schema, new RegExp(`^model ${name}\\b`, 'm'), name);
+  }
+  const block = schema.match(/^model CertificationApplication \{[\s\S]*?^\}/m)?.[0] ?? '';
+  assert.ok(block.length > 0);
+  assert.doesNotMatch(block, /\brole\b/);
+  assert.doesNotMatch(block, /ComplaintCase|AppealCase/);
 });
 
 test('P06_TEST_002 resulting Prisma enum count exactly 2', async () => {

@@ -141,25 +141,43 @@ test('10 deleting a user with identity links is rejected', async () => {
   await rejects(prisma.user.delete({ where: { id: u.id } }));
 });
 
-test('11 only approved application tables exist', async () => {
+test('11 historical application tables remain and prohibited tables stay absent', async () => {
   const tables = await prisma.$queryRaw<
     Array<{ table_name: string }>
   >`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name <> '_prisma_migrations'`;
-  const names = tables.map(({ table_name }) => table_name).sort();
-  // BAR-P02 baseline tables remain required (historical authority).
-  for (const required of ['ExternalIdentityLink', 'Tenant', 'User']) {
-    assert.equal(names.includes(required), true, `missing P02 baseline table ${required}`);
-  }
-  // BAR-P05 additive tables are exact; no unknown public tables.
-  assert.deepEqual(names, [
-    'AuditChainHead',
-    'AuditEvent',
-    'CertificationApplication',
-    'ExternalIdentityLink',
+  const names = tables.map((row) => row.table_name);
+  const required = [
     'Tenant',
     'User',
-  ]);
-  assert.equal(names.length, 6);
+    'ExternalIdentityLink',
+    'CertificationApplication',
+    'AuditEvent',
+    'AuditChainHead',
+  ];
+  for (const table of required) {
+    assert.equal(names.includes(table), true, `missing historical table ${table}`);
+  }
+  // Later authorized tables, including ComplaintCase and AppealCase, may coexist.
+  const prohibited = [
+    'Role',
+    'UserRole',
+    'Permission',
+    'UserPermission',
+    'TenantRole',
+    'Grievance',
+    'GrievanceCase',
+    'ComplaintAppealCase',
+    'CombinedComplaintAppealCase',
+  ];
+  for (const table of prohibited) {
+    assert.equal(names.includes(table), false, `prohibited table ${table}`);
+  }
+  const watched = new Set<string>([...required, 'ComplaintCase', 'AppealCase']);
+  const roleColumns = await prisma.$queryRaw<
+    Array<{ table_name: string; column_name: string }>
+  >`SELECT table_name, column_name FROM information_schema.columns WHERE table_schema = 'public' AND column_name ILIKE '%role%'`;
+  const roleHits = roleColumns.filter((row) => watched.has(row.table_name));
+  assert.deepEqual(roleHits, []);
 });
 
 test('12 schema contains no unapproved persistence fields', async () => {

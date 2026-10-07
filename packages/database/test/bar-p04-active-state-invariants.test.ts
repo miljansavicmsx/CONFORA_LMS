@@ -22,12 +22,10 @@ test('BAR-P04 Tenant.isActive and User.isActive exist with default false', async
   assert.equal(u2.isActive, false);
 });
 
-test('BAR-P04 identity constraints preserved; BAR-P05 additive models/enum exact', async () => {
+test('BAR-P04 identity constraints preserved; historical models remain present', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  const modelMatches = schema.match(/^model /gm) ?? [];
   const enumMatches = schema.match(/^enum /gm) ?? [];
-  // BAR-P04 baseline models remain; BAR-P05 adds AuditEvent + AuditChainHead; BAR-P06 adds CertificationApplication.
-  assert.equal(modelMatches.length, 6);
+  // Historical models remain required. Later authorized models may coexist.
   assert.match(schema, /model Tenant\b/);
   assert.match(schema, /model User\b/);
   assert.match(schema, /model ExternalIdentityLink/);
@@ -38,12 +36,15 @@ test('BAR-P04 identity constraints preserved; BAR-P05 additive models/enum exact
   assert.equal(enumMatches.length, 2);
   assert.match(schema, /enum AuditOutcome\b/);
   assert.match(schema, /enum CertificationApplicationStatus\b/);
-  const tenantBlock = schema.match(/model Tenant\s*\{([^}]*)\}/s)?.[1] ?? '';
-  const userBlock = schema.match(/model User\s*\{([^}]*)\}/s)?.[1] ?? '';
-  const eilBlock = schema.match(/model ExternalIdentityLink\s*\{([^}]*)\}/s)?.[1] ?? '';
+  const tenantBlock = schema.match(/^model Tenant \{[\s\S]*?^\}/m)?.[0] ?? '';
+  const userBlock = schema.match(/^model User \{[\s\S]*?^\}/m)?.[0] ?? '';
+  const eilBlock = schema.match(/^model ExternalIdentityLink \{[\s\S]*?^\}/m)?.[0] ?? '';
   assert.equal(tenantBlock.toLowerCase().includes('status'), false);
   assert.equal(userBlock.toLowerCase().includes('status'), false);
   assert.equal(eilBlock.toLowerCase().includes('status'), false);
+  assert.equal(tenantBlock.toLowerCase().includes('role'), false);
+  assert.equal(userBlock.toLowerCase().includes('role'), false);
+  assert.equal(eilBlock.toLowerCase().includes('role'), false);
   assert.match(schema, /@@unique\(\[tenantId, email\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, id\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, issuer, subject\]\)/);

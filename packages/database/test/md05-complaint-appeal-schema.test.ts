@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -543,17 +543,62 @@ test('PKG06-45 no production migration command is added', async () => {
   assert.doesNotMatch(executable, /\bmigrate\b/iu);
 });
 
-test('PKG06-46 no package manifest is changed', () => {
-  const paths = changedPaths();
-  assert.deepEqual(paths, [
-    'packages/database/prisma/migrations/20261005120000_md05_complaints_appeals_cases/migration.sql',
-    'packages/database/prisma/schema.prisma',
-    'packages/database/test/md05-complaint-appeal-schema.test.ts',
-  ]);
+test('PKG06-46 complaint and appeal schema contract stays self-contained', async () => {
+  const focusedTestPath = fileURLToPath(import.meta.url);
+  assert.equal((await stat(schemaPath)).isFile(), true);
+  assert.equal((await stat(migrationPath)).isFile(), true);
+  assert.equal((await stat(focusedTestPath)).isFile(), true);
   assert.equal(
-    paths.some((changed) => changed.endsWith('package.json')),
-    false,
+    path.basename(path.dirname(migrationPath)),
+    '20261005120000_md05_complaints_appeals_cases',
   );
+
+  const names = modelNames(schema);
+  for (const model of ['ComplaintCase', 'AppealCase']) {
+    assert.equal(names.includes(model), true, model);
+  }
+  const createdTables = statements
+    .filter((statement) => statement.startsWith('CREATE TABLE '))
+    .map((statement) => statement.slice('CREATE TABLE '.length).split(' ')[0]);
+  assert.deepEqual(createdTables, ['"ComplaintCase"', '"AppealCase"']);
+  for (const forbidden of [
+    'Grievance',
+    'GrievanceCase',
+    'ComplaintAppealCase',
+    'CombinedComplaintAppealCase',
+    'Case',
+  ]) {
+    assert.equal(names.includes(forbidden), false, forbidden);
+  }
+
+  const prohibitedField = /\b(role|status|state|lifecycle|content|narrative|body|evidence)\b/iu;
+  assert.doesNotMatch(complaintBlock, prohibitedField);
+  assert.doesNotMatch(appealBlock, prohibitedField);
+
+  const contractSource = `${schema}\n${migration}`;
+  for (const runtimePath of [
+    'apps/api/',
+    'frontend-app/',
+    'audit.service',
+    'role-administration',
+  ]) {
+    assert.equal(contractSource.includes(runtimePath), false, runtimePath);
+  }
+
+  const historicalBarTests = [
+    'bar-p02-schema-invariants.test.ts',
+    'bar-p04-active-state-invariants.test.ts',
+    'bar-p05-audit-schema-invariants.test.ts',
+    'bar-p06-certification-application-schema-invariants.test.ts',
+    'bar-p07-schema-zero-delta-invariants.test.ts',
+  ];
+  for (const fileName of historicalBarTests) {
+    const source = await readFile(path.join(packageRoot, 'test', fileName), 'utf8');
+    assert.match(source, /\btest\(/u, fileName);
+    assert.equal(source.includes('test.skip'), false, fileName);
+    assert.equal(source.includes('test.only'), false, fileName);
+  }
+  // Changed-path review is an external Git gate, not a permanent runtime invariant.
 });
 
 test('PKG06-47 no lockfile is changed', async () => {
