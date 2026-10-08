@@ -27,7 +27,9 @@ test('P05_TEST_001 AuditEvent and AuditChainHead exist among historical models',
 
 test('P05_TEST_002 AuditOutcome exactly SUCCESS/DENIED/FAILURE', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  assert.equal((schema.match(/^enum /gm) ?? []).length, 2);
+  const enumNames = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((match) => match[1]);
+  assert.equal(enumNames.includes('AuditOutcome'), true);
+  assert.equal(enumNames.includes('CertificationApplicationStatus'), true);
   const block = schema.match(/enum AuditOutcome\s*\{([^}]*)\}/)?.[1] ?? '';
   const values = block
     .split('\n')

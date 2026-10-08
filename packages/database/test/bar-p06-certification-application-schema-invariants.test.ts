@@ -184,9 +184,18 @@ test('P06_TEST_001 CertificationApplication and historical models remain present
   assert.doesNotMatch(block, /ComplaintCase|AppealCase/);
 });
 
-test('P06_TEST_002 resulting Prisma enum count exactly 2', async () => {
+test('P06_TEST_002 protected Prisma enums remain defined', async () => {
   const schema = await readFile(schemaPath, 'utf8');
-  assert.equal((schema.match(/^enum /gm) ?? []).length, 2);
+  const enumNames = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((match) => match[1]);
+  for (const name of ['AuditOutcome', 'CertificationApplicationStatus']) {
+    assert.equal(enumNames.includes(name), true, name);
+  }
+  const auditOutcome = schema.match(/enum AuditOutcome\s*\{([^}]*)\}/)?.[1] ?? '';
+  const auditValues = auditOutcome
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('//'));
+  assert.deepEqual(auditValues, ['SUCCESS', 'DENIED', 'FAILURE']);
 });
 
 test('P06_TEST_003 CertificationApplicationStatus values exact order', async () => {

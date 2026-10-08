@@ -27,6 +27,12 @@ function modelBlock(source: string, name: string): string {
   return match[0];
 }
 
+function enumBlock(source: string, name: string): string {
+  const match = new RegExp(`^enum ${name} \\{[\\s\\S]*?^\\}`, 'm').exec(source);
+  assert.ok(match, `enum ${name} is missing`);
+  return match[0];
+}
+
 function commitPaths(commit: string, pathspec: string): string[] {
   return execSync(`git diff --name-only "${commit}^" "${commit}" -- ${pathspec}`, {
     cwd: repoRoot,
@@ -46,10 +52,15 @@ test('P07_TEST_001 historical Prisma models remain present', async () => {
   assert.equal(models.includes('Report'), false);
 });
 
-test('P07_TEST_002 Prisma enum count remains 2', async () => {
-  const schema = await readFile(schemaPath, 'utf8');
-  const enums = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((m) => m[1]);
-  assert.equal(enums.length, 2);
+test('P07_TEST_002 protected Prisma enums retain their historical definitions', async () => {
+  const baseline = execSync(`git show ${BASE_SHA}:packages/database/prisma/schema.prisma`, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  }).replace(/\r\n/g, '\n');
+  const disk = (await readFile(schemaPath, 'utf8')).replace(/\r\n/g, '\n');
+  for (const name of ['AuditOutcome', 'CertificationApplicationStatus']) {
+    assert.equal(enumBlock(disk, name), enumBlock(baseline, name), name);
+  }
 });
 
 test('P07_TEST_003 BAR-P07 commit left schema.prisma unchanged', async () => {

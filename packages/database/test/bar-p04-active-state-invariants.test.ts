@@ -22,9 +22,17 @@ test('BAR-P04 Tenant.isActive and User.isActive exist with default false', async
   assert.equal(u2.isActive, false);
 });
 
+function enumMembers(schema: string, name: string): string[] {
+  const block = schema.match(new RegExp(`^enum ${name} \\{([\\s\\S]*?)^\\}`, 'm'))?.[1] ?? '';
+  assert.ok(block.trim().length > 0, `enum ${name} is missing`);
+  return block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('//'));
+}
+
 test('BAR-P04 identity constraints preserved; historical models remain present', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  const enumMatches = schema.match(/^enum /gm) ?? [];
   // Historical models remain required. Later authorized models may coexist.
   assert.match(schema, /model Tenant\b/);
   assert.match(schema, /model User\b/);
@@ -32,10 +40,19 @@ test('BAR-P04 identity constraints preserved; historical models remain present',
   assert.match(schema, /model AuditEvent\b/);
   assert.match(schema, /model AuditChainHead\b/);
   assert.match(schema, /model CertificationApplication\b/);
-  // BAR-P05 adds AuditOutcome; BAR-P06 adds CertificationApplicationStatus.
-  assert.equal(enumMatches.length, 2);
-  assert.match(schema, /enum AuditOutcome\b/);
-  assert.match(schema, /enum CertificationApplicationStatus\b/);
+  // Protected enum definitions remain. Later authorized enums may coexist.
+  const enumNames = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((match) => match[1]);
+  for (const name of ['AuditOutcome', 'CertificationApplicationStatus']) {
+    assert.equal(enumNames.includes(name), true, name);
+  }
+  assert.deepEqual(enumMembers(schema, 'AuditOutcome'), ['SUCCESS', 'DENIED', 'FAILURE']);
+  assert.deepEqual(enumMembers(schema, 'CertificationApplicationStatus'), [
+    'DRAFT',
+    'SUBMITTED',
+    'UNDER_REVIEW',
+    'APPROVED',
+    'REJECTED',
+  ]);
   const tenantBlock = schema.match(/^model Tenant \{[\s\S]*?^\}/m)?.[0] ?? '';
   const userBlock = schema.match(/^model User \{[\s\S]*?^\}/m)?.[0] ?? '';
   const eilBlock = schema.match(/^model ExternalIdentityLink \{[\s\S]*?^\}/m)?.[0] ?? '';
