@@ -67,6 +67,16 @@ function modelBlock(source: string, name: string): string {
   return block;
 }
 
+function enumMembers(source: string, name: string): string[] {
+  const match = new RegExp(`^enum ${name} \\{([\\s\\S]*?)^\\}`, 'm').exec(source);
+  const body = match?.[1];
+  assert.ok(body && body.trim().length > 0, `enum ${name} is missing`);
+  return body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('//'));
+}
+
 function modelNames(source: string): string[] {
   return [...source.matchAll(/^model\s+([A-Za-z0-9_]+)/gm)]
     .map((match) => match[1])
@@ -354,10 +364,20 @@ test('PKG06-24 neither model has a status column', () => {
       assert.equal(fields.has(name), false, name);
     }
   }
-  const enums = [...schema.matchAll(/^enum\s+([A-Za-z0-9_]+)/gm)]
+  const enumNames = [...schema.matchAll(/^enum\s+([A-Za-z0-9_]+)/gm)]
     .map((match) => match[1])
     .filter((name): name is string => typeof name === 'string');
-  assert.deepEqual(enums, ['AuditOutcome', 'CertificationApplicationStatus']);
+  for (const name of ['AuditOutcome', 'CertificationApplicationStatus']) {
+    assert.equal(enumNames.includes(name), true, name);
+  }
+  assert.deepEqual(enumMembers(schema, 'AuditOutcome'), ['SUCCESS', 'DENIED', 'FAILURE']);
+  assert.deepEqual(enumMembers(schema, 'CertificationApplicationStatus'), [
+    'DRAFT',
+    'SUBMITTED',
+    'UNDER_REVIEW',
+    'APPROVED',
+    'REJECTED',
+  ]);
   assert.doesNotMatch(executable, /CREATE TYPE/iu);
 });
 
