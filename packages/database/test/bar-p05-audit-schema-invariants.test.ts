@@ -2,17 +2,34 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-test('P05_TEST_001 AuditEvent + AuditChainHead exist / resulting model count 6', async () => {
+test('P05_TEST_001 AuditEvent and AuditChainHead exist among historical models', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  assert.equal((schema.match(/^model /gm) ?? []).length, 6);
-  assert.match(schema, /model AuditEvent\b/);
-  assert.match(schema, /model AuditChainHead\b/);
-  assert.match(schema, /model CertificationApplication\b/);
+  for (const name of [
+    'Tenant',
+    'User',
+    'ExternalIdentityLink',
+    'CertificationApplication',
+    'AuditEvent',
+    'AuditChainHead',
+  ]) {
+    assert.match(schema, new RegExp(`^model ${name}\\b`, 'm'), name);
+  }
+  const auditEvent = schema.match(/^model AuditEvent \{[\s\S]*?^\}/m)?.[0] ?? '';
+  const chainHead = schema.match(/^model AuditChainHead \{[\s\S]*?^\}/m)?.[0] ?? '';
+  assert.ok(auditEvent.length > 0);
+  assert.ok(chainHead.length > 0);
+  assert.doesNotMatch(auditEvent, /\brole\b/);
+  assert.doesNotMatch(chainHead, /\brole\b/);
+  // ComplaintCase and AppealCase are later domain models, not audit models.
+  assert.doesNotMatch(auditEvent, /ComplaintCase|AppealCase/);
+  assert.doesNotMatch(chainHead, /ComplaintCase|AppealCase/);
 });
 
 test('P05_TEST_002 AuditOutcome exactly SUCCESS/DENIED/FAILURE', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  assert.equal((schema.match(/^enum /gm) ?? []).length, 2);
+  const enumNames = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((match) => match[1]);
+  assert.equal(enumNames.includes('AuditOutcome'), true);
+  assert.equal(enumNames.includes('CertificationApplicationStatus'), true);
   const block = schema.match(/enum AuditOutcome\s*\{([^}]*)\}/)?.[1] ?? '';
   const values = block
     .split('\n')

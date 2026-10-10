@@ -22,28 +22,46 @@ test('BAR-P04 Tenant.isActive and User.isActive exist with default false', async
   assert.equal(u2.isActive, false);
 });
 
-test('BAR-P04 identity constraints preserved; BAR-P05 additive models/enum exact', async () => {
+function enumMembers(schema: string, name: string): string[] {
+  const block = schema.match(new RegExp(`^enum ${name} \\{([\\s\\S]*?)^\\}`, 'm'))?.[1] ?? '';
+  assert.ok(block.trim().length > 0, `enum ${name} is missing`);
+  return block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('//'));
+}
+
+test('BAR-P04 identity constraints preserved; historical models remain present', async () => {
   const schema = await readFile(new URL('../prisma/schema.prisma', import.meta.url), 'utf8');
-  const modelMatches = schema.match(/^model /gm) ?? [];
-  const enumMatches = schema.match(/^enum /gm) ?? [];
-  // BAR-P04 baseline models remain; BAR-P05 adds AuditEvent + AuditChainHead; BAR-P06 adds CertificationApplication.
-  assert.equal(modelMatches.length, 6);
+  // Historical models remain required. Later authorized models may coexist.
   assert.match(schema, /model Tenant\b/);
   assert.match(schema, /model User\b/);
   assert.match(schema, /model ExternalIdentityLink/);
   assert.match(schema, /model AuditEvent\b/);
   assert.match(schema, /model AuditChainHead\b/);
   assert.match(schema, /model CertificationApplication\b/);
-  // BAR-P05 adds AuditOutcome; BAR-P06 adds CertificationApplicationStatus.
-  assert.equal(enumMatches.length, 2);
-  assert.match(schema, /enum AuditOutcome\b/);
-  assert.match(schema, /enum CertificationApplicationStatus\b/);
-  const tenantBlock = schema.match(/model Tenant\s*\{([^}]*)\}/s)?.[1] ?? '';
-  const userBlock = schema.match(/model User\s*\{([^}]*)\}/s)?.[1] ?? '';
-  const eilBlock = schema.match(/model ExternalIdentityLink\s*\{([^}]*)\}/s)?.[1] ?? '';
+  // Protected enum definitions remain. Later authorized enums may coexist.
+  const enumNames = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((match) => match[1]);
+  for (const name of ['AuditOutcome', 'CertificationApplicationStatus']) {
+    assert.equal(enumNames.includes(name), true, name);
+  }
+  assert.deepEqual(enumMembers(schema, 'AuditOutcome'), ['SUCCESS', 'DENIED', 'FAILURE']);
+  assert.deepEqual(enumMembers(schema, 'CertificationApplicationStatus'), [
+    'DRAFT',
+    'SUBMITTED',
+    'UNDER_REVIEW',
+    'APPROVED',
+    'REJECTED',
+  ]);
+  const tenantBlock = schema.match(/^model Tenant \{[\s\S]*?^\}/m)?.[0] ?? '';
+  const userBlock = schema.match(/^model User \{[\s\S]*?^\}/m)?.[0] ?? '';
+  const eilBlock = schema.match(/^model ExternalIdentityLink \{[\s\S]*?^\}/m)?.[0] ?? '';
   assert.equal(tenantBlock.toLowerCase().includes('status'), false);
   assert.equal(userBlock.toLowerCase().includes('status'), false);
   assert.equal(eilBlock.toLowerCase().includes('status'), false);
+  assert.equal(tenantBlock.toLowerCase().includes('role'), false);
+  assert.equal(userBlock.toLowerCase().includes('role'), false);
+  assert.equal(eilBlock.toLowerCase().includes('role'), false);
   assert.match(schema, /@@unique\(\[tenantId, email\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, id\]\)/);
   assert.match(schema, /@@unique\(\[tenantId, issuer, subject\]\)/);

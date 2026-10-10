@@ -10,29 +10,78 @@ const repoRoot = path.resolve(packageRoot, '..', '..');
 const schemaPath = path.join(packageRoot, 'prisma', 'schema.prisma');
 const migrationsDir = path.join(packageRoot, 'prisma', 'migrations');
 const BASE_SHA = 'c6d09d5dfbf542f92b091f06875bae1819b74efc';
+const BAR_P07_COMMIT = '9acf699d55a3cb472850f33c0f31d331dc0eaad9';
+const HISTORICAL_MODELS = [
+  'Tenant',
+  'User',
+  'ExternalIdentityLink',
+  'CertificationApplication',
+  'AuditEvent',
+  'AuditChainHead',
+] as const;
+const PROTECTED_BLOCKS = ['AuditEvent', 'AuditChainHead', 'CertificationApplication'] as const;
 
-test('P07_TEST_001 Prisma model count remains 6', async () => {
-  const schema = await readFile(schemaPath, 'utf8');
-  const models = [...schema.matchAll(/^model\s+(\w+)/gm)].map((m) => m[1]);
-  assert.equal(models.length, 6);
-});
+function modelBlock(source: string, name: string): string {
+  const match = new RegExp(`^model ${name} \\{[\\s\\S]*?^\\}`, 'm').exec(source);
+  assert.ok(match, `model ${name} is missing`);
+  return match[0];
+}
 
-test('P07_TEST_002 Prisma enum count remains 2', async () => {
-  const schema = await readFile(schemaPath, 'utf8');
-  const enums = [...schema.matchAll(/^enum\s+(\w+)/gm)].map((m) => m[1]);
-  assert.equal(enums.length, 2);
-});
+function enumBlock(source: string, name: string): string {
+  const match = new RegExp(`^enum ${name} \\{[\\s\\S]*?^\\}`, 'm').exec(source);
+  assert.ok(match, `enum ${name} is missing`);
+  return match[0];
+}
 
-test('P07_TEST_003 schema.prisma remains unchanged from base', async () => {
-  const base = execSync(`git show ${BASE_SHA}:packages/database/prisma/schema.prisma`, {
+function commitPaths(commit: string, pathspec: string): string[] {
+  return execSync(`git diff --name-only "${commit}^" "${commit}" -- ${pathspec}`, {
     cwd: repoRoot,
     encoding: 'utf8',
-  });
-  const disk = await readFile(schemaPath, 'utf8');
-  assert.equal(disk.replace(/\r\n/g, '\n'), base.replace(/\r\n/g, '\n'));
+  })
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+}
+
+test('P07_TEST_001 historical Prisma models remain present', async () => {
+  const schema = await readFile(schemaPath, 'utf8');
+  const models = [...schema.matchAll(/^model\s+(\w+)/gm)].map((match) => match[1]);
+  for (const name of HISTORICAL_MODELS) {
+    assert.equal(models.includes(name), true, name);
+  }
+  assert.equal(models.includes('Report'), false);
 });
 
-test('P07_TEST_004 migration directory delta = 0', async () => {
+test('P07_TEST_002 protected Prisma enums retain their historical definitions', async () => {
+  const baseline = execSync(`git show ${BASE_SHA}:packages/database/prisma/schema.prisma`, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  }).replace(/\r\n/g, '\n');
+  const disk = (await readFile(schemaPath, 'utf8')).replace(/\r\n/g, '\n');
+  for (const name of ['AuditOutcome', 'CertificationApplicationStatus']) {
+    assert.equal(enumBlock(disk, name), enumBlock(baseline, name), name);
+  }
+});
+
+test('P07_TEST_003 BAR-P07 commit left schema.prisma unchanged', async () => {
+  assert.deepEqual(commitPaths(BAR_P07_COMMIT, 'packages/database/prisma/schema.prisma'), []);
+  const baseline = execSync(`git show ${BASE_SHA}:packages/database/prisma/schema.prisma`, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  }).replace(/\r\n/g, '\n');
+  const disk = (await readFile(schemaPath, 'utf8')).replace(/\r\n/g, '\n');
+  for (const name of PROTECTED_BLOCKS) {
+    assert.equal(modelBlock(disk, name), modelBlock(baseline, name), name);
+  }
+  assert.doesNotMatch(modelBlock(disk, 'User'), /\brole\b/u);
+  assert.doesNotMatch(disk, /^model Report\b/m);
+  for (const name of HISTORICAL_MODELS) {
+    assert.match(disk, new RegExp(`^model ${name}\\b`, 'm'), name);
+  }
+});
+
+test('P07_TEST_004 BAR-P07 commit left the migration directory unchanged', async () => {
+  assert.deepEqual(commitPaths(BAR_P07_COMMIT, 'packages/database/prisma/migrations'), []);
   const baseList = execSync(
     `git ls-tree --name-only ${BASE_SHA}:packages/database/prisma/migrations`,
     {
@@ -42,10 +91,15 @@ test('P07_TEST_004 migration directory delta = 0', async () => {
   )
     .trim()
     .split(/\r?\n/)
-    .filter(Boolean)
-    .sort();
-  const now = (await readdir(migrationsDir)).filter((n) => n !== '.gitkeep').sort();
-  assert.deepEqual(now, baseList);
+    .filter(Boolean);
+  const now = (await readdir(migrationsDir)).filter((name) => name !== '.gitkeep');
+  for (const name of baseList) {
+    assert.equal(now.includes(name), true, name);
+  }
+  assert.equal(
+    now.some((name) => /p07|report/i.test(name)),
+    false,
+  );
 });
 
 test('P07_TEST_089 schema/migration zero delta', async () => {

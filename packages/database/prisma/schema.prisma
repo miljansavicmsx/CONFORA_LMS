@@ -8,23 +8,28 @@ datasource db {
 }
 
 model Tenant {
-  id                       String                    @id @default(uuid()) @db.Uuid
-  isActive                 Boolean                   @default(false)
-  users                    User[]
-  auditEvents              AuditEvent[]
-  auditChainHead           AuditChainHead?
+  id                        String                     @id @default(uuid()) @db.Uuid
+  isActive                  Boolean                    @default(false)
+  users                     User[]
+  auditEvents               AuditEvent[]
+  auditChainHead            AuditChainHead?
   certificationApplications CertificationApplication[]
+  complaintCases            ComplaintCase[]
+  appealCases               AppealCase[]
 }
 
 model User {
-  id                 String                 @id @default(uuid()) @db.Uuid
-  tenantId           String                 @db.Uuid
-  email              String
-  isActive           Boolean                @default(false)
-  tenant             Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  externalIdentities         ExternalIdentityLink[]
-  auditEvents                AuditEvent[]
-  certificationApplications  CertificationApplication[]
+  id                                 String                     @id @default(uuid()) @db.Uuid
+  tenantId                           String                     @db.Uuid
+  email                              String
+  isActive                           Boolean                    @default(false)
+  tenant                             Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  externalIdentities                 ExternalIdentityLink[]
+  auditEvents                        AuditEvent[]
+  certificationApplications          CertificationApplication[]
+  complaintCases                     ComplaintCase[]
+  appealCasesAsAppellant             AppealCase[]               @relation("AppealCaseAppellant")
+  appealCasesAsOriginalDecisionMaker AppealCase[]               @relation("AppealCaseOriginalDecisionMaker")
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -70,6 +75,34 @@ model CertificationApplication {
 
   @@index([tenantId, applicantUserId, createdAt(sort: Desc), id(sort: Desc)])
   @@index([tenantId, applicantUserId, status])
+}
+
+model ComplaintCase {
+  id                String @id @default(uuid()) @db.Uuid
+  tenantId          String @db.Uuid
+  internalCaseId    String @db.VarChar(128)
+  complainantUserId String @db.Uuid
+
+  tenant      Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  complainant User   @relation(fields: [tenantId, complainantUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, internalCaseId])
+}
+
+model AppealCase {
+  id                             String  @id @default(uuid()) @db.Uuid
+  tenantId                       String  @db.Uuid
+  internalCaseId                 String  @db.VarChar(128)
+  appellantUserId                String  @db.Uuid
+  certificationDecisionReference String  @db.VarChar(128)
+  originalDecisionMakerUserId    String  @db.Uuid
+  committeeIdentifier            String? @db.VarChar(128)
+
+  tenant                Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  appellant             User   @relation("AppealCaseAppellant", fields: [tenantId, appellantUserId], references: [tenantId, id], onDelete: Restrict)
+  originalDecisionMaker User   @relation("AppealCaseOriginalDecisionMaker", fields: [tenantId, originalDecisionMakerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, internalCaseId])
 }
 
 model AuditEvent {
