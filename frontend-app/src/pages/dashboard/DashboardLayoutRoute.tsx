@@ -3,6 +3,7 @@ import { DASHBOARD_NS } from "@confora/i18n";
 import { useTranslation } from "react-i18next";
 import { Navigate, Outlet } from "react-router";
 
+import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { useAuthStore } from "@/stores/authStore";
 
 import type { DashboardOutletContext } from "./dashboard-outlet-context";
@@ -25,5 +26,17 @@ export function DashboardLayoutRoute(): JSX.Element {
   if (!hydrated) return <p className="p-8" role="status">{t("loading")}</p>;
   if (!authenticated) return <Navigate to="/login?reason=session" replace />;
   const context: DashboardOutletContext = { user: user ?? {} };
-  return <Outlet context={context} />;
+  const name = user?.name?.trim() || user?.email?.trim() || t("greeting.anonymous");
+  return (
+    <DashboardLayout
+      user={{
+        name,
+        ...(user?.email ? { email: user.email } : {}),
+        ...(user?.role ? { role: user.role } : {}),
+      }}
+      onLogout={() => useAuthStore.getState().logout()}
+    >
+      <Outlet context={context} />
+    </DashboardLayout>
+  );
 }

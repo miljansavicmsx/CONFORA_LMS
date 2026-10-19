@@ -29,7 +29,7 @@ export const IA_RIBBON_LEARNER_TRUST: readonly WorkspaceContinuityItem[] = [
 
 let latestInvestigation: InvestigationSnapshot = null;
 
-/** Stores only the current in-memory UI hint; no tenant, identity, token, or server state is persisted. */
+/** Stores only the current in-memory UI hint; no tenant, identity, or server state is persisted. */
 export function recordInvestigationJump(jump: InvestigationJump): void {
   latestInvestigation = { ...jump };
 }

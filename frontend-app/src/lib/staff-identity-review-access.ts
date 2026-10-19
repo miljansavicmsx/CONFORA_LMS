@@ -15,3 +15,6 @@ function hasRole(input: StaffIdentityReviewAccessInput, allowed: ReadonlySet<str
 /** UI visibility only; privileged identity operations require server authorization. */
 export function canReadStaffIdentityQueue(input: StaffIdentityReviewAccessInput): boolean { return hasRole(input, READ_ROLES); }
 export function canPerformStaffIdentityReview(input: StaffIdentityReviewAccessInput): boolean { return hasRole(input, PERFORM_ROLES); }
+export function shouldLoadStaffIdentityQueue(input: StaffIdentityReviewAccessInput): boolean {
+  return canReadStaffIdentityQueue(input);
+}

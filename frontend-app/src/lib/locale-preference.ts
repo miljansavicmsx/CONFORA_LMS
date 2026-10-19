@@ -6,8 +6,11 @@ import {
 
 const ENV_LOCALE = import.meta.env.VITE_APP_LOCALE as SupportedLocale | undefined;
 
-/** TD-070 default: hr when unset (pilot baseline); fallback chain for missing storage. */
-const DEFAULT_UI_LOCALE: SupportedLocale = "hr";
+/**
+ * Unset UI locale follows OD-PP NFR-07 and Baseline §14: bs, then en.
+ * A saved choice and VITE_APP_LOCALE still win.
+ */
+const DEFAULT_UI_LOCALE: SupportedLocale = "bs";
 
 function isSupportedLocale(value: string | null | undefined): value is SupportedLocale {
   return Boolean(value && (SUPPORTED_LOCALES as readonly string[]).includes(value));
