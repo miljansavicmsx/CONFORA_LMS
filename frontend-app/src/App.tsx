@@ -34,6 +34,8 @@ const CoursesCatalogPage = lazy(() => import("@/pages/courses/CoursesCatalogPage
 const CourseDetailPage = lazy(() => import("@/pages/courses/CourseDetailPage"));
 const IdentityReviewPage = lazy(() => import("@/pages/admin/IdentityReviewPage"));
 const LearnerEducationPage = lazy(() => import("@/pages/learner/LearnerEducationPage"));
+const CoursePlayerPage = lazy(() => import("@/pages/learner/CoursePlayerPage"));
+const LearnerStatisticsPage = lazy(() => import("@/pages/learner/LearnerStatisticsPage"));
 const StaffAppealsComplaintsPage = lazy(() => import("@/pages/staff/StaffAppealsComplaintsPage"));
 const SupportAdminPage = lazy(() => import("@/pages/admin/SupportAdminPage"));
 const VerifyCertificate = lazy(() => import("@/pages/public/VerifyCertificate"));
@@ -58,6 +60,8 @@ export default function App(): JSX.Element {
               <Route path="/dashboard" element={<DashboardLayoutRoute />}>
                 <Route index element={<DashboardHome />} />
                 <Route path="learner/education" element={<LearnerEducationPage />} />
+                <Route path="learner/courses/:enrolmentId" element={<CoursePlayerPage />} />
+                <Route path="learner/statistics" element={<LearnerStatisticsPage />} />
                 <Route path="exams/register" element={<ExamRegistrationPage />} />
                 <Route path="certification/applications" element={<CertificationApplicationsPage />} />
                 <Route path="my-certificates" element={<MyCertificates />} />

@@ -32,6 +32,10 @@ model Tenant {
   enrolmentTrainers               EnrolmentTrainer[]
   lessonProgresses                LessonProgress[]
   learningActivityRecords         LearningActivityRecord[]
+  enrolmentPaymentIntents         EnrolmentPaymentIntent[]
+  learnerAnalyticsConsents        LearnerAnalyticsConsent[]
+  chapterQuizAttempts             ChapterQuizAttempt[]
+  chapterQuizAttemptAnswers       ChapterQuizAttemptAnswer[]
   itemScenarioGroups              ItemScenarioGroup[]
   itemScenarioMemberships         ItemScenarioMembership[]
   assessmentItems                 AssessmentItem[]
@@ -110,6 +114,7 @@ model User {
   learnerEnrolments                  Enrolment[]
   enrolmentTrainerDuties             EnrolmentTrainer[]
   learningActivityRecords            LearningActivityRecord[]
+  learnerAnalyticsConsent            LearnerAnalyticsConsent?
   itemReviews                        ItemReview[]
   identityChecksAsSubject            IdentityCheck[]                  @relation("IdentityCheckSubject")
   identityChecksReviewed             IdentityCheck[]                  @relation("IdentityCheckReviewer")
@@ -290,6 +295,12 @@ enum LearningObjectKind {
   QUIZ
   EXAM
   ITEM
+}
+
+/// Payment is not collected in this slice. PENDING_PAYMENT is a stub state.
+enum EnrolmentPaymentState {
+  PENDING_PAYMENT
+  NOT_REQUIRED
 }
 
 enum ExamFormLifecycle {
@@ -712,6 +723,8 @@ model Enrolment {
   course          Course                     @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
   trainer         EnrolmentTrainer?
   lessonProgress  LessonProgress[]
+  paymentIntent   EnrolmentPaymentIntent?
+  quizAttempts    ChapterQuizAttempt[]
   attendanceLinks AttendanceCredentialLink[]
 
   @@unique([tenantId, id])
@@ -752,6 +765,77 @@ model LessonProgress {
 
   @@unique([tenantId, id])
   @@unique([tenantId, enrolmentId, lessonId])
+  @@index([tenantId])
+}
+
+model EnrolmentPaymentIntent {
+  id          String                @id @default(uuid()) @db.Uuid
+  tenantId    String                @db.Uuid
+  enrolmentId String                @db.Uuid
+  amount      Decimal               @db.Decimal(12, 2)
+  currency    String                @db.Char(3)
+  state       EnrolmentPaymentState
+  createdAt   DateTime              @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  enrolment Enrolment @relation(fields: [tenantId, enrolmentId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, enrolmentId])
+  @@index([tenantId, state])
+}
+
+model LearnerAnalyticsConsent {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  userId    String   @db.Uuid
+  granted   Boolean
+  decidedAt DateTime @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+}
+
+model ChapterQuizAttempt {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  enrolmentId  String   @db.Uuid
+  quizId       String   @db.Uuid
+  scorePercent Int
+  passed       Boolean
+  submittedAt  DateTime @db.Timestamptz(3)
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  enrolment Enrolment                  @relation(fields: [tenantId, enrolmentId], references: [tenantId, id], onDelete: Restrict)
+  quiz      Quiz                       @relation(fields: [tenantId, quizId], references: [tenantId, id], onDelete: Restrict)
+  answers   ChapterQuizAttemptAnswer[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, enrolmentId, quizId])
+}
+
+model ChapterQuizAttemptAnswer {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  attemptId         String   @db.Uuid
+  itemId            String   @db.Uuid
+  selectedChoiceKey String   @db.VarChar(16)
+  correct           Boolean
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant             @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  attempt ChapterQuizAttempt @relation(fields: [tenantId, attemptId], references: [tenantId, id], onDelete: Restrict)
+  item    AssessmentItem     @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, attemptId, itemId])
   @@index([tenantId])
 }
 
@@ -833,6 +917,7 @@ model AssessmentItem {
   quizItems          QuizItem[]
   examFormItems      ExamFormItem[]
   answers            ExamAttemptAnswer[]
+  quizAttemptAnswers ChapterQuizAttemptAnswer[]
 
   @@unique([tenantId, id])
   @@index([tenantId, courseId, reviewState])
@@ -901,9 +986,10 @@ model Quiz {
   createdAt       DateTime @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime @updatedAt @db.Timestamptz(3)
 
-  tenant  Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  chapter CourseChapter @relation(fields: [tenantId, chapterId], references: [tenantId, id], onDelete: Restrict)
-  items   QuizItem[]
+  tenant   Tenant               @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  chapter  CourseChapter        @relation(fields: [tenantId, chapterId], references: [tenantId, id], onDelete: Restrict)
+  items    QuizItem[]
+  attempts ChapterQuizAttempt[]
 
   @@unique([tenantId, id])
   @@index([tenantId, chapterId])
