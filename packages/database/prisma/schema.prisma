@@ -8,28 +8,135 @@ datasource db {
 }
 
 model Tenant {
-  id                        String                     @id @default(uuid()) @db.Uuid
-  isActive                  Boolean                    @default(false)
-  users                     User[]
-  auditEvents               AuditEvent[]
-  auditChainHead            AuditChainHead?
-  certificationApplications CertificationApplication[]
-  complaintCases            ComplaintCase[]
-  appealCases               AppealCase[]
+  id                              String                           @id @default(uuid()) @db.Uuid
+  isActive                        Boolean                          @default(false)
+  users                           User[]
+  auditEvents                     AuditEvent[]
+  auditChainHead                  AuditChainHead?
+  certificationApplications       CertificationApplication[]
+  complaintCases                  ComplaintCase[]
+  appealCases                     AppealCase[]
+  userProfiles                    UserProfile[]
+  accessibilityNeeds              UserAccessibilityNeed[]
+  committeeMemberships            CommitteeMembership[]
+  breakGlassEvents                BreakGlassAccess[]
+  staffDeclarations               StaffDeclaration[]
+  competences                     Competence[]
+  proficiencyLevels               ProficiencyLevel[]
+  courses                         Course[]
+  courseChapters                  CourseChapter[]
+  courseLessons                   CourseLesson[]
+  contentBlocks                   ContentBlock[]
+  courseApprovals                 CourseApproval[]
+  enrolments                      Enrolment[]
+  enrolmentTrainers               EnrolmentTrainer[]
+  lessonProgresses                LessonProgress[]
+  learningActivityRecords         LearningActivityRecord[]
+  itemScenarioGroups              ItemScenarioGroup[]
+  itemScenarioMemberships         ItemScenarioMembership[]
+  assessmentItems                 AssessmentItem[]
+  assessmentItemChoices           AssessmentItemChoice[]
+  assessmentItemCompetences       AssessmentItemCompetence[]
+  itemReviews                     ItemReview[]
+  quizzes                         Quiz[]
+  quizItems                       QuizItem[]
+  examForms                       ExamForm[]
+  examFormItems                   ExamFormItem[]
+  examFormCourses                 ExamFormCourse[]
+  examFormSchemes                 ExamFormScheme[]
+  identityChecks                  IdentityCheck[]
+  examSessions                    ExamSession[]
+  examDutyAssignments             ExamDutyAssignment[]
+  examAttempts                    ExamAttempt[]
+  examAttemptAnswers              ExamAttemptAnswer[]
+  proctorSignals                  ProctorSignal[]
+  proctorSignalReviews            ProctorSignalReview[]
+  certificationSchemes            CertificationScheme[]
+  certificationSchemeVersions     CertificationSchemeVersion[]
+  schemeCompetenceRequirements    SchemeCompetenceRequirement[]
+  certificationApplicationDetails CertificationApplicationDetail[]
+  applicationExperiences          ApplicationExperience[]
+  applicationReferees             ApplicationReferee[]
+  certificationDecisions          CertificationDecision[]
+  decisionParticipants            DecisionParticipant[]
+  credentials                     Credential[]
+  attendanceCredentialLinks       AttendanceCredentialLink[]
+  personnelCredentialLinks        PersonnelCredentialLink[]
+  achievementRecords              AchievementRecord[]
+  credentialLifecycleEvents       CredentialLifecycleEvent[]
+  verificationLogs                VerificationLog[]
+  recertificationCases            RecertificationCase[]
+  recertificationOutcomes         RecertificationOutcome[]
+  invoices                        Invoice[]
+  payments                        Payment[]
+  amfMemberships                  AmfMembership[]
+  amfSuspensionProposals          AmfSuspensionProposal[]
+  amfSuspensionConfirmations      AmfSuspensionConfirmation[]
+  controlledDocuments             ControlledDocument[]
+  documentVersions                DocumentVersion[]
+  documentApprovals               DocumentApproval[]
+  riskRecords                     RiskRecord[]
+  internalAudits                  InternalAudit[]
+  correctiveActions               CorrectiveAction[]
+  managementReviews               ManagementReview[]
+  impartialityReports             ImpartialityReport[]
+  aiSystems                       AiSystem[]
+  aiSuggestions                   AiSuggestion[]
+  aiSuggestionReviews             AiSuggestionReview[]
+  aiAuditRecords                  AiAuditRecord[]
+  aiDisclosureAcknowledgements    AiDisclosureAcknowledgement[]
 }
 
 model User {
-  id                                 String                     @id @default(uuid()) @db.Uuid
-  tenantId                           String                     @db.Uuid
+  id                                 String                           @id @default(uuid()) @db.Uuid
+  tenantId                           String                           @db.Uuid
   email                              String
-  isActive                           Boolean                    @default(false)
-  tenant                             Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  isActive                           Boolean                          @default(false)
+  tenant                             Tenant                           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   externalIdentities                 ExternalIdentityLink[]
   auditEvents                        AuditEvent[]
   certificationApplications          CertificationApplication[]
   complaintCases                     ComplaintCase[]
-  appealCasesAsAppellant             AppealCase[]               @relation("AppealCaseAppellant")
-  appealCasesAsOriginalDecisionMaker AppealCase[]               @relation("AppealCaseOriginalDecisionMaker")
+  appealCasesAsAppellant             AppealCase[]                     @relation("AppealCaseAppellant")
+  appealCasesAsOriginalDecisionMaker AppealCase[]                     @relation("AppealCaseOriginalDecisionMaker")
+  profile                            UserProfile?
+  accessibilityNeeds                 UserAccessibilityNeed[]
+  committeeMemberships               CommitteeMembership[]            @relation("CommitteeMember")
+  committeeAppointments              CommitteeMembership[]            @relation("CommitteeAppointer")
+  breakGlassEvents                   BreakGlassAccess[]
+  staffDeclarations                  StaffDeclaration[]
+  authoredCourses                    Course[]                         @relation("CourseAuthor")
+  courseApprovals                    CourseApproval[]
+  learnerEnrolments                  Enrolment[]
+  enrolmentTrainerDuties             EnrolmentTrainer[]
+  learningActivityRecords            LearningActivityRecord[]
+  itemReviews                        ItemReview[]
+  identityChecksAsSubject            IdentityCheck[]                  @relation("IdentityCheckSubject")
+  identityChecksReviewed             IdentityCheck[]                  @relation("IdentityCheckReviewer")
+  candidateExamSessions              ExamSession[]                    @relation("ExamCandidate")
+  invigilatedExamSessions            ExamSession[]                    @relation("ExamInvigilator")
+  examDutyAssignments                ExamDutyAssignment[]
+  applicationDetails                 CertificationApplicationDetail[]
+  decisionsChaired                   CertificationDecision[]          @relation("DecisionChair")
+  decisionParticipations             DecisionParticipant[]
+  heldCredentials                    Credential[]
+  credentialLifecycleEvents          CredentialLifecycleEvent[]
+  recertificationCases               RecertificationCase[]
+  invoices                           Invoice[]
+  payments                           Payment[]
+  amfMemberships                     AmfMembership[]
+  amfSuspensionProposals             AmfSuspensionProposal[]
+  amfSuspensionConfirmations         AmfSuspensionConfirmation[]
+  documentApprovals                  DocumentApproval[]
+  ownedRisks                         RiskRecord[]
+  ledInternalAudits                  InternalAudit[]
+  raisedCorrectiveActions            CorrectiveAction[]               @relation("CorrectiveActionRaiser")
+  ownedCorrectiveActions             CorrectiveAction[]               @relation("CorrectiveActionOwner")
+  chairedManagementReviews           ManagementReview[]
+  aiSuggestionReviews                AiSuggestionReview[]
+  aiAuditRecords                     AiAuditRecord[]
+  aiDisclosureAcknowledgements       AiDisclosureAcknowledgement[]
+  proctorSignalReviews               ProctorSignalReview[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -137,4 +244,1586 @@ model AuditChainHead {
   lastHash     String @db.Char(64)
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+}
+
+/// Product-plan domain (OD-PP-14, 2026-10-19).
+/// CertificationApplication is frozen: details store its id without a foreign key.
+/// Personnel certificates require PersonnelCredentialLink. Attendance uses AttendanceCredentialLink.
+/// AMF membership is not a foreign key on any certification record (OD-PP-02).
+/// Identity images and nationalIdNumber must not be collected before DPIA (OD-PP-05).
+/// IdentityCheck.method allows human visual review only (OD-PP-04). No biometric template column.
+
+enum CourseLifecycle {
+  DRAFT
+  IN_TC_REVIEW
+  APPROVED
+  PUBLISHED
+  UNPUBLISHED
+}
+
+enum ContentBlockKind {
+  PDF
+  VIDEO
+  TEXT
+}
+
+enum CourseApprovalCapacity {
+  TECHNICAL_COMMITTEE
+  DIRECTOR
+}
+
+enum ItemReviewState {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ItemReviewOutcome {
+  APPROVED
+  REJECTED
+}
+
+enum LearningObjectKind {
+  COURSE
+  LESSON
+  QUIZ
+  EXAM
+  ITEM
+}
+
+enum ExamFormLifecycle {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  PUBLISHED
+  RETIRED
+}
+
+enum IdentityVerificationState {
+  UNVERIFIED
+  VERIFIED
+  REJECTED
+  ADDITIONAL_EVIDENCE_REQUESTED
+}
+
+enum IdentityCheckMethod {
+  HUMAN_VISUAL
+}
+
+enum ExamDutyKind {
+  EXAMINER
+  INVIGILATOR
+}
+
+enum ExamAttemptLifecycle {
+  IN_PROGRESS
+  SUBMITTED
+  INTERRUPTED
+  VOID
+}
+
+enum ProctorSignalSource {
+  HUMAN
+  AI
+}
+
+enum ProctorSignalDisposition {
+  DISMISSED
+  CONFIRMED_BY_INVIGILATOR
+}
+
+enum CertificationPathway {
+  CONFORA_TRAINING
+  EXTERNAL_EQUIVALENT
+}
+
+enum SchemeVersionLifecycle {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  PUBLISHED
+  RETIRED
+}
+
+enum DecisionOutcome {
+  APPROVED
+  REJECTED
+}
+
+enum CredentialType {
+  ATTENDANCE
+  PERSONNEL
+}
+
+enum CredentialLifecycle {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+  WITHDRAWN
+  SCOPE_REDUCED
+}
+
+enum VerificationResult {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+  WITHDRAWN
+  SCOPE_REDUCED
+  NOT_FOUND
+}
+
+enum RecertificationLifecycle {
+  REQUESTED
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum PaymentLifecycle {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum MembershipLifecycle {
+  DUE
+  PAID
+  PROPOSAL_PENDING
+  SUSPENDED
+  WITHDRAWN
+}
+
+enum SuspensionProposalLifecycle {
+  PROPOSED
+  CONFIRMED
+  REJECTED
+  WITHDRAWN_AFTER_DEADLINE
+}
+
+enum DocumentLifecycle {
+  DRAFT
+  APPROVED
+  SUPERSEDED
+}
+
+enum RiskBand {
+  GREEN
+  YELLOW
+  RED
+}
+
+enum InternalAuditLifecycle {
+  PLANNED
+  IN_PROGRESS
+  REPORTED
+  CLOSED
+}
+
+enum CorrectiveActionLifecycle {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  VERIFIED
+}
+
+enum AiSuggestionLifecycle {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum AiReviewOutcome {
+  ACCEPTED
+  REJECTED
+}
+
+enum StaffDeclarationKind {
+  CONFIDENTIALITY
+  IMPARTIALITY
+}
+
+model UserProfile {
+  id                        String                    @id @default(uuid()) @db.Uuid
+  tenantId                  String                    @db.Uuid
+  userId                    String                    @db.Uuid
+  givenName                 String                    @db.VarChar(128)
+  familyName                String                    @db.VarChar(128)
+  nationalIdNumber          String?                   @db.VarChar(32)
+  phone                     String?                   @db.VarChar(32)
+  jobTitle                  String?                   @db.VarChar(128)
+  organizationName          String?                   @db.VarChar(256)
+  educationLevel            String?                   @db.VarChar(128)
+  identityVerificationState IdentityVerificationState @default(UNVERIFIED)
+  createdAt                 DateTime                  @default(now()) @db.Timestamptz(3)
+  updatedAt                 DateTime                  @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId])
+  @@unique([tenantId, nationalIdNumber])
+  @@index([tenantId])
+}
+
+model UserAccessibilityNeed {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid
+  userId           String   @db.Uuid
+  needCode         String   @db.VarChar(64)
+  extraTimePercent Int?
+  note             String?  @db.Text
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId, needCode])
+  @@index([tenantId])
+}
+
+model CommitteeMembership {
+  id                String    @id @default(uuid()) @db.Uuid
+  tenantId          String    @db.Uuid
+  userId            String    @db.Uuid
+  canonicalCode     String    @db.VarChar(64)
+  committeeCode     String    @db.VarChar(64)
+  activeFrom        DateTime  @db.Timestamptz(3)
+  activeUntil       DateTime? @db.Timestamptz(3)
+  appointedByUserId String    @db.Uuid
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(3)
+
+  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  member    User   @relation("CommitteeMember", fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  appointer User   @relation("CommitteeAppointer", fields: [tenantId, appointedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, canonicalCode])
+  @@index([tenantId, userId])
+}
+
+model BreakGlassAccess {
+  id          String    @id @default(uuid()) @db.Uuid
+  tenantId    String    @db.Uuid
+  actorUserId String    @db.Uuid
+  reason      String    @db.Text
+  scopeLabel  String    @db.VarChar(128)
+  ticketRef   String    @db.VarChar(128)
+  startedAt   DateTime  @db.Timestamptz(3)
+  endedAt     DateTime? @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  actor  User   @relation(fields: [tenantId, actorUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, actorUserId, startedAt])
+}
+
+model StaffDeclaration {
+  id                 String               @id @default(uuid()) @db.Uuid
+  tenantId           String               @db.Uuid
+  userId             String               @db.Uuid
+  kind               StaffDeclarationKind
+  signedAt           DateTime             @db.Timestamptz(3)
+  documentVersionRef String?              @db.VarChar(64)
+  createdAt          DateTime             @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, userId, kind])
+}
+
+model Competence {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  code      String   @db.VarChar(64)
+  statement String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant      Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  levels      ProficiencyLevel[]
+  itemLinks   AssessmentItemCompetence[]
+  schemeLinks SchemeCompetenceRequirement[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+model ProficiencyLevel {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  competenceId String   @db.Uuid
+  levelCode    String   @db.VarChar(32)
+  descriptor   String   @db.Text
+  rank         Int
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant      Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  competence  Competence                    @relation(fields: [tenantId, competenceId], references: [tenantId, id], onDelete: Restrict)
+  itemLinks   AssessmentItemCompetence[]
+  schemeLinks SchemeCompetenceRequirement[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, competenceId, levelCode])
+  @@index([tenantId])
+}
+
+model Course {
+  id                         String          @id @default(uuid()) @db.Uuid
+  tenantId                   String          @db.Uuid
+  code                       String          @db.VarChar(64)
+  title                      String          @db.VarChar(256)
+  description                String          @db.Text
+  areaCode                   String          @db.VarChar(64)
+  imageObjectKey             String?         @db.VarChar(512)
+  language                   String          @db.VarChar(16)
+  educationalLevel           String?         @db.VarChar(64)
+  targetAudience             String?         @db.Text
+  typicalLearningTimeMinutes Int?
+  learningObjectives         String?         @db.Text
+  standardReference          String?         @db.VarChar(128)
+  priceAmount                Decimal         @db.Decimal(12, 2)
+  priceCurrency              String          @db.Char(3)
+  requiresCertification      Boolean         @default(false)
+  minimumTimeSeconds         Int             @default(0)
+  lifecycle                  CourseLifecycle @default(DRAFT)
+  authorUserId               String          @db.Uuid
+  createdAt                  DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt                  DateTime        @updatedAt @db.Timestamptz(3)
+
+  tenant          Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  author          User                       @relation("CourseAuthor", fields: [tenantId, authorUserId], references: [tenantId, id], onDelete: Restrict)
+  chapters        CourseChapter[]
+  approvals       CourseApproval[]
+  enrolments      Enrolment[]
+  scenarioGroups  ItemScenarioGroup[]
+  items           AssessmentItem[]
+  examFormCourses ExamFormCourse[]
+  attendanceLinks AttendanceCredentialLink[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+  @@index([tenantId, areaCode, lifecycle])
+}
+
+model CourseChapter {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  courseId           String   @db.Uuid
+  sequence           Int
+  title              String   @db.VarChar(256)
+  minimumTimeSeconds Int      @default(0)
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  course  Course         @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+  lessons CourseLesson[]
+  quizzes Quiz[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, courseId, sequence])
+  @@index([tenantId, courseId])
+}
+
+model CourseLesson {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  chapterId          String   @db.Uuid
+  sequence           Int
+  title              String   @db.VarChar(256)
+  minimumTimeSeconds Int      @default(0)
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  chapter  CourseChapter    @relation(fields: [tenantId, chapterId], references: [tenantId, id], onDelete: Restrict)
+  blocks   ContentBlock[]
+  progress LessonProgress[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, chapterId, sequence])
+  @@index([tenantId, chapterId])
+}
+
+model ContentBlock {
+  id                    String           @id @default(uuid()) @db.Uuid
+  tenantId              String           @db.Uuid
+  lessonId              String           @db.Uuid
+  sequence              Int
+  kind                  ContentBlockKind
+  title                 String?          @db.VarChar(256)
+  textBody              String?          @db.Text
+  objectKey             String?          @db.VarChar(512)
+  accessibilityFeatures Json?
+  createdAt             DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime         @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  lesson CourseLesson @relation(fields: [tenantId, lessonId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, lessonId, sequence])
+  @@index([tenantId, lessonId])
+}
+
+model CourseApproval {
+  id             String                 @id @default(uuid()) @db.Uuid
+  tenantId       String                 @db.Uuid
+  courseId       String                 @db.Uuid
+  approverUserId String                 @db.Uuid
+  capacity       CourseApprovalCapacity
+  approvedAt     DateTime               @db.Timestamptz(3)
+  createdAt      DateTime               @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  course   Course @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+  approver User   @relation(fields: [tenantId, approverUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, courseId, capacity])
+}
+
+model Enrolment {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @db.Uuid
+  userId          String    @db.Uuid
+  courseId        String    @db.Uuid
+  enrolledAt      DateTime  @db.Timestamptz(3)
+  progressPercent Int       @default(0)
+  completedAt     DateTime? @db.Timestamptz(3)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(3)
+
+  tenant          Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  learner         User                       @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  course          Course                     @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+  trainer         EnrolmentTrainer?
+  lessonProgress  LessonProgress[]
+  attendanceLinks AttendanceCredentialLink[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId, courseId])
+  @@index([tenantId, userId])
+}
+
+model EnrolmentTrainer {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @db.Uuid
+  enrolmentId   String   @db.Uuid
+  trainerUserId String   @db.Uuid
+  assignedAt    DateTime @db.Timestamptz(3)
+  createdAt     DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  enrolment Enrolment @relation(fields: [tenantId, enrolmentId], references: [tenantId, id], onDelete: Restrict)
+  trainer   User      @relation(fields: [tenantId, trainerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, enrolmentId])
+  @@index([tenantId, trainerUserId])
+}
+
+model LessonProgress {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid
+  enrolmentId      String    @db.Uuid
+  lessonId         String    @db.Uuid
+  timeSpentSeconds Int       @default(0)
+  completedAt      DateTime? @db.Timestamptz(3)
+  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(3)
+
+  tenant    Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  enrolment Enrolment    @relation(fields: [tenantId, enrolmentId], references: [tenantId, id], onDelete: Restrict)
+  lesson    CourseLesson @relation(fields: [tenantId, lessonId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, enrolmentId, lessonId])
+  @@index([tenantId])
+}
+
+model LearningActivityRecord {
+  id                String             @id @default(uuid()) @db.Uuid
+  tenantId          String             @db.Uuid
+  statementId       String             @unique @db.Uuid
+  actorUserId       String             @db.Uuid
+  verbIri           String             @db.VarChar(256)
+  objectKind        LearningObjectKind
+  objectId          String             @db.Uuid
+  resultScoreScaled Decimal?           @db.Decimal(6, 5)
+  resultSuccess     Boolean?
+  resultDurationIso String?            @db.VarChar(32)
+  storedAt          DateTime           @db.Timestamptz(3)
+  rawStatement      Json
+  analyticsConsent  Boolean            @default(false)
+  createdAt         DateTime           @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  actor  User   @relation(fields: [tenantId, actorUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, actorUserId, storedAt])
+  @@index([tenantId, objectKind, objectId])
+}
+
+model ItemScenarioGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  courseId  String   @db.Uuid
+  title     String   @db.VarChar(256)
+  narrative String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant      Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  course      Course                   @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+  memberships ItemScenarioMembership[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, courseId])
+}
+
+model ItemScenarioMembership {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  itemId    String   @db.Uuid
+  groupId   String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item   AssessmentItem    @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+  group  ItemScenarioGroup @relation(fields: [tenantId, groupId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, itemId])
+  @@index([tenantId, groupId])
+}
+
+model AssessmentItem {
+  id               String          @id @default(uuid()) @db.Uuid
+  tenantId         String          @db.Uuid
+  courseId         String          @db.Uuid
+  stem             String          @db.Text
+  correctChoiceKey String          @db.VarChar(16)
+  timeLimitSeconds Int
+  reviewState      ItemReviewState @default(DRAFT)
+  isAiGenerated    Boolean         @default(false)
+  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime        @updatedAt @db.Timestamptz(3)
+
+  tenant             Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  course             Course                     @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+  choices            AssessmentItemChoice[]
+  competenceLinks    AssessmentItemCompetence[]
+  reviews            ItemReview[]
+  scenarioMembership ItemScenarioMembership?
+  quizItems          QuizItem[]
+  examFormItems      ExamFormItem[]
+  answers            ExamAttemptAnswer[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, courseId, reviewState])
+  @@index([tenantId, isAiGenerated])
+}
+
+model AssessmentItemChoice {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  itemId    String   @db.Uuid
+  choiceKey String   @db.VarChar(16)
+  text      String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item   AssessmentItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, itemId, choiceKey])
+  @@index([tenantId])
+}
+
+model AssessmentItemCompetence {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  itemId             String   @db.Uuid
+  competenceId       String   @db.Uuid
+  proficiencyLevelId String   @db.Uuid
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant           Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item             AssessmentItem   @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+  competence       Competence       @relation(fields: [tenantId, competenceId], references: [tenantId, id], onDelete: Restrict)
+  proficiencyLevel ProficiencyLevel @relation(fields: [tenantId, proficiencyLevelId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, itemId, competenceId])
+  @@index([tenantId, competenceId])
+}
+
+model ItemReview {
+  id             String            @id @default(uuid()) @db.Uuid
+  tenantId       String            @db.Uuid
+  itemId         String            @db.Uuid
+  reviewerUserId String            @db.Uuid
+  outcome        ItemReviewOutcome
+  note           String?           @db.Text
+  reviewedAt     DateTime          @db.Timestamptz(3)
+  createdAt      DateTime          @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item     AssessmentItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+  reviewer User           @relation(fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, itemId])
+}
+
+model Quiz {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  chapterId       String   @db.Uuid
+  title           String   @db.VarChar(256)
+  passMarkPercent Int
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant  Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  chapter CourseChapter @relation(fields: [tenantId, chapterId], references: [tenantId, id], onDelete: Restrict)
+  items   QuizItem[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, chapterId])
+}
+
+model QuizItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  quizId    String   @db.Uuid
+  itemId    String   @db.Uuid
+  sequence  Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  quiz   Quiz           @relation(fields: [tenantId, quizId], references: [tenantId, id], onDelete: Restrict)
+  item   AssessmentItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, quizId, itemId])
+  @@unique([tenantId, quizId, sequence])
+}
+
+model ExamForm {
+  id               String            @id @default(uuid()) @db.Uuid
+  tenantId         String            @db.Uuid
+  title            String            @db.VarChar(256)
+  shuffleItems     Boolean           @default(true)
+  shuffleChoices   Boolean           @default(true)
+  durationSeconds  Int
+  retakeWindowDays Int               @default(90)
+  lifecycle        ExamFormLifecycle @default(DRAFT)
+  createdAt        DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime          @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  items    ExamFormItem[]
+  course   ExamFormCourse?
+  scheme   ExamFormScheme?
+  sessions ExamSession[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, lifecycle])
+}
+
+model ExamFormItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid
+  examFormId String   @db.Uuid
+  itemId     String   @db.Uuid
+  sequence   Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  examForm ExamForm       @relation(fields: [tenantId, examFormId], references: [tenantId, id], onDelete: Restrict)
+  item     AssessmentItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, examFormId, itemId])
+  @@unique([tenantId, examFormId, sequence])
+}
+
+model ExamFormCourse {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid
+  examFormId String   @db.Uuid
+  courseId   String   @db.Uuid
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  examForm ExamForm @relation(fields: [tenantId, examFormId], references: [tenantId, id], onDelete: Restrict)
+  course   Course   @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, examFormId])
+  @@index([tenantId, courseId])
+}
+
+model ExamFormScheme {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  examFormId      String   @db.Uuid
+  schemeVersionId String   @db.Uuid
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  examForm      ExamForm                   @relation(fields: [tenantId, examFormId], references: [tenantId, id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, examFormId])
+  @@index([tenantId, schemeVersionId])
+}
+
+model IdentityCheck {
+  id                      String                    @id @default(uuid()) @db.Uuid
+  tenantId                String                    @db.Uuid
+  subjectUserId           String                    @db.Uuid
+  reviewerUserId          String                    @db.Uuid
+  method                  IdentityCheckMethod       @default(HUMAN_VISUAL)
+  outcome                 IdentityVerificationState
+  idImageObjectKey        String?                   @db.VarChar(512)
+  candidateImageObjectKey String?                   @db.VarChar(512)
+  dpiaReference           String?                   @db.VarChar(128)
+  checkedAt               DateTime                  @db.Timestamptz(3)
+  retainUntil             DateTime?                 @db.Timestamptz(3)
+  createdAt               DateTime                  @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  subject  User          @relation("IdentityCheckSubject", fields: [tenantId, subjectUserId], references: [tenantId, id], onDelete: Restrict)
+  reviewer User          @relation("IdentityCheckReviewer", fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
+  sessions ExamSession[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, subjectUserId])
+}
+
+model ExamSession {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  examFormId        String   @db.Uuid
+  candidateUserId   String   @db.Uuid
+  invigilatorUserId String   @db.Uuid
+  identityCheckId   String   @db.Uuid
+  rulesAcceptedAt   DateTime @db.Timestamptz(3)
+  ndaAcceptedAt     DateTime @db.Timestamptz(3)
+  mfaReference      String   @db.VarChar(128)
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant               @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  examForm      ExamForm             @relation(fields: [tenantId, examFormId], references: [tenantId, id], onDelete: Restrict)
+  candidate     User                 @relation("ExamCandidate", fields: [tenantId, candidateUserId], references: [tenantId, id], onDelete: Restrict)
+  invigilator   User                 @relation("ExamInvigilator", fields: [tenantId, invigilatorUserId], references: [tenantId, id], onDelete: Restrict)
+  identityCheck IdentityCheck        @relation(fields: [tenantId, identityCheckId], references: [tenantId, id], onDelete: Restrict)
+  duties        ExamDutyAssignment[]
+  attempts      ExamAttempt[]
+  signals       ProctorSignal[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, candidateUserId])
+  @@index([tenantId, invigilatorUserId])
+}
+
+model ExamDutyAssignment {
+  id        String       @id @default(uuid()) @db.Uuid
+  tenantId  String       @db.Uuid
+  sessionId String       @db.Uuid
+  userId    String       @db.Uuid
+  duty      ExamDutyKind
+  createdAt DateTime     @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant      @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session ExamSession @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  user    User        @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, sessionId, userId, duty])
+  @@index([tenantId, userId, duty])
+}
+
+model ExamAttempt {
+  id             String               @id @default(uuid()) @db.Uuid
+  tenantId       String               @db.Uuid
+  sessionId      String               @db.Uuid
+  lifecycle      ExamAttemptLifecycle @default(IN_PROGRESS)
+  startedAt      DateTime             @db.Timestamptz(3)
+  submittedAt    DateTime?            @db.Timestamptz(3)
+  scorePercent   Int?
+  passed         Boolean?
+  nextEligibleAt DateTime?            @db.Timestamptz(3)
+  createdAt      DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime             @updatedAt @db.Timestamptz(3)
+
+  tenant  Tenant              @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session ExamSession         @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  answers ExamAttemptAnswer[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, sessionId])
+}
+
+model ExamAttemptAnswer {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  attemptId         String   @db.Uuid
+  itemId            String   @db.Uuid
+  selectedChoiceKey String   @db.VarChar(16)
+  answeredAt        DateTime @db.Timestamptz(3)
+  timeSpentSeconds  Int
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  attempt ExamAttempt    @relation(fields: [tenantId, attemptId], references: [tenantId, id], onDelete: Restrict)
+  item    AssessmentItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, attemptId, itemId])
+}
+
+model ProctorSignal {
+  id         String              @id @default(uuid()) @db.Uuid
+  tenantId   String              @db.Uuid
+  sessionId  String              @db.Uuid
+  source     ProctorSignalSource
+  signalCode String              @db.VarChar(64)
+  recordedAt DateTime            @db.Timestamptz(3)
+  createdAt  DateTime            @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant                @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session ExamSession           @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  reviews ProctorSignalReview[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, sessionId, recordedAt])
+}
+
+model ProctorSignalReview {
+  id             String                   @id @default(uuid()) @db.Uuid
+  tenantId       String                   @db.Uuid
+  signalId       String                   @db.Uuid
+  reviewerUserId String                   @db.Uuid
+  disposition    ProctorSignalDisposition
+  reviewedAt     DateTime                 @db.Timestamptz(3)
+  createdAt      DateTime                 @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  signal   ProctorSignal @relation(fields: [tenantId, signalId], references: [tenantId, id], onDelete: Restrict)
+  reviewer User          @relation(fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, signalId])
+}
+
+model CertificationScheme {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  code      String   @db.VarChar(64)
+  title     String   @db.VarChar(256)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  versions CertificationSchemeVersion[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+}
+
+model CertificationSchemeVersion {
+  id                     String                 @id @default(uuid()) @db.Uuid
+  tenantId               String                 @db.Uuid
+  schemeId               String                 @db.Uuid
+  versionLabel           String                 @db.VarChar(32)
+  scopeDescription       String                 @db.Text
+  jobDescription         String                 @db.Text
+  experienceRequirement  String                 @db.Text
+  prerequisites          String                 @db.Text
+  abilitiesSummary       String                 @db.Text
+  ethicsCodeRef          String?                @db.VarChar(128)
+  refereeCount           Int                    @default(2)
+  publicProcessSummary   String                 @db.Text
+  surveillanceSummary    String?                @db.Text
+  recertificationSummary String?                @db.Text
+  limitationsTemplate    String?                @db.Text
+  lifecycle              SchemeVersionLifecycle @default(DRAFT)
+  validFrom              DateTime?              @db.Timestamptz(3)
+  nextReviewAt           DateTime?              @db.Timestamptz(3)
+  createdAt              DateTime               @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime               @updatedAt @db.Timestamptz(3)
+
+  tenant                 Tenant                           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  scheme                 CertificationScheme              @relation(fields: [tenantId, schemeId], references: [tenantId, id], onDelete: Restrict)
+  competenceRequirements SchemeCompetenceRequirement[]
+  applicationDetails     CertificationApplicationDetail[]
+  personnelLinks         PersonnelCredentialLink[]
+  examFormSchemes        ExamFormScheme[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeId, versionLabel])
+  @@index([tenantId, lifecycle])
+}
+
+model SchemeCompetenceRequirement {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  schemeVersionId    String   @db.Uuid
+  competenceId       String   @db.Uuid
+  proficiencyLevelId String   @db.Uuid
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant           Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion    CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  competence       Competence                 @relation(fields: [tenantId, competenceId], references: [tenantId, id], onDelete: Restrict)
+  proficiencyLevel ProficiencyLevel           @relation(fields: [tenantId, proficiencyLevelId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeVersionId, competenceId])
+}
+
+model CertificationApplicationDetail {
+  id                         String               @id @default(uuid()) @db.Uuid
+  tenantId                   String               @db.Uuid
+  certificationApplicationId String               @db.Uuid
+  applicantUserId            String               @db.Uuid
+  schemeVersionId            String               @db.Uuid
+  pathway                    CertificationPathway
+  biography                  String?              @db.Text
+  experienceSummary          String?              @db.Text
+  publicWorksUrl             String?              @db.VarChar(512)
+  externalEvidenceObjectKey  String?              @db.VarChar(512)
+  rulesAcceptedAt            DateTime?            @db.Timestamptz(3)
+  contractAcceptedAt         DateTime?            @db.Timestamptz(3)
+  markUseAcceptedAt          DateTime?            @db.Timestamptz(3)
+  createdAt                  DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt                  DateTime             @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  applicant     User                       @relation(fields: [tenantId, applicantUserId], references: [tenantId, id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  experiences   ApplicationExperience[]
+  referees      ApplicationReferee[]
+  decisions     CertificationDecision[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, certificationApplicationId])
+  @@index([tenantId, applicantUserId])
+}
+
+model ApplicationExperience {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid
+  detailId         String    @db.Uuid
+  organizationName String    @db.VarChar(256)
+  jobTitle         String    @db.VarChar(128)
+  startedOn        DateTime  @db.Date
+  endedOn          DateTime? @db.Date
+  summary          String?   @db.Text
+  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant                         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  detail CertificationApplicationDetail @relation(fields: [tenantId, detailId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, detailId])
+}
+
+model ApplicationReferee {
+  id          String    @id @default(uuid()) @db.Uuid
+  tenantId    String    @db.Uuid
+  detailId    String    @db.Uuid
+  givenName   String    @db.VarChar(128)
+  familyName  String    @db.VarChar(128)
+  email       String    @db.VarChar(256)
+  invitedAt   DateTime? @db.Timestamptz(3)
+  confirmedAt DateTime? @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant                         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  detail CertificationApplicationDetail @relation(fields: [tenantId, detailId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, detailId])
+}
+
+model CertificationDecision {
+  id          String          @id @default(uuid()) @db.Uuid
+  tenantId    String          @db.Uuid
+  detailId    String          @db.Uuid
+  outcome     DecisionOutcome
+  rationale   String          @db.Text
+  coiCleared  Boolean
+  decidedAt   DateTime        @db.Timestamptz(3)
+  chairUserId String          @db.Uuid
+  createdAt   DateTime        @default(now()) @db.Timestamptz(3)
+
+  tenant         Tenant                         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  detail         CertificationApplicationDetail @relation(fields: [tenantId, detailId], references: [tenantId, id], onDelete: Restrict)
+  chair          User                           @relation("DecisionChair", fields: [tenantId, chairUserId], references: [tenantId, id], onDelete: Restrict)
+  participants   DecisionParticipant[]
+  personnelLinks PersonnelCredentialLink[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, detailId])
+}
+
+model DecisionParticipant {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  decisionId         String   @db.Uuid
+  userId             String   @db.Uuid
+  declaredConflict   Boolean
+  trainerOfCandidate Boolean
+  examinesOwnTrainee Boolean
+  cleared            Boolean
+  checkedAt          DateTime @db.Timestamptz(3)
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  decision CertificationDecision @relation(fields: [tenantId, decisionId], references: [tenantId, id], onDelete: Restrict)
+  user     User                  @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, decisionId, userId])
+}
+
+model Credential {
+  id              String              @id @default(uuid()) @db.Uuid
+  tenantId        String              @db.Uuid
+  holderUserId    String              @db.Uuid
+  credentialType  CredentialType
+  lifecycle       CredentialLifecycle @default(ACTIVE)
+  publicUid       String              @unique @db.VarChar(32)
+  payloadHash     String              @db.Char(64)
+  signature       String?             @db.Text
+  qrVerifyToken   String              @unique @db.VarChar(128)
+  scopeText       String?             @db.Text
+  limitationsText String?             @db.Text
+  cbName          String              @db.VarChar(256)
+  cbIdentifier    String              @db.VarChar(128)
+  issuedAt        DateTime            @db.Timestamptz(3)
+  expiresAt       DateTime?           @db.Timestamptz(3)
+  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime            @updatedAt @db.Timestamptz(3)
+
+  tenant               Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  holder               User                       @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
+  attendanceLink       AttendanceCredentialLink?
+  personnelLink        PersonnelCredentialLink?
+  achievement          AchievementRecord?
+  lifecycleEvents      CredentialLifecycleEvent[]
+  verificationLogs     VerificationLog[]
+  recertificationCases RecertificationCase[]
+  successorOutcomes    RecertificationOutcome[]   @relation("SuccessorCredential")
+
+  @@unique([tenantId, id])
+  @@index([tenantId, holderUserId, lifecycle])
+  @@index([tenantId, credentialType])
+}
+
+model AttendanceCredentialLink {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  credentialId String   @db.Uuid
+  courseId     String   @db.Uuid
+  enrolmentId  String   @db.Uuid
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential Credential @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  course     Course     @relation(fields: [tenantId, courseId], references: [tenantId, id], onDelete: Restrict)
+  enrolment  Enrolment  @relation(fields: [tenantId, enrolmentId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, credentialId])
+  @@index([tenantId, courseId])
+}
+
+model PersonnelCredentialLink {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  credentialId    String   @db.Uuid
+  decisionId      String   @db.Uuid
+  schemeVersionId String   @db.Uuid
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential    Credential                 @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  decision      CertificationDecision      @relation(fields: [tenantId, decisionId], references: [tenantId, id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, credentialId])
+  @@index([tenantId, decisionId])
+}
+
+model AchievementRecord {
+  id                     String    @id @default(uuid()) @db.Uuid
+  tenantId               String    @db.Uuid
+  credentialId           String    @db.Uuid
+  achievementTitle       String    @db.VarChar(256)
+  holderName             String    @db.VarChar(256)
+  awardingBodyName       String    @db.VarChar(256)
+  awardingBodyIdentifier String    @db.VarChar(128)
+  awardedAt              DateTime  @db.Timestamptz(3)
+  expiresAt              DateTime? @db.Timestamptz(3)
+  resultLabel            String?   @db.VarChar(128)
+  criteriaSummary        String?   @db.Text
+  creditValue            Decimal?  @db.Decimal(8, 2)
+  language               String    @db.VarChar(16)
+  supplement             Json?
+  createdAt              DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime  @updatedAt @db.Timestamptz(3)
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential Credential @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, credentialId])
+}
+
+model CredentialLifecycleEvent {
+  id               String               @id @default(uuid()) @db.Uuid
+  tenantId         String               @db.Uuid
+  credentialId     String               @db.Uuid
+  fromLifecycle    CredentialLifecycle?
+  toLifecycle      CredentialLifecycle
+  reason           String               @db.Text
+  actorUserId      String               @db.Uuid
+  effectiveAt      DateTime             @db.Timestamptz(3)
+  suspensionEndsAt DateTime?            @db.Timestamptz(3)
+  withdrawalDueAt  DateTime?            @db.Timestamptz(3)
+  createdAt        DateTime             @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential Credential @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  actor      User       @relation(fields: [tenantId, actorUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, credentialId, effectiveAt])
+}
+
+model VerificationLog {
+  id           String             @id @default(uuid()) @db.Uuid
+  tenantId     String             @db.Uuid
+  credentialId String             @db.Uuid
+  publicUid    String             @db.VarChar(32)
+  sourceIp     String             @db.VarChar(64)
+  verifiedAt   DateTime           @db.Timestamptz(3)
+  result       VerificationResult
+  createdAt    DateTime           @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential Credential @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, publicUid, verifiedAt])
+  @@index([tenantId, credentialId])
+}
+
+model RecertificationCase {
+  id                 String                   @id @default(uuid()) @db.Uuid
+  tenantId           String                   @db.Uuid
+  credentialId       String                   @db.Uuid
+  applicantUserId    String                   @db.Uuid
+  lifecycle          RecertificationLifecycle @default(REQUESTED)
+  requestedAt        DateTime                 @db.Timestamptz(3)
+  requirementSummary String?                  @db.Text
+  createdAt          DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime                 @updatedAt @db.Timestamptz(3)
+
+  tenant     Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential Credential              @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  applicant  User                    @relation(fields: [tenantId, applicantUserId], references: [tenantId, id], onDelete: Restrict)
+  outcome    RecertificationOutcome?
+
+  @@unique([tenantId, id])
+  @@index([tenantId, credentialId])
+}
+
+model RecertificationOutcome {
+  id                    String   @id @default(uuid()) @db.Uuid
+  tenantId              String   @db.Uuid
+  caseId                String   @db.Uuid
+  successorCredentialId String   @db.Uuid
+  completedAt           DateTime @db.Timestamptz(3)
+  createdAt             DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant              Tenant              @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  recertificationCase RecertificationCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  successor           Credential          @relation("SuccessorCredential", fields: [tenantId, successorCredentialId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, caseId])
+  @@index([tenantId, successorCredentialId])
+}
+
+model Invoice {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  userId    String    @db.Uuid
+  number    String    @db.VarChar(64)
+  amount    Decimal   @db.Decimal(12, 2)
+  currency  String    @db.Char(3)
+  issuedAt  DateTime  @db.Timestamptz(3)
+  dueAt     DateTime? @db.Timestamptz(3)
+  objectKey String?   @db.VarChar(512)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user     User      @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  payments Payment[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, number])
+  @@index([tenantId, userId])
+}
+
+model Payment {
+  id                String           @id @default(uuid()) @db.Uuid
+  tenantId          String           @db.Uuid
+  invoiceId         String           @db.Uuid
+  userId            String           @db.Uuid
+  amount            Decimal          @db.Decimal(12, 2)
+  currency          String           @db.Char(3)
+  provider          String           @db.VarChar(64)
+  providerReference String           @db.VarChar(128)
+  lifecycle         PaymentLifecycle @default(PENDING)
+  paidAt            DateTime?        @db.Timestamptz(3)
+  createdAt         DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime         @updatedAt @db.Timestamptz(3)
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  invoice Invoice @relation(fields: [tenantId, invoiceId], references: [tenantId, id], onDelete: Restrict)
+  user    User    @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, invoiceId])
+  @@index([tenantId, provider, providerReference])
+}
+
+model AmfMembership {
+  id         String              @id @default(uuid()) @db.Uuid
+  tenantId   String              @db.Uuid
+  userId     String              @db.Uuid
+  periodYear Int
+  amount     Decimal             @db.Decimal(12, 2)
+  currency   String              @db.Char(3)
+  lifecycle  MembershipLifecycle @default(DUE)
+  paidUntil  DateTime?           @db.Timestamptz(3)
+  createdAt  DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime            @updatedAt @db.Timestamptz(3)
+
+  tenant    Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user      User                    @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  proposals AmfSuspensionProposal[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId, periodYear])
+}
+
+model AmfSuspensionProposal {
+  id               String                      @id @default(uuid()) @db.Uuid
+  tenantId         String                      @db.Uuid
+  membershipId     String                      @db.Uuid
+  proposedByUserId String                      @db.Uuid
+  proposedAt       DateTime                    @db.Timestamptz(3)
+  reasonCode       String                      @db.VarChar(64)
+  lifecycle        SuspensionProposalLifecycle @default(PROPOSED)
+  suspensionEndsAt DateTime?                   @db.Timestamptz(3)
+  withdrawalDueAt  DateTime?                   @db.Timestamptz(3)
+  createdAt        DateTime                    @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime                    @updatedAt @db.Timestamptz(3)
+
+  tenant       Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  membership   AmfMembership              @relation(fields: [tenantId, membershipId], references: [tenantId, id], onDelete: Restrict)
+  proposedBy   User                       @relation(fields: [tenantId, proposedByUserId], references: [tenantId, id], onDelete: Restrict)
+  confirmation AmfSuspensionConfirmation?
+
+  @@unique([tenantId, id])
+  @@index([tenantId, membershipId])
+}
+
+model AmfSuspensionConfirmation {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  proposalId        String   @db.Uuid
+  confirmedByUserId String   @db.Uuid
+  confirmedAt       DateTime @db.Timestamptz(3)
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant      Tenant                @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  proposal    AmfSuspensionProposal @relation(fields: [tenantId, proposalId], references: [tenantId, id], onDelete: Restrict)
+  confirmedBy User                  @relation(fields: [tenantId, confirmedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, proposalId])
+}
+
+model ControlledDocument {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  code         String   @db.VarChar(64)
+  title        String   @db.VarChar(256)
+  documentKind String   @db.VarChar(64)
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  versions DocumentVersion[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+}
+
+model DocumentVersion {
+  id           String            @id @default(uuid()) @db.Uuid
+  tenantId     String            @db.Uuid
+  documentId   String            @db.Uuid
+  versionLabel String            @db.VarChar(32)
+  objectKey    String?           @db.VarChar(512)
+  body         String?           @db.Text
+  lifecycle    DocumentLifecycle @default(DRAFT)
+  nextReviewAt DateTime?         @db.Timestamptz(3)
+  createdAt    DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime          @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant             @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  document ControlledDocument @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Restrict)
+  approval DocumentApproval?
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, documentId, versionLabel])
+  @@index([tenantId, nextReviewAt])
+}
+
+model DocumentApproval {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid
+  versionId        String   @db.Uuid
+  approvedByUserId String   @db.Uuid
+  approvedAt       DateTime @db.Timestamptz(3)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant          @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  version    DocumentVersion @relation(fields: [tenantId, versionId], references: [tenantId, id], onDelete: Restrict)
+  approvedBy User            @relation(fields: [tenantId, approvedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, versionId])
+}
+
+model RiskRecord {
+  id           String    @id @default(uuid()) @db.Uuid
+  tenantId     String    @db.Uuid
+  title        String    @db.VarChar(256)
+  likelihood   Int
+  impact       Int
+  band         RiskBand
+  mitigation   String?   @db.Text
+  ownerUserId  String    @db.Uuid
+  nextReviewAt DateTime? @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  owner  User   @relation(fields: [tenantId, ownerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, band])
+}
+
+model InternalAudit {
+  id               String                 @id @default(uuid()) @db.Uuid
+  tenantId         String                 @db.Uuid
+  title            String                 @db.VarChar(256)
+  scheduledAt      DateTime               @db.Timestamptz(3)
+  lifecycle        InternalAuditLifecycle @default(PLANNED)
+  leadUserId       String                 @db.Uuid
+  reportObjectKey  String?                @db.VarChar(512)
+  minutesObjectKey String?                @db.VarChar(512)
+  createdAt        DateTime               @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime               @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  lead   User   @relation(fields: [tenantId, leadUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, scheduledAt])
+}
+
+model CorrectiveAction {
+  id             String                    @id @default(uuid()) @db.Uuid
+  tenantId       String                    @db.Uuid
+  title          String                    @db.VarChar(256)
+  requestText    String                    @db.Text
+  rootCause      String?                   @db.Text
+  actionText     String?                   @db.Text
+  reportText     String?                   @db.Text
+  raisedByUserId String                    @db.Uuid
+  ownerUserId    String                    @db.Uuid
+  lifecycle      CorrectiveActionLifecycle @default(OPEN)
+  createdAt      DateTime                  @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime                  @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  raisedBy User   @relation("CorrectiveActionRaiser", fields: [tenantId, raisedByUserId], references: [tenantId, id], onDelete: Restrict)
+  owner    User   @relation("CorrectiveActionOwner", fields: [tenantId, ownerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, lifecycle])
+}
+
+model ManagementReview {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid
+  heldAt           DateTime @db.Timestamptz(3)
+  chairUserId      String   @db.Uuid
+  summary          String   @db.Text
+  minutesObjectKey String?  @db.VarChar(512)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  chair  User   @relation(fields: [tenantId, chairUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, heldAt])
+}
+
+model ImpartialityReport {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  body              String   @db.Text
+  submittedAt       DateTime @db.Timestamptz(3)
+  followUpTokenHash String?  @db.Char(64)
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, submittedAt])
+}
+
+model AiSystem {
+  id                     String   @id @default(uuid()) @db.Uuid
+  tenantId               String   @db.Uuid
+  code                   String   @db.VarChar(64)
+  purpose                String   @db.Text
+  modelIdentifier        String   @db.VarChar(128)
+  humanOversightRequired Boolean  @default(true)
+  aiiaReference          String?  @db.VarChar(128)
+  createdAt              DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant           Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  suggestions      AiSuggestion[]
+  auditRecords     AiAuditRecord[]
+  acknowledgements AiDisclosureAcknowledgement[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+}
+
+model AiSuggestion {
+  id              String                @id @default(uuid()) @db.Uuid
+  tenantId        String                @db.Uuid
+  aiSystemId      String                @db.Uuid
+  targetType      String                @db.VarChar(64)
+  targetId        String                @db.Uuid
+  promptHash      String                @db.Char(64)
+  outputHash      String                @db.Char(64)
+  modelIdentifier String                @db.VarChar(128)
+  lifecycle       AiSuggestionLifecycle @default(PENDING)
+  isAiGenerated   Boolean               @default(true)
+  createdAt       DateTime              @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime              @updatedAt @db.Timestamptz(3)
+
+  tenant   Tenant               @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  aiSystem AiSystem             @relation(fields: [tenantId, aiSystemId], references: [tenantId, id], onDelete: Restrict)
+  reviews  AiSuggestionReview[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, targetType, targetId])
+  @@index([tenantId, isAiGenerated])
+}
+
+model AiSuggestionReview {
+  id             String          @id @default(uuid()) @db.Uuid
+  tenantId       String          @db.Uuid
+  suggestionId   String          @db.Uuid
+  reviewerUserId String          @db.Uuid
+  outcome        AiReviewOutcome
+  reviewedAt     DateTime        @db.Timestamptz(3)
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  suggestion AiSuggestion @relation(fields: [tenantId, suggestionId], references: [tenantId, id], onDelete: Restrict)
+  reviewer   User         @relation(fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, suggestionId])
+}
+
+model AiAuditRecord {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  aiSystemId      String   @db.Uuid
+  actorUserId     String   @db.Uuid
+  occurredAt      DateTime @db.Timestamptz(3)
+  action          String   @db.VarChar(64)
+  modelIdentifier String   @db.VarChar(128)
+  promptHash      String   @db.Char(64)
+  inputReference  String   @db.VarChar(256)
+  outputHash      String   @db.Char(64)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  aiSystem AiSystem @relation(fields: [tenantId, aiSystemId], references: [tenantId, id], onDelete: Restrict)
+  actor    User     @relation(fields: [tenantId, actorUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, occurredAt])
+  @@index([tenantId, aiSystemId])
+}
+
+model AiDisclosureAcknowledgement {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid
+  userId         String   @db.Uuid
+  aiSystemId     String   @db.Uuid
+  noticeVersion  String   @db.VarChar(32)
+  acknowledgedAt DateTime @db.Timestamptz(3)
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user     User     @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  aiSystem AiSystem @relation(fields: [tenantId, aiSystemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId, aiSystemId, noticeVersion])
+  @@index([tenantId, userId])
 }
