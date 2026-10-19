@@ -77,6 +77,13 @@
 
 ---
 
-## Update 2026-10-19 — OD-PP-12
+## Update 2026-10-20 — OD-PP-12 accepted
 
-OQ-4 stays **OPEN**. [OD-PP-12](./OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md) records the two options and recommends keeping Vite `frontend-app` as the delivery surface until the owner confirms. That recommendation is not an accepted decision and does not supersede ADR-001 or Baseline §4.1.
+Miljan Savić confirmed [OD-PP-12](./OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md) on 2026-10-20: product-plan delivery stays on Vite `frontend-app`. Next.js (`apps/web`, `apps/admin`) is deferred.
+
+Still open, and not done by that confirmation:
+
+1. Baseline §0.2 and §4.1 still name Next.js as the intended target. Change Control §2 requires the Owner and the Architecture Lead together before that text changes. The Baseline was not rewritten.
+2. ADR-001 is still contradicted and is not superseded.
+3. OQ-4 stays **OPEN**. Its exit criteria (a superseding ADR, and parity-migration criteria met or rewritten because Next.js is deferred) are not met.
+4. The parity matrix, Next.js E2E re-run, and `frontend-app` sunset plan above remain the criteria for a later move. They are not a gate on the accepted Vite delivery.

@@ -74,18 +74,18 @@ Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` /
 
 ### OQ-4 — Canonical frontend
 
-| Field           | Value                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| Date            | 2026-07-26                                                                                  |
-| Status          | OPEN                                                                                        |
-| Approved option | `frontend-app` is current operational canonical frontend pending an ADR superseding ADR-001 |
-| Owner           | Repository Owner                                                                            |
-| Rationale       | Pilot operational truth diverges from ADR-001; see Frontend Canonicalization Gap Note       |
-| Scope           | `frontend-app`, `apps/web`, `apps/admin`, ADR-001                                           |
-| Residual risk   | ADR-001 contradiction remains until superseded                                              |
-| Dependencies    | R0-1B2 ADR supersession                                                                     |
-| Exit criteria   | Superseding ADR accepted; parity migration criteria met                                     |
-| Supersession    | Pending (R0-1B2)                                                                            |
+| Field           | Value                                                                                                                                                                                                             |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                                                                                                                                        |
+| Status          | OPEN                                                                                                                                                                                                              |
+| Approved option | `frontend-app` is current operational canonical frontend pending an ADR superseding ADR-001. Product-plan delivery is decided separately by OD-PP-12 (2026-10-20): stay on Vite `frontend-app`; Next.js deferred. |
+| Owner           | Repository Owner                                                                                                                                                                                                  |
+| Rationale       | Pilot operational truth diverges from ADR-001; see Frontend Canonicalization Gap Note. OD-PP-12 does not meet these exit criteria.                                                                                |
+| Scope           | `frontend-app`, `apps/web`, `apps/admin`, ADR-001                                                                                                                                                                 |
+| Residual risk   | ADR-001 contradiction remains until superseded. Baseline §0.2 and §4.1 still name Next.js as the intended target.                                                                                                 |
+| Dependencies    | R0-1B2 ADR supersession; Architecture Lead together with the Owner before any Baseline text change (Change Control §2)                                                                                            |
+| Exit criteria   | Superseding ADR accepted; parity migration criteria met, or those criteria rewritten because Next.js is deferred. Neither is done.                                                                                |
+| Supersession    | Pending (R0-1B2). OD-PP-12 does not close this question and does not rewrite Baseline text.                                                                                                                       |
 
 ### OQ-5 — Identity / RBAC / SoD
 
@@ -1111,7 +1111,7 @@ New decisions are appended here with the same fields. Provisional recommendation
 
 Recorded 2026-10-19 from the owner-approved product plan (specification, gap analysis including „Zahtjevi za akreditaciju”, and standards applicability analysis). Full Bosnian text, conflict log, NFR list and application-security catalogue: [OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md](./OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md).
 
-This part does not close OQ-4, does not resolve MD05, does not authorize deployment, and does not authorize processing of webcam images, identity-document images or JMBG before a DPIA. ISO/BAS standard texts are not added to the repository.
+OD-PP-12 was confirmed by the owner on 2026-10-20: product-plan delivery stays on Vite `frontend-app` and Next.js is deferred. That confirmation does not close OQ-4, does not supersede ADR-001, and does not rewrite Baseline §0.2 or §4.1. Those still need the Owner and the Architecture Lead together. This part does not resolve MD05, does not authorize deployment, and does not authorize processing of webcam images, identity-document images or JMBG before a DPIA. ISO/BAS standard texts are not added to the repository.
 
 ### OD-PP-01 — Razdvajanje obuke i certifikacije
 
@@ -1280,18 +1280,18 @@ This part does not close OQ-4, does not resolve MD05, does not authorize deploym
 
 ### OD-PP-12 — Frontend Vite ili Next.js
 
-| Field           | Value                                                                                                                                                                                                               |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Date            | 2026-10-19                                                                                                                                                                                                          |
-| Status          | OPEN                                                                                                                                                                                                                |
-| Approved option | Nema odobrene opcije. OQ-4 ostaje OPEN. Opcija A: nastaviti na Vite `frontend-app`. Opcija B: novi rad na Next.js `apps/web` i `apps/admin`. Preporuka, koja nije odluka: opcija A dok vlasnik ne potvrdi suprotno. |
-| Owner           | Miljan Savić, Repository Owner — potvrda još nije data                                                                                                                                                              |
-| Rationale       | Baseline §0.2 i §4.1, ADR-001 u suprotnosti, Frontend Canonicalization Gap Note.                                                                                                                                    |
-| Scope           | `frontend-app`, `apps/web`, `apps/admin`                                                                                                                                                                            |
-| Residual risk   | Novi ekrani bez odluke produžavaju raskorak ili grade na pilotu koji nije ciljni stack.                                                                                                                             |
-| Dependencies    | Paritet iz gap note i ADR koji zamjenjuje ADR-001                                                                                                                                                                   |
-| Exit criteria   | Vlasnik izričito potvrdi A ili B, ili prihvati preporuku                                                                                                                                                            |
-| Supersession    | Ne dira OQ-4, ADR-001 ni Baseline §4.1.                                                                                                                                                                             |
+| Field           | Value                                                                                                                                                                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-20                                                                                                                                                                                                                                            |
+| Status          | ACCEPTED                                                                                                                                                                                                                                              |
+| Approved option | Isporučujemo na Vite `frontend-app` (opcija A). Next.js (`apps/web`, `apps/admin`) je odgođen.                                                                                                                                                        |
+| Owner           | Miljan Savić, Repository Owner — potvrda 2026-10-20                                                                                                                                                                                                   |
+| Rationale       | Operativni frontend i F5 dokazi već su na `frontend-app`. Vlasnik je potvrdio preporuku. Baseline §0.2 i §4.1 i dalje opisuju Next.js kao cilj; ADR-001 ostaje u suprotnosti.                                                                         |
+| Scope           | Površina isporuke plana proizvoda: `frontend-app`. Ne uključuje prepis Baselinea ni gašenje `apps/web` / `apps/admin`.                                                                                                                                |
+| Residual risk   | Tekst Baseline §0.2 i §4.1 i ADR-001 nisu usklađeni s ovom odlukom. OQ-4 ostaje OPEN jer izlazni uslovi (zamjenski ADR i kriteriji pariteta) nisu ispunjeni.                                                                                          |
+| Dependencies    | Change Control §2: izmjena teksta Baselinea traži vlasnika i Architecture Lead zajedno. OQ-4 / R0-1B2 za zamjenu ADR-001.                                                                                                                             |
+| Exit criteria   | Odluka o površini isporuke je ispunjena ovom potvrdom. Preostaje: (1) tekst Baseline §0.2 i §4.1 nije prepisan; (2) ADR-001 nije zamijenjen; (3) OQ-4 nije zatvoren; (4) kriteriji pariteta iz gap note važe za kasniji prelazak, ne za ovu isporuku. |
+| Supersession    | Za isporuku plana proizvoda bira Vite `frontend-app` i odgađa Next.js. Ne zatvara OQ-4, ne zamjenjuje ADR-001 i ne prepisuje Baseline.                                                                                                                |
 
 ### OD-PP-13 — Pojednostavljenje procesa
 

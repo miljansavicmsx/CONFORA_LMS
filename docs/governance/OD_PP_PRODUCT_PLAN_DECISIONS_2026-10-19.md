@@ -1,7 +1,7 @@
 # Odluke vlasnika — plan proizvoda CONFORA
 
 **Document ID:** CON-GOV-OD-PP-2026-10-19
-**Status:** Recorded 2026-10-19
+**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20
 **Owner:** Miljan Savić, Repository Owner
 **Authority level:** Governance Hierarchy Level 1
 **Companion:** [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) Part F (OD-PP-01 … OD-PP-14)
@@ -297,24 +297,28 @@ ISO/IEC 27017 ostaje referenca za podjelu odgovornosti s pružaocem oblaka. Nije
 
 ## OD-PP-12 — Frontend: Vite ili Next.js
 
-| Field           | Value                                                                                                                                     |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Date            | 2026-10-19                                                                                                                                |
-| Status          | OPEN                                                                                                                                      |
-| Approved option | Nema odobrene opcije. OQ-4 ostaje OPEN. Preporuka je zabilježena ispod i ne zatvara odluku.                                               |
-| Owner           | Miljan Savić, Repository Owner — potvrda još nije data                                                                                    |
-| Rationale       | Baseline §0.2 i §4.1, ADR-001 u suprotnosti, Frontend Canonicalization Gap Note. Analiza razlika traži odluku prije većih novih funkcija. |
-| Scope           | `frontend-app`, `apps/web`, `apps/admin`                                                                                                  |
-| Residual risk   | Novi ekrani bez ove odluke produžavaju raskorak ili grade na pilotu koji Baseline i dalje ne zove ciljnim stackom.                        |
-| Dependencies    | Paritet iz gap note, superseding ADR                                                                                                      |
-| Exit criteria   | Vlasnik izričito potvrdi opciju A ili B, ili prihvati preporuku                                                                           |
-| Supersession    | Ne dira OQ-4, ADR-001 ni Baseline §4.1.                                                                                                   |
+| Field           | Value                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-20                                                                                                                   |
+| Status          | ACCEPTED                                                                                                                     |
+| Approved option | Isporučujemo na Vite `frontend-app` (opcija A). Next.js (`apps/web`, `apps/admin`) je odgođen.                               |
+| Owner           | Miljan Savić, Repository Owner — potvrda 2026-10-20                                                                          |
+| Rationale       | Operativni frontend i F5 dokazi već su na `frontend-app`. Vlasnik je 2026-10-20 potvrdio preporuku.                          |
+| Scope           | Površina isporuke plana proizvoda. Ne uključuje prepis Baselinea ni gašenje Next.js aplikacija.                              |
+| Residual risk   | Baseline §0.2 i §4.1 i dalje opisuju Next.js kao cilj. ADR-001 ostaje u suprotnosti. OQ-4 ostaje OPEN.                       |
+| Dependencies    | Change Control §2 (vlasnik i Architecture Lead zajedno) prije izmjene teksta Baselinea. OQ-4 / R0-1B2 prije zamjene ADR-001. |
+| Exit criteria   | Potvrda površine isporuke je ispunjena. Preostaje usklađenje teksta, koje ovaj zapis ne radi.                                |
+| Supersession    | Za isporuku plana proizvoda bira Vite i odgađa Next.js. Ne zatvara OQ-4, ne zamjenjuje ADR-001 i ne prepisuje Baseline.      |
 
-Opcija A — nastaviti isporuku na Vite `frontend-app`. To je današnji operativni kanonski frontend za zaključani lokalni release candidate. Pilot rute i F5 dokazi već su na njemu. Cijena: ADR-001 ostaje u suprotnosti, a Next.js cilj se odgađa.
+Opcija A — nastaviti isporuku na Vite `frontend-app`. To je današnji operativni kanonski frontend za zaključani lokalni release candidate. Pilot rute i F5 dokazi već su na njemu. Cijena: ADR-001 ostaje u suprotnosti, a Next.js cilj se odgađa. **Vlasnik je 2026-10-20 odobrio ovu opciju.**
 
-Opcija B — novi rad graditi na Next.js `apps/web` i `apps/admin`, kako Baseline §4.1 i ADR-001 opisuju cilj. Cijena: paritet s `frontend-app` nije dokazan. Gap note traži matricu pariteta, ponovljeni E2E, izmjenu ADR-001, plan gašenja i a11y/i18n potvrdu prije tvrdnje da je frontend usklađen.
+Opcija B — novi rad graditi na Next.js `apps/web` i `apps/admin`, kako Baseline §4.1 i ADR-001 opisuju cilj. **Nije odobrena.** Ostaje odgođena. Gap note i dalje traži matricu pariteta, ponovljeni E2E, izmjenu ADR-001, plan gašenja i a11y/i18n potvrdu prije bilo kakve tvrdnje da je frontend usklađen s tim ciljem.
 
-Preporuka: opcija A za isporuku ovog plana proizvoda, dok vlasnik ne potvrdi suprotno. Prelazak na Next.js ne počinje u istom paketu kao domenski model. Preporuka nije odluka.
+Šta još treba, a ovaj zapis namjerno ne radi:
+
+1. Tekst Baseline §0.2 i §4.1 i dalje kaže da je cilj Next.js. Change Control §2 traži vlasnika i Architecture Lead zajedno prije prepisa. Architecture Lead ovu izmjenu nije odobrio.
+2. ADR-001 nije zamijenjen. OQ-4 ostaje OPEN jer izlazni uslovi (zamjenski ADR i ispunjeni kriteriji pariteta, ili njihov prepis jer je Next.js odgođen) nisu ispunjeni.
+3. Kriteriji migracije u Frontend Canonicalization Gap Note ostaju za kasniji prelazak. Ne važe kao uslov za isporuku na `frontend-app`.
 
 ---
 
@@ -367,7 +371,7 @@ Mapiranje ISO 21001 u analizi razlika ostaje provizorno jer je izvorni fajl ošt
 3. **Specifikacija 12, sys admin vidi sve** protiv SoD i AGENTS.md. Riješeno u OD-PP-07.
 4. **Specifikacija 7, AI proctoring kao kontrola ispita** protiv 7.4.4(b) i Baseline §12. Riješeno u OD-PP-03 i OD-PP-04: signal, uz ljudskog nadzornika.
 5. **Webkamera i slika isprave** protiv zabrane IAL-3 i biometrije u Baseline §8 i §9. Riješeno suženjem na IAL-2 ljudski pregled. IAL-3 ostaje van MVP-a. Prikupljanje čeka DPIA (OD-PP-05).
-6. **OQ-4 Vite / Next.js.** Nije riješeno. Preporuka je opcija A. Vidi OD-PP-12.
+6. **OQ-4 Vite / Next.js.** Vlasnik je 2026-10-20 odobrio OD-PP-12: isporuka ostaje na Vite `frontend-app`, Next.js je odgođen. Tekst Baseline §0.2 i §4.1 nije prepisan (traži i Architecture Lead). ADR-001 nije zamijenjen. OQ-4 ostaje OPEN.
 7. **Pojednostavljenje R0 procesa.** Nije usvojeno. Vidi OD-PP-13.
 8. **MD05 „privacy basis unrecorded”.** OD-PP-08 daje identifikator osnove i ne zatvara MD05.
 9. **PKG-06 zamrznuta prijava.** Veza prijave na novi detalj nema strani ključ. To je ograničenje postojećeg testa, zabilježeno u OD-PP-14, a ne tiha izmjena prijave.
