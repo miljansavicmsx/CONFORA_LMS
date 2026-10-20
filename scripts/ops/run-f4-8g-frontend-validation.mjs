@@ -71,8 +71,8 @@ function main() {
     ),
     runStep('build-ui', 'pnpm', ['--filter', '@confora/ui', 'build'], REPO_ROOT),
     runStep('build-i18n', 'pnpm', ['--filter', '@confora/i18n', 'build'], REPO_ROOT),
-    runStep('unit', 'npm', ['run', 'test:f4-cutover'], FRONTEND),
-    runStep('e2e-smoke', 'npm', ['run', 'test:e2e:f4-smoke'], FRONTEND),
+    runStep('unit', 'pnpm', ['run', 'test:f4-cutover'], FRONTEND),
+    runStep('e2e-smoke', 'pnpm', ['run', 'test:e2e:f4-smoke'], FRONTEND),
   ];
 
   for (const step of steps) {

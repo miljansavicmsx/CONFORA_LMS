@@ -37,13 +37,8 @@ jobs:
       - name: Install workspace packages
         run: pnpm install --frozen-lockfile
 
-      - name: Install frontend-app dependencies
-        working-directory: frontend-app
-        run: npm install
-
       - name: Install Playwright Chromium
-        working-directory: frontend-app
-        run: npx playwright install chromium --with-deps
+        run: pnpm --filter confora-frontend-app exec playwright install chromium --with-deps
 
       - name: F4-8g validation (audit + unit + e2e smoke)
         run: node scripts/ops/run-f4-8g-frontend-validation.mjs

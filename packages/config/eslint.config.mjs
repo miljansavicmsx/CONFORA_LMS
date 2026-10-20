@@ -24,6 +24,18 @@ export default function createConforaEslintConfig(rootDir) {
         '**/eslint.config.mjs',
         '**/next.config.mjs',
         'apps/examiner/main.cjs',
+        /**
+         * OD-2026-10-20: outside apps/api/tsconfig.build.json.
+         * They reference models or modules the frozen schema does not contain.
+         * Rules are unchanged; these files are not part of the shipping program.
+         */
+        '**/actor-db-access.ts',
+        '**/actor-db-access.spec.ts',
+        '**/recertification.service.ts',
+        '**/me-certificates.service.ts',
+        '**/me-certificates.service.spec.ts',
+        '**/appeals-complaints-1-boundary.e2e-spec.ts',
+        '**/td-082-pilot-certificant-wallet.e2e-spec.ts',
       ],
     },
     js.configs.recommended,

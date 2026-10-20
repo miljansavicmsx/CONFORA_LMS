@@ -1,0 +1,16 @@
+# CI smoke image for the Nest API (OD-2026-10-20).
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm exec turbo build --filter=@confora/api
+
+ENV API_PORT=4000
+EXPOSE 4000
+
+CMD ["node", "apps/api/dist/main.js"]

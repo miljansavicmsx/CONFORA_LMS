@@ -10,7 +10,7 @@ import { z } from "zod";
 
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { ConforaLogo } from "@/components/ui/ConforaLogo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -163,7 +163,7 @@ export default function Login(): JSX.Element {
       </div>
       <Card>
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-xl">{t("login.title")}</CardTitle>
+          <h1 className="text-xl font-semibold leading-none tracking-tight">{t("login.title")}</h1>
           <p className="text-sm font-medium text-text-primary">{t("login.subtitle")}</p>
           <CardDescription>{t("login.description")}</CardDescription>
           {import.meta.env.DEV ? (
@@ -245,9 +245,9 @@ export default function Login(): JSX.Element {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
+          <p className="mt-6 text-center text-sm text-text-secondary">
             {t("login.noAccount")}{" "}
-            <Link to="/register" className="font-medium text-[#1F4E79] underline underline-offset-2">
+            <Link to="/register" className="font-medium text-text-primary underline underline-offset-2">
               {t("login.register")}
             </Link>
           </p>

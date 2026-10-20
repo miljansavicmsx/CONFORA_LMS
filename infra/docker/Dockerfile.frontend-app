@@ -1,0 +1,20 @@
+# CI smoke image for the Vite frontend (OD-2026-10-20).
+# PLAYWRIGHT_F4_SMOKE resolves modules that are absent from the tree.
+# A real source file still wins. This image is not a production release.
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @confora/ui build && pnpm --filter @confora/i18n build
+
+ENV PLAYWRIGHT_F4_SMOKE=1
+RUN pnpm --filter confora-frontend-app exec vite build
+
+EXPOSE 5173
+
+CMD ["pnpm", "--filter", "confora-frontend-app", "exec", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]

@@ -3,12 +3,17 @@
  * Lighthouse accessibility gate. Scores below .lighthouserc.json minAccessibilityScore fail.
  */
 import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
-const require = createRequire(import.meta.url);
-const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
+const lighthouseModule = await import('lighthouse');
+const lighthouse = lighthouseModule.default;
+const chromeLauncherModule = await import('chrome-launcher');
+const chromeLauncher = chromeLauncherModule.default ?? chromeLauncherModule;
+
+if (typeof lighthouse !== 'function') {
+  console.error('Lighthouse default export is not a function.');
+  process.exit(1);
+}
 
 const configPath = join(import.meta.dirname, '..', '..', '.lighthouserc.json');
 const config = JSON.parse(readFileSync(configPath, 'utf8'));

@@ -139,7 +139,7 @@ describe('BAR-P03 auth e2e', () => {
         exp: now + 300,
         iat: now,
       },
-      privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+      privateKey.export({ type: 'pkcs8', format: 'pem' }),
       { algorithm: 'RS256', keyid: fixture.kid },
     );
     await request(httpServer(app))
@@ -213,7 +213,7 @@ describe('BAR-P03 auth e2e', () => {
         exp: now + 300,
         iat: now,
       },
-      privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+      privateKey.export({ type: 'pkcs8', format: 'pem' }),
       { algorithm: 'RS256', keyid: 'after-stop' },
     );
     await request(httpServer(app))
