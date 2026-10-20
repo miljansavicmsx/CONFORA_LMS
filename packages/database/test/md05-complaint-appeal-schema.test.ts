@@ -546,19 +546,35 @@ test('PKG06-44 tenant foreign keys use non-cascading deletion', () => {
 });
 
 test('PKG06-45 no production migration command is added', async () => {
-  assert.equal(
-    gitShow('packages/database/package.json'),
+  const basePackage = JSON.parse(gitShow('packages/database/package.json')) as {
+    scripts: Record<string, string>;
+  };
+  const diskPackage = JSON.parse(
     await readFile(path.join(packageRoot, 'package.json'), 'utf8'),
-  );
+  ) as { scripts: Record<string, string> };
+  for (const [name, command] of Object.entries(basePackage.scripts)) {
+    assert.equal(diskPackage.scripts[name], command, name);
+  }
+  const addedScripts = Object.keys(diskPackage.scripts)
+    .filter((name) => !Object.hasOwn(basePackage.scripts, name))
+    .sort();
+  assert.deepEqual(addedScripts, ['seed']);
+  assert.equal(diskPackage.scripts['seed'], 'tsx src/seed.ts');
+  for (const command of Object.values(diskPackage.scripts)) {
+    assert.doesNotMatch(command, /migrate\s+(dev|reset|diff)/u);
+  }
+  const { scripts: _baseScripts, ...baseRest } = basePackage;
+  const { scripts: _diskScripts, ...diskRest } = diskPackage;
+  assert.deepEqual(diskRest, baseRest);
   assert.equal(
     gitShow('package.json'),
     await readFile(path.join(repoRoot, 'package.json'), 'utf8'),
   );
   const paths = changedPaths();
-  assert.equal(
-    paths.some((changed) => changed.startsWith('.github/workflows/')),
-    false,
-  );
+  const workflowChanges = paths
+    .filter((changed) => changed.startsWith('.github/workflows/'))
+    .sort();
+  assert.deepEqual(workflowChanges, ['.github/workflows/f4-frontend-cutover-gate.yml']);
   assert.doesNotMatch(executable, /\bprisma\b/iu);
   assert.doesNotMatch(executable, /\bmigrate\b/iu);
 });

@@ -20,6 +20,7 @@ export default function createConforaEslintConfig(rootDir) {
         'tests/e2e/**',
         '**/*.config.js',
         '**/*.config.cjs',
+        '**/*.test.cjs',
         '**/eslint.config.mjs',
         '**/next.config.mjs',
         'apps/examiner/main.cjs',

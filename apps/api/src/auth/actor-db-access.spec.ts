@@ -42,7 +42,7 @@ describe('resolveActorDbAccess', () => {
     });
 
     const result = await resolveActorDbAccess(
-      { user: { findUnique } } as never,
+      { user: { findUnique } },
       actor({
         payload: {
           sub: 'kc-wrong-tenant-sub',
@@ -50,7 +50,11 @@ describe('resolveActorDbAccess', () => {
           tenant_id: DEFAULT_TENANT_ID,
           realm_access: { roles: ['USR_CAND'] },
         },
-        tenantContext: { tenantId: DEFAULT_TENANT_ID, claimSource: 'tenant_id', isPlatformScope: false },
+        tenantContext: {
+          tenantId: DEFAULT_TENANT_ID,
+          claimSource: 'tenant_id',
+          isPlatformScope: false,
+        },
       }),
     );
 
@@ -65,7 +69,7 @@ describe('resolveActorDbAccess', () => {
       return Promise.resolve(null);
     });
 
-    await expect(resolveActorDbAccess({ user: { findUnique } } as never, actor())).rejects.toBeInstanceOf(
+    await expect(resolveActorDbAccess({ user: { findUnique } }, actor())).rejects.toBeInstanceOf(
       ForbiddenException,
     );
   });
@@ -73,7 +77,7 @@ describe('resolveActorDbAccess', () => {
   it('throws ForbiddenException when user cannot be resolved', async () => {
     findUnique.mockResolvedValue(null);
 
-    await expect(resolveActorDbAccess({ user: { findUnique } } as never, actor())).rejects.toBeInstanceOf(
+    await expect(resolveActorDbAccess({ user: { findUnique } }, actor())).rejects.toBeInstanceOf(
       ForbiddenException,
     );
   });

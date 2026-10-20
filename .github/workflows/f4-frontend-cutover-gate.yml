@@ -4,16 +4,16 @@ on:
   push:
     branches: [main, master, develop]
     paths:
-      - "frontend-app/**"
-      - "scripts/ops/audit-f4-frontend-api-usage.mjs"
-      - "scripts/ops/run-f4-8g-frontend-validation.mjs"
-      - ".github/workflows/f4-frontend-cutover-gate.yml"
+      - 'frontend-app/**'
+      - 'scripts/ops/audit-f4-frontend-api-usage.mjs'
+      - 'scripts/ops/run-f4-8g-frontend-validation.mjs'
+      - '.github/workflows/f4-frontend-cutover-gate.yml'
   pull_request:
     paths:
-      - "frontend-app/**"
-      - "scripts/ops/audit-f4-frontend-api-usage.mjs"
-      - "scripts/ops/run-f4-8g-frontend-validation.mjs"
-      - ".github/workflows/f4-frontend-cutover-gate.yml"
+      - 'frontend-app/**'
+      - 'scripts/ops/audit-f4-frontend-api-usage.mjs'
+      - 'scripts/ops/run-f4-8g-frontend-validation.mjs'
+      - '.github/workflows/f4-frontend-cutover-gate.yml'
 
 concurrency:
   group: f4-frontend-cutover-${{ github.ref }}
@@ -25,9 +25,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.2
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
+
+      - name: Install workspace packages
+        run: pnpm install --frozen-lockfile
 
       - name: Install frontend-app dependencies
         working-directory: frontend-app

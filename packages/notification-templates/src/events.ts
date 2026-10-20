@@ -41,10 +41,7 @@ export type BundledEmailTemplate = {
  * Values are HTML-escaped. Unknown keys are rejected. Missing allowlisted keys are rejected.
  * Does not accept raw HTML passthrough.
  */
-export function interpolateMjmlAllowlisted(
-  template: string,
-  vars: Record<string, string>,
-): string {
+export function interpolateMjmlAllowlisted(template: string, vars: Record<string, string>): string {
   const provided = Object.keys(vars);
   const unknown = provided.filter((k) => !ALLOWED_VAR_SET.has(k));
   if (unknown.length > 0) {
@@ -83,7 +80,7 @@ function isSupportedLocale(locale: string): locale is NotificationLocale {
 }
 
 function normalizeLocale(locale: string): NotificationLocale | null {
-  const tag = String(locale).trim().toLowerCase().slice(0, 2);
+  const tag = locale.trim().toLowerCase().slice(0, 2);
   return isSupportedLocale(tag) ? tag : null;
 }
 
