@@ -12,6 +12,20 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b
+        env:
+          POSTGRES_USER: confora
+          POSTGRES_PASSWORD: confora_dev_change_me
+          POSTGRES_DB: confora
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U confora -d confora"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,7 +55,21 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Prisma migrate deploy
+        working-directory: packages/database
+        env:
+          DATABASE_URL: postgresql://confora:confora_dev_change_me@127.0.0.1:5432/confora
+        run: pnpm exec prisma migrate deploy
+
+      - name: Prisma seed
+        working-directory: packages/database
+        env:
+          DATABASE_URL: postgresql://confora:confora_dev_change_me@127.0.0.1:5432/confora
+        run: pnpm run seed
+
       - name: Test
+        env:
+          DATABASE_URL: postgresql://confora:confora_dev_change_me@127.0.0.1:5432/confora
         run: pnpm test
 
       - name: API e2e (auth + verify)
