@@ -23,6 +23,7 @@ import { AccessDeniedError } from '../tenant/tenant-errors';
 import {
   BlueprintDomainsDto,
   CreateBlueprintDto,
+  ConfirmIdentityDto,
   CreateItemDto,
   ListItemsQueryDto,
   OpenStandardSettingDto,
@@ -154,6 +155,15 @@ export class StaffExamController {
   @Post('sessions')
   schedule(@Body() body: ScheduleSessionDto, @Req() req: RequestWithPrincipal) {
     return this.exams.schedule(actor(req), body);
+  }
+
+  @Post('sessions/:sessionId/identity-check')
+  confirmIdentity(
+    @Param('sessionId', ParseUUIDPipe) sessionId: string,
+    @Body() body: ConfirmIdentityDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.exams.confirmIdentity(actor(req), sessionId, body.documentType);
   }
 
   @Post('sessions/:sessionId/proctor-flags')

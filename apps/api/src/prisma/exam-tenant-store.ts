@@ -8,6 +8,7 @@ import {
   assertCertificationDecision,
   assertChoiceSet,
   assertItemTransition,
+  assertNonImageIdentity,
   assertRetakeWindow,
   assertRetakeWindowDays,
   assertStaffAction,
@@ -16,6 +17,8 @@ import {
   domainFeedbackForCandidate,
   EXAM_MFA_REFERENCE,
   ExamRuleError,
+  retakeWindowAnchor,
+  type IdentityDocumentType,
   formReviewFlag,
   hashSeed,
   itemIsCorrect,
@@ -65,6 +68,8 @@ export type ExamClient = {
   | 'assembledExamForm'
   | 'assembledExamFormItem'
   | 'certificationExamSession'
+  | 'certificationExamIdentityLink'
+  | 'identityCheck'
   | 'certificationExamAnswer'
   | 'certificationExamResult'
   | 'examCertificationDecision'
@@ -662,7 +667,13 @@ export async function scheduleSession(
     if (!invigilator || invigilator.id === input.candidateUserId) {
       throw new ExamRuleError('INVIGILATOR_REQUIRED');
     }
-    await assertNoOpenRetake(tx, input.tenantId, input.candidateUserId, form.blueprint, input.now);
+    await assertNoFailedRetake(
+      tx,
+      input.tenantId,
+      input.candidateUserId,
+      form.blueprint,
+      input.now,
+    );
     const id = randomUUID();
     await tx.certificationExamSession.create({
       data: {
@@ -686,7 +697,7 @@ export async function scheduleSession(
   });
 }
 
-async function assertNoOpenRetake(
+async function assertNoFailedRetake(
   tx: Tx,
   tenantId: string,
   candidateUserId: string,
@@ -700,9 +711,109 @@ async function assertNoOpenRetake(
       status: 'SCORED',
       form: { blueprintId: blueprint.id },
     },
+    include: { result: true },
     orderBy: { submittedAt: 'desc' },
   });
-  assertRetakeWindow(previous?.submittedAt ?? null, blueprint.retakeWindowDays, now);
+  const anchor = retakeWindowAnchor(
+    previous?.result ? { submittedAt: previous.submittedAt, passed: previous.result.passed } : null,
+  );
+  assertRetakeWindow(anchor, blueprint.retakeWindowDays, now);
+}
+
+export async function confirmSessionIdentity(
+  client: ExamClient,
+  input: {
+    tenantId: string;
+    actor: Actor;
+    sessionId: string;
+    documentType: IdentityDocumentType;
+    now: Date;
+  },
+) {
+  assertAction(input.actor, 'IDENTITY_CONFIRM');
+  return client.$transaction(async (tx) => {
+    const session = await tx.certificationExamSession.findFirst({
+      where: { tenantId: input.tenantId, id: input.sessionId },
+    });
+    if (!session) {
+      throw new ExamNotFoundError();
+    }
+    if (session.status !== 'SCHEDULED') {
+      throw new ExamRuleError('SESSION_NOT_SCHEDULED');
+    }
+    if (
+      input.actor.userId !== session.invigilatorUserId ||
+      input.actor.userId === session.candidateUserId
+    ) {
+      throw new ExamRuleError('IDENTITY_VERIFIER');
+    }
+    const existing = await tx.certificationExamIdentityLink.findFirst({
+      where: { tenantId: input.tenantId, sessionId: session.id },
+    });
+    if (existing) {
+      throw new ExamRuleError('IDENTITY_ALREADY_RECORDED');
+    }
+    const identityCheckId = randomUUID();
+    await tx.identityCheck.create({
+      data: {
+        id: identityCheckId,
+        tenantId: input.tenantId,
+        subjectUserId: session.candidateUserId,
+        reviewerUserId: input.actor.userId,
+        method: 'HUMAN_VISUAL',
+        outcome: 'VERIFIED',
+        documentType: input.documentType,
+        checkedAt: input.now,
+      },
+    });
+    await tx.certificationExamIdentityLink.create({
+      data: {
+        id: randomUUID(),
+        tenantId: input.tenantId,
+        sessionId: session.id,
+        identityCheckId,
+      },
+    });
+    await tx.certificationExamSession.update({
+      where: { tenantId_id: { tenantId: input.tenantId, id: session.id } },
+      data: { status: 'READY' },
+    });
+    return {
+      sessionId: session.id,
+      identityCheckId,
+      status: 'READY' as const,
+      accreditationReady: true,
+      documentType: input.documentType,
+      method: 'HUMAN_VISUAL' as const,
+      verifierUserId: input.actor.userId,
+      checkedAt: input.now.toISOString(),
+    };
+  });
+}
+
+async function requireReadyIdentity(
+  tx: Tx,
+  tenantId: string,
+  session: { id: string; candidateUserId: string },
+): Promise<void> {
+  const link = await tx.certificationExamIdentityLink.findFirst({
+    where: { tenantId, sessionId: session.id },
+    include: { identityCheck: true },
+  });
+  if (!link) {
+    throw new ExamRuleError('IDENTITY_CHECK_REQUIRED');
+  }
+  const check = link.identityCheck;
+  assertNonImageIdentity({
+    documentType: check.documentType ?? '',
+    method: check.method,
+    outcome: check.outcome,
+    reviewerUserId: check.reviewerUserId,
+    subjectUserId: check.subjectUserId,
+    candidateUserId: session.candidateUserId,
+    checkedAt: check.checkedAt,
+    hasImage: Boolean(check.idImageObjectKey || check.candidateImageObjectKey),
+  });
 }
 
 export async function listCandidateSessions(client: ExamClient, tenantId: string, userId: string) {
@@ -737,9 +848,13 @@ export async function startCandidateSession(
   assertStartAcknowledgements(input);
   return client.$transaction(async (tx) => {
     const session = await loadOwnSession(tx, input.tenantId, input.userId, input.sessionId);
-    if (session.status !== 'SCHEDULED') {
+    if (session.status === 'SCHEDULED') {
+      throw new ExamRuleError('IDENTITY_CHECK_REQUIRED');
+    }
+    if (session.status !== 'READY') {
       throw new ExamRuleError('SESSION_NOT_SCHEDULED');
     }
+    await requireReadyIdentity(tx, input.tenantId, session);
     const needs = await tx.userAccessibilityNeed.findMany({
       where: { tenantId: input.tenantId, userId: input.userId },
     });

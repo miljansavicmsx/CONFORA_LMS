@@ -27,6 +27,8 @@ const recordId = '5a5a5a5a-5a5a-4a5a-8a5a-5a5a5a5a5a5a';
 const formId = '6a6a6a6a-6a6a-4a6a-8a6a-6a6a6a6a6a6a';
 const applicationId = '7a7a7a7a-7a7a-4a7a-8a7a-7a7a7a7a7a7a';
 const sessionId = '8a8a8a8a-8a8a-4a8a-8a8a-8a8a8a8a8a8a';
+const identityCheckId = '9a9a9a9a-9a9a-4a9a-8a9a-9a9a9a9a9a9a';
+const identityLinkId = '9b9b9b9b-9b9b-4b9b-8b9b-9b9b9b9b9b9b';
 
 async function user(id: string, email: string): Promise<void> {
   await prisma.user.upsert({
@@ -253,12 +255,40 @@ async function main(): Promise<void> {
       certificationApplicationId: applicationId,
       scheduledStartAt: new Date('2026-10-21T09:00:00.000Z'),
       invigilatorUserId: invigilatorId,
-      status: 'SCHEDULED',
+      status: 'READY',
       identityCaptureState: 'NOT_COLLECTED_DPIA_PENDING',
     },
-    update: { status: 'SCHEDULED' },
+    update: { status: 'READY', identityCaptureState: 'NOT_COLLECTED_DPIA_PENDING' },
   });
-  console.log('Exam demo seed stored a scheduled session. No credential was issued.');
+  await prisma.identityCheck.upsert({
+    where: { tenantId_id: { tenantId, id: identityCheckId } },
+    create: {
+      id: identityCheckId,
+      tenantId,
+      subjectUserId: candidateId,
+      reviewerUserId: invigilatorId,
+      method: 'HUMAN_VISUAL',
+      outcome: 'VERIFIED',
+      documentType: 'PASSPORT',
+      checkedAt: new Date('2026-10-20T12:00:00.000Z'),
+    },
+    update: {
+      documentType: 'PASSPORT',
+      outcome: 'VERIFIED',
+      method: 'HUMAN_VISUAL',
+    },
+  });
+  await prisma.certificationExamIdentityLink.upsert({
+    where: { tenantId_id: { tenantId, id: identityLinkId } },
+    create: {
+      id: identityLinkId,
+      tenantId,
+      sessionId,
+      identityCheckId,
+    },
+    update: { identityCheckId },
+  });
+  console.log('Exam demo seed stored a ready session without images. No credential was issued.');
 }
 
 main()

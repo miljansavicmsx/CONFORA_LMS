@@ -271,6 +271,6 @@ describe('BAR-P03 auth e2e', () => {
     // AUTH_30 exact inventory. Equality stays strict; the list is the full authorized surface.
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(41);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(42);
   });
 });

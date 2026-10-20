@@ -5,12 +5,15 @@ import {
   angoffCutScoreBasisPoints,
   assertApplicationEligible,
   assertItemTransition,
+  assertNonImageIdentity,
   assertRetakeWindowDays,
+  assertStaffAction,
   domainFeedbackForCandidate,
   ExamRuleError,
   formReviewFlag,
   itemIsCorrect,
   itemReviewFlag,
+  retakeWindowAnchor,
   kr20,
   pointBiserial,
   pValue,
@@ -79,6 +82,7 @@ describe('exam rules', () => {
     expect(itemIsCorrect('SINGLE_CHOICE', ['A'], ['A', 'B'])).toBe(false);
     expect(itemIsCorrect('MULTIPLE_CHOICE', ['A', 'C'], ['C', 'A'])).toBe(true);
     expect(itemIsCorrect('MULTIPLE_CHOICE', ['A', 'C'], ['A'])).toBe(false);
+    expect(itemIsCorrect('MULTIPLE_CHOICE', ['A', 'C'], ['A', 'C', 'B'])).toBe(false);
     expect(scoreBasisPoints(7, 10)).toBe(7000);
     const domains = [{ domainCode: 'D1', correct: 1, total: 2 }];
     expect(domainFeedbackForCandidate(true, domains)).toEqual([]);
@@ -117,6 +121,65 @@ describe('exam rules', () => {
     expect(() => {
       assertRetakeWindowDays(30);
     }).toThrow('RETAKE_WINDOW_TOO_SHORT');
+    const failedAt = new Date('2026-01-01T00:00:00.000Z');
+    expect(retakeWindowAnchor({ submittedAt: failedAt, passed: false })).toEqual(failedAt);
+    expect(retakeWindowAnchor({ submittedAt: failedAt, passed: true })).toBeNull();
+    expect(retakeWindowAnchor(null)).toBeNull();
+  });
+
+  it('keeps the system administrator out of the item bank and certification decisions', () => {
+    expect(() => {
+      assertStaffAction(['STAFF_SYSADM'], 'ITEM_WRITE');
+    }).toThrow('ROLE_SEPARATION');
+    expect(() => {
+      assertStaffAction(['STAFF_SYSADM'], 'ITEM_APPROVE');
+    }).toThrow('ROLE_SEPARATION');
+    expect(() => {
+      assertStaffAction(['STAFF_SYSADM'], 'DECIDE');
+    }).toThrow('ROLE_SEPARATION');
+    expect(() => {
+      assertStaffAction(['STAFF_SYSADM'], 'IDENTITY_CONFIRM');
+    }).toThrow('ROLE_SEPARATION');
+  });
+
+  it('requires a non-image identity record before a session can be ready', () => {
+    const checkedAt = new Date('2026-10-20T09:00:00.000Z');
+    expect(() => {
+      assertNonImageIdentity({
+        documentType: 'PASSPORT',
+        method: 'HUMAN_VISUAL',
+        outcome: 'VERIFIED',
+        reviewerUserId: 'invigilator',
+        subjectUserId: 'candidate',
+        candidateUserId: 'candidate',
+        checkedAt,
+        hasImage: false,
+      });
+    }).not.toThrow();
+    expect(() => {
+      assertNonImageIdentity({
+        documentType: 'PASSPORT',
+        method: 'HUMAN_VISUAL',
+        outcome: 'VERIFIED',
+        reviewerUserId: 'invigilator',
+        subjectUserId: 'candidate',
+        candidateUserId: 'candidate',
+        checkedAt,
+        hasImage: true,
+      });
+    }).toThrow('IDENTITY_IMAGE_FORBIDDEN');
+    expect(() => {
+      assertNonImageIdentity({
+        documentType: '',
+        method: 'HUMAN_VISUAL',
+        outcome: 'VERIFIED',
+        reviewerUserId: 'invigilator',
+        subjectUserId: 'candidate',
+        candidateUserId: 'candidate',
+        checkedAt,
+        hasImage: false,
+      });
+    }).toThrow('IDENTITY_DOCUMENT_TYPE');
   });
 
   it('computes p-value, point-biserial and KR-20', () => {

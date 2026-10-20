@@ -107,6 +107,7 @@ model Tenant {
   examProctorFlagReviews          ExamProctorFlagReview[]
   examItemStatistics              ExamItemStatistic[]
   examFormReliabilities           ExamFormReliability[]
+  certificationExamIdentityLinks  CertificationExamIdentityLink[]
 }
 
 model User {
@@ -347,6 +348,14 @@ enum IdentityVerificationState {
 
 enum IdentityCheckMethod {
   HUMAN_VISUAL
+}
+
+/// Document kind only. The document number and any image stay uncollected until a DPIA.
+enum IdentityDocumentType {
+  PASSPORT
+  ID_CARD
+  DRIVING_LICENCE
+  RESIDENCE_PERMIT
 }
 
 enum ExamDutyKind {
@@ -1118,6 +1127,7 @@ model IdentityCheck {
   reviewerUserId          String                    @db.Uuid
   method                  IdentityCheckMethod       @default(HUMAN_VISUAL)
   outcome                 IdentityVerificationState
+  documentType            IdentityDocumentType?
   idImageObjectKey        String?                   @db.VarChar(512)
   candidateImageObjectKey String?                   @db.VarChar(512)
   dpiaReference           String?                   @db.VarChar(128)
@@ -1125,10 +1135,11 @@ model IdentityCheck {
   retainUntil             DateTime?                 @db.Timestamptz(3)
   createdAt               DateTime                  @default(now()) @db.Timestamptz(3)
 
-  tenant   Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  subject  User          @relation("IdentityCheckSubject", fields: [tenantId, subjectUserId], references: [tenantId, id], onDelete: Restrict)
-  reviewer User          @relation("IdentityCheckReviewer", fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
-  sessions ExamSession[]
+  tenant                 Tenant                            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  subject                User                              @relation("IdentityCheckSubject", fields: [tenantId, subjectUserId], references: [tenantId, id], onDelete: Restrict)
+  reviewer               User                              @relation("IdentityCheckReviewer", fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
+  sessions               ExamSession[]
+  certificationExamLinks CertificationExamIdentityLink[]
 
   @@unique([tenantId, id])
   @@index([tenantId, subjectUserId])
@@ -1975,6 +1986,7 @@ enum StandardSettingStatus {
 
 enum CertificationExamSessionStatus {
   SCHEDULED
+  READY
   IN_PROGRESS
   SUBMITTED
   SCORED
@@ -2225,13 +2237,31 @@ model CertificationExamSession {
   form        AssembledExamForm         @relation(fields: [tenantId, formId], references: [tenantId, id], onDelete: Restrict)
   candidate   User                      @relation("CertificationExamCandidate", fields: [tenantId, candidateUserId], references: [tenantId, id], onDelete: Restrict)
   invigilator User                      @relation("CertificationExamInvigilator", fields: [tenantId, invigilatorUserId], references: [tenantId, id], onDelete: Restrict)
-  answers     CertificationExamAnswer[]
-  result      CertificationExamResult?
+  answers      CertificationExamAnswer[]
+  result       CertificationExamResult?
   proctorFlags ExamProctorFlag[]
+  identityLink CertificationExamIdentityLink?
 
   @@unique([tenantId, id])
   @@index([tenantId, candidateUserId, status])
   @@index([tenantId, certificationApplicationId])
+}
+
+/// Binds a certification exam session to a non-image IdentityCheck before the session is ready.
+model CertificationExamIdentityLink {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  sessionId       String   @db.Uuid
+  identityCheckId String   @db.Uuid
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session       CertificationExamSession @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  identityCheck IdentityCheck            @relation(fields: [tenantId, identityCheckId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, sessionId])
+  @@index([tenantId, identityCheckId])
 }
 
 model CertificationExamAnswer {

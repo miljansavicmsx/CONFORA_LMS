@@ -1107,9 +1107,11 @@ New decisions are appended here with the same fields. Provisional recommendation
 
 ---
 
-## Part F — Product plan decisions (OD-PP-01 … OD-PP-14)
+## Part F — Product plan decisions (OD-PP-01 … OD-PP-18)
 
 Recorded 2026-10-19 from the owner-approved product plan (specification, gap analysis including „Zahtjevi za akreditaciju”, and standards applicability analysis). Full Bosnian text, conflict log, NFR list and application-security catalogue: [OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md](./OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md).
+
+On 2026-10-20 the owner accepted OD-PP-15 … OD-PP-18: a non-image identity check is required before an exam session is ready; the 90-day retake wait applies only after a fail; multiple-choice scoring is all-or-nothing; `STAFF_SYSADM` has no item-bank or certification-decision access.
 
 OD-PP-12 was confirmed by the owner on 2026-10-20: product-plan delivery stays on Vite `frontend-app` and Next.js is deferred. That confirmation does not close OQ-4, does not supersede ADR-001, and does not rewrite Baseline §0.2 or §4.1. Those still need the Owner and the Architecture Lead together. This part does not resolve MD05, does not authorize deployment, and does not authorize processing of webcam images, identity-document images or JMBG before a DPIA. ISO/BAS standard texts are not added to the repository.
 
@@ -1322,3 +1324,63 @@ OD-PP-12 was confirmed by the owner on 2026-10-20: product-plan delivery stays o
 | Dependencies    | OD-PP-01 … OD-PP-11                                                                                                                                                                                                                                |
 | Exit criteria   | prisma validate, generate, typecheck, lint i postojeći testovi prolaze                                                                                                                                                                             |
 | Supersession    | Ne mijenja PKG-06 zamrzavanje CertificationApplication, ComplaintCase, AppealCase, AuditEvent i AuditChainHead.                                                                                                                                    |
+
+### OD-PP-15 — Provjera identiteta bez slike prije spremne sesije
+
+| Field           | Value                                                                                                                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-20                                                                                                                                                                                            |
+| Status          | ACCEPTED                                                                                                                                                                                              |
+| Approved option | Prije nego što se certifikacijska ispitna sesija označi spremnom, obavezan je zapis `IdentityCheck` bez slike: vrsta isprave, provjeravač, vrijeme i metoda `HUMAN_VISUAL`. Slika i JMBG čekaju DPIA. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                        |
+| Rationale       | OD-PP-04 traži ljudsku provjeru identiteta. OD-PP-05 i dalje zabranjuje sliku i JMBG. Zapis bez slike zatvara taj raskorak.                                                                           |
+| Scope           | `CertificationExamSession` status `READY`, `CertificationExamIdentityLink`, `IdentityCheck.documentType`                                                                                              |
+| Residual risk   | DPIA i dalje nije izrađena. Kolone za sliku ostaju prazne i nisu odobrenje za prikupljanje.                                                                                                           |
+| Dependencies    | OD-PP-04, OD-PP-05                                                                                                                                                                                    |
+| Exit criteria   | Sesija ne prelazi u spremno stanje bez vrste isprave, provjeravača, vremena i metode, i bez upisane slike                                                                                             |
+| Supersession    | Pojašnjava OD-PP-04 i OD-PP-05: akreditabilna spremnost ne čeka sliku. Ne odobrava prikupljanje slike ni JMBG-a.                                                                                      |
+
+### OD-PP-16 — Čekanje od 90 dana samo nakon pada
+
+| Field           | Value                                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-20                                                                                                                               |
+| Status          | ACCEPTED                                                                                                                                 |
+| Approved option | Prozor ponovnog polaganja od najmanje 90 dana primjenjuje se samo nakon rezultata koji nije položen. Položen ispit ne otvara to čekanje. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                           |
+| Rationale       | OD-PP-04 je propisao najranije 90 dana. Vlasnik je 2026-10-20 ograničio to čekanje na pad.                                               |
+| Scope           | Zakazivanje `CertificationExamSession` za isti nacrt ispita                                                                              |
+| Residual risk   | Broj dozvoljenih prolaza i naknada za novi pokušaj nisu ovom odlukom fiksirani.                                                          |
+| Dependencies    | OD-PP-04                                                                                                                                 |
+| Exit criteria   | Zakazivanje odmah nakon prolaza prolazi pravilo prozora; zakazivanje unutar prozora nakon pada biva odbijeno                             |
+| Supersession    | Sužava rečenicu OD-PP-04 o ponovnom polaganju. Ne snižava minimum od 90 dana za pad.                                                     |
+
+### OD-PP-17 — Bodovanje višestrukog izbora
+
+| Field           | Value                                                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-20                                                                                                                                  |
+| Status          | ACCEPTED                                                                                                                                    |
+| Approved option | Stavka višestrukog izbora je tačna samo kada se izabrani skup ključeva u potpunosti poklapa s ključem. Djelimičan odgovor ne donosi bodove. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                              |
+| Rationale       | Potvrda pravila koje je već u ispitnom motoru. Parcijalni kredit nije odobren.                                                              |
+| Scope           | Server scoring `MULTIPLE_CHOICE`                                                                                                            |
+| Residual risk   | Druge vrste stavki, kada se uvedu, traže posebnu odluku o bodovanju.                                                                        |
+| Dependencies    | OD-PP-04                                                                                                                                    |
+| Exit criteria   | Test pokazuje da nepotpun ili suvišan skup ključeva nije tačan                                                                              |
+| Supersession    | —                                                                                                                                           |
+
+### OD-PP-18 — Sistem-administrator bez banke stavki i odluke
+
+| Field           | Value                                                                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Date            | 2026-10-20                                                                                                                                 |
+| Status          | ACCEPTED                                                                                                                                   |
+| Approved option | `STAFF_SYSADM` nema pristup banci ispitnih stavki niti odluci o certifikaciji. To je pravilo nepristrasnosti, a ne privremeno ograničenje. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                             |
+| Rationale       | OD-PP-07 i razdvajanje dužnosti. Sistem-administrator ne vidi povjerljive stavke i ne mijenja ishod certifikacije.                         |
+| Scope           | Čuvari `ExamStaffRolesGuard`, `ExamCommitteeRolesGuard` i isto pravilo na Vite sučelju                                                     |
+| Residual risk   | Break-glass i dalje nema aplikacijski tok. Ovaj zapis ne uvodi izuzetak.                                                                   |
+| Dependencies    | OD-PP-06, OD-PP-07                                                                                                                         |
+| Exit criteria   | Zahtjev sa ulogom `STAFF_SYSADM` na banku stavki, potvrdu identiteta i odluku biva odbijen                                                 |
+| Supersession    | Potvrđuje OD-PP-07 za ispitnu banku i odluku. Ne daje sistem-administratoru širi pristup.                                                  |

@@ -95,6 +95,14 @@ export class StandardSettingRatingsDto extends createZodDto(
     .strict(),
 ) {}
 
+export class ConfirmIdentityDto extends createZodDto(
+  z
+    .object({
+      documentType: z.enum(['PASSPORT', 'ID_CARD', 'DRIVING_LICENCE', 'RESIDENCE_PERMIT']),
+    })
+    .strict(),
+) {}
+
 export class ScheduleSessionDto extends createZodDto(
   z
     .object({

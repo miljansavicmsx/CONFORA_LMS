@@ -362,6 +362,32 @@ describe('certification exam foundation e2e', () => {
       .sessionId;
     expect((scheduled.body as { accreditationReady: boolean }).accreditationReady).toBe(false);
 
+    await request(httpServer(app))
+      .post(`/v1/me/exams/sessions/${passSessionId}/start`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ rulesAccepted: true, ndaAccepted: true })
+      .expect(400);
+    await request(httpServer(app))
+      .post(`/v1/staff/exams/sessions/${passSessionId}/identity-check`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({ documentType: 'PASSPORT' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/exams/sessions/${passSessionId}/identity-check`)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send({ documentType: 'PASSPORT' })
+      .expect(403);
+    const ready = await request(httpServer(app))
+      .post(`/v1/staff/exams/sessions/${passSessionId}/identity-check`)
+      .set(auth('exam-invigilator', ['INVIGILATOR']))
+      .send({ documentType: 'PASSPORT' })
+      .expect(201);
+    const readyBody = ready.body as { accreditationReady: boolean; status: string; method: string };
+    expect(readyBody.accreditationReady).toBe(true);
+    expect(readyBody.status).toBe('READY');
+    expect(readyBody.method).toBe('HUMAN_VISUAL');
+    expect(JSON.stringify(readyBody)).not.toMatch(/idImage|candidateImage|jmbg/i);
+
     const listed = await request(httpServer(app))
       .get('/v1/me/exams/sessions')
       .set(auth(candidateSubject, ['USR_CAND']))
@@ -422,7 +448,7 @@ describe('certification exam foundation e2e', () => {
       .expect(200);
     expect(JSON.stringify(hidden.body)).not.toContain(STEM);
 
-    await request(httpServer(app))
+    const afterPass = await request(httpServer(app))
       .post('/v1/staff/exams/sessions')
       .set(auth(approverSubject, ['COM_TECH']))
       .send({
@@ -432,7 +458,8 @@ describe('certification exam foundation e2e', () => {
         invigilatorUserId: invigilatorId,
         scheduledStartAt: new Date().toISOString(),
       })
-      .expect(400);
+      .expect(201);
+    expect((afterPass.body as { accreditationReady: boolean }).accreditationReady).toBe(false);
 
     const second = await request(httpServer(app))
       .post('/v1/staff/exams/sessions')
@@ -446,6 +473,11 @@ describe('certification exam foundation e2e', () => {
       })
       .expect(201);
     failSessionId = (second.body as { sessionId: string }).sessionId;
+    await request(httpServer(app))
+      .post(`/v1/staff/exams/sessions/${failSessionId}/identity-check`)
+      .set(auth('exam-invigilator', ['INVIGILATOR']))
+      .send({ documentType: 'ID_CARD' })
+      .expect(201);
     await request(httpServer(app))
       .post(`/v1/me/exams/sessions/${failSessionId}/start`)
       .set(auth(otherSubject, ['USR_CAND']))
@@ -478,6 +510,17 @@ describe('certification exam foundation e2e', () => {
         expect.objectContaining({ domainCode: 'B', correct: 1, total: 1 }),
       ]),
     );
+    await request(httpServer(app))
+      .post('/v1/staff/exams/sessions')
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        formId,
+        candidateUserId: otherCandidateId,
+        certificationApplicationId: otherApplicationId,
+        invigilatorUserId: invigilatorId,
+        scheduledStartAt: new Date().toISOString(),
+      })
+      .expect(400);
 
     const stats = await request(httpServer(app))
       .get(`/v1/staff/exams/forms/${formId}/psychometrics`)
@@ -558,6 +601,7 @@ describe('certification exam foundation e2e', () => {
     expect(types.has('EXAM_SUBMITTED')).toBe(true);
     expect(types.has('EXAM_SCORED')).toBe(true);
     expect(types.has('EXAM_DECISION_RECORDED')).toBe(true);
+    expect(types.has('EXAM_IDENTITY_CONFIRMED')).toBe(true);
 
     const statement = await requirePrisma().learningActivityRecord.findFirst({
       where: { tenantId, objectId: passSessionId },

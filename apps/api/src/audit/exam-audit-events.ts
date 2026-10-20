@@ -22,6 +22,9 @@ const EXAM_METADATA = {
     provisional: BOOLEAN_VALUE,
     outcome: STRING_VALUE,
     independentOfTraining: BOOLEAN_VALUE,
+    identityCheckId: STRING_VALUE,
+    documentType: STRING_VALUE,
+    method: STRING_VALUE,
   },
 } as const;
 
@@ -53,6 +56,11 @@ export const EXAM_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
   },
   {
     eventType: 'EXAM_DECISION_RECORDED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: EXAM_METADATA,
+  },
+  {
+    eventType: 'EXAM_IDENTITY_CONFIRMED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: EXAM_METADATA,
   },

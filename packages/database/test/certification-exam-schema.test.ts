@@ -16,6 +16,16 @@ const migration = await readFile(
   ),
   'utf8',
 );
+const identityMigration = await readFile(
+  path.join(
+    packageRoot,
+    'prisma',
+    'migrations',
+    '20261020160000_exam_identity_check_ready',
+    'migration.sql',
+  ),
+  'utf8',
+);
 
 function modelBlock(source: string, name: string): string {
   const match = new RegExp(`^model ${name} \\{[\\s\\S]*?^\\}`, 'm').exec(source);
@@ -48,6 +58,12 @@ test('certification exam models are tenant scoped and do not store identity imag
   const decision = modelBlock(schema, 'ExamCertificationDecision');
   assert.match(decision, /\bindependentOfTraining\b/);
   assert.doesNotMatch(decision, /\bCredential\b/);
+  const identity = modelBlock(schema, 'IdentityCheck');
+  assert.match(identity, /documentType\s+IdentityDocumentType\?/);
+  const link = modelBlock(schema, 'CertificationExamIdentityLink');
+  assert.match(link, /\bidentityCheckId\b/);
+  assert.doesNotMatch(link, /image|webcam|jmbg|nationalId/i);
+  assert.match(schema, /READY/);
 });
 
 test('exam migration is additive and leaves frozen tables untouched', () => {
@@ -66,5 +82,11 @@ test('exam migration is additive and leaves frozen tables untouched', () => {
     'AssessmentItem',
   ]) {
     assert.doesNotMatch(migration, new RegExp(`ALTER TABLE "${table}"`));
+    assert.doesNotMatch(identityMigration, new RegExp(`ALTER TABLE "${table}"`));
   }
+  assert.match(identityMigration, /CREATE TABLE "CertificationExamIdentityLink"/);
+  assert.match(identityMigration, /ADD COLUMN "documentType"/);
+  assert.doesNotMatch(identityMigration, /\bINSERT\b/i);
+  assert.doesNotMatch(identityMigration, /\bDROP\b/i);
+  assert.doesNotMatch(identityMigration, /image|jmbg/i);
 });

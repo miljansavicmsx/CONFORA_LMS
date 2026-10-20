@@ -31,6 +31,7 @@ export const PRODUCTION_ROUTE_INVENTORY = [
   'POST /v1/staff/exams/blueprints/:blueprintId/assemble',
   'GET /v1/staff/exams/forms/:formId/psychometrics',
   'POST /v1/staff/exams/sessions',
+  'POST /v1/staff/exams/sessions/:sessionId/identity-check',
   'POST /v1/staff/exams/sessions/:sessionId/proctor-flags',
   'POST /v1/staff/exams/proctor-flags/:flagId/reviews',
   'GET /v1/me/exams/sessions',

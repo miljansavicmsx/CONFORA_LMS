@@ -22,6 +22,7 @@ export type StaffAction =
   | 'ASSEMBLE'
   | 'PSYCHOMETRICS_READ'
   | 'SESSION_SCHEDULE'
+  | 'IDENTITY_CONFIRM'
   | 'PROCTOR_FLAG'
   | 'PROCTOR_REVIEW'
   | 'DECIDE';
@@ -34,12 +35,20 @@ const ACTION_ROLES: Record<StaffAction, readonly string[]> = {
   ASSEMBLE: ['COM_TECH', 'EXAMINER'],
   PSYCHOMETRICS_READ: ['COM_TECH', 'EXAMINER'],
   SESSION_SCHEDULE: ['COM_TECH', 'EXAMINER'],
+  IDENTITY_CONFIRM: ['INVIGILATOR'],
   PROCTOR_FLAG: ['INVIGILATOR', 'EXAMINER', 'COM_TECH'],
   PROCTOR_REVIEW: ['INVIGILATOR', 'EXAMINER', 'COM_TECH'],
   DECIDE: ['COM_CERT'],
 };
 
 export const MIN_RETAKE_WINDOW_DAYS = 90;
+export const IDENTITY_DOCUMENT_TYPES = [
+  'PASSPORT',
+  'ID_CARD',
+  'DRIVING_LICENCE',
+  'RESIDENCE_PERMIT',
+] as const;
+export type IdentityDocumentType = (typeof IDENTITY_DOCUMENT_TYPES)[number];
 export const EXAM_MFA_REFERENCE = 'ASSURED';
 export const P_VALUE_LOW = 0.2;
 export const P_VALUE_HIGH = 0.95;
@@ -281,6 +290,53 @@ export function assertRetakeWindow(
   const next = previousSubmittedAt.getTime() + windowDays * 86_400_000;
   if (now.getTime() < next) {
     throw new ExamRuleError('RETAKE_WINDOW');
+  }
+}
+
+/** The wait starts only after a failed attempt. A pass does not open the window. */
+export function retakeWindowAnchor(
+  previous: { submittedAt: Date | null; passed: boolean } | null,
+): Date | null {
+  if (!previous || previous.passed) {
+    return null;
+  }
+  return previous.submittedAt;
+}
+
+/**
+ * A session is ready only when a human recorded document type, verifier, time and method,
+ * and no image was stored.
+ */
+export function assertNonImageIdentity(input: {
+  documentType: string;
+  method: string;
+  outcome: string;
+  reviewerUserId: string;
+  subjectUserId: string;
+  candidateUserId: string;
+  checkedAt: Date | null;
+  hasImage: boolean;
+}): void {
+  if (input.hasImage) {
+    throw new ExamRuleError('IDENTITY_IMAGE_FORBIDDEN');
+  }
+  if (!IDENTITY_DOCUMENT_TYPES.includes(input.documentType as IdentityDocumentType)) {
+    throw new ExamRuleError('IDENTITY_DOCUMENT_TYPE');
+  }
+  if (input.method !== 'HUMAN_VISUAL') {
+    throw new ExamRuleError('IDENTITY_METHOD');
+  }
+  if (input.outcome !== 'VERIFIED') {
+    throw new ExamRuleError('IDENTITY_NOT_VERIFIED');
+  }
+  if (!input.checkedAt) {
+    throw new ExamRuleError('IDENTITY_CHECK_REQUIRED');
+  }
+  if (
+    input.subjectUserId !== input.candidateUserId ||
+    input.reviewerUserId === input.candidateUserId
+  ) {
+    throw new ExamRuleError('IDENTITY_VERIFIER');
   }
 }
 

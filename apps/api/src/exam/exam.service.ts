@@ -13,6 +13,7 @@ const DENIED = new Set([
   'AUTHOR_CANNOT_APPROVE',
   'TRAINER_CANNOT_DECIDE',
   'CANDIDATE_CANNOT_DECIDE',
+  'IDENTITY_VERIFIER',
 ]);
 
 function fail(error: unknown): never {
@@ -220,6 +221,35 @@ export class ExamService {
         invigilatorUserId: body.invigilatorUserId,
         scheduledStartAt: new Date(body.scheduledStartAt),
         now: new Date(),
+      })
+      .catch(fail);
+  }
+
+  confirmIdentity(
+    actor: AuthenticatedActor,
+    sessionId: string,
+    documentType: 'PASSPORT' | 'ID_CARD' | 'DRIVING_LICENCE' | 'RESIDENCE_PERMIT',
+  ) {
+    const now = new Date();
+    return this.tenantPrisma.exam
+      .confirmIdentity({ actor: this.actor(actor), sessionId, documentType, now })
+      .then(async (result) => {
+        await this.audit.append(actor, {
+          idempotencyKey: randomUUID(),
+          eventType: 'EXAM_IDENTITY_CONFIRMED',
+          outcome: 'SUCCESS',
+          occurredAt: now,
+          resourceType: 'IdentityCheck',
+          resourceId: result.identityCheckId,
+          metadata: {
+            sessionId: result.sessionId,
+            identityCheckId: result.identityCheckId,
+            documentType: result.documentType,
+            method: result.method,
+            toStatus: result.status,
+          },
+        });
+        return result;
       })
       .catch(fail);
   }

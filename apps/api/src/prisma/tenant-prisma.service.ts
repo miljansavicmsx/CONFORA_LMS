@@ -10,6 +10,7 @@ import {
   approveStandardSetting,
   assembleForm,
   candidateResult,
+  confirmSessionIdentity,
   createBlueprint,
   createItemVersion,
   createSchemeItem,
@@ -404,6 +405,8 @@ export class TenantPrismaService {
       formPsychometrics(this.examClient(), this.requiredTenantId(), actor, formId),
     schedule: (input: Omit<Parameters<typeof scheduleSession>[1], 'tenantId'>) =>
       scheduleSession(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    confirmIdentity: (input: Omit<Parameters<typeof confirmSessionIdentity>[1], 'tenantId'>) =>
+      confirmSessionIdentity(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
     listMine: (userId: string) =>
       listCandidateSessions(this.examClient(), this.requiredTenantId(), userId),
     start: (input: Omit<Parameters<typeof startCandidateSession>[1], 'tenantId'>) =>
