@@ -25,8 +25,8 @@ jobs:
 
       - name: Nest API tests and build
         run: |
-          pnpm --filter @confora/api test
           pnpm exec turbo build --filter=@confora/api
+          pnpm --filter @confora/api test
 
       - name: Frontend cutover validation
         run: node scripts/ops/run-f4-8g-frontend-validation.mjs

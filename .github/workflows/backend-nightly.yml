@@ -25,6 +25,9 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: '1'
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma client and build API dependencies
+        run: pnpm exec turbo build --filter=@confora/api
+
       - name: Nest API unit tests
         run: pnpm --filter @confora/api test
 
