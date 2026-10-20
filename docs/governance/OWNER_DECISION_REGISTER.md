@@ -1132,6 +1132,7 @@ The shipping program is `apps/api/tsconfig.build.json`, which is what `typecheck
 - Design-token contrast check is unchanged.
 - Docker smoke build of `infra/docker/Dockerfile.api` and `infra/docker/Dockerfile.frontend-app`.
 - Database suite glob is `test/*.test.ts` so the shell used by pnpm actually loads the files.
+- Nest e2e route inventory includes the mounted MD05 command `POST /v1/role-administration/commands`. The check stays an exact list and fails if any other route is registered.
 
 #### Tracked gaps (behaviour not in this tree)
 

@@ -248,7 +248,7 @@ describe('BAR-P08 reports module e2e', () => {
     clearThrottle();
   });
 
-  it('P08_TEST_005/006 exact production route inventory = 5', () => {
+  it('P08_TEST_005/006 exact production route inventory includes MD05 role administration', () => {
     const adapter = requireApp(app).getHttpAdapter();
     const instance = adapter.getInstance() as {
       _router?: { stack?: Array<{ route?: { path: string; methods: Record<string, boolean> } }> };
@@ -270,8 +270,9 @@ describe('BAR-P08 reports module e2e', () => {
       'GET /v1/me/certification/applications/:id',
       'GET /v1/staff/reports/certification-applications/by-status',
       'GET /v1/staff/reports/certification-applications/by-scheme-ref',
+      'POST /v1/role-administration/commands',
     ]);
-    expect(productionRoutes).toHaveLength(5);
+    expect(productionRoutes).toHaveLength(6);
   });
 
   it('P08_TEST_009 unauthenticated -> 401', async () => {
