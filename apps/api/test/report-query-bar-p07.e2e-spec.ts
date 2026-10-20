@@ -7,6 +7,7 @@ import { PrismaClient } from '@confora/database';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
+import { PRODUCTION_ROUTE_COUNT, PRODUCTION_ROUTE_INVENTORY } from './production-route-inventory';
 import type { AuthenticatedActor } from '../src/auth/request-principal';
 import { REQUEST_PRINCIPAL_KEY } from '../src/auth/request-principal';
 import { ReportQueryService } from '../src/report-query/report-query.service';
@@ -333,7 +334,7 @@ describe('BAR-P07 report-query e2e', () => {
   });
 
   it('P07_TEST_088 production route inventory includes P08 report routes (forward-compat)', () => {
-    // Forward-compatibility only: inventory expectation updated for BAR-P08 +2 routes.
+    // Exact inventory, including learning, certification exams, and role administration.
     // P07 service/privacy/tenant/date semantics are not weakened by this adaptation.
     const adapter = app.getHttpAdapter();
     const instance = adapter.getInstance() as {
@@ -350,13 +351,9 @@ describe('BAR-P07 report-query e2e', () => {
         return methods.map((m) => `${m} ${route.path}`);
       })
       .flat();
-    expect(productionRoutes).toEqual([
-      'GET /v1/health',
-      'GET /v1/me/certification/applications',
-      'GET /v1/me/certification/applications/:id',
-      'GET /v1/staff/reports/certification-applications/by-status',
-      'GET /v1/staff/reports/certification-applications/by-scheme-ref',
-    ]);
+    expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
+    expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(41);
   });
 
   it('P07 exact 365 day span works at runtime', async () => {

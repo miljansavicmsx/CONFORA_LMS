@@ -11,6 +11,7 @@ import { AppModule } from '../src/app.module';
 import { AppController } from '../src/app.controller';
 import type { AuthenticatedActor } from '../src/auth/request-principal';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
+import { PRODUCTION_ROUTE_COUNT, PRODUCTION_ROUTE_INVENTORY } from './production-route-inventory';
 
 const IMAGE =
   'pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b';
@@ -267,13 +268,9 @@ describe('BAR-P03 auth e2e', () => {
       // ProbeController exists only inside this e2e suite and is not production surface.
       .filter((entry) => !entry.endsWith('/probe') && !entry.endsWith('/v1/probe'));
 
-    // AUTH_30 exact post-P08 canonical inventory (OD3). Unexpected sixth route must fail.
-    expect(productionRoutes).toEqual([
-      'GET /v1/health',
-      'GET /v1/me/certification/applications',
-      'GET /v1/me/certification/applications/:id',
-      'GET /v1/staff/reports/certification-applications/by-status',
-      'GET /v1/staff/reports/certification-applications/by-scheme-ref',
-    ]);
+    // AUTH_30 exact inventory. Equality stays strict; the list is the full authorized surface.
+    expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
+    expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(41);
   });
 });

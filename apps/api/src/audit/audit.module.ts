@@ -8,6 +8,7 @@ import {
 } from './audit-event.registry';
 import { AuditHashService } from './audit-hash.service';
 import { AuditIntegrityService } from './audit-integrity.service';
+import { EXAM_AUDIT_EVENT_DEFINITIONS } from './exam-audit-events';
 import { LEARNING_AUDIT_EVENT_DEFINITIONS } from './learning-audit-events';
 import { AuditRepository } from './audit.repository';
 import { AUDIT_EVENT_REGISTRY, AuditService } from './audit.service';
@@ -25,6 +26,7 @@ import { AUDIT_EVENT_REGISTRY, AuditService } from './audit.service';
         new AuditEventRegistry([
           ...ROLE_ADMINISTRATION_AUDIT_EVENT_DEFINITIONS,
           ...LEARNING_AUDIT_EVENT_DEFINITIONS,
+          ...EXAM_AUDIT_EVENT_DEFINITIONS,
         ]),
     },
     AuditService,

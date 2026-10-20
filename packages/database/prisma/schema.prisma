@@ -89,6 +89,24 @@ model Tenant {
   aiSuggestionReviews             AiSuggestionReview[]
   aiAuditRecords                  AiAuditRecord[]
   aiDisclosureAcknowledgements    AiDisclosureAcknowledgement[]
+  schemeExamItems                 SchemeExamItem[]
+  schemeExamItemChoices           SchemeExamItemChoice[]
+  schemeExamItemCompetences       SchemeExamItemCompetence[]
+  schemeExamItemTransitions       SchemeExamItemTransition[]
+  examBlueprints                  ExamBlueprint[]
+  examBlueprintDomains            ExamBlueprintDomain[]
+  standardSettingRecords          StandardSettingRecord[]
+  standardSettingRatings          StandardSettingRating[]
+  assembledExamForms              AssembledExamForm[]
+  assembledExamFormItems          AssembledExamFormItem[]
+  certificationExamSessions       CertificationExamSession[]
+  certificationExamAnswers        CertificationExamAnswer[]
+  certificationExamResults        CertificationExamResult[]
+  examCertificationDecisions      ExamCertificationDecision[]
+  examProctorFlags                ExamProctorFlag[]
+  examProctorFlagReviews          ExamProctorFlagReview[]
+  examItemStatistics              ExamItemStatistic[]
+  examFormReliabilities           ExamFormReliability[]
 }
 
 model User {
@@ -142,6 +160,15 @@ model User {
   aiAuditRecords                     AiAuditRecord[]
   aiDisclosureAcknowledgements       AiDisclosureAcknowledgement[]
   proctorSignalReviews               ProctorSignalReview[]
+  authoredSchemeExamItems            SchemeExamItem[]                 @relation("SchemeExamItemAuthor")
+  schemeExamItemTransitions          SchemeExamItemTransition[]
+  standardSettingRatings             StandardSettingRating[]          @relation("StandardSettingPanelist")
+  approvedStandardSettings           StandardSettingRecord[]          @relation("StandardSettingApprover")
+  assembledExamForms                 AssembledExamForm[]
+  candidateCertificationExams        CertificationExamSession[]       @relation("CertificationExamCandidate")
+  invigilatedCertificationExams      CertificationExamSession[]       @relation("CertificationExamInvigilator")
+  examCertificationDecisions         ExamCertificationDecision[]
+  examProctorFlagReviews             ExamProctorFlagReview[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -561,10 +588,11 @@ model Competence {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  tenant      Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  levels      ProficiencyLevel[]
-  itemLinks   AssessmentItemCompetence[]
-  schemeLinks SchemeCompetenceRequirement[]
+  tenant              Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  levels              ProficiencyLevel[]
+  itemLinks           AssessmentItemCompetence[]
+  schemeLinks         SchemeCompetenceRequirement[]
+  schemeExamItemLinks SchemeExamItemCompetence[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, code])
@@ -1233,6 +1261,7 @@ model CertificationScheme {
 
   tenant   Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   versions CertificationSchemeVersion[]
+  examItems SchemeExamItem[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, code])
@@ -1266,6 +1295,7 @@ model CertificationSchemeVersion {
   applicationDetails     CertificationApplicationDetail[]
   personnelLinks         PersonnelCredentialLink[]
   examFormSchemes        ExamFormScheme[]
+  examBlueprints         ExamBlueprint[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, schemeId, versionLabel])
@@ -1912,4 +1942,424 @@ model AiDisclosureAcknowledgement {
   @@unique([tenantId, id])
   @@unique([tenantId, userId, aiSystemId, noticeVersion])
   @@index([tenantId, userId])
+}
+
+/// Certification item bank. Separate from course quiz items.
+/// Stems are confidential: learner and AI surfaces must not receive them outside an active session.
+enum SchemeExamItemType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+}
+
+enum SchemeExamItemStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  RETIRED
+}
+
+enum ExamBlueprintStatus {
+  DRAFT
+  APPROVED
+  RETIRED
+}
+
+enum StandardSettingMethod {
+  ANGOFF
+}
+
+enum StandardSettingStatus {
+  DRAFT
+  APPROVED
+}
+
+enum CertificationExamSessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  SUBMITTED
+  SCORED
+  VOID
+}
+
+/// Webcam and identity-document images stay uncollected until a DPIA (OD-PP-05).
+enum IdentityCaptureState {
+  NOT_COLLECTED_DPIA_PENDING
+}
+
+enum ExamCertificationDecisionOutcome {
+  GRANT
+  DENY
+}
+
+enum ExamProctorDisposition {
+  DISMISSED
+  CONFIRMED_FOR_REVIEW
+}
+
+model SchemeExamItem {
+  id            String               @id @default(uuid()) @db.Uuid
+  tenantId      String               @db.Uuid
+  schemeId      String               @db.Uuid
+  familyKey     String               @db.VarChar(64)
+  version       Int
+  stem          String               @db.Text
+  itemType      SchemeExamItemType
+  status        SchemeExamItemStatus @default(DRAFT)
+  authorUserId  String               @db.Uuid
+  domainCode    String               @db.VarChar(64)
+  exposureCount Int                  @default(0)
+  createdAt     DateTime             @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime             @updatedAt @db.Timestamptz(3)
+
+  tenant       Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  scheme       CertificationScheme        @relation(fields: [tenantId, schemeId], references: [tenantId, id], onDelete: Restrict)
+  author       User                       @relation("SchemeExamItemAuthor", fields: [tenantId, authorUserId], references: [tenantId, id], onDelete: Restrict)
+  choices      SchemeExamItemChoice[]
+  competences  SchemeExamItemCompetence[]
+  transitions  SchemeExamItemTransition[]
+  ratings      StandardSettingRating[]
+  formItems    AssembledExamFormItem[]
+  answers      CertificationExamAnswer[]
+  statistics   ExamItemStatistic[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, familyKey, version])
+  @@index([tenantId, schemeId, status, domainCode])
+  @@index([tenantId, authorUserId])
+}
+
+model SchemeExamItemChoice {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  itemId    String   @db.Uuid
+  choiceKey String   @db.VarChar(16)
+  text      String   @db.Text
+  isCorrect Boolean
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item   SchemeExamItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, itemId, choiceKey])
+  @@index([tenantId])
+}
+
+model SchemeExamItemCompetence {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  itemId       String   @db.Uuid
+  competenceId String   @db.Uuid
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item       SchemeExamItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+  competence Competence     @relation(fields: [tenantId, competenceId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, itemId, competenceId])
+  @@index([tenantId, competenceId])
+}
+
+model SchemeExamItemTransition {
+  id          String               @id @default(uuid()) @db.Uuid
+  tenantId    String               @db.Uuid
+  itemId      String               @db.Uuid
+  actorUserId String               @db.Uuid
+  fromStatus  SchemeExamItemStatus
+  toStatus    SchemeExamItemStatus
+  note        String?              @db.Text
+  actedAt     DateTime             @db.Timestamptz(3)
+  createdAt   DateTime             @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant         @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  item   SchemeExamItem @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+  actor  User           @relation(fields: [tenantId, actorUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, itemId, actedAt])
+}
+
+model ExamBlueprint {
+  id               String              @id @default(uuid()) @db.Uuid
+  tenantId         String              @db.Uuid
+  schemeVersionId  String              @db.Uuid
+  title            String              @db.VarChar(256)
+  durationSeconds  Int
+  status           ExamBlueprintStatus @default(DRAFT)
+  retakeWindowDays Int                 @default(90)
+  cutScoreBasisPoints Int?
+  createdAt        DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime            @updatedAt @db.Timestamptz(3)
+
+  tenant           Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion    CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  domains          ExamBlueprintDomain[]
+  standardSettings StandardSettingRecord[]
+  forms            AssembledExamForm[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, schemeVersionId, status])
+}
+
+model ExamBlueprintDomain {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  blueprintId        String   @db.Uuid
+  domainCode         String   @db.VarChar(64)
+  title              String   @db.VarChar(256)
+  weightBasisPoints  Int
+  itemCount          Int
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant        @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  blueprint ExamBlueprint @relation(fields: [tenantId, blueprintId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, blueprintId, domainCode])
+  @@index([tenantId])
+}
+
+model StandardSettingRecord {
+  id                  String                 @id @default(uuid()) @db.Uuid
+  tenantId            String                 @db.Uuid
+  blueprintId         String                 @db.Uuid
+  method              StandardSettingMethod  @default(ANGOFF)
+  status              StandardSettingStatus  @default(DRAFT)
+  cutScoreBasisPoints Int?
+  approvedByUserId    String?                @db.Uuid
+  approvedAt          DateTime?              @db.Timestamptz(3)
+  note                String?                @db.Text
+  createdAt           DateTime               @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  blueprint  ExamBlueprint           @relation(fields: [tenantId, blueprintId], references: [tenantId, id], onDelete: Restrict)
+  approver   User?                   @relation("StandardSettingApprover", fields: [tenantId, approvedByUserId], references: [tenantId, id], onDelete: Restrict)
+  ratings    StandardSettingRating[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, blueprintId, status])
+}
+
+model StandardSettingRating {
+  id                      String   @id @default(uuid()) @db.Uuid
+  tenantId                String   @db.Uuid
+  recordId                String   @db.Uuid
+  panelistUserId          String   @db.Uuid
+  itemId                  String   @db.Uuid
+  probabilityBasisPoints  Int
+  createdAt               DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  record   StandardSettingRecord @relation(fields: [tenantId, recordId], references: [tenantId, id], onDelete: Restrict)
+  panelist User                  @relation("StandardSettingPanelist", fields: [tenantId, panelistUserId], references: [tenantId, id], onDelete: Restrict)
+  item     SchemeExamItem        @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, recordId, panelistUserId, itemId])
+  @@index([tenantId, itemId])
+}
+
+model AssembledExamForm {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  blueprintId     String   @db.Uuid
+  title           String   @db.VarChar(256)
+  shuffleItems    Boolean  @default(true)
+  shuffleChoices  Boolean  @default(true)
+  assembledByUserId String @db.Uuid
+  assembledAt     DateTime @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant      Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  blueprint   ExamBlueprint            @relation(fields: [tenantId, blueprintId], references: [tenantId, id], onDelete: Restrict)
+  assembler   User                     @relation(fields: [tenantId, assembledByUserId], references: [tenantId, id], onDelete: Restrict)
+  items       AssembledExamFormItem[]
+  sessions    CertificationExamSession[]
+  statistics  ExamItemStatistic[]
+  reliability ExamFormReliability?
+
+  @@unique([tenantId, id])
+  @@index([tenantId, blueprintId])
+}
+
+model AssembledExamFormItem {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid
+  formId     String   @db.Uuid
+  itemId     String   @db.Uuid
+  domainCode String   @db.VarChar(64)
+  sequence   Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  form   AssembledExamForm @relation(fields: [tenantId, formId], references: [tenantId, id], onDelete: Restrict)
+  item   SchemeExamItem    @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, formId, itemId])
+  @@unique([tenantId, formId, sequence])
+}
+
+model CertificationExamSession {
+  id                         String                         @id @default(uuid()) @db.Uuid
+  tenantId                   String                         @db.Uuid
+  formId                     String                         @db.Uuid
+  candidateUserId            String                         @db.Uuid
+  certificationApplicationId String                         @db.Uuid
+  scheduledStartAt           DateTime                       @db.Timestamptz(3)
+  invigilatorUserId          String                         @db.Uuid
+  status                     CertificationExamSessionStatus @default(SCHEDULED)
+  rulesAcceptedAt            DateTime?                      @db.Timestamptz(3)
+  ndaAcceptedAt              DateTime?                      @db.Timestamptz(3)
+  mfaReference               String?                        @db.VarChar(64)
+  identityCaptureState       IdentityCaptureState           @default(NOT_COLLECTED_DPIA_PENDING)
+  extraTimePercent           Int                            @default(0)
+  startedAt                  DateTime?                      @db.Timestamptz(3)
+  expiresAt                  DateTime?                      @db.Timestamptz(3)
+  submittedAt                DateTime?                      @db.Timestamptz(3)
+  createdAt                  DateTime                       @default(now()) @db.Timestamptz(3)
+  updatedAt                  DateTime                       @updatedAt @db.Timestamptz(3)
+
+  tenant      Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  form        AssembledExamForm         @relation(fields: [tenantId, formId], references: [tenantId, id], onDelete: Restrict)
+  candidate   User                      @relation("CertificationExamCandidate", fields: [tenantId, candidateUserId], references: [tenantId, id], onDelete: Restrict)
+  invigilator User                      @relation("CertificationExamInvigilator", fields: [tenantId, invigilatorUserId], references: [tenantId, id], onDelete: Restrict)
+  answers     CertificationExamAnswer[]
+  result      CertificationExamResult?
+  proctorFlags ExamProctorFlag[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, candidateUserId, status])
+  @@index([tenantId, certificationApplicationId])
+}
+
+model CertificationExamAnswer {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  sessionId    String   @db.Uuid
+  itemId       String   @db.Uuid
+  selectedKeys String[]
+  savedAt      DateTime @db.Timestamptz(3)
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant  Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session CertificationExamSession @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  item    SchemeExamItem           @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, sessionId, itemId])
+}
+
+model CertificationExamResult {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  sessionId         String   @db.Uuid
+  scoreBasisPoints  Int
+  passed            Boolean
+  provisional       Boolean  @default(true)
+  domainFeedback    Json
+  scoredAt          DateTime @db.Timestamptz(3)
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session  CertificationExamSession   @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  decision ExamCertificationDecision?
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, sessionId])
+}
+
+model ExamCertificationDecision {
+  id                     String                           @id @default(uuid()) @db.Uuid
+  tenantId               String                           @db.Uuid
+  resultId               String                           @db.Uuid
+  decidedByUserId        String                           @db.Uuid
+  outcome                ExamCertificationDecisionOutcome
+  rationale              String                           @db.Text
+  trainerOfCandidate     Boolean
+  independentOfTraining  Boolean
+  decidedAt              DateTime                         @db.Timestamptz(3)
+  createdAt              DateTime                         @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  result  CertificationExamResult @relation(fields: [tenantId, resultId], references: [tenantId, id], onDelete: Restrict)
+  decider User                    @relation(fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, resultId])
+  @@index([tenantId, decidedByUserId])
+}
+
+/// Placeholder signal only. No image, no biometric template, no automatic disqualification.
+model ExamProctorFlag {
+  id         String              @id @default(uuid()) @db.Uuid
+  tenantId   String              @db.Uuid
+  sessionId  String              @db.Uuid
+  source     ProctorSignalSource
+  signalCode String              @db.VarChar(64)
+  recordedAt DateTime            @db.Timestamptz(3)
+  createdAt  DateTime            @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  session CertificationExamSession @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
+  reviews ExamProctorFlagReview[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, sessionId, recordedAt])
+}
+
+model ExamProctorFlagReview {
+  id             String                 @id @default(uuid()) @db.Uuid
+  tenantId       String                 @db.Uuid
+  flagId         String                 @db.Uuid
+  reviewerUserId String                 @db.Uuid
+  disposition    ExamProctorDisposition
+  note           String?                @db.Text
+  reviewedAt     DateTime               @db.Timestamptz(3)
+  createdAt      DateTime               @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  flag     ExamProctorFlag @relation(fields: [tenantId, flagId], references: [tenantId, id], onDelete: Restrict)
+  reviewer User            @relation(fields: [tenantId, reviewerUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, flagId])
+}
+
+model ExamItemStatistic {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid
+  formId         String   @db.Uuid
+  itemId         String   @db.Uuid
+  attemptCount   Int
+  pValue         Decimal  @db.Decimal(8, 5)
+  pointBiserial  Decimal? @db.Decimal(8, 5)
+  flagReason     String?  @db.VarChar(64)
+  computedAt     DateTime @db.Timestamptz(3)
+
+  tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  form   AssembledExamForm @relation(fields: [tenantId, formId], references: [tenantId, id], onDelete: Restrict)
+  item   SchemeExamItem    @relation(fields: [tenantId, itemId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, formId, itemId])
+  @@index([tenantId, flagReason])
+}
+
+model ExamFormReliability {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  formId       String   @db.Uuid
+  attemptCount Int
+  kr20         Decimal? @db.Decimal(8, 5)
+  flagReason   String?  @db.VarChar(64)
+  computedAt   DateTime @db.Timestamptz(3)
+
+  tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  form   AssembledExamForm @relation(fields: [tenantId, formId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, formId])
 }

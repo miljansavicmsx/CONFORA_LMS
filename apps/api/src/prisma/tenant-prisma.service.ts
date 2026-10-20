@@ -4,6 +4,34 @@ import type { CertificationApplicationStatus } from '@prisma/client';
 import { TenantContextStore } from '../tenant/tenant-context.store';
 import { TenantAccessDeniedError } from '../tenant/tenant-errors';
 import {
+  addProctorFlag,
+  addStandardSettingRatings,
+  approveBlueprint,
+  approveStandardSetting,
+  assembleForm,
+  candidateResult,
+  createBlueprint,
+  createItemVersion,
+  createSchemeItem,
+  decisionQueue,
+  formPsychometrics,
+  getCandidateSession,
+  listBlueprints,
+  listCandidateSessions,
+  listSchemeItems,
+  openStandardSetting,
+  recordDecision,
+  replaceBlueprintDomains,
+  reviewProctorFlag,
+  saveCandidateAnswers,
+  scheduleSession,
+  startCandidateSession,
+  submitCandidateSession,
+  transitionItem,
+  updateDraftItem,
+  type ExamClient,
+} from './exam-tenant-store';
+import {
   enrolInCourse,
   getAnalyticsConsent,
   getLearningStatistics,
@@ -339,11 +367,74 @@ export class TenantPrismaService {
       setAnalyticsConsent(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
   };
 
+  /**
+   * Certification exam writes stay on this allowlisted facade.
+   * Callers cannot pass tenantId. Item keys are not returned from candidate methods.
+   */
+  readonly exam = {
+    createItem: (
+      input: Parameters<typeof createSchemeItem>[1] extends infer T ? Omit<T, 'tenantId'> : never,
+    ) => createSchemeItem(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    updateDraft: (input: Omit<Parameters<typeof updateDraftItem>[1], 'tenantId'>) =>
+      updateDraftItem(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    createVersion: (input: Omit<Parameters<typeof createItemVersion>[1], 'tenantId'>) =>
+      createItemVersion(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    transition: (input: Omit<Parameters<typeof transitionItem>[1], 'tenantId'>) =>
+      transitionItem(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    listItems: (actor: Parameters<typeof listSchemeItems>[2], schemeId?: string) =>
+      listSchemeItems(this.examClient(), this.requiredTenantId(), actor, schemeId),
+    listBlueprints: (actor: Parameters<typeof listBlueprints>[2]) =>
+      listBlueprints(this.examClient(), this.requiredTenantId(), actor),
+    createBlueprint: (input: Omit<Parameters<typeof createBlueprint>[1], 'tenantId'>) =>
+      createBlueprint(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    setDomains: (input: Omit<Parameters<typeof replaceBlueprintDomains>[1], 'tenantId'>) =>
+      replaceBlueprintDomains(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    openStandardSetting: (input: Omit<Parameters<typeof openStandardSetting>[1], 'tenantId'>) =>
+      openStandardSetting(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    addRatings: (input: Omit<Parameters<typeof addStandardSettingRatings>[1], 'tenantId'>) =>
+      addStandardSettingRatings(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    approveStandardSetting: (
+      input: Omit<Parameters<typeof approveStandardSetting>[1], 'tenantId'>,
+    ) => approveStandardSetting(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    approveBlueprint: (input: Omit<Parameters<typeof approveBlueprint>[1], 'tenantId'>) =>
+      approveBlueprint(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    assemble: (input: Omit<Parameters<typeof assembleForm>[1], 'tenantId'>) =>
+      assembleForm(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    psychometrics: (actor: Parameters<typeof formPsychometrics>[2], formId: string) =>
+      formPsychometrics(this.examClient(), this.requiredTenantId(), actor, formId),
+    schedule: (input: Omit<Parameters<typeof scheduleSession>[1], 'tenantId'>) =>
+      scheduleSession(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    listMine: (userId: string) =>
+      listCandidateSessions(this.examClient(), this.requiredTenantId(), userId),
+    start: (input: Omit<Parameters<typeof startCandidateSession>[1], 'tenantId'>) =>
+      startCandidateSession(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    getSession: (input: Omit<Parameters<typeof getCandidateSession>[1], 'tenantId'>) =>
+      getCandidateSession(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    saveAnswers: (input: Omit<Parameters<typeof saveCandidateAnswers>[1], 'tenantId'>) =>
+      saveCandidateAnswers(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    submit: (input: Omit<Parameters<typeof submitCandidateSession>[1], 'tenantId'>) =>
+      submitCandidateSession(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    result: (input: Omit<Parameters<typeof candidateResult>[1], 'tenantId'>) =>
+      candidateResult(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    queue: (actor: Parameters<typeof decisionQueue>[2]) =>
+      decisionQueue(this.examClient(), this.requiredTenantId(), actor),
+    decide: (input: Omit<Parameters<typeof recordDecision>[1], 'tenantId'>) =>
+      recordDecision(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    addFlag: (input: Omit<Parameters<typeof addProctorFlag>[1], 'tenantId'>) =>
+      addProctorFlag(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+    reviewFlag: (input: Omit<Parameters<typeof reviewProctorFlag>[1], 'tenantId'>) =>
+      reviewProctorFlag(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+  };
+
   private requiredTenantId(): string {
     return this.tenantContext.getRequiredTenantId();
   }
 
   private learningClient(): LearningClient {
+    return this.prisma;
+  }
+
+  private examClient(): ExamClient {
     return this.prisma;
   }
 

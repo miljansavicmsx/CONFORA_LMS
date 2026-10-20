@@ -575,6 +575,16 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
   if (normalized === "/v1/me/learning" || normalized.startsWith("/v1/me/learning/")) {
     return "nest";
   }
+  if (
+    normalized === "/v1/me/exams" ||
+    normalized.startsWith("/v1/me/exams/") ||
+    normalized === "/v1/staff/exams" ||
+    normalized.startsWith("/v1/staff/exams/") ||
+    normalized === "/v1/committee/exams" ||
+    normalized.startsWith("/v1/committee/exams/")
+  ) {
+    return "nest";
+  }
   if (provider === "legacy") return "legacy";
   if (provider === "nest") return "nest";
   return resolveHybridOwnerForPath(normalized);

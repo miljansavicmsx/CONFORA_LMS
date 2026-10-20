@@ -7,6 +7,8 @@ import { LandmarkDevAudit } from "@/components/accessibility/LandmarkDevAudit";
 import { canAccessComplaintsDomain, canAccessReportsDomain } from "@/lib/iso-navigation-access";
 import { AppealsCommitteeGuard } from "@/pages/dashboard/AppealsCommitteeGuard";
 import { AdminEducationGuard } from "@/pages/dashboard/AdminEducationGuard";
+import { ExamCommitteeGuard } from "@/pages/dashboard/ExamCommitteeGuard";
+import { ExamStaffGuard } from "@/pages/dashboard/ExamStaffGuard";
 import { AdminReportsGuard } from "@/pages/dashboard/AdminReportsGuard";
 import { CertificationApplicationsQueueGuard } from "@/pages/dashboard/CertificationApplicationsQueueGuard";
 import { CertificationGuard } from "@/pages/dashboard/CertificationGuard";
@@ -19,6 +21,9 @@ import Login from "@/pages/Login";
 import AppealsComplaintsPage from "@/pages/learner/AppealsComplaintsPage";
 import CertificationApplicationsPage from "@/pages/learner/CertificationApplicationsPage";
 import ExamRegistrationPage from "@/pages/learner/ExamRegistrationPage";
+import ExamResultPage from "@/pages/learner/ExamResultPage";
+import ExamSessionListPage from "@/pages/learner/ExamSessionListPage";
+import ExamTakingPage from "@/pages/learner/ExamTakingPage";
 import MyCertificates from "@/pages/learner/MyCertificates";
 import MyRecertificationsPage from "@/pages/learner/MyRecertificationsPage";
 import SupportPage from "@/pages/learner/SupportPage";
@@ -42,6 +47,9 @@ const VerifyCertificate = lazy(() => import("@/pages/public/VerifyCertificate"))
 const CommitteePilotApplicationsPage = lazy(
   () => import("@/pages/committee/CommitteePilotApplicationsPage"),
 );
+const ExamDecisionQueuePage = lazy(() => import("@/pages/committee/ExamDecisionQueuePage"));
+const ItemBankPage = lazy(() => import("@/pages/admin/ItemBankPage"));
+const ExamBlueprintPage = lazy(() => import("@/pages/admin/ExamBlueprintPage"));
 
 export default function App(): JSX.Element {
   return (
@@ -63,6 +71,9 @@ export default function App(): JSX.Element {
                 <Route path="learner/courses/:enrolmentId" element={<CoursePlayerPage />} />
                 <Route path="learner/statistics" element={<LearnerStatisticsPage />} />
                 <Route path="exams/register" element={<ExamRegistrationPage />} />
+                <Route path="exams/sessions" element={<ExamSessionListPage />} />
+                <Route path="exams/sessions/:sessionId" element={<ExamTakingPage />} />
+                <Route path="exams/sessions/:sessionId/result" element={<ExamResultPage />} />
                 <Route path="certification/applications" element={<CertificationApplicationsPage />} />
                 <Route path="my-certificates" element={<MyCertificates />} />
                 <Route path="my-recertifications" element={<MyRecertificationsPage />} />
@@ -106,6 +117,22 @@ export default function App(): JSX.Element {
                     <AdminEducationGuard>
                       <AdminEducationPage />
                     </AdminEducationGuard>
+                  }
+                />
+                <Route
+                  path="admin/item-bank"
+                  element={
+                    <ExamStaffGuard>
+                      <ItemBankPage />
+                    </ExamStaffGuard>
+                  }
+                />
+                <Route
+                  path="admin/exam-blueprint"
+                  element={
+                    <ExamStaffGuard>
+                      <ExamBlueprintPage />
+                    </ExamStaffGuard>
                   }
                 />
                 <Route
@@ -154,6 +181,14 @@ export default function App(): JSX.Element {
                     <CertificationGuard>
                       <CommitteePilotApplicationsPage />
                     </CertificationGuard>
+                  }
+                />
+                <Route
+                  path="committee/exam-queue"
+                  element={
+                    <ExamCommitteeGuard>
+                      <ExamDecisionQueuePage />
+                    </ExamCommitteeGuard>
                   }
                 />
               </Route>

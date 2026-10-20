@@ -14,6 +14,7 @@ describe("buildSidebarSections minimum bridge", () => {
       "/dashboard",
       "/dashboard/learner/education",
       "/courses",
+      "/dashboard/exams/sessions",
       "/dashboard/certification/applications",
       "/dashboard/my-certificates",
       "/dashboard/my-recertifications",
@@ -26,8 +27,13 @@ describe("buildSidebarSections minimum bridge", () => {
       buildSidebarSections({ role: "tech_committee", cognitoGroups: [] }, "learning"),
     );
     expect(technical).toContain("/dashboard/iso/reports");
-    expect(technical).not.toContain("/dashboard/admin/item-bank");
+    expect(technical).toContain("/dashboard/admin/item-bank");
+    expect(technical).toContain("/dashboard/admin/exam-blueprint");
     expect(technical).not.toContain("/dashboard/iso/decisions");
+    expect(technical).not.toContain("/dashboard/committee/decisions");
+    expect(
+      paths(buildSidebarSections({ role: "sys_admin", cognitoGroups: [] }, "learning")),
+    ).not.toContain("/dashboard/admin/item-bank");
   });
 
   it("keeps certification committee navigation on approved operations", () => {
@@ -36,6 +42,7 @@ describe("buildSidebarSections minimum bridge", () => {
     );
     expect(certification).toContain("/dashboard/committee/pilot-applications");
     expect(certification).toContain("/dashboard/admin/recertification");
+    expect(certification).toContain("/dashboard/committee/exam-queue");
     expect(certification).not.toContain("/dashboard/committee/decisions");
     expect(certification).not.toContain("/dashboard/iso/decisions");
   });

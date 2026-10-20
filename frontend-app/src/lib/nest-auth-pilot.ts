@@ -77,6 +77,8 @@ export const NEST_AUTH_PILOT_LEARNER_DASHBOARD_PREFIXES: readonly string[] = [
 export const NEST_AUTH_PILOT_STAFF_DASHBOARD_PREFIXES: readonly string[] = [
   "/dashboard/admin/reports",
   "/dashboard/admin/education",
+  "/dashboard/admin/item-bank",
+  "/dashboard/admin/exam-blueprint",
   "/dashboard/admin/identity-review",
   "/dashboard/admin/appeals-complaints",
   "/dashboard/admin/support",
@@ -88,6 +90,7 @@ export const NEST_AUTH_PILOT_STAFF_DASHBOARD_PREFIXES: readonly string[] = [
   "/dashboard/iso/complaints",
   "/dashboard/admin/recertification",
   "/dashboard/committee/pilot-applications",
+  "/dashboard/committee/exam-queue",
   "/dashboard/committee/decisions",
 ] as const;
 
@@ -319,6 +322,7 @@ export function buildNestAuthPilotLearnerSidebarSections(): readonly SidebarSect
         { to: "/dashboard/learner/education", labelKey: "myEducation", icon: BookOpen, end: true },
         { to: "/courses", labelKey: "catalog", icon: BookOpen, end: true },
         { to: "/dashboard/exams/register", labelKey: "exams", icon: BookOpenCheck, end: true },
+        { to: "/dashboard/exams/sessions", labelKey: "exams", icon: BookOpenCheck, end: false },
         {
           to: "/dashboard/certification/applications",
           labelKey: "certApplications",

@@ -101,6 +101,10 @@ Ispitna sesija ne može biti upisana bez `rulesAcceptedAt`, `ndaAcceptedAt`, `in
 
 `EnrolmentTrainer` postoji da bi se trener mogao uporediti sa ispitivačem i nadzornikom (`ExamDutyAssignment`, `ExamSession.invigilatorUserId`). Pravilo „trener ne ispituje svog polaznika” izvršava kasniji servis; šema drži obje strane.
 
+Certifikacijski ispit u runtimeu koristi zasebne tabele (`SchemeExamItem`, `ExamBlueprint`, `StandardSettingRecord`, `AssembledExamForm`, `CertificationExamSession`, `CertificationExamResult`, `ExamCertificationDecision`, `ExamProctorFlag`). Kursna banka `AssessmentItem` ostaje za kviz poglavlja. Njen status `ItemReviewState` je zamrznut na DRAFT / IN_REVIEW / APPROVED / REJECTED, pa tok DRAFT → REVIEW → APPROVED → RETIRED ne mijenja tu enumeraciju.
+
+`CertificationExamSession` čuva `rulesAcceptedAt`, `ndaAcceptedAt`, `invigilatorUserId` i `mfaReference`. `identityCaptureState` je samo `NOT_COLLECTED_DPIA_PENDING`: nema slike, JMBG ni biometrije dok DPIA nije odobren (OD-PP-05). Zbog toga sesija nije spremna za akreditaciju sve dok vlasnik ne odluči kako se `IdentityCheck` vodi bez snimka. Proktorski signal je zapis koji čovjek pregleda; ne mijenja bodove i ne diskvalifikuje. Odluka `ExamCertificationDecision` ne izdaje `Credential`.
+
 | Entitet                                    | Spec    | Klauzula / standard                       |
 | ------------------------------------------ | ------- | ----------------------------------------- |
 | Competence, ProficiencyLevel               | 6.1, 8  | ISO/IEC 20006-1/-2; 17024 8.2             |
