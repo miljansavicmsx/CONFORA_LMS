@@ -666,7 +666,7 @@ test('PKG06-47 lockfile change is the frontend workspace membership only', async
     assert.equal(paths.includes(lockfile), false, lockfile);
   }
   const workspace = await readFile(path.join(repoRoot, 'pnpm-workspace.yaml'), 'utf8');
-  assert.match(workspace, /^ {2}- "frontend-app"$/m);
+  assert.match(workspace, /^ {2}- ['"]frontend-app['"]$/m);
   const lockfile = await readFile(path.join(repoRoot, 'pnpm-lock.yaml'), 'utf8');
   assert.equal(lockfile.includes('\n  frontend-app:\n'), true);
   assert.equal(lockfile.includes("'@axe-core/playwright':"), true);

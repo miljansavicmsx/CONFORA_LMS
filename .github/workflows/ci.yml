@@ -29,6 +29,12 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Prisma generate
+        working-directory: packages/database
+        env:
+          DISABLE_ERD: 'true'
+        run: pnpm exec prisma generate
+
       - name: Lint
         run: pnpm lint
 
