@@ -7,6 +7,8 @@ RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
 
 COPY . .
 
+# The image has no git metadata. Husky's prepare script exits cleanly when this is set.
+ENV HUSKY=0
 RUN pnpm install --frozen-lockfile
 RUN pnpm exec turbo build --filter=@confora/api
 
