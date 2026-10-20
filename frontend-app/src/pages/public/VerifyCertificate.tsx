@@ -2,6 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import { Link, useParams } from "react-router";
 
 import { verifyCertificate, type VerifiedCertificatePublic } from "@/lib/api-certificates";
+import { fetchPublicCaseDocument, isEducationOrExamNumber, type PublicCaseDocument } from "@/lib/case-public";
 import {
   fetchPublicPersonnelCertificate,
   formatPersonnelDate,
@@ -132,11 +133,66 @@ function PersonnelVerification({ certificateNumber }: { readonly certificateNumb
   );
 }
 
+function DocumentVerification({ number }: { readonly number: string }): JSX.Element {
+  const [state, setState] = useState<
+    | { readonly kind: "loading" }
+    | { readonly kind: "not_found" }
+    | { readonly kind: "rate_limited" }
+    | { readonly kind: "error" }
+    | { readonly kind: "result"; readonly document: PublicCaseDocument }
+  >({ kind: "loading" });
+
+  useEffect(() => {
+    let active = true;
+    setState({ kind: "loading" });
+    void fetchPublicCaseDocument(number).then((result) => {
+      if (!active) return;
+      if (result.kind === "ok") setState({ kind: "result", document: result.data });
+      else setState({ kind: result.kind });
+    }).catch(() => {
+      if (active) setState({ kind: "error" });
+    });
+    return () => { active = false; };
+  }, [number]);
+
+  const title = state.kind === "result" && state.document.kind === "EDUCATION"
+    ? "Provjera potvrde o završetku edukacije"
+    : "Provjera potvrde o rezultatu ispita";
+
+  return (
+    <main className="mx-auto max-w-2xl px-4 py-10" data-testid="document-verify-page" aria-labelledby="document-verify-heading">
+      <h1 id="document-verify-heading" className="text-2xl font-bold text-text-primary">{title}</h1>
+      <p className="mt-1 text-sm text-text-secondary">Ovo nije profesionalni certifikat.</p>
+      {state.kind === "loading" ? <p className="mt-6 text-sm" role="status">Provjera zapisa…</p> : null}
+      {state.kind === "not_found" ? <p className="mt-6 text-sm" role="status">Dokument s ovim brojem nije pronađen.</p> : null}
+      {state.kind === "rate_limited" ? <p className="mt-6 text-sm" role="status">Previše zahtjeva. Pokušajte ponovo za koji trenutak.</p> : null}
+      {state.kind === "error" ? <p className="mt-6 text-sm" role="alert">Provjera trenutno nije dostupna.</p> : null}
+      {state.kind === "result" ? (
+        <section className="mt-6 rounded-xl border border-border/50 p-5" data-testid="document-verify-result">
+          <p className="text-sm text-text-primary">{state.document.statement}</p>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <div><dt className="text-text-muted">Broj</dt><dd className="font-mono font-medium">{state.document.number}</dd></div>
+            <div><dt className="text-text-muted">Naziv</dt><dd className="font-medium">{state.document.title}</dd></div>
+            <div><dt className="text-text-muted">Ime</dt><dd className="font-medium">{state.document.holderName ?? "—"}</dd></div>
+            <div><dt className="text-text-muted">Datum</dt><dd className="font-medium">{formatPersonnelDate(state.document.issuedAt)}</dd></div>
+            {state.document.kind === "EXAM_PASS" ? (
+              <div><dt className="text-text-muted">Rezultat</dt><dd className="font-medium">{state.document.passed ? "Položio" : "Nije položio"}</dd></div>
+            ) : null}
+          </dl>
+        </section>
+      ) : null}
+    </main>
+  );
+}
+
 /** Hash links keep the existing verification page. Personnel numbers use the public registry record. */
 export default function VerifyCertificate(): JSX.Element {
   const { verificationHash } = useParams();
   if (verificationHash && isPersonnelCertificateNumber(verificationHash)) {
     return <PersonnelVerification certificateNumber={verificationHash.trim().toUpperCase()} />;
+  }
+  if (verificationHash && isEducationOrExamNumber(verificationHash)) {
+    return <DocumentVerification number={verificationHash.trim().toUpperCase()} />;
   }
   return <HashVerification verificationHash={verificationHash} />;
 }

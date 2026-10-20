@@ -161,11 +161,27 @@ export async function issuePersonnelCertificate(
         enrolment: { userId: holderUserId },
       },
     });
+    const participants = new Set<string>([decision.decidedByUserId]);
+    const flowCase = await tx.professionalCase.findFirst({
+      where: { tenantId: input.tenantId, examResultId: decision.resultId },
+      include: { assessments: true, proposals: true },
+    });
+    if (flowCase) {
+      for (const assessment of flowCase.assessments) {
+        participants.add(assessment.memberUserId);
+      }
+      for (const proposal of flowCase.proposals) {
+        if (proposal.confirmedByUserId) {
+          participants.add(proposal.confirmedByUserId);
+        }
+      }
+    }
     assertIssuer({
       roles: input.actor.roles,
       issuerUserId: input.actor.userId,
       holderUserId,
       trainerOfCandidate: Boolean(trainer),
+      decisionParticipantIds: [...participants],
     });
     const version = decision.result.session.form.blueprint.schemeVersion;
     const issuedAt = input.now;

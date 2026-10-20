@@ -8,6 +8,7 @@ const APPROVED_ROUTE_PATHS = [
   "/verify",
   "/verify/:verificationHash",
   "/registry",
+  "/referee/:token",
   "/courses",
   "/courses/:courseId",
   "/dashboard",
@@ -19,6 +20,7 @@ const APPROVED_ROUTE_PATHS = [
   "exams/sessions/:sessionId",
   "exams/sessions/:sessionId/result",
   "certification/applications",
+  "certification/dossier",
   "my-certificates",
   "my-recertifications",
   "support",
@@ -37,6 +39,7 @@ const APPROVED_ROUTE_PATHS = [
   "admin/recertification",
   "committee/pilot-applications",
   "committee/exam-queue",
+  "committee/case-file",
 ] as const;
 
 const APPROVED_NAVIGATION_PATHS = new Set([
@@ -75,7 +78,7 @@ describe("owner-approved R0-7D minimum bridge contract", () => {
   });
 
   it("contains no excluded route or shell surface", () => {
-    expect(routePaths(app)).toHaveLength(33);
+    expect(routePaths(app)).toHaveLength(36);
     expect(app).not.toContain("FeedbackWidget");
     expect(app).not.toContain("AppShellFallback");
     expect(app).not.toContain("admin/users");

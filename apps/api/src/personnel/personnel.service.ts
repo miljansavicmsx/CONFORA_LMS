@@ -13,6 +13,7 @@ const DENIED = new Set([
   'CANDIDATE_CANNOT_ISSUE',
   'TRAINER_CANNOT_ISSUE',
   'NOT_HOLDER',
+  'FOUR_EYES',
 ]);
 
 function fail(error: unknown): never {

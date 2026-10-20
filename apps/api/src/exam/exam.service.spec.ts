@@ -15,7 +15,10 @@ describe('ExamService audit and role mapping', () => {
   };
 
   function service(exam: Record<string, jest.Mock>, append: jest.Mock) {
-    return new ExamService({ exam } as never, { append } as never);
+    return new ExamService(
+      { exam, flow: { noteExamPass: jest.fn().mockResolvedValue(null) } } as never,
+      { append } as never,
+    );
   }
 
   it('records item approval on the audit chain and skips other transitions', async () => {

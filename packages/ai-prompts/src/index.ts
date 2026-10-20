@@ -23,6 +23,7 @@ export const AI_PROMPT_IDS_V1 = [
   'chat.support',
   'question.generate',
   'risk.suggest',
+  'certification.assist',
   'default',
 ] as const;
 
@@ -36,6 +37,7 @@ export const AI_PROMPT_PLACEHOLDERS_V1: Readonly<Record<AiPromptIdV1, readonly s
   'chat.support': ['user_message'],
   'question.generate': ['blueprint', 'constraints'],
   'risk.suggest': ['audit_events_last_30d', 'complaints_by_subject', 'instruction'],
+  'certification.assist': ['dossier_facts'],
   default: ['user_message'],
 };
 
@@ -59,7 +61,7 @@ function assertPromptBundle(raw: unknown, expectedId: AiPromptIdV1): PromptBundl
   }
   const o = raw as Record<string, unknown>;
   for (const key of ['version', 'purpose', 'reviewNote', 'system', 'user_template'] as const) {
-    if (typeof o[key] !== 'string' || String(o[key]).length === 0) {
+    if (typeof o[key] !== 'string' || o[key].length === 0) {
       throw new Error(`Invalid prompt JSON for "${expectedId}": missing string field "${key}"`);
     }
   }
@@ -118,9 +120,7 @@ function loadPromptBundleLazy(id: AiPromptIdV1): PromptBundle {
  */
 export function getPromptBundleV1(purpose: string): PromptBundle {
   if (!isAiPromptIdV1(purpose)) {
-    throw new Error(
-      `Unknown prompt ID "${purpose}". Allowed: ${AI_PROMPT_IDS_V1.join(', ')}`,
-    );
+    throw new Error(`Unknown prompt ID "${purpose}". Allowed: ${AI_PROMPT_IDS_V1.join(', ')}`);
   }
   return loadPromptBundleLazy(purpose);
 }
@@ -212,14 +212,9 @@ export function fillTemplate(
 /**
  * Fill the user_template for a known prompt ID using that prompt's placeholder allowlist.
  */
-export function fillPromptUserTemplateV1(
-  purpose: string,
-  vars: Record<string, string>,
-): string {
+export function fillPromptUserTemplateV1(purpose: string, vars: Record<string, string>): string {
   if (!isAiPromptIdV1(purpose)) {
-    throw new Error(
-      `Unknown prompt ID "${purpose}". Allowed: ${AI_PROMPT_IDS_V1.join(', ')}`,
-    );
+    throw new Error(`Unknown prompt ID "${purpose}". Allowed: ${AI_PROMPT_IDS_V1.join(', ')}`);
   }
   const bundle = loadPromptBundleLazy(purpose);
   return fillTemplate(bundle.user_template, vars, {

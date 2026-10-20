@@ -29,7 +29,10 @@ import MyRecertificationsPage from "@/pages/learner/MyRecertificationsPage";
 import SupportPage from "@/pages/learner/SupportPage";
 import ComplaintsIsoPage from "@/pages/iso/ComplaintsIsoPage";
 import { IsoReportsPage } from "@/pages/iso/IsoStaticPages";
+import CertificationDossierPage from "@/pages/learner/CertificationDossierPage";
+import CaseFilePage from "@/pages/committee/CaseFilePage";
 import PublicRegistryPage from "@/pages/public/PublicRegistryPage";
+import RefereeConfirmPage from "@/pages/public/RefereeConfirmPage";
 import VerifyLookupPage from "@/pages/public/VerifyLookupPage";
 
 const AdminEducationPage = lazy(() => import("@/pages/admin/AdminEducationPage"));
@@ -65,6 +68,7 @@ export default function App(): JSX.Element {
               <Route path="/verify" element={<VerifyLookupPage />} />
               <Route path="/verify/:verificationHash" element={<VerifyCertificate />} />
               <Route path="/registry" element={<PublicRegistryPage />} />
+              <Route path="/referee/:token" element={<RefereeConfirmPage />} />
               <Route path="/courses" element={<CoursesCatalogPage />} />
               <Route path="/courses/:courseId" element={<CourseDetailPage />} />
               <Route path="/dashboard" element={<DashboardLayoutRoute />}>
@@ -77,6 +81,7 @@ export default function App(): JSX.Element {
                 <Route path="exams/sessions/:sessionId" element={<ExamTakingPage />} />
                 <Route path="exams/sessions/:sessionId/result" element={<ExamResultPage />} />
                 <Route path="certification/applications" element={<CertificationApplicationsPage />} />
+                <Route path="certification/dossier" element={<CertificationDossierPage />} />
                 <Route path="my-certificates" element={<MyCertificates />} />
                 <Route path="my-recertifications" element={<MyRecertificationsPage />} />
                 <Route path="support" element={<SupportPage />} />
@@ -190,6 +195,14 @@ export default function App(): JSX.Element {
                   element={
                     <ExamCommitteeGuard>
                       <ExamDecisionQueuePage />
+                    </ExamCommitteeGuard>
+                  }
+                />
+                <Route
+                  path="committee/case-file"
+                  element={
+                    <ExamCommitteeGuard>
+                      <CaseFilePage />
                     </ExamCommitteeGuard>
                   }
                 />
