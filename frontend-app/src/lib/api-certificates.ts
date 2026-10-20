@@ -62,6 +62,9 @@ export type MyCertificateItem = {
   readonly lifecycleStatus: string;
   readonly qrHash: string | null;
   readonly pdfUrl: string | null;
+  readonly pdfDownloadAvailable?: boolean;
+  readonly publicVerifyUrl?: string | null;
+  readonly verifyHash?: string | null;
   /** Relativna putanja u learner SPA (npr. /verify/CON-…). */
   readonly learnerVerifyPath: string;
   /** Puni URL javne provjere (CERTIFICATE_VERIFY_BASE_URL). */
@@ -76,6 +79,8 @@ export type MyCertificateItem = {
   readonly publicNumber?: string;
   readonly recertificationEligible?: boolean;
   readonly cpdEligible?: boolean;
+  readonly verifiableCredentialUrl?: string | null;
+  readonly reminders?: readonly { readonly kind: string; readonly dueAt: string }[];
 };
 
 export type VerifiedCertificatePublic = {

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PublicTrustMessaging } from "@/components/public/PublicTrustMessaging";
 import { EntityLineagePanel } from "@/components/entity-relations";
 import { verifyPublicCertificateByReference } from "@/lib/api";
+import { isPersonnelCertificateNumber } from "@/lib/personnel-public";
 import { EntityKind, buildTrustNavigationExplainerEdges } from "@/lib/entity-relationships";
 import { isNormalizedApiError } from "@/lib/api";
 
@@ -39,6 +40,11 @@ export default function VerifyLookupPage(): JSX.Element {
       setBusy(false);
       return;
     }
+    if (isPersonnelCertificateNumber(ref)) {
+      nav(`/verify/${encodeURIComponent(ref.toUpperCase())}`);
+      setBusy(false);
+      return;
+    }
     try {
       const result = await verifyPublicCertificateByReference(ref);
       if (result.kind === "ok") {
@@ -65,8 +71,7 @@ export default function VerifyLookupPage(): JSX.Element {
         Javna verifikacija
       </h1>
       <p className="mt-1 text-sm text-text-secondary">
-        Unesi puni <strong>verification hash</strong> (64 hex) i otvorit će se ista stranica kao u demo materijalima, ili
-        unesi referencu za <code className="text-xs">POST /api/public/certificates/verify</code>.
+        Unesi broj certifikata osoblja (CON-YYYY-NNNN), puni verification hash (64 hex), ili referencu postojeće javne provjere.
       </p>
       <div className="mt-4">
         <PublicTrustMessaging variant="verification" />
@@ -78,7 +83,7 @@ export default function VerifyLookupPage(): JSX.Element {
           data-testid="verify-lookup-input"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
-          placeholder="Npr. 64-hex hash iz potvrde"
+          placeholder="Npr. CON-2026-0001 ili 64-hex hash"
           className="h-10 min-w-0 flex-1 rounded-md border border-border/60 bg-surface-primary px-3 text-sm font-mono"
         />
         <Button type="button" onClick={() => void onVerify()} disabled={busy || !reference.trim()}>
@@ -86,10 +91,10 @@ export default function VerifyLookupPage(): JSX.Element {
         </Button>
       </div>
       <p className="mt-2 text-xs text-text-muted">
-        <Link className="text-brand underline" to="/login">
-          Prijava
-        </Link>{" "}
-        nije potrebna za javni pregled.
+        <Link className="text-brand underline" to="/registry">
+          Javni registar
+        </Link>
+        . Prijava nije potrebna.
       </p>
 
       {error ? <p className="mt-3 text-sm text-red-400">{error}</p> : null}

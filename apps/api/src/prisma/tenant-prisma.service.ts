@@ -33,6 +33,20 @@ import {
   type ExamClient,
 } from './exam-tenant-store';
 import {
+  addCpdRecord,
+  changePersonnelStatus,
+  holderCredential,
+  holderPdf,
+  issuePersonnelCertificate,
+  listHolderCertificates,
+  listReminders,
+  proposeAmfSuspension,
+  publicCertificate,
+  publicPdf,
+  revocationStatusList,
+  searchPublicRegistry,
+} from './personnel-certificate-store';
+import {
   enrolInCourse,
   getAnalyticsConsent,
   getLearningStatistics,
@@ -427,6 +441,32 @@ export class TenantPrismaService {
       addProctorFlag(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
     reviewFlag: (input: Omit<Parameters<typeof reviewProctorFlag>[1], 'tenantId'>) =>
       reviewProctorFlag(this.examClient(), { ...input, tenantId: this.requiredTenantId() }),
+  };
+
+  readonly personnel = {
+    issue: (input: Omit<Parameters<typeof issuePersonnelCertificate>[1], 'tenantId'>) =>
+      issuePersonnelCertificate(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    changeStatus: (input: Omit<Parameters<typeof changePersonnelStatus>[1], 'tenantId'>) =>
+      changePersonnelStatus(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    proposeAmf: (input: Omit<Parameters<typeof proposeAmfSuspension>[1], 'tenantId'>) =>
+      proposeAmfSuspension(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    listMine: (userId: string, now: Date) =>
+      listHolderCertificates(this.prisma, { tenantId: this.requiredTenantId(), userId, now }),
+    pdf: (userId: string, credentialId: string, now: Date) =>
+      holderPdf(this.prisma, { tenantId: this.requiredTenantId(), userId, credentialId, now }),
+    credential: (userId: string, credentialId: string) =>
+      holderCredential(this.prisma, { tenantId: this.requiredTenantId(), userId, credentialId }),
+    addCpd: (input: Omit<Parameters<typeof addCpdRecord>[1], 'tenantId'>) =>
+      addCpdRecord(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    reminders: (userId: string, credentialId: string) =>
+      listReminders(this.prisma, { tenantId: this.requiredTenantId(), userId, credentialId }),
+    publicOne: (publicUid: string, now: Date, sourceIp: string) =>
+      publicCertificate(this.prisma, { publicUid, now, sourceIp }),
+    publicPdf: (publicUid: string, ticket: string, now: Date) =>
+      publicPdf(this.prisma, { publicUid, ticket, now }),
+    search: (input: { number?: string; name?: string }, now: Date) =>
+      searchPublicRegistry(this.prisma, { ...input, now }),
+    statusList: () => revocationStatusList(this.prisma),
   };
 
   private requiredTenantId(): string {

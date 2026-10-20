@@ -108,6 +108,9 @@ model Tenant {
   examItemStatistics              ExamItemStatistic[]
   examFormReliabilities           ExamFormReliability[]
   certificationExamIdentityLinks  CertificationExamIdentityLink[]
+  examPersonnelCredentialLinks    ExamPersonnelCredentialLink[]
+  recertificationReminders        RecertificationReminder[]
+  cpdRecords                      CpdRecord[]
 }
 
 model User {
@@ -170,6 +173,7 @@ model User {
   invigilatedCertificationExams      CertificationExamSession[]       @relation("CertificationExamInvigilator")
   examCertificationDecisions         ExamCertificationDecision[]
   examProctorFlagReviews             ExamProctorFlagReview[]
+  cpdRecords                         CpdRecord[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -1307,6 +1311,7 @@ model CertificationSchemeVersion {
   personnelLinks         PersonnelCredentialLink[]
   examFormSchemes        ExamFormScheme[]
   examBlueprints         ExamBlueprint[]
+  examPersonnelLinks     ExamPersonnelCredentialLink[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, schemeId, versionLabel])
@@ -1459,6 +1464,7 @@ model Credential {
   holder               User                       @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
   attendanceLink       AttendanceCredentialLink?
   personnelLink        PersonnelCredentialLink?
+  examPersonnelLink    ExamPersonnelCredentialLink?
   achievement          AchievementRecord?
   lifecycleEvents      CredentialLifecycleEvent[]
   verificationLogs     VerificationLog[]
@@ -2316,10 +2322,77 @@ model ExamCertificationDecision {
   tenant  Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   result  CertificationExamResult @relation(fields: [tenantId, resultId], references: [tenantId, id], onDelete: Restrict)
   decider User                    @relation(fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
+  personnelIssue ExamPersonnelCredentialLink?
 
   @@unique([tenantId, id])
   @@unique([tenantId, resultId])
   @@index([tenantId, decidedByUserId])
+}
+
+enum RecertificationReminderKind {
+  NINETY_DAYS
+  THIRTY_DAYS
+  ON_EXPIRY
+}
+
+/// Personnel certificate issued after an exam GRANT. Distinct from course attendance.
+model ExamPersonnelCredentialLink {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @db.Uuid
+  credentialId       String    @db.Uuid
+  examDecisionId     String    @db.Uuid
+  schemeVersionId    String    @db.Uuid
+  holderDisplayName  String    @db.VarChar(256)
+  registryListed     Boolean   @default(false)
+  registryConsentAt  DateTime? @db.Timestamptz(3)
+  statusListIndex    Int
+  createdAt          DateTime  @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  credential    Credential                 @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  examDecision  ExamCertificationDecision  @relation(fields: [tenantId, examDecisionId], references: [tenantId, id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  reminders     RecertificationReminder[]
+  cpdRecords    CpdRecord[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, credentialId])
+  @@unique([tenantId, examDecisionId])
+  @@unique([statusListIndex])
+  @@index([tenantId, registryListed])
+}
+
+model RecertificationReminder {
+  id        String                       @id @default(uuid()) @db.Uuid
+  tenantId  String                       @db.Uuid
+  linkId    String                       @db.Uuid
+  kind      RecertificationReminderKind
+  dueAt     DateTime                     @db.Timestamptz(3)
+  createdAt DateTime                     @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  link   ExamPersonnelCredentialLink @relation(fields: [tenantId, linkId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, linkId, kind])
+}
+
+model CpdRecord {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid
+  linkId       String   @db.Uuid
+  holderUserId String   @db.Uuid
+  title        String   @db.VarChar(256)
+  hours        Decimal  @db.Decimal(6, 2)
+  completedAt  DateTime @db.Timestamptz(3)
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  link   ExamPersonnelCredentialLink @relation(fields: [tenantId, linkId], references: [tenantId, id], onDelete: Restrict)
+  holder User                        @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, holderUserId])
 }
 
 /// Placeholder signal only. No image, no biometric template, no automatic disqualification.

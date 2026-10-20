@@ -65,16 +65,20 @@
     "refresh": "Osveži",
     "publicVerify": "Javno preverjanje",
     "downloadPdf": "Prenesi PDF",
+    "downloadCredential": "Prenesi poverilnico",
     "documentTypes": {
       "EXAM_PASS_CERTIFICATE": "Potrdilo o opravljenem izpitu",
       "COURSE_COMPLETION_CERTIFICATE": "Potrdilo o zaključenem izobraževanju",
       "PERSON_CERTIFICATION": "Profesionalni certifikat osebe",
+      "PERSONNEL": "Certifikat osebja",
       "default": "Dokument"
     },
     "status": {
       "ISSUED": "Izdano",
       "ACTIVE": "Aktiven",
+      "VALID": "Veljaven",
       "SUSPENDED": "Suspendirano",
+      "WITHDRAWN": "Umaknjen",
       "REVOKED": "Preklicano",
       "EXPIRED": "Poteklo",
       "PENDING_ISSUANCE": "Izdaja v teku",

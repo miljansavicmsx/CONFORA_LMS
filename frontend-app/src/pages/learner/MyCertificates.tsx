@@ -25,6 +25,7 @@ import {
   type MyCertificateItem,
   fetchMyCertificates,
 } from "@/lib/api-certificates";
+import { addPersonnelCpdRecord, downloadPersonnelCredential } from "@/lib/personnel-public";
 import {
   canDownloadPdf,
   issuedIsDistinctFromActive,
@@ -131,10 +132,12 @@ export default function MyCertificates(): JSX.Element {
     refresh: refreshLabel,
     publicVerify,
     downloadPdf,
+    downloadCredential,
   } = labels;
 
   const [toast, setToast] = useState<string | null>(null);
   const [pdfBusyId, setPdfBusyId] = useState<string | null>(null);
+  const [vcBusyId, setVcBusyId] = useState<string | null>(null);
   const [filter, setFilter] = useState<WalletFilter>("all");
 
   const { data = [], isLoading, isError, isFetching, refetch } = useQuery({
@@ -172,9 +175,50 @@ export default function MyCertificates(): JSX.Element {
     [showToast, pdfPendingCopy],
   );
 
+  const onDownloadCredential = useCallback(
+    async (c: MyCertificateItem) => {
+      if (!c.verifiableCredentialUrl) {
+        return;
+      }
+      setVcBusyId(c.certificateId);
+      try {
+        await downloadPersonnelCredential(c.certificateId, `${c.certificateNumber}.jwt`);
+      } catch {
+        showToast("Preuzimanje vjerodajnice nije uspjelo.");
+      } finally {
+        setVcBusyId(null);
+      }
+    },
+    [showToast],
+  );
+
+  const onAddCpd = useCallback(
+    async (certificateId: string, form: FormData) => {
+      const title = String(form.get("title") ?? "").trim();
+      const hours = Number(form.get("hours"));
+      const completedOn = String(form.get("completedOn") ?? "");
+      if (!title || !Number.isFinite(hours) || hours <= 0 || !completedOn) {
+        showToast("CPD zapis traži naziv, sate i datum.");
+        return;
+      }
+      try {
+        await addPersonnelCpdRecord(certificateId, {
+          title,
+          hours,
+          completedAt: new Date(`${completedOn}T00:00:00.000Z`).toISOString(),
+        });
+        showToast("CPD zapis je sačuvan. Ne mijenja status certifikata.");
+      } catch {
+        showToast("CPD zapis nije sačuvan.");
+      }
+    },
+    [showToast],
+  );
+
   const renderCard = (c: MyCertificateItem, variant: "exam" | "person"): JSX.Element => {
     const wallet = variant === "person" && isActiveCertificateStatus(c.lifecycleStatus);
-    const showPublicVerify = shouldShowPublicVerificationForCertificate(c);
+    const personnelCertificate = c.certificateKind === "PERSONNEL";
+    const showPublicVerify = shouldShowPublicVerificationForCertificate(c) || (personnelCertificate && Boolean(c.publicVerificationUrl?.trim()));
     const pubUrl = showPublicVerify ? c.publicVerificationUrl?.trim() || null : null;
     const typeLabel = learnerDocumentTypeLabel(c.certificateKind);
     const statusLabel = learnerCertificateStatusLabel(c.lifecycleStatus);
@@ -254,14 +298,33 @@ export default function MyCertificates(): JSX.Element {
                   )}
                   {downloadPdf}
                 </Button>
-              ) : (
+              ) : null}
+              {personnelCertificate && c.verifiableCredentialUrl ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="w-full"
+                  disabled={vcBusyId === c.certificateId}
+                  onClick={() => void onDownloadCredential(c)}
+                  data-testid={`learner-download-vc-${c.certificateId}`}
+                >
+                  {vcBusyId === c.certificateId ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="mr-2 h-4 w-4" />
+                  )}
+                  {downloadCredential}
+                </Button>
+              ) : null}
+              {!downloadReady ? (
                 <p
                   className="rounded-lg border border-border/40 bg-surface-secondary/40 px-3 py-2 text-xs text-text-secondary"
                   data-testid={`learner-pdf-pending-${c.certificateId}`}
                 >
                   {pdfPendingCopy}
                 </p>
-              )}
+              ) : null}
             </div>
           }
         >
@@ -314,7 +377,11 @@ export default function MyCertificates(): JSX.Element {
                   </a>
                 </p>
               ) : null}
-              <p className="mt-2 text-[11px] text-text-muted">{digitalSignatureLocalMvpCopy}</p>
+              <p className="mt-2 text-[11px] text-text-muted">
+                {personnelCertificate && c.verifiableCredentialUrl
+                  ? "Open Badges 3.0 vjerodajnica je potpisana razvojnim ključem. To nije akreditirani sidro povjerenja."
+                  : digitalSignatureLocalMvpCopy}
+              </p>
             </div>
           ) : null}
 
@@ -337,6 +404,48 @@ export default function MyCertificates(): JSX.Element {
               </dd>
             </div>
           </dl>
+
+          {personnelCertificate && c.reminders && c.reminders.length > 0 ? (
+            <div className="mt-3 text-xs text-text-secondary">
+              <p className="font-medium text-text-primary">Podsjetnici za recertifikaciju</p>
+              <ul className="mt-1 list-disc pl-4">
+                {c.reminders.map((reminder) => (
+                  <li key={reminder.kind}>
+                    {reminder.kind === "NINETY_DAYS" ? "90 dana" : reminder.kind === "THIRTY_DAYS" ? "30 dana" : "Na dan isteka"}
+                    {": "}
+                    {formatDate(reminder.dueAt)}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1">Podsjetnik se ne šalje automatski i ne mijenja status.</p>
+            </div>
+          ) : null}
+          {personnelCertificate ? (
+            <form
+              className="mt-3 space-y-2 text-xs"
+              aria-labelledby={`cpd-heading-${c.certificateId}`}
+              onSubmit={(event) => {
+                event.preventDefault();
+                void onAddCpd(c.certificateId, new FormData(event.currentTarget));
+              }}
+            >
+              <h3 id={`cpd-heading-${c.certificateId}`} className="font-medium text-text-primary">CPD zapis</h3>
+              <p className="text-text-muted">Evidencija sati. Ne donosi odluku o recertifikaciji.</p>
+              <label className="block" htmlFor={`cpd-title-${c.certificateId}`}>
+                Naziv
+                <input id={`cpd-title-${c.certificateId}`} name="title" className="mt-1 w-full rounded border border-border px-2 py-1" required />
+              </label>
+              <label className="block" htmlFor={`cpd-hours-${c.certificateId}`}>
+                Sati
+                <input id={`cpd-hours-${c.certificateId}`} name="hours" type="number" min="0.5" step="0.5" className="mt-1 w-full rounded border border-border px-2 py-1" required />
+              </label>
+              <label className="block" htmlFor={`cpd-date-${c.certificateId}`}>
+                Datum
+                <input id={`cpd-date-${c.certificateId}`} name="completedOn" type="date" className="mt-1 w-full rounded border border-border px-2 py-1" required />
+              </label>
+              <Button type="submit" size="sm" variant="outline">Sačuvaj CPD</Button>
+            </form>
+          ) : null}
 
           {variant === "person" && issuedIsDistinctFromActive(c.lifecycleStatus) ? (
             <p className="mt-2 text-[11px] text-text-muted" data-testid="learner-issued-active-boundary">

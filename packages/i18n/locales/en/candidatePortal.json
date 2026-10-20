@@ -65,16 +65,20 @@
     "refresh": "Refresh",
     "publicVerify": "Public verification",
     "downloadPdf": "Download PDF",
+    "downloadCredential": "Download credential",
     "documentTypes": {
       "EXAM_PASS_CERTIFICATE": "Exam pass confirmation",
       "COURSE_COMPLETION_CERTIFICATE": "Education completion confirmation",
       "PERSON_CERTIFICATION": "Person professional certificate",
+      "PERSONNEL": "Personnel certificate",
       "default": "Document"
     },
     "status": {
       "ISSUED": "Issued",
       "ACTIVE": "Active",
+      "VALID": "Valid",
       "SUSPENDED": "Suspended",
+      "WITHDRAWN": "Withdrawn",
       "REVOKED": "Revoked",
       "EXPIRED": "Expired",
       "PENDING_ISSUANCE": "Pending issuance",

@@ -581,7 +581,13 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
     normalized === "/v1/staff/exams" ||
     normalized.startsWith("/v1/staff/exams/") ||
     normalized === "/v1/committee/exams" ||
-    normalized.startsWith("/v1/committee/exams/")
+    normalized.startsWith("/v1/committee/exams/") ||
+    normalized === "/v1/me/certificates" ||
+    normalized.startsWith("/v1/me/certificates/") ||
+    normalized === "/v1/committee/certificates" ||
+    normalized.startsWith("/v1/committee/certificates/") ||
+    normalized === "/v1/public/certificates" ||
+    normalized.startsWith("/v1/public/certificates/")
   ) {
     return "nest";
   }
