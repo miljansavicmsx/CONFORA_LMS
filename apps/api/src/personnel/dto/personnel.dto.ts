@@ -40,7 +40,7 @@ export class PublicSearchDto extends createZodDto(
   z
     .object({
       number: z.string().trim().min(4).max(32).optional(),
-      name: z.string().trim().min(2).max(256).optional(),
+      name: z.string().trim().min(3).max(256).optional(),
     })
     .strict(),
 ) {}

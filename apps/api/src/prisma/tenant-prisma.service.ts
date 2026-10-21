@@ -465,7 +465,11 @@ export class TenantPrismaService {
     publicPdf: (publicUid: string, ticket: string, now: Date) =>
       publicPdf(this.prisma, { publicUid, ticket, now }),
     search: (input: { number?: string; name?: string }, now: Date) =>
-      searchPublicRegistry(this.prisma, { ...input, now }),
+      searchPublicRegistry(this.prisma, {
+        ...input,
+        tenantId: this.requiredTenantId(),
+        now,
+      }),
     statusList: () => revocationStatusList(this.prisma),
   };
 

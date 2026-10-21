@@ -601,10 +601,25 @@ describe('certification exam foundation e2e', () => {
       .set(auth(trainerSubject, ['COM_CERT']))
       .send({ decisionId, holderDisplayName: 'Demo Kandidat', registryConsent: true })
       .expect(403);
+    await request(httpServer(app))
+      .post('/v1/committee/certificates')
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
+      .expect(400);
+    await requirePrisma().userProfile.create({
+      data: {
+        id: randomUUID(),
+        tenantId,
+        userId: candidateId,
+        givenName: 'Demo',
+        familyName: 'Kandidat',
+        identityVerificationState: 'VERIFIED',
+      },
+    });
     const issued = await request(httpServer(app))
       .post('/v1/committee/certificates')
       .set(auth(deciderSubject, ['COM_CERT']))
-      .send({ decisionId, holderDisplayName: 'Demo Kandidat', registryConsent: true })
+      .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
       .expect(201);
     const issuedBody = issued.body as {
       credentialId: string;
@@ -622,16 +637,29 @@ describe('certification exam foundation e2e', () => {
       .set(auth(deciderSubject, ['COM_CERT']))
       .send({ decisionId, holderDisplayName: 'Demo Kandidat', registryConsent: true })
       .expect(400);
+    await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .expect(401);
+    await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'De' })
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(400);
     const directory = await request(httpServer(app))
       .get('/v1/public/certificates')
       .query({ name: 'Demo' })
+      .set(auth(candidateSubject, ['USR_CAND']))
       .expect(200);
     expect(JSON.stringify(directory.body)).toContain('Demo Kandidat');
+    expect(JSON.stringify(directory.body)).not.toContain('Krivo Ime');
     expect(JSON.stringify(directory.body)).not.toContain('email');
     const lookedUp = await request(httpServer(app))
       .get(`/v1/public/certificates/${issuedBody.certificateNumber}`)
       .expect(200);
     expect((lookedUp.body as { status: string; scheme: string }).status).toBe('VALID');
+    expect(JSON.stringify(lookedUp.body)).toContain('Demo Kandidat');
+    expect(JSON.stringify(lookedUp.body)).not.toContain('Krivo Ime');
     const wallet = await request(httpServer(app))
       .get('/v1/me/certificates')
       .set(auth(candidateSubject, ['USR_CAND']))
