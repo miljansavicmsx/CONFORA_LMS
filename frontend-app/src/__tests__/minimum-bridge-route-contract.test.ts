@@ -21,6 +21,8 @@ const APPROVED_ROUTE_PATHS = [
   "exams/sessions/:sessionId/result",
   "certification/applications",
   "certification/dossier",
+  "certification/documents",
+  "certification/case-status",
   "my-certificates",
   "my-recertifications",
   "support",
@@ -40,6 +42,10 @@ const APPROVED_ROUTE_PATHS = [
   "committee/pilot-applications",
   "committee/exam-queue",
   "committee/case-file",
+  "committee/assigned",
+  "committee/review",
+  "committee/conflict",
+  "committee/decision",
 ] as const;
 
 const APPROVED_NAVIGATION_PATHS = new Set([
@@ -78,7 +84,7 @@ describe("owner-approved R0-7D minimum bridge contract", () => {
   });
 
   it("contains no excluded route or shell surface", () => {
-    expect(routePaths(app)).toHaveLength(36);
+    expect(routePaths(app)).toHaveLength(42);
     expect(app).not.toContain("FeedbackWidget");
     expect(app).not.toContain("AppShellFallback");
     expect(app).not.toContain("admin/users");
@@ -88,7 +94,7 @@ describe("owner-approved R0-7D minimum bridge contract", () => {
 
   it("contains exactly the approved sidebar navigation occurrences", () => {
     const paths = navigationPaths(sidebar);
-    expect(paths).toHaveLength(34);
+    expect(paths).toHaveLength(41);
     expect(paths.every((path) => APPROVED_NAVIGATION_PATHS.has(path))).toBe(true);
   });
 

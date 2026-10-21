@@ -39,6 +39,7 @@ import {
   RefereeAssessmentDto,
   RefereeRequestDto,
   RefereeResponseDto,
+  ConflictDeclarationDto,
   VoteDto,
 } from './dto/flow.dto';
 
@@ -175,6 +176,11 @@ export class LearnerDocumentController {
 export class CommitteeCaseController {
   constructor(private readonly flow: CertificationFlowService) {}
 
+  @Get()
+  list(@Req() req: RequestWithPrincipal) {
+    return this.flow.listCommittee(actor(req));
+  }
+
   @Get(':caseId')
   one(@Param('caseId', ParseUUIDPipe) caseId: string, @Req() req: RequestWithPrincipal) {
     return this.flow.committeeOne(actor(req), caseId);
@@ -232,6 +238,15 @@ export class CommitteeCaseController {
     @Req() req: RequestWithPrincipal,
   ) {
     return this.flow.authorize(actor(req), caseId, body);
+  }
+
+  @Post(':caseId/conflict-declaration')
+  conflict(
+    @Param('caseId', ParseUUIDPipe) caseId: string,
+    @Body() body: ConflictDeclarationDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.flow.declareConflict(actor(req), caseId, body);
   }
 }
 

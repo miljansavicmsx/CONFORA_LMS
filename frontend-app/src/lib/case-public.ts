@@ -80,6 +80,69 @@ export async function openCertificationCase(body: {
   return data;
 }
 
+export type MyCaseStatus = {
+  readonly caseId: string;
+  readonly path: string;
+  readonly phase: string;
+};
+
+export type EducationDocumentRow = {
+  readonly documentId: string;
+  readonly number: string;
+  readonly courseTitle: string;
+};
+
+export type ExamPassRow = {
+  readonly attestationId: string;
+  readonly number: string;
+  readonly examTitle: string;
+  readonly state: string;
+};
+
+export type AssignedCaseRow = {
+  readonly caseId: string;
+  readonly phase: string;
+  readonly path: string;
+  readonly assigned: boolean;
+};
+
+export async function fetchEducationDocuments(): Promise<readonly EducationDocumentRow[]> {
+  const { data } = await api.get<EducationDocumentRow[]>("/v1/me/documents/education");
+  return data;
+}
+
+export async function fetchExamPassDocuments(): Promise<readonly ExamPassRow[]> {
+  const { data } = await api.get<ExamPassRow[]>("/v1/me/documents/exam-passes");
+  return data;
+}
+
+export async function fetchAssignedCases(): Promise<readonly AssignedCaseRow[]> {
+  const { data } = await api.get<AssignedCaseRow[]>("/v1/committee/cases");
+  return data;
+}
+
+export async function signConflictDeclaration(
+  caseId: string,
+  body: { hasConflict: boolean; statement: string },
+): Promise<{ hasConflict: boolean }> {
+  const { data } = await api.post<{ hasConflict: boolean }>(
+    `/v1/committee/cases/${encodeURIComponent(caseId)}/conflict-declaration`,
+    body,
+  );
+  return data;
+}
+
+export async function voteOnCase(
+  caseId: string,
+  body: { ballot: "GRANT" | "DENY"; reasoning: string },
+): Promise<{ phase: string }> {
+  const { data } = await api.post<{ phase: string }>(
+    `/v1/committee/cases/${encodeURIComponent(caseId)}/votes`,
+    body,
+  );
+  return data;
+}
+
 export async function fetchCommitteeCase(caseId: string): Promise<CommitteeCaseView> {
   const { data } = await api.get<CommitteeCaseView>(`/v1/committee/cases/${encodeURIComponent(caseId)}`);
   return data;

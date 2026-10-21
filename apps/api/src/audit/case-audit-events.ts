@@ -47,4 +47,9 @@ export const CASE_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: CASE_METADATA,
   },
+  {
+    eventType: 'CONFLICT_SIGNED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
 ];

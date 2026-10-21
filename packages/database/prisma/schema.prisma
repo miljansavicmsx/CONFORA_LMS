@@ -124,6 +124,12 @@ model Tenant {
   committeeAssessments            CommitteeAssessment[]
   issuanceAuthorizations          IssuanceAuthorization[]
   aiCaseSuggestions               AiCaseSuggestion[]
+  committeeConflictDeclarations   CommitteeConflictDeclaration[]
+  tenantAiBudgets                 TenantAiBudget[]
+  noticeJobs                      NoticeJob[]
+  inAppNotices                    InAppNotice[]
+  schemeAnnualFees                SchemeAnnualFee[]
+  annualFeeObligations            AnnualFeeObligation[]
 }
 
 model User {
@@ -194,6 +200,10 @@ model User {
   committeeProposalsAsMember         CommitteeProposal[]                @relation("CommitteeProposalMember")
   committeeAssessments               CommitteeAssessment[]
   issuanceAuthorizations             IssuanceAuthorization[]
+  conflictDeclarations               CommitteeConflictDeclaration[]
+  noticeJobs                         NoticeJob[]
+  inAppNotices                       InAppNotice[]
+  annualFeeObligations               AnnualFeeObligation[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -1337,6 +1347,8 @@ model CertificationSchemeVersion {
   decisionMakers         SchemeDecisionMaker[]
   caseRule               SchemeCaseRule?
   professionalCases      ProfessionalCase[]
+  annualFee              SchemeAnnualFee?
+  annualFeeObligations   AnnualFeeObligation[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, schemeId, versionLabel])
@@ -1495,6 +1507,7 @@ model Credential {
   verificationLogs     VerificationLog[]
   recertificationCases RecertificationCase[]
   successorOutcomes    RecertificationOutcome[]   @relation("SuccessorCredential")
+  annualFeeObligations AnnualFeeObligation[]
 
   @@unique([tenantId, id])
   @@index([tenantId, holderUserId, lifecycle])
@@ -2627,6 +2640,7 @@ model ProfessionalCase {
   assessments   CommitteeAssessment[]
   authorization IssuanceAuthorization?
   suggestions   AiCaseSuggestion[]
+  conflictDeclarations CommitteeConflictDeclaration[]
 
   @@unique([tenantId, id])
   @@index([tenantId, applicantUserId, phase])
@@ -2800,4 +2814,165 @@ model AiCaseSuggestion {
 
   @@unique([tenantId, id])
   @@index([tenantId, caseId])
+}
+
+/// Signed before a committee member views a case or records a decision.
+model CommitteeConflictDeclaration {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid
+  caseId      String   @db.Uuid
+  userId      String   @db.Uuid
+  hasConflict Boolean
+  statement   String   @db.Text
+  signedAt    DateTime @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  member User             @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, caseId, userId])
+}
+
+model TenantAiBudget {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid
+  periodKey      String   @db.VarChar(7)
+  unitLimit      Int
+  unitsUsed      Int      @default(0)
+  costLimitMinor Int
+  costUsedMinor  Int      @default(0)
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, periodKey])
+}
+
+enum NoticeChannel {
+  EMAIL
+  IN_APP
+}
+
+enum NoticeJobStatus {
+  QUEUED
+  SENDING
+  SENT
+  FAILED
+  BOUNCED
+  COMPLAINT
+}
+
+enum NoticeKind {
+  CERTIFICATE_EXPIRY
+  RECERTIFICATION
+  EXAM
+  FEE
+  GENERAL
+}
+
+model NoticeJob {
+  id              String          @id @default(uuid()) @db.Uuid
+  tenantId        String          @db.Uuid
+  recipientUserId String          @db.Uuid
+  channel         NoticeChannel
+  kind            NoticeKind
+  referenceId     String          @db.VarChar(64)
+  toAddress       String          @db.VarChar(256)
+  subject         String          @db.VarChar(256)
+  body            String          @db.Text
+  status          NoticeJobStatus @default(QUEUED)
+  attempts        Int             @default(0)
+  maxAttempts     Int             @default(3)
+  nextAttemptAt   DateTime        @db.Timestamptz(3)
+  lastError       String?         @db.VarChar(512)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+
+  tenant    Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  recipient User         @relation(fields: [tenantId, recipientUserId], references: [tenantId, id], onDelete: Restrict)
+  inApp     InAppNotice?
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, kind, referenceId, channel])
+  @@index([tenantId, status, nextAttemptAt])
+}
+
+model InAppNotice {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  userId    String    @db.Uuid
+  jobId     String    @db.Uuid
+  title     String    @db.VarChar(256)
+  body      String    @db.Text
+  readAt    DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user   User      @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  job    NoticeJob @relation(fields: [tenantId, jobId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, jobId])
+  @@index([tenantId, userId, createdAt])
+}
+
+model SchemeAnnualFee {
+  id                      String   @id @default(uuid()) @db.Uuid
+  tenantId                String   @db.Uuid
+  schemeVersionId         String   @db.Uuid
+  annualAmountMinor       Int
+  currency                String   @db.VarChar(3)
+  firstYearIncluded       Boolean  @default(true)
+  recertificationSeparate Boolean  @default(true)
+  createdAt               DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt               DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeVersionId])
+}
+
+enum AnnualFeeKind {
+  FIRST_YEAR
+  ANNUAL
+  RECERTIFICATION
+}
+
+enum AnnualFeeStatus {
+  INCLUDED
+  DUE
+  OPEN_CASE
+  SETTLED
+}
+
+model AnnualFeeObligation {
+  id              String          @id @default(uuid()) @db.Uuid
+  tenantId        String          @db.Uuid
+  schemeVersionId String          @db.Uuid
+  credentialId    String          @db.Uuid
+  holderUserId    String          @db.Uuid
+  year            Int
+  kind            AnnualFeeKind
+  amountMinor     Int
+  currency        String          @db.VarChar(3)
+  status          AnnualFeeStatus
+  reason          String?         @db.Text
+  openedAt        DateTime?       @db.Timestamptz(3)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  credential    Credential                 @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  holder        User                       @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, credentialId, year, kind])
+  @@index([tenantId, holderUserId, status])
 }

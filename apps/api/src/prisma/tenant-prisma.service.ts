@@ -49,6 +49,9 @@ import {
   proposeCommittee,
   publicDocument,
   publicDocumentPdf,
+  assistFacts,
+  listCommitteeCases,
+  persistSuggestion,
   readApplicantCase,
   readCommitteeCase,
   recordVote,
@@ -57,8 +60,26 @@ import {
   saveCaseRule,
   saveDecisionMaker,
   saveLevel,
-  storeSuggestion,
+  signConflictDeclaration,
 } from './certification-flow-store';
+import { consumeAiBudget, loadAiBudget } from '../ai-gateway/ai-budget-store';
+import {
+  chargeRecertification,
+  includeFirstYear,
+  listHolderFees,
+  openNonPaymentCase,
+  readSchemeFee,
+  saveSchemeFee,
+} from '../annual-fee/annual-fee-store';
+import {
+  drainNoticeQueue,
+  enqueueDueReminders,
+  listInAppNotices,
+  markNoticeBounce,
+  markNoticeComplaint,
+  markNoticeRead,
+} from '../notices/notice-store';
+import type { EmailTransport } from '../notices/notice-transport';
 import {
   addCpdRecord,
   changePersonnelStatus,
@@ -504,6 +525,10 @@ export class TenantPrismaService {
       readApplicantCase(this.prisma, this.requiredTenantId(), userId, caseId),
     committeeOne: (actor: Parameters<typeof readCommitteeCase>[2], caseId: string) =>
       readCommitteeCase(this.prisma, this.requiredTenantId(), actor, caseId),
+    listCommittee: (actor: Parameters<typeof listCommitteeCases>[2]) =>
+      listCommitteeCases(this.prisma, this.requiredTenantId(), actor),
+    signConflict: (input: Omit<Parameters<typeof signConflictDeclaration>[1], 'tenantId'>) =>
+      signConflictDeclaration(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     linkExam: (input: Omit<Parameters<typeof linkExamResult>[1], 'tenantId'>) =>
       linkExamResult(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     addEvidence: (input: Omit<Parameters<typeof addEvidence>[1], 'tenantId'>) =>
@@ -528,8 +553,10 @@ export class TenantPrismaService {
       recordVote(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     assessReferee: (input: Omit<Parameters<typeof assessReferee>[1], 'tenantId'>) =>
       assessReferee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
-    assist: (input: Omit<Parameters<typeof storeSuggestion>[1], 'tenantId'>) =>
-      storeSuggestion(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    assistFacts: (input: Omit<Parameters<typeof assistFacts>[1], 'tenantId'>) =>
+      assistFacts(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    persistSuggestion: (input: Omit<Parameters<typeof persistSuggestion>[1], 'tenantId'>) =>
+      persistSuggestion(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     authorize: (input: Omit<Parameters<typeof authorizeIssuance>[1], 'tenantId'>) =>
       authorizeIssuance(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     releaseExamPass: (input: Omit<Parameters<typeof releaseExamPass>[1], 'tenantId'>) =>
@@ -550,6 +577,47 @@ export class TenantPrismaService {
         resultId,
         now: new Date(),
       }),
+  };
+
+  readonly aiBudget = {
+    load: (now: Date) => loadAiBudget(this.prisma, this.requiredTenantId(), now),
+    consume: (now: Date, promptUnits: number, completionUnits: number, costMinor: number) =>
+      consumeAiBudget(
+        this.prisma,
+        this.requiredTenantId(),
+        now,
+        promptUnits,
+        completionUnits,
+        costMinor,
+      ),
+  };
+
+  readonly notices = {
+    list: (userId: string) => listInAppNotices(this.prisma, this.requiredTenantId(), userId),
+    read: (input: Omit<Parameters<typeof markNoticeRead>[1], 'tenantId'>) =>
+      markNoticeRead(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    remind: (input: Omit<Parameters<typeof enqueueDueReminders>[1], 'tenantId'>) =>
+      enqueueDueReminders(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    drain: (now: Date, transport: EmailTransport) =>
+      drainNoticeQueue(this.prisma, { tenantId: this.requiredTenantId(), now, transport }),
+    bounce: (input: Omit<Parameters<typeof markNoticeBounce>[1], 'tenantId'>) =>
+      markNoticeBounce(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    complaint: (input: Omit<Parameters<typeof markNoticeComplaint>[1], 'tenantId'>) =>
+      markNoticeComplaint(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+  };
+
+  readonly fees = {
+    save: (input: Omit<Parameters<typeof saveSchemeFee>[1], 'tenantId'>) =>
+      saveSchemeFee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    read: (input: Omit<Parameters<typeof readSchemeFee>[1], 'tenantId'>) =>
+      readSchemeFee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    listMine: (userId: string) => listHolderFees(this.prisma, this.requiredTenantId(), userId),
+    openCase: (input: Omit<Parameters<typeof openNonPaymentCase>[1], 'tenantId'>) =>
+      openNonPaymentCase(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    chargeRecertification: (input: Omit<Parameters<typeof chargeRecertification>[1], 'tenantId'>) =>
+      chargeRecertification(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    includeFirstYear: (input: Omit<Parameters<typeof includeFirstYear>[1], 'tenantId'>) =>
+      includeFirstYear(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
   };
 
   private requiredTenantId(): string {

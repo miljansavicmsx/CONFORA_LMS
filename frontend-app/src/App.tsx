@@ -31,6 +31,16 @@ import ComplaintsIsoPage from "@/pages/iso/ComplaintsIsoPage";
 import { IsoReportsPage } from "@/pages/iso/IsoStaticPages";
 import CertificationDossierPage from "@/pages/learner/CertificationDossierPage";
 import CaseFilePage from "@/pages/committee/CaseFilePage";
+import {
+  CommitteeAssignedPage,
+  CommitteeConflictPage,
+  CommitteeDecisionPage,
+  CommitteeReviewPage,
+} from "@/pages/committee/CommitteeCertificationPages";
+import {
+  MyCertificationDocumentsPage,
+  MyCertificationStatusPage,
+} from "@/pages/learner/MyCertificationPages";
 import PublicRegistryPage from "@/pages/public/PublicRegistryPage";
 import RefereeConfirmPage from "@/pages/public/RefereeConfirmPage";
 import VerifyLookupPage from "@/pages/public/VerifyLookupPage";
@@ -82,6 +92,8 @@ export default function App(): JSX.Element {
                 <Route path="exams/sessions/:sessionId/result" element={<ExamResultPage />} />
                 <Route path="certification/applications" element={<CertificationApplicationsPage />} />
                 <Route path="certification/dossier" element={<CertificationDossierPage />} />
+                <Route path="certification/documents" element={<MyCertificationDocumentsPage />} />
+                <Route path="certification/case-status" element={<MyCertificationStatusPage />} />
                 <Route path="my-certificates" element={<MyCertificates />} />
                 <Route path="my-recertifications" element={<MyRecertificationsPage />} />
                 <Route path="support" element={<SupportPage />} />
@@ -203,6 +215,38 @@ export default function App(): JSX.Element {
                   element={
                     <ExamCommitteeGuard>
                       <CaseFilePage />
+                    </ExamCommitteeGuard>
+                  }
+                />
+                <Route
+                  path="committee/assigned"
+                  element={
+                    <ExamCommitteeGuard>
+                      <CommitteeAssignedPage />
+                    </ExamCommitteeGuard>
+                  }
+                />
+                <Route
+                  path="committee/review"
+                  element={
+                    <ExamCommitteeGuard>
+                      <CommitteeReviewPage />
+                    </ExamCommitteeGuard>
+                  }
+                />
+                <Route
+                  path="committee/conflict"
+                  element={
+                    <ExamCommitteeGuard>
+                      <CommitteeConflictPage />
+                    </ExamCommitteeGuard>
+                  }
+                />
+                <Route
+                  path="committee/decision"
+                  element={
+                    <ExamCommitteeGuard>
+                      <CommitteeDecisionPage />
                     </ExamCommitteeGuard>
                   }
                 />

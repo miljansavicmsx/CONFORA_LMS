@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { AiGatewayModule } from '../ai-gateway/ai-gateway.module';
 import { AuditModule } from '../audit/audit.module';
 import { LearnerRolesGuard } from '../auth/learner-roles.guard';
 import { ExamCommitteeRolesGuard, ExamStaffRolesGuard } from '../exam/exam-roles.guard';
@@ -16,7 +17,7 @@ import {
 import { CertificationFlowService } from './certification-flow.service';
 
 @Module({
-  imports: [TenantModule, AuditModule],
+  imports: [TenantModule, AuditModule, AiGatewayModule],
   controllers: [
     SchemeCaseStaffController,
     LearnerCaseController,

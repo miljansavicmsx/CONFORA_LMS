@@ -1,16 +1,25 @@
 import { randomUUID } from 'node:crypto';
 import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 
+import { AiGatewayService } from '../ai-gateway/ai-gateway.service';
 import { AuditService } from '../audit/audit.service';
 import type { AuthenticatedActor } from '../auth/request-principal';
 import { FlowNotFoundError } from '../prisma/certification-flow-store';
 import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
+import { labelSuggestion, prepareAssistPrompt } from './case-suggestions';
 import { FlowRuleError } from './certification-flow-rules';
 import { PersonnelRuleError } from '../personnel/personnel-rules';
 
-const DENIED = new Set(['ROLE_SEPARATION', 'FOUR_EYES', 'NOT_APPLICANT', 'NOT_MEMBER']);
+const DENIED = new Set([
+  'ROLE_SEPARATION',
+  'FOUR_EYES',
+  'NOT_APPLICANT',
+  'NOT_MEMBER',
+  'CONFLICT_UNSIGNED',
+  'CONFLICT_DECLARED',
+]);
 
 function fail(error: unknown): never {
   if (error instanceof FlowNotFoundError || error instanceof PersonnelNotFoundError) {
@@ -39,6 +48,7 @@ export class CertificationFlowService {
   constructor(
     private readonly tenantPrisma: TenantPrismaService,
     private readonly audit: AuditService,
+    private readonly gateway: AiGatewayService,
   ) {}
 
   private actor(actor: AuthenticatedActor) {
@@ -251,24 +261,80 @@ export class CertificationFlowService {
       .catch(fail);
   }
 
-  assist(
+  async assist(
     actor: AuthenticatedActor,
     caseId: string,
     purpose: 'completeness' | 'summary' | 'inconsistencies' | 'committee' | 'notification',
   ) {
     const now = new Date();
+    try {
+      const context = await this.tenantPrisma.flow.assistFacts({
+        actor: this.actor(actor),
+        caseId,
+      });
+      const prepared = prepareAssistPrompt(purpose, context.facts);
+      const ai = await this.gateway.complete(actor, {
+        purpose,
+        dataCategory: prepared.dataCategory,
+        system: prepared.system,
+        prompt: prepared.prompt,
+      });
+      const saved = await this.tenantPrisma.flow.persistSuggestion({
+        actor: this.actor(actor),
+        caseId,
+        purpose,
+        suggestion: labelSuggestion(ai.text),
+        model: ai.model,
+        promptHash: prepared.promptHash,
+      });
+      await this.audit.append(actor, {
+        idempotencyKey: randomUUID(),
+        eventType: 'AI_SUGGESTION_STORED',
+        outcome: 'SUCCESS',
+        occurredAt: now,
+        resourceType: 'AiCaseSuggestion',
+        resourceId: saved.suggestionId,
+        metadata: { caseId, purpose },
+      });
+      return {
+        suggestionId: saved.suggestionId,
+        suggestion: saved.suggestion,
+        model: ai.model,
+        promptHash: prepared.promptHash,
+        isAiGenerated: true as const,
+        label: 'Prijedlog' as const,
+        decides: false as const,
+        humanValidationRequired: true as const,
+      };
+    } catch (error) {
+      fail(error);
+    }
+  }
+
+  listCommittee(actor: AuthenticatedActor) {
+    return this.tenantPrisma.flow.listCommittee(this.actor(actor)).catch(fail);
+  }
+
+  declareConflict(
+    actor: AuthenticatedActor,
+    caseId: string,
+    body: { hasConflict: boolean; statement: string },
+  ) {
+    const now = new Date();
     return this.tenantPrisma.flow
-      .assist({ actor: this.actor(actor), caseId, purpose })
+      .signConflict({ actor: this.actor(actor), caseId, ...body, now })
       .then(async (result) => {
-        await this.audit.append(actor, {
-          idempotencyKey: randomUUID(),
-          eventType: 'AI_SUGGESTION_STORED',
-          outcome: 'SUCCESS',
-          occurredAt: now,
-          resourceType: 'AiCaseSuggestion',
-          resourceId: result.suggestionId,
-          metadata: { caseId, purpose },
-        });
+        if (result.created) {
+          await this.audit.append(actor, {
+            idempotencyKey: randomUUID(),
+            eventType: 'CONFLICT_SIGNED',
+            outcome: 'SUCCESS',
+            occurredAt: now,
+            resourceType: 'ProfessionalCase',
+            resourceId: caseId,
+            metadata: { caseId, reason: result.hasConflict ? 'conflict' : 'no-conflict' },
+          });
+        }
         return result;
       })
       .catch(fail);

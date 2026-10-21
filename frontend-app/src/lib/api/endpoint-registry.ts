@@ -600,7 +600,15 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
     normalized.startsWith("/v1/public/documents/") ||
     normalized === "/v1/public/referees" ||
     normalized.startsWith("/v1/public/referees/") ||
-    normalized.startsWith("/v1/staff/schemes/")
+    normalized.startsWith("/v1/staff/schemes/") ||
+    normalized === "/v1/me/notices" ||
+    normalized.startsWith("/v1/me/notices/") ||
+    normalized === "/v1/staff/notices" ||
+    normalized.startsWith("/v1/staff/notices/") ||
+    normalized === "/v1/me/annual-fees" ||
+    normalized.startsWith("/v1/me/annual-fees/") ||
+    normalized === "/v1/committee/annual-fees" ||
+    normalized.startsWith("/v1/committee/annual-fees/")
   ) {
     return "nest";
   }

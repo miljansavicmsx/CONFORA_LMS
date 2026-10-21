@@ -662,6 +662,129 @@ describe('certification exam foundation e2e', () => {
       where: { tenantId, id: issuedBody.credentialId },
     });
     expect(stillValid?.lifecycle).toBe('ACTIVE');
+    const included = await request(httpServer(app))
+      .get('/v1/me/annual-fees')
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(200);
+    expect(included.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: 'FIRST_YEAR', status: 'INCLUDED', amountMinor: 9000 }),
+      ]),
+    );
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/annual-fee`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({
+        annualAmountMinor: 12000,
+        currency: 'EUR',
+        firstYearIncluded: true,
+        recertificationSeparate: true,
+      })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/annual-fee`)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send({
+        annualAmountMinor: 12000,
+        currency: 'EUR',
+        firstYearIncluded: true,
+        recertificationSeparate: true,
+      })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/annual-fee`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        annualAmountMinor: 12000,
+        currency: 'EUR',
+        firstYearIncluded: true,
+        recertificationSeparate: true,
+      })
+      .expect(201);
+    const priced = await request(httpServer(app))
+      .get(`/v1/staff/schemes/${versionId}/annual-fee`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .expect(200);
+    expect((priced.body as { annualAmountMinor: number }).annualAmountMinor).toBe(12000);
+    await request(httpServer(app))
+      .post('/v1/committee/annual-fees/recertification')
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ credentialId: issuedBody.credentialId, year: 2027 })
+      .expect(403);
+    const recertFee = await request(httpServer(app))
+      .post('/v1/committee/annual-fees/recertification')
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ credentialId: issuedBody.credentialId, year: 2027 })
+      .expect(201);
+    expect(recertFee.body).toMatchObject({
+      kind: 'RECERTIFICATION',
+      status: 'DUE',
+      amountMinor: 12000,
+      withdrawn: false,
+      lifecycle: 'ACTIVE',
+    });
+    await request(httpServer(app))
+      .post('/v1/committee/annual-fees/non-payment')
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send({
+        credentialId: issuedBody.credentialId,
+        year: 2027,
+        reason: 'Naknada nije plaćena.',
+      })
+      .expect(403);
+    const openedFee = await request(httpServer(app))
+      .post('/v1/committee/annual-fees/non-payment')
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({
+        credentialId: issuedBody.credentialId,
+        year: 2027,
+        reason: 'Naknada nije plaćena.',
+      })
+      .expect(201);
+    expect(openedFee.body).toMatchObject({
+      status: 'OPEN_CASE',
+      withdrawn: false,
+      lifecycle: 'ACTIVE',
+    });
+    const afterFee = await requirePrisma().credential.findFirst({
+      where: { tenantId, id: issuedBody.credentialId },
+    });
+    expect(afterFee?.lifecycle).toBe('ACTIVE');
+    await request(httpServer(app))
+      .post('/v1/staff/notices/reminders')
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(403);
+    await request(httpServer(app))
+      .post('/v1/staff/notices/reminders')
+      .set(auth(approverSubject, ['EXAMINER']))
+      .expect(403);
+    const reminded = await request(httpServer(app))
+      .post('/v1/staff/notices/reminders')
+      .set(auth(approverSubject, ['COM_TECH']))
+      .expect(201);
+    const jobs = (
+      reminded.body as { jobs: { id: string; channel: string; kind: string; status: string }[] }
+    ).jobs;
+    expect(jobs.some((job) => job.kind === 'FEE' && job.status === 'SENT')).toBe(true);
+    const emailJob = jobs.find((job) => job.channel === 'EMAIL' && job.kind === 'FEE');
+    expect(emailJob).toBeDefined();
+    await request(httpServer(app))
+      .post(`/v1/staff/notices/${emailJob?.id ?? ''}/bounce`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/notices/${emailJob?.id ?? ''}/bounce`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .expect(201);
+    const inbox = await request(httpServer(app))
+      .get('/v1/me/notices')
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(200);
+    expect(JSON.stringify(inbox.body)).toContain('Godišnja naknada');
+    await request(httpServer(app))
+      .get('/v1/me/notices')
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(403);
     const suspended = await request(httpServer(app))
       .post(`/v1/committee/certificates/${issuedBody.credentialId}/status`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -753,6 +876,52 @@ describe('certification exam foundation e2e', () => {
       .set(auth(candidateSubject, ['USR_CAND']))
       .send({ experienceMonths: 0 })
       .expect(201);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(403);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .expect(403);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ hasConflict: false, statement: 'Nema sukoba.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({ hasConflict: true, statement: 'Obučavao sam kandidata.' })
+      .expect(201);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/votes`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ ballot: 'GRANT', reasoning: 'Bez izjave nema glasa.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Nemam sukob interesa.' })
+      .expect(201);
+    const visible = await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(200);
+    expect((visible.body as { caseId: string }).caseId).toBe(caseId);
+    const assigned = await request(httpServer(app))
+      .get('/v1/committee/cases')
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(200);
+    expect(JSON.stringify(assigned.body)).toContain(caseId);
     const proposed = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/propose`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -785,6 +954,16 @@ describe('certification exam foundation e2e', () => {
         note: 'Administrativna provjera.',
       })
       .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/assist`)
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({ purpose: 'summary' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Nisam učestvovao u odluci.' })
+      .expect(201);
     const suggestion = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/assist`)
       .set(auth(issuerSubject, ['COM_CERT']))
@@ -792,6 +971,18 @@ describe('certification exam foundation e2e', () => {
       .expect(201);
     expect((suggestion.body as { suggestion: string }).suggestion).toContain('Prijedlog');
     expect((suggestion.body as { decides: boolean }).decides).toBe(false);
+    expect((suggestion.body as { humanValidationRequired: boolean }).humanValidationRequired).toBe(
+      true,
+    );
+    await requirePrisma().tenantAiBudget.updateMany({
+      where: { tenantId },
+      data: { unitsUsed: 100_000, unitLimit: 100_000 },
+    });
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/assist`)
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({ purpose: 'summary' })
+      .expect(403);
 
     const events = await requirePrisma().auditEvent.findMany({
       where: { tenantId },
@@ -805,6 +996,10 @@ describe('certification exam foundation e2e', () => {
     expect(types.has('EXAM_SCORED')).toBe(true);
     expect(types.has('EXAM_DECISION_RECORDED')).toBe(true);
     expect(types.has('EXAM_IDENTITY_CONFIRMED')).toBe(true);
+    expect(types.has('AI_USE_RECORDED')).toBe(true);
+    expect(types.has('CONFLICT_SIGNED')).toBe(true);
+    expect(types.has('FEE_OBLIGATION_OPENED')).toBe(true);
+    expect(types.has('NOTICE_RESULT')).toBe(true);
 
     const statement = await requirePrisma().learningActivityRecord.findFirst({
       where: { tenantId, objectId: passSessionId },

@@ -93,6 +93,15 @@ export class ProposeDto extends createZodDto(
 
 export class ConfirmSlotDto extends createZodDto(z.object({ memberUserId: uuid }).strict()) {}
 
+export class ConflictDeclarationDto extends createZodDto(
+  z
+    .object({
+      hasConflict: z.boolean(),
+      statement: z.string().trim().min(3).max(4000),
+    })
+    .strict(),
+) {}
+
 export class VoteDto extends createZodDto(
   z
     .object({

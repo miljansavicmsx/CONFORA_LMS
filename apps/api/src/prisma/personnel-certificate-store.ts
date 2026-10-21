@@ -12,6 +12,7 @@ import {
   type PublicCertificateStatus,
   type StoredLifecycle,
 } from '../personnel/personnel-rules';
+import { includeFirstYear } from '../annual-fee/annual-fee-store';
 import { encodedStatusList, statusListCredential } from '../personnel/personnel-status-list';
 import {
   issueDownloadTicket,
@@ -272,6 +273,13 @@ export async function issuePersonnelCertificate(
         kind: reminder.kind,
         dueAt: reminder.dueAt,
       })),
+    });
+    await includeFirstYear(tx, {
+      tenantId: input.tenantId,
+      credentialId,
+      holderUserId,
+      schemeVersionId: version.id,
+      year: issuedAt.getUTCFullYear(),
     });
     return {
       credentialId,
