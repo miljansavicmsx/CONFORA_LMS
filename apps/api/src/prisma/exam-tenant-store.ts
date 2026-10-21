@@ -1359,6 +1359,7 @@ export async function recordDecision(
       candidateUserId: result.session.candidateUserId,
       roles: input.actor.roles,
       trainerOfCandidate: Boolean(trainer),
+      examinedCandidate: input.actor.userId === result.session.invigilatorUserId,
     });
     const id = randomUUID();
     await tx.examCertificationDecision.create({
