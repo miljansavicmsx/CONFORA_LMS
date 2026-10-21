@@ -32,6 +32,7 @@ const DENIED = new Set([
   'SELF_CONFIRMATION',
   'GRANT_SELF',
   'REVIEW_SELF_DECISION',
+  'REVIEW_SAME_SIDE',
   'DEPUTY_NOT_REQUIRED',
   'EXAMINER_CANNOT_DECIDE',
   'TRAINER_CANNOT_DECIDE',
@@ -226,6 +227,8 @@ export class CertificationFlowService {
       | 'COMMITTEE_COMPOSITION_PROPOSED'
       | 'COMMITTEE_COMPOSITION_CHANGED'
       | 'COMMITTEE_VOTE_RECORDED'
+      | 'COMMITTEE_SEAT_CONFIRMED'
+      | 'ISSUANCE_AUTHORISED'
       | 'CONFLICT_SIGNED'
       | 'SCHEME_COMMITTEE_AUTHORITY_GRANTED'
       | 'COMMITTEE_COMPOSITION_REVIEW_OPENED'
@@ -237,7 +240,7 @@ export class CertificationFlowService {
   ) {
     return async (
       tx: NonNullable<Parameters<AuditService['executeInTransaction']>[2]>,
-      fact: { purpose: string; phase: string; reason: string },
+      fact: { purpose: string; phase: string; reason: string; documentNumber?: string },
     ): Promise<void> => {
       await this.audit.executeInTransaction(
         actor,
@@ -249,7 +252,13 @@ export class CertificationFlowService {
             occurredAt: now,
             resourceType,
             resourceId: caseId,
-            metadata: { caseId, reason: fact.reason, purpose: fact.purpose, phase: fact.phase },
+            metadata: {
+              caseId,
+              reason: fact.reason,
+              purpose: fact.purpose,
+              phase: fact.phase,
+              ...(fact.documentNumber ? { documentNumber: fact.documentNumber } : {}),
+            },
           });
         },
         tx,
@@ -292,6 +301,7 @@ export class CertificationFlowService {
       recordedCoiReview: string;
       competenceReview: string;
       priorVoteImpact: string;
+      requestedSide?: 'CHAIR' | 'OVERSIGHT' | undefined;
     },
   ) {
     const now = new Date();
@@ -309,13 +319,35 @@ export class CertificationFlowService {
           randomUUID(),
           'CommitteeCompositionRequest',
         ),
+        writeReviewAudit: this.audited(
+          actor,
+          'COMMITTEE_COMPOSITION_REVIEW_OPENED',
+          caseId,
+          now,
+          randomUUID(),
+          'CertificationBodyReview',
+        ),
       })
       .catch(fail);
   }
 
   confirm(actor: AuthenticatedActor, caseId: string, memberUserId: string) {
+    const now = new Date();
     return this.tenantPrisma.flow
-      .confirm({ actor: this.actor(actor), caseId, memberUserId, now: new Date() })
+      .confirm({
+        actor: this.actor(actor),
+        caseId,
+        memberUserId,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'COMMITTEE_SEAT_CONFIRMED',
+          caseId,
+          now,
+          randomUUID(),
+          'CommitteeProposal',
+        ),
+      })
       .catch(fail);
   }
 
@@ -427,6 +459,14 @@ export class CertificationFlowService {
           randomUUID(),
           'ProfessionalCase',
         ),
+        writeReviewAudit: this.audited(
+          actor,
+          'COMMITTEE_COMPOSITION_REVIEW_OPENED',
+          caseId,
+          now,
+          randomUUID(),
+          'CertificationBodyReview',
+        ),
       })
       .catch(fail);
   }
@@ -518,18 +558,41 @@ export class CertificationFlowService {
   ) {
     const now = new Date();
     return this.tenantPrisma.flow
-      .authorize({ ...body, actor: this.actor(actor), caseId, now })
-      .then(async (result) => {
-        await this.audit.append(actor, {
-          idempotencyKey: randomUUID(),
-          eventType: 'ISSUANCE_AUTHORISED',
-          outcome: 'SUCCESS',
-          occurredAt: now,
-          resourceType: 'IssuanceAuthorization',
-          resourceId: caseId,
-          metadata: { caseId, documentNumber: result.certificateNumber, phase: 'ISSUED' },
-        });
-        return result;
+      .authorize({
+        ...body,
+        actor: this.actor(actor),
+        caseId,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'ISSUANCE_AUTHORISED',
+          caseId,
+          now,
+          randomUUID(),
+          'IssuanceAuthorization',
+        ),
+        writeCertificateAudit: async (tx, result) => {
+          await this.audit.executeInTransaction(
+            actor,
+            async (ops) => {
+              await ops.append({
+                idempotencyKey: randomUUID(),
+                eventType: 'PERSONNEL_CERTIFICATE_ISSUED',
+                outcome: 'SUCCESS',
+                occurredAt: now,
+                resourceType: 'Credential',
+                resourceId: result.credentialId,
+                metadata: {
+                  credentialId: result.credentialId,
+                  decisionId: result.decisionId,
+                  certificateNumber: result.certificateNumber,
+                  registryListed: result.registryListed,
+                },
+              });
+            },
+            tx,
+          );
+        },
       })
       .catch(fail);
   }

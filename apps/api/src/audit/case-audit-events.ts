@@ -33,6 +33,11 @@ export const CASE_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
     metadataSchema: CASE_METADATA,
   },
   {
+    eventType: 'COMMITTEE_SEAT_CONFIRMED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
     eventType: 'COMMITTEE_COMPOSITION_CHANGED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: CASE_METADATA,

@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID } from 'node:crypto';
 import type { Prisma } from '@confora/database';
 
+import { liveBallotCounts, voteResult } from '../certification-flow/certification-flow-rules';
 import { buildCertificatePdf } from '../personnel/personnel-pdf';
 import {
   addYears,
@@ -112,6 +113,24 @@ async function nextPublicUid(tx: Tx, year: number): Promise<string> {
   return `${prefix}${String(count + 1).padStart(4, '0')}`;
 }
 
+async function lockIssuanceCase(tx: Tx, tenantId: string, caseId: string): Promise<void> {
+  const key = `${tenantId}:${caseId}`;
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${key}, ${1n}))`;
+}
+
+export type IssuedCertificate = {
+  credentialId: string;
+  decisionId: string;
+  certificateNumber: string;
+  status: 'VALID';
+  issuedAt: string;
+  expiresAt: string;
+  registryListed: boolean;
+  attendanceLinked: false;
+};
+
+export type CertificateAudit = (tx: Tx, result: IssuedCertificate) => Promise<void>;
+
 function presentPublic(row: IssuedCredential, now: Date, includeName: boolean) {
   const link = row.examPersonnelLink;
   if (!link) {
@@ -139,191 +158,279 @@ export async function issuePersonnelCertificate(
     holderDisplayName: string;
     registryConsent: boolean;
     now: Date;
+    writeCertificateAudit?: CertificateAudit | undefined;
   },
 ) {
-  return client.$transaction(async (tx) => {
-    const decision = await tx.examCertificationDecision.findFirst({
-      where: { tenantId: input.tenantId, id: input.decisionId },
-      include: {
-        personnelIssue: true,
-        result: {
-          include: {
-            session: {
-              include: {
-                form: {
-                  include: {
-                    blueprint: { include: { schemeVersion: { include: { scheme: true } } } },
-                  },
+  return client.$transaction((tx) => issuePersonnelCertificateInTransaction(tx, input, false));
+}
+
+/**
+ * Signing and activation stay in this transaction, after the case lock and the
+ * case-version check. A voided decision therefore never receives an active credential.
+ * Callers that already hold the case lock pass lockHeld so the lock is not taken twice.
+ */
+export async function issuePersonnelCertificateInTransaction(
+  tx: Tx,
+  input: {
+    tenantId: string;
+    actor: Actor;
+    decisionId: string;
+    holderDisplayName: string;
+    registryConsent: boolean;
+    now: Date;
+    writeCertificateAudit?: CertificateAudit | undefined;
+  },
+  lockHeld: boolean,
+): Promise<IssuedCertificate> {
+  const located = await tx.examCertificationDecision.findFirst({
+    where: { tenantId: input.tenantId, id: input.decisionId },
+    select: { resultId: true },
+  });
+  if (!located) {
+    throw new PersonnelNotFoundError();
+  }
+  const linked = await tx.professionalCase.findFirst({
+    where: { tenantId: input.tenantId, examResultId: located.resultId },
+    select: { id: true },
+  });
+  if (linked && !lockHeld) {
+    await lockIssuanceCase(tx, input.tenantId, linked.id);
+  }
+  const decision = await tx.examCertificationDecision.findFirst({
+    where: { tenantId: input.tenantId, id: input.decisionId },
+    include: {
+      personnelIssue: true,
+      result: {
+        include: {
+          session: {
+            include: {
+              form: {
+                include: {
+                  blueprint: { include: { schemeVersion: { include: { scheme: true } } } },
                 },
               },
             },
           },
         },
       },
-    });
-    if (!decision) {
-      throw new PersonnelNotFoundError();
-    }
-    if (decision.supersededAt) {
-      throw new PersonnelRuleError('DECISION_SUPERSEDED');
-    }
-    if (decision.outcome !== 'GRANT') {
-      throw new PersonnelRuleError('DECISION_NOT_GRANT');
-    }
-    if (decision.personnelIssue) {
-      throw new PersonnelRuleError('CERTIFICATE_EXISTS');
-    }
-    const holderUserId = decision.result.session.candidateUserId;
-    const trainer = await tx.enrolmentTrainer.findFirst({
-      where: {
-        tenantId: input.tenantId,
-        trainerUserId: input.actor.userId,
-        enrolment: { userId: holderUserId },
-      },
-    });
-    const participants = new Set<string>([decision.decidedByUserId]);
-    const flowCase = await tx.professionalCase.findFirst({
-      where: { tenantId: input.tenantId, examResultId: decision.resultId },
-      include: { assessments: true, proposals: true },
-    });
-    if (flowCase) {
-      for (const assessment of flowCase.assessments) {
+    },
+  });
+  if (!decision) {
+    throw new PersonnelNotFoundError();
+  }
+  if (decision.supersededAt) {
+    throw new PersonnelRuleError('DECISION_SUPERSEDED');
+  }
+  if (decision.outcome !== 'GRANT') {
+    throw new PersonnelRuleError('DECISION_NOT_GRANT');
+  }
+  if (decision.personnelIssue) {
+    throw new PersonnelRuleError('CERTIFICATE_EXISTS');
+  }
+  const holderUserId = decision.result.session.candidateUserId;
+  const trainer = await tx.enrolmentTrainer.findFirst({
+    where: {
+      tenantId: input.tenantId,
+      trainerUserId: input.actor.userId,
+      enrolment: { userId: holderUserId },
+    },
+  });
+  const flowCase = linked
+    ? await tx.professionalCase.findFirst({
+        where: { tenantId: input.tenantId, id: linked.id },
+        include: {
+          assessments: true,
+          proposals: true,
+          schemeVersion: { include: { caseRule: true } },
+        },
+      })
+    : null;
+  const participants = new Set<string>([decision.decidedByUserId]);
+  if (flowCase) {
+    for (const assessment of flowCase.assessments) {
+      if (
+        assessment.voidedAt === null &&
+        assessment.compositionVersion === flowCase.compositionVersion
+      ) {
         participants.add(assessment.memberUserId);
       }
-      for (const proposal of flowCase.proposals) {
-        if (proposal.confirmedByUserId) {
-          participants.add(proposal.confirmedByUserId);
-        }
+    }
+    for (const proposal of flowCase.proposals) {
+      if (
+        proposal.confirmedByUserId &&
+        proposal.state === 'CONFIRMED' &&
+        proposal.compositionVersion === flowCase.compositionVersion
+      ) {
+        participants.add(proposal.confirmedByUserId);
       }
     }
-    assertIssuer({
-      roles: input.actor.roles,
-      issuerUserId: input.actor.userId,
+  }
+  assertIssuer({
+    roles: input.actor.roles,
+    issuerUserId: input.actor.userId,
+    holderUserId,
+    trainerOfCandidate: Boolean(trainer),
+    decisionParticipantIds: [...participants],
+  });
+  if (!flowCase || flowCase.phase !== 'APPROVED_FOR_ISSUANCE') {
+    throw new PersonnelRuleError('CASE_NOT_ISSUABLE');
+  }
+  const counts = liveBallotCounts(flowCase.assessments, flowCase.compositionVersion);
+  if (
+    voteResult({
+      grants: counts.grants,
+      denies: counts.denies,
+      quorum: flowCase.schemeVersion.caseRule?.votingQuorum ?? 2,
+    }) !== 'GRANT'
+  ) {
+    throw new PersonnelRuleError('CASE_NOT_ISSUABLE');
+  }
+  const profile = await tx.userProfile.findUnique({
+    where: { tenantId_userId: { tenantId: input.tenantId, userId: holderUserId } },
+  });
+  if (!profile || profile.identityVerificationState !== 'VERIFIED') {
+    throw new PersonnelRuleError('IDENTITY_UNVERIFIED');
+  }
+  const holderName = `${profile.givenName} ${profile.familyName}`.replace(/\s+/g, ' ').trim();
+  if (holderName.length < 2) {
+    throw new PersonnelRuleError('IDENTITY_UNVERIFIED');
+  }
+  const activated = await tx.professionalCase.updateMany({
+    where: {
+      tenantId: input.tenantId,
+      id: flowCase.id,
+      phase: 'APPROVED_FOR_ISSUANCE',
+      caseVersion: flowCase.caseVersion,
+      compositionVersion: flowCase.compositionVersion,
+    },
+    data: { phase: 'ISSUED', caseVersion: { increment: 1 } },
+  });
+  if (activated.count !== 1) {
+    throw new PersonnelRuleError('CASE_NOT_ISSUABLE');
+  }
+  const stillLive = await tx.examCertificationDecision.findFirst({
+    where: {
+      tenantId: input.tenantId,
+      id: decision.id,
+      supersededAt: null,
+      outcome: 'GRANT',
+    },
+    select: { id: true },
+  });
+  if (!stillLive) {
+    throw new PersonnelRuleError('DECISION_SUPERSEDED');
+  }
+  const version = decision.result.session.form.blueprint.schemeVersion;
+  const issuedAt = input.now;
+  const expiresAt = addYears(issuedAt, PERSONNEL_VALIDITY_YEARS);
+  const credentialId = randomUUID();
+  const publicUid = await nextPublicUid(tx, issuedAt.getUTCFullYear());
+  const index = await tx.examPersonnelCredentialLink.count();
+  const claims: PersonnelVcClaims = {
+    certificateNumber: publicUid,
+    holderName,
+    scheme: version.scheme.title,
+    schemeVersion: version.versionLabel,
+    issuedAt: issuedAt.toISOString(),
+    expiresAt: expiresAt.toISOString(),
+    statusListIndex: index,
+    statusListUrl: statusListUrl(),
+  };
+  const signed = signPersonnelCredential(claims);
+  await tx.credential.create({
+    data: {
+      id: credentialId,
+      tenantId: input.tenantId,
       holderUserId,
-      trainerOfCandidate: Boolean(trainer),
-      decisionParticipantIds: [...participants],
-    });
-    if (!flowCase || (flowCase.phase !== 'APPROVED_FOR_ISSUANCE' && flowCase.phase !== 'ISSUED')) {
-      throw new PersonnelRuleError('CASE_NOT_ISSUABLE');
-    }
-    const profile = await tx.userProfile.findUnique({
-      where: { tenantId_userId: { tenantId: input.tenantId, userId: holderUserId } },
-    });
-    if (!profile || profile.identityVerificationState !== 'VERIFIED') {
-      throw new PersonnelRuleError('IDENTITY_UNVERIFIED');
-    }
-    const holderName = `${profile.givenName} ${profile.familyName}`.replace(/\s+/g, ' ').trim();
-    if (holderName.length < 2) {
-      throw new PersonnelRuleError('IDENTITY_UNVERIFIED');
-    }
-    const version = decision.result.session.form.blueprint.schemeVersion;
-    const issuedAt = input.now;
-    const expiresAt = addYears(issuedAt, PERSONNEL_VALIDITY_YEARS);
-    const credentialId = randomUUID();
-    const publicUid = await nextPublicUid(tx, issuedAt.getUTCFullYear());
-    const index = await tx.examPersonnelCredentialLink.count();
-    const claims: PersonnelVcClaims = {
-      certificateNumber: publicUid,
-      holderName,
-      scheme: version.scheme.title,
-      schemeVersion: version.versionLabel,
-      issuedAt: issuedAt.toISOString(),
-      expiresAt: expiresAt.toISOString(),
-      statusListIndex: index,
-      statusListUrl: statusListUrl(),
-    };
-    const signed = signPersonnelCredential(claims);
-    await tx.credential.create({
-      data: {
-        id: credentialId,
-        tenantId: input.tenantId,
-        holderUserId,
-        credentialType: 'PERSONNEL',
-        lifecycle: 'ACTIVE',
-        publicUid,
-        payloadHash: signed.payloadHash,
-        signature: signed.jwt,
-        qrVerifyToken: randomBytes(24).toString('base64url'),
-        scopeText: version.scopeDescription,
-        cbName: 'CONFORA',
-        cbIdentifier: 'CONFORA-CB',
-        issuedAt,
-        expiresAt,
-      },
-    });
-    await tx.achievementRecord.create({
-      data: {
-        id: randomUUID(),
-        tenantId: input.tenantId,
-        credentialId,
-        achievementTitle: version.scheme.title,
-        holderName,
-        awardingBodyName: 'CONFORA',
-        awardingBodyIdentifier: 'CONFORA-CB',
-        awardedAt: issuedAt,
-        expiresAt,
-        resultLabel: 'GRANT',
-        criteriaSummary: 'Odluka komiteta nakon ispita.',
-        language: 'bs',
-      },
-    });
-    await tx.credentialLifecycleEvent.create({
-      data: {
-        id: randomUUID(),
-        tenantId: input.tenantId,
-        credentialId,
-        toLifecycle: 'ACTIVE',
-        reason: 'Izdavanje nakon odluke komiteta.',
-        actorUserId: input.actor.userId,
-        effectiveAt: issuedAt,
-      },
-    });
-    const linkId = randomUUID();
-    await tx.examPersonnelCredentialLink.create({
-      data: {
-        id: linkId,
-        tenantId: input.tenantId,
-        credentialId,
-        examDecisionId: decision.id,
-        schemeVersionId: version.id,
-        holderDisplayName: holderName,
-        registryListed: input.registryConsent,
-        registryConsentAt: input.registryConsent ? issuedAt : null,
-        statusListIndex: index,
-      },
-    });
-    const reminders = [
-      { kind: 'NINETY_DAYS' as const, dueAt: new Date(expiresAt.getTime() - 90 * 86_400_000) },
-      { kind: 'THIRTY_DAYS' as const, dueAt: new Date(expiresAt.getTime() - 30 * 86_400_000) },
-      { kind: 'ON_EXPIRY' as const, dueAt: expiresAt },
-    ];
-    await tx.recertificationReminder.createMany({
-      data: reminders.map((reminder) => ({
-        id: randomUUID(),
-        tenantId: input.tenantId,
-        linkId,
-        kind: reminder.kind,
-        dueAt: reminder.dueAt,
-      })),
-    });
-    await includeFirstYear(tx, {
+      credentialType: 'PERSONNEL',
+      lifecycle: 'ACTIVE',
+      publicUid,
+      payloadHash: signed.payloadHash,
+      signature: signed.jwt,
+      qrVerifyToken: randomBytes(24).toString('base64url'),
+      scopeText: version.scopeDescription,
+      cbName: 'CONFORA',
+      cbIdentifier: 'CONFORA-CB',
+      issuedAt,
+      expiresAt,
+    },
+  });
+  await tx.achievementRecord.create({
+    data: {
+      id: randomUUID(),
       tenantId: input.tenantId,
       credentialId,
-      holderUserId,
-      schemeVersionId: version.id,
-      year: issuedAt.getUTCFullYear(),
-    });
-    return {
-      credentialId,
-      decisionId: decision.id,
-      certificateNumber: publicUid,
-      status: 'VALID' as const,
-      issuedAt: issuedAt.toISOString(),
-      expiresAt: expiresAt.toISOString(),
-      registryListed: input.registryConsent,
-      attendanceLinked: false,
-    };
+      achievementTitle: version.scheme.title,
+      holderName,
+      awardingBodyName: 'CONFORA',
+      awardingBodyIdentifier: 'CONFORA-CB',
+      awardedAt: issuedAt,
+      expiresAt,
+      resultLabel: 'GRANT',
+      criteriaSummary: 'Odluka komiteta nakon ispita.',
+      language: 'bs',
+    },
   });
+  await tx.credentialLifecycleEvent.create({
+    data: {
+      id: randomUUID(),
+      tenantId: input.tenantId,
+      credentialId,
+      toLifecycle: 'ACTIVE',
+      reason: 'Izdavanje nakon odluke komiteta.',
+      actorUserId: input.actor.userId,
+      effectiveAt: issuedAt,
+    },
+  });
+  const linkId = randomUUID();
+  await tx.examPersonnelCredentialLink.create({
+    data: {
+      id: linkId,
+      tenantId: input.tenantId,
+      credentialId,
+      examDecisionId: decision.id,
+      schemeVersionId: version.id,
+      holderDisplayName: holderName,
+      registryListed: input.registryConsent,
+      registryConsentAt: input.registryConsent ? issuedAt : null,
+      statusListIndex: index,
+    },
+  });
+  const reminders = [
+    { kind: 'NINETY_DAYS' as const, dueAt: new Date(expiresAt.getTime() - 90 * 86_400_000) },
+    { kind: 'THIRTY_DAYS' as const, dueAt: new Date(expiresAt.getTime() - 30 * 86_400_000) },
+    { kind: 'ON_EXPIRY' as const, dueAt: expiresAt },
+  ];
+  await tx.recertificationReminder.createMany({
+    data: reminders.map((reminder) => ({
+      id: randomUUID(),
+      tenantId: input.tenantId,
+      linkId,
+      kind: reminder.kind,
+      dueAt: reminder.dueAt,
+    })),
+  });
+  await includeFirstYear(tx, {
+    tenantId: input.tenantId,
+    credentialId,
+    holderUserId,
+    schemeVersionId: version.id,
+    year: issuedAt.getUTCFullYear(),
+  });
+  const issued: IssuedCertificate = {
+    credentialId,
+    decisionId: decision.id,
+    certificateNumber: publicUid,
+    status: 'VALID',
+    issuedAt: issuedAt.toISOString(),
+    expiresAt: expiresAt.toISOString(),
+    registryListed: input.registryConsent,
+    attendanceLinked: false,
+  };
+  if (input.writeCertificateAudit) {
+    await input.writeCertificateAudit(tx, issued);
+  }
+  return issued;
 }
 
 async function loadIssued(

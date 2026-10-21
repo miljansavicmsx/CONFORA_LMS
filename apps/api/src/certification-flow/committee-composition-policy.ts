@@ -6,7 +6,8 @@
  * chair, or a quality manager who holds a current scheme-oversight grant, may
  * confirm another person's seat, and that actor cannot confirm themselves.
  * The voting body therefore cannot appoint itself. A certification-body deputy
- * may take a side only when every holder of that side is conflicted on the case.
+ * may take a side only when that side has no holder, or every holder of that side
+ * is conflicted on the case.
  */
 
 export type CommitteeSlotState = 'PROPOSED' | 'CONFIRMED' | 'EXCLUDED';
@@ -69,12 +70,33 @@ export type SeatConfirmationDecision =
 
 const REVIEW_MIN = 12;
 
-export function officeBlocked(
+/** A side needs a deputy when nobody holds it, or every holder is conflicted. */
+export function sideNeedsDeputy(
   offices: readonly { side: OfficeSide; conflicted: boolean }[],
   side: OfficeSide,
 ): boolean {
   const holders = offices.filter((office) => office.side === side);
-  return holders.length > 0 && holders.every((office) => office.conflicted);
+  return holders.length === 0 || holders.every((office) => office.conflicted);
+}
+
+export type ReviewSideDecision =
+  | { readonly action: 'allow' }
+  | { readonly action: 'deny'; readonly code: 'REVIEW_SELF_DECISION' | 'REVIEW_SAME_SIDE' };
+
+/** The person who opened a review cannot decide it, and neither can the same side. */
+export function decideReviewSide(input: {
+  openerUserId: string;
+  deciderUserId: string;
+  openerSide: OfficeSide | null;
+  deciderSide: OfficeSide;
+}): ReviewSideDecision {
+  if (input.openerUserId === input.deciderUserId) {
+    return { action: 'deny', code: 'REVIEW_SELF_DECISION' };
+  }
+  if (input.openerSide !== null && input.openerSide === input.deciderSide) {
+    return { action: 'deny', code: 'REVIEW_SAME_SIDE' };
+  }
+  return { action: 'allow' };
 }
 
 /**
@@ -105,8 +127,8 @@ export function decideCompositionActor(input: {
     return { action: 'allow', side: 'OVERSIGHT' };
   }
   if (input.grants.some((grant) => grant.kind === 'CERTIFICATION_BODY_DEPUTY')) {
-    const chairBlocked = officeBlocked(input.offices, 'CHAIR');
-    const oversightBlocked = officeBlocked(input.offices, 'OVERSIGHT');
+    const chairBlocked = sideNeedsDeputy(input.offices, 'CHAIR');
+    const oversightBlocked = sideNeedsDeputy(input.offices, 'OVERSIGHT');
     if (!chairBlocked && !oversightBlocked) {
       return { action: 'deny', code: 'DEPUTY_NOT_REQUIRED' };
     }

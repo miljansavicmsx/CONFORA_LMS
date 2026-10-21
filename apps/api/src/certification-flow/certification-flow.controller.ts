@@ -229,6 +229,7 @@ export class CommitteeCaseController {
         recordedCoiReview: body.recordedCoiReview,
         competenceReview: body.competenceReview,
         priorVoteImpact: body.priorVoteImpact,
+        ...(body.requestedSide ? { requestedSide: body.requestedSide } : {}),
       });
     }
     if (body.reviewAction === 'OPEN' && body.statement) {

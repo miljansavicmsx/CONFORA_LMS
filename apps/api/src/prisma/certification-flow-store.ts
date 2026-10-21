@@ -7,6 +7,7 @@ import {
   compositionTouchesActor,
   decideCompositionActor,
   decideCompositionApproval,
+  decideReviewSide,
   decideSeatConfirmation,
   planComposition,
   slotSnapshot,
@@ -28,6 +29,7 @@ import {
   EXAM_PASS_STATEMENT,
   INVALID_PUBLIC_VERIFICATION,
   levelChosenByCommittee,
+  liveBallotCounts,
   presentPublicVerification,
   PUBLIC_VERIFICATION_STATEMENT,
   publicVerificationPdfLines,
@@ -46,7 +48,10 @@ import {
 } from '../exam/exam-rules';
 import { drawDocumentPage, openUnicodePdf } from '../personnel/document-pdf';
 import { examinationActorsForApplication } from './exam-tenant-store';
-import { issuePersonnelCertificate, type PersonnelClient } from './personnel-certificate-store';
+import {
+  issuePersonnelCertificateInTransaction,
+  type CertificateAudit,
+} from './personnel-certificate-store';
 
 export class FlowNotFoundError extends Error {
   constructor() {
@@ -454,9 +459,9 @@ export async function readCommitteeCase(
   caseId: string,
 ) {
   assertRole(actor.roles, 'COM_CERT');
+  const row = await loadCase(client, tenantId, caseId);
   await assertAssigned(client, tenantId, caseId, actor.userId);
   await assertConflictCleared(client, tenantId, caseId, actor.userId);
-  const row = await loadCase(client, tenantId, caseId);
   return present(row, await examPassedFor(client, tenantId, row.examResultId));
 }
 
@@ -511,6 +516,7 @@ export async function signConflictDeclaration(
     statement: string;
     now: Date;
     writeAudit: GovernanceAudit;
+    writeReviewAudit: GovernanceAudit;
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
@@ -528,9 +534,10 @@ export async function signConflictDeclaration(
         : await latestConflictDeclaration(db, input.tenantId, row.id, input.actor.userId);
     const context = await loadAuthorityContext(db, input.tenantId, schemeId, row.id, input.now);
     let documentedOffice = false;
+    let openedSide: OfficeSide | null = null;
     if (actorLatest && !actorLatest.hasConflict) {
       try {
-        requireActorSide(input.actor, context.grants, context.offices, true, false);
+        openedSide = requireActorSide(input.actor, context.grants, context.offices, true, false);
         documentedOffice = true;
       } catch (error) {
         if (!(error instanceof FlowRuleError)) {
@@ -589,22 +596,33 @@ export async function signConflictDeclaration(
         data: { voidedAt: input.now, voidReason: 'CONFLICT_DECLARED' },
       });
       votesVoided = voided.count;
-      if (votesVoided > 0) {
-        await reevaluateQuorum(
-          db,
-          input.tenantId,
-          row,
-          input.now,
-          input.actor,
-          'CONFLICT_DECLARED',
-        );
-      }
     }
+    let reviewId: string | null = null;
+    if (votesVoided > 0) {
+      const effect = await reevaluateQuorum(
+        db,
+        input.tenantId,
+        row,
+        input.now,
+        input.actor,
+        'CONFLICT_DECLARED',
+        openedSide,
+      );
+      reviewId = effect.reviewId;
+    }
+    const refreshed = await loadCase(db, input.tenantId, row.id);
     await input.writeAudit(tx, {
       purpose: votesVoided > 0 ? `votes=${String(votesVoided)}` : 'declaration',
-      phase: row.phase,
+      phase: refreshed.phase,
       reason: decision.reason,
     });
+    if (reviewId) {
+      await input.writeReviewAudit(tx, {
+        purpose: 'BASIS_VOIDED',
+        phase: refreshed.phase,
+        reason: SET_ASIDE_STATEMENT,
+      });
+    }
     return {
       caseId: input.caseId,
       hasConflict: input.hasConflict,
@@ -695,7 +713,7 @@ export async function openIssuedReview(
       row.id,
       input.actor.userId,
     );
-    requireActorSide(
+    const side = requireActorSide(
       input.actor,
       context.grants,
       context.offices,
@@ -722,6 +740,7 @@ export async function openIssuedReview(
         credentialId: hold.credentialId,
         statement: input.statement.trim(),
         openedByUserId: input.actor.userId,
+        openedSide: side,
         openedAt: input.now,
       },
     });
@@ -761,9 +780,6 @@ export async function decideIssuedReview(
     if (!review || review.status !== 'OPEN') {
       throw new FlowRuleError('REVIEW_NOT_OPEN');
     }
-    if (review.openedByUserId === input.actor.userId) {
-      throw new FlowRuleError('REVIEW_SELF_DECISION');
-    }
     const schemeId = await schemeIdForVersion(db, input.tenantId, row.schemeVersionId);
     const context = await loadAuthorityContext(db, input.tenantId, schemeId, row.id, input.now);
     const declaration = await latestConflictDeclaration(
@@ -772,13 +788,22 @@ export async function decideIssuedReview(
       row.id,
       input.actor.userId,
     );
-    requireActorSide(
+    const side = requireActorSide(
       input.actor,
       context.grants,
       context.offices,
       declaration !== null,
       declaration?.hasConflict === true,
     );
+    const reviewSide = decideReviewSide({
+      openerUserId: review.openedByUserId,
+      deciderUserId: input.actor.userId,
+      openerSide: review.openedSide,
+      deciderSide: side,
+    });
+    if (reviewSide.action === 'deny') {
+      throw new FlowRuleError(reviewSide.code);
+    }
     await db.certificationBodyReview.update({
       where: { tenantId_id: { tenantId: input.tenantId, id: review.id } },
       data: {
@@ -1012,6 +1037,7 @@ export async function assessReferee(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await loadCase(client, input.tenantId, input.caseId);
   await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const referee = await client.refereeConfirmation.findFirst({
@@ -1110,6 +1136,7 @@ async function writeCommitteeProposals(
         userId: slot.userId,
         state: slot.state,
         exclusionReason: slot.exclusionReason,
+        compositionVersion: input.row.compositionVersion,
       },
     });
     slots.push(slot);
@@ -1143,7 +1170,7 @@ function slotView(row: LoadedCase): CommitteeSlotView[] {
 
 type GovernanceAudit = (
   tx: Tx,
-  fact: { purpose: string; phase: string; reason: string },
+  fact: { purpose: string; phase: string; reason: string; documentNumber?: string },
 ) => Promise<void>;
 
 function asFlow(tx: Tx): FlowClient {
@@ -1291,10 +1318,48 @@ async function writeFreshGrantDecision(
   });
 }
 
+async function writeFreshDenyDecision(
+  client: FlowClient,
+  tenantId: string,
+  row: LoadedCase,
+  confirmerUserId: string,
+  rationale: string,
+  now: Date,
+  actor: Actor,
+  supersedeReason: string,
+): Promise<void> {
+  if (!row.examResultId) {
+    return;
+  }
+  await assertRecordedDecisionMaker(client, tenantId, row, confirmerUserId, actor);
+  await supersedeLiveDecision(client, tenantId, row.examResultId, now, supersedeReason);
+  const trainer = await client.enrolmentTrainer.findFirst({
+    where: {
+      tenantId,
+      trainerUserId: confirmerUserId,
+      enrolment: { userId: row.applicantUserId },
+    },
+  });
+  await client.examCertificationDecision.create({
+    data: {
+      id: randomUUID(),
+      tenantId,
+      resultId: row.examResultId,
+      decidedByUserId: confirmerUserId,
+      outcome: 'DENY',
+      rationale,
+      trainerOfCandidate: Boolean(trainer),
+      independentOfTraining: !trainer,
+      decidedAt: now,
+    },
+  });
+}
+
 async function applySlotUpdates(
   client: FlowClient,
   tenantId: string,
   row: LoadedCase,
+  compositionVersion: number,
   updates: readonly {
     userId: string;
     toState: 'PROPOSED' | 'CONFIRMED' | 'EXCLUDED';
@@ -1313,6 +1378,7 @@ async function applySlotUpdates(
           userId: update.userId,
           state: update.toState,
           exclusionReason: update.exclusionReason,
+          compositionVersion,
         },
       });
       continue;
@@ -1326,10 +1392,54 @@ async function applySlotUpdates(
       data: {
         state: update.toState,
         exclusionReason: update.exclusionReason,
+        compositionVersion,
         ...(update.clearConfirmation ? { confirmedByUserId: null } : {}),
       },
     });
   }
+}
+
+const SET_ASIDE_STATEMENT =
+  'Odluka o odbijanju je stavljena van snage jer glas više nema važeći osnov.';
+
+async function openDeniedReview(
+  client: FlowClient,
+  input: {
+    tenantId: string;
+    caseId: string;
+    actorUserId: string;
+    openedSide: OfficeSide | null;
+    now: Date;
+  },
+): Promise<string | null> {
+  const existing = await client.certificationBodyReview.findFirst({
+    where: { tenantId: input.tenantId, caseId: input.caseId, status: 'OPEN' },
+    select: { id: true },
+  });
+  if (existing) {
+    return null;
+  }
+  const reviewId = randomUUID();
+  await client.certificationBodyReview.create({
+    data: {
+      id: reviewId,
+      tenantId: input.tenantId,
+      caseId: input.caseId,
+      statement: SET_ASIDE_STATEMENT,
+      openedByUserId: input.actorUserId,
+      openedSide: input.openedSide,
+      openedAt: input.now,
+    },
+  });
+  return reviewId;
+}
+
+function countedBallots(row: LoadedCase) {
+  return row.assessments.map((assessment) => ({
+    ballot: assessment.ballot,
+    voidedAt: assessment.voidedAt,
+    compositionVersion: assessment.compositionVersion,
+  }));
 }
 
 async function reevaluateQuorum(
@@ -1339,20 +1449,22 @@ async function reevaluateQuorum(
   now: Date,
   actor: Actor,
   reason: string,
-): Promise<'RETAINED' | 'FRESH' | 'REWOUND' | 'UNCHANGED'> {
+  openedSide: OfficeSide | null,
+): Promise<{ status: 'RETAINED' | 'FRESH' | 'REWOUND' | 'UNCHANGED'; reviewId: string | null }> {
   const hold = await issuanceHold(client, tenantId, row);
   if (hold.issued) {
-    return 'RETAINED';
+    return { status: 'RETAINED', reviewId: null };
   }
-  if (row.phase !== 'APPROVED_FOR_ISSUANCE' || !row.examResultId) {
-    return 'UNCHANGED';
+  if ((row.phase !== 'APPROVED_FOR_ISSUANCE' && row.phase !== 'DENIED') || !row.examResultId) {
+    return { status: 'UNCHANGED', reviewId: null };
   }
   const live = await client.committeeAssessment.findMany({
-    where: { tenantId, caseId: row.id, voidedAt: null },
+    where: { tenantId, caseId: row.id, voidedAt: null, compositionVersion: row.compositionVersion },
   });
+  const counts = liveBallotCounts(live, row.compositionVersion);
   const outcome = voteResult({
-    grants: live.filter((vote) => vote.ballot === 'GRANT').length,
-    denies: live.filter((vote) => vote.ballot === 'DENY').length,
+    grants: counts.grants,
+    denies: counts.denies,
     quorum: row.schemeVersion.caseRule?.votingQuorum ?? 2,
   });
   if (outcome === 'GRANT') {
@@ -1371,14 +1483,42 @@ async function reevaluateQuorum(
       now,
       actor,
     );
-    return 'FRESH';
+    return { status: 'FRESH', reviewId: null };
+  }
+  if (outcome === 'DENY') {
+    const deny = live.find((vote) => vote.ballot === 'DENY');
+    await writeFreshDenyDecision(
+      client,
+      tenantId,
+      row,
+      deny?.memberUserId ?? actor.userId,
+      deny?.reasoning ?? reason,
+      now,
+      actor,
+      reason,
+    );
+    await client.professionalCase.update({
+      where: { tenantId_id: { tenantId, id: row.id } },
+      data: { phase: 'DENIED', caseVersion: { increment: 1 } },
+    });
+    return { status: 'FRESH', reviewId: null };
   }
   await supersedeLiveDecision(client, tenantId, row.examResultId, now, reason);
+  const reviewId =
+    row.phase === 'DENIED'
+      ? await openDeniedReview(client, {
+          tenantId,
+          caseId: row.id,
+          actorUserId: actor.userId,
+          openedSide,
+          now,
+        })
+      : null;
   await client.professionalCase.update({
     where: { tenantId_id: { tenantId, id: row.id } },
-    data: { phase: 'COMMITTEE', computedLevelCode: null },
+    data: { phase: 'COMMITTEE', computedLevelCode: null, caseVersion: { increment: 1 } },
   });
-  return 'REWOUND';
+  return { status: 'REWOUND', reviewId };
 }
 
 export async function proposeCommittee(
@@ -1404,7 +1544,8 @@ export async function proposeCommittee(
     if (
       row.phase !== 'COMMITTEE' &&
       row.phase !== 'APPROVED_FOR_ISSUANCE' &&
-      row.phase !== 'ISSUED'
+      row.phase !== 'ISSUED' &&
+      row.phase !== 'DENIED'
     ) {
       throw new FlowRuleError('NOT_IN_COMMITTEE');
     }
@@ -1492,6 +1633,7 @@ export async function approveComposition(
     now: Date;
     requestedSide?: OfficeSide | undefined;
     writeAudit: GovernanceAudit;
+    writeReviewAudit: GovernanceAudit;
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
@@ -1521,6 +1663,10 @@ export async function approveComposition(
       declaration?.hasConflict === true,
       input.requestedSide,
     );
+    const hold = await issuanceHold(db, input.tenantId, row);
+    if (hold.issued) {
+      throw new FlowRuleError('ISSUED_REVIEW_REQUIRED');
+    }
     const desired = await desiredCommitteeSlots(db, {
       tenantId: input.tenantId,
       row,
@@ -1549,12 +1695,11 @@ export async function approveComposition(
     if (approval.action === 'deny') {
       throw new FlowRuleError(approval.code);
     }
-    const hold = await issuanceHold(db, input.tenantId, row);
-    if (hold.issued) {
-      throw new FlowRuleError('ISSUED_REVIEW_REQUIRED');
-    }
     let phase = row.phase;
     let votesInvalidated = 0;
+    let reviewId: string | null = null;
+    const nextCompositionVersion =
+      plan.updates.length > 0 ? row.compositionVersion + 1 : row.compositionVersion;
     if (plan.updates.length > 0) {
       if (plan.invalidateVotes) {
         const voided = await db.committeeAssessment.updateMany({
@@ -1562,7 +1707,7 @@ export async function approveComposition(
           data: { voidedAt: input.now, voidReason: 'COMPOSITION_CHANGED' },
         });
         votesInvalidated = voided.count;
-        if (row.phase === 'APPROVED_FOR_ISSUANCE' && row.examResultId) {
+        if ((row.phase === 'APPROVED_FOR_ISSUANCE' || row.phase === 'DENIED') && row.examResultId) {
           await supersedeLiveDecision(
             db,
             input.tenantId,
@@ -1571,20 +1716,47 @@ export async function approveComposition(
             'COMPOSITION_CHANGED',
           );
         }
-        if (row.phase === 'APPROVED_FOR_ISSUANCE') {
+        if (row.phase === 'DENIED') {
+          reviewId = await openDeniedReview(db, {
+            tenantId: input.tenantId,
+            caseId: row.id,
+            actorUserId: input.actor.userId,
+            openedSide: side,
+            now: input.now,
+          });
+        }
+        if (row.phase === 'APPROVED_FOR_ISSUANCE' || row.phase === 'DENIED') {
           phase = 'COMMITTEE';
         }
+      } else if (row.phase === 'DENIED' && row.examResultId) {
+        await supersedeLiveDecision(
+          db,
+          input.tenantId,
+          row.examResultId,
+          input.now,
+          'COMPOSITION_CHANGED',
+        );
+        reviewId = await openDeniedReview(db, {
+          tenantId: input.tenantId,
+          caseId: row.id,
+          actorUserId: input.actor.userId,
+          openedSide: side,
+          now: input.now,
+        });
+        phase = 'COMMITTEE';
       }
       await db.professionalCase.update({
         where: { tenantId_id: { tenantId: input.tenantId, id: row.id } },
         data: {
           compositionVersion: { increment: 1 },
-          ...(phase === 'COMMITTEE' && row.phase === 'APPROVED_FOR_ISSUANCE'
+          caseVersion: { increment: 1 },
+          ...(phase === 'COMMITTEE' &&
+          (row.phase === 'APPROVED_FOR_ISSUANCE' || row.phase === 'DENIED')
             ? { phase: 'COMMITTEE', computedLevelCode: null }
             : {}),
         },
       });
-      await applySlotUpdates(db, input.tenantId, row, plan.updates);
+      await applySlotUpdates(db, input.tenantId, row, nextCompositionVersion, plan.updates);
     }
     await db.committeeCompositionRequest.update({
       where: { tenantId_id: { tenantId: input.tenantId, id: request.id } },
@@ -1600,9 +1772,16 @@ export async function approveComposition(
       },
     });
     const purpose = `${request.proposerSide}>${side};votes=${String(votesInvalidated)};decision=${
-      votesInvalidated > 0 ? 'SUPERSEDED' : 'UNCHANGED'
+      votesInvalidated > 0 || reviewId ? 'SUPERSEDED' : 'UNCHANGED'
     }`;
     await input.writeAudit(tx, { purpose, phase, reason: input.grounds.trim() });
+    if (reviewId) {
+      await input.writeReviewAudit(tx, {
+        purpose: 'BASIS_VOIDED',
+        phase,
+        reason: SET_ASIDE_STATEMENT,
+      });
+    }
     const refreshed = await loadCase(db, input.tenantId, row.id);
     return {
       caseId: row.id,
@@ -1620,63 +1799,94 @@ export async function approveComposition(
 
 export async function confirmProposal(
   client: FlowClient,
-  input: { tenantId: string; actor: Actor; caseId: string; memberUserId: string; now: Date },
+  input: {
+    tenantId: string;
+    actor: Actor;
+    caseId: string;
+    memberUserId: string;
+    now: Date;
+    writeAudit: GovernanceAudit;
+  },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
-  const row = await loadCase(client, input.tenantId, input.caseId);
-  const schemeId = await schemeIdForVersion(client, input.tenantId, row.schemeVersionId);
-  const context = await loadAuthorityContext(client, input.tenantId, schemeId, row.id, input.now);
-  const declaration = await latestConflictDeclaration(
-    client,
-    input.tenantId,
-    row.id,
-    input.actor.userId,
-  );
-  let actorSide: OfficeSide | null = null;
-  try {
-    actorSide = requireActorSide(
-      input.actor,
-      context.grants,
-      context.offices,
-      declaration !== null,
-      declaration?.hasConflict === true,
+  return client.$transaction(async (tx) => {
+    await lockCase(tx, input.tenantId, input.caseId);
+    const db = asFlow(tx);
+    const row = await loadCase(db, input.tenantId, input.caseId);
+    const schemeId = await schemeIdForVersion(db, input.tenantId, row.schemeVersionId);
+    const context = await loadAuthorityContext(db, input.tenantId, schemeId, row.id, input.now);
+    const declaration = await latestConflictDeclaration(
+      db,
+      input.tenantId,
+      row.id,
+      input.actor.userId,
     );
-  } catch (error) {
-    if (!(error instanceof FlowRuleError)) {
-      throw error;
+    let actorSide: OfficeSide | null = null;
+    try {
+      actorSide = requireActorSide(
+        input.actor,
+        context.grants,
+        context.offices,
+        declaration !== null,
+        declaration?.hasConflict === true,
+      );
+    } catch (error) {
+      if (!(error instanceof FlowRuleError)) {
+        throw error;
+      }
+      if (
+        error.code === 'CONFLICT_UNSIGNED' ||
+        error.code === 'CONFLICT_DECLARED' ||
+        error.code === 'DEPUTY_NOT_REQUIRED' ||
+        error.code === 'SIDE_REQUIRED'
+      ) {
+        throw error;
+      }
+      actorSide = null;
     }
-    if (
-      error.code === 'CONFLICT_UNSIGNED' ||
-      error.code === 'CONFLICT_DECLARED' ||
-      error.code === 'DEPUTY_NOT_REQUIRED' ||
-      error.code === 'SIDE_REQUIRED'
-    ) {
-      throw error;
+    const seat = decideSeatConfirmation({
+      actorUserId: input.actor.userId,
+      memberUserId: input.memberUserId,
+      actorSide,
+    });
+    if (seat.action === 'deny') {
+      throw new FlowRuleError(seat.code);
     }
-    actorSide = null;
-  }
-  const seat = decideSeatConfirmation({
-    actorUserId: input.actor.userId,
-    memberUserId: input.memberUserId,
-    actorSide,
+    const confirmed = await db.committeeProposal.updateMany({
+      where: {
+        tenantId: input.tenantId,
+        caseId: row.id,
+        userId: input.memberUserId,
+        state: 'PROPOSED',
+      },
+      data: {
+        state: 'CONFIRMED',
+        confirmedByUserId: input.actor.userId,
+        compositionVersion: row.compositionVersion,
+      },
+    });
+    if (confirmed.count !== 1) {
+      const slot = await db.committeeProposal.findFirst({
+        where: { tenantId: input.tenantId, caseId: row.id, userId: input.memberUserId },
+        select: { id: true },
+      });
+      if (!slot) {
+        throw new FlowNotFoundError();
+      }
+      throw new FlowRuleError('NOT_ELIGIBLE');
+    }
+    await input.writeAudit(tx, {
+      purpose: `compositionVersion=${String(row.compositionVersion)}`,
+      phase: row.phase,
+      reason: input.memberUserId,
+    });
+    return {
+      caseId: input.caseId,
+      memberUserId: input.memberUserId,
+      state: 'CONFIRMED' as const,
+      compositionVersion: row.compositionVersion,
+    };
   });
-  if (seat.action === 'deny') {
-    throw new FlowRuleError(seat.code);
-  }
-  const slot = await client.committeeProposal.findFirst({
-    where: { tenantId: input.tenantId, caseId: input.caseId, userId: input.memberUserId },
-  });
-  if (!slot) {
-    throw new FlowNotFoundError();
-  }
-  if (slot.state !== 'PROPOSED') {
-    throw new FlowRuleError('NOT_ELIGIBLE');
-  }
-  await client.committeeProposal.update({
-    where: { tenantId_id: { tenantId: input.tenantId, id: slot.id } },
-    data: { state: 'CONFIRMED', confirmedByUserId: input.actor.userId },
-  });
-  return { caseId: input.caseId, memberUserId: input.memberUserId, state: 'CONFIRMED' as const };
 }
 
 async function decisionParticipants(
@@ -1687,17 +1897,23 @@ async function decisionParticipants(
   const ids = new Set<string>();
   if (row.examResultId) {
     const decision = await client.examCertificationDecision.findFirst({
-      where: { tenantId, resultId: row.examResultId },
+      where: { tenantId, resultId: row.examResultId, supersededAt: null },
     });
     if (decision) {
       ids.add(decision.decidedByUserId);
     }
   }
   for (const assessment of row.assessments) {
-    ids.add(assessment.memberUserId);
+    if (assessment.voidedAt === null && assessment.compositionVersion === row.compositionVersion) {
+      ids.add(assessment.memberUserId);
+    }
   }
   for (const proposal of row.proposals) {
-    if (proposal.confirmedByUserId) {
+    if (
+      proposal.confirmedByUserId &&
+      proposal.state === 'CONFIRMED' &&
+      proposal.compositionVersion === row.compositionVersion
+    ) {
       ids.add(proposal.confirmedByUserId);
     }
   }
@@ -1772,17 +1988,20 @@ export async function recordVote(
   return client.$transaction(async (tx) => {
     await lockCase(tx, input.tenantId, input.caseId);
     const db = asFlow(tx);
+    const row = await loadCase(db, input.tenantId, input.caseId);
     await assertAssigned(db, input.tenantId, input.caseId, input.actor.userId);
     await assertConflictCleared(db, input.tenantId, input.caseId, input.actor.userId);
-    const row = await loadCase(db, input.tenantId, input.caseId);
-    if (row.phase === 'ISSUED') {
+    if (row.phase === 'ISSUED' || row.phase === 'DENIED') {
       throw new FlowRuleError('VOTING_CLOSED');
     }
     const slot = row.proposals.find((proposal) => proposal.userId === input.actor.userId);
     if (!slot || slot.state !== 'CONFIRMED') {
       throw new FlowRuleError('NOT_MEMBER');
     }
-    const liveVotes = row.assessments.filter((assessment) => assessment.voidedAt === null);
+    const liveVotes = row.assessments.filter(
+      (assessment) =>
+        assessment.voidedAt === null && assessment.compositionVersion === row.compositionVersion,
+    );
     if (liveVotes.some((assessment) => assessment.memberUserId === input.actor.userId)) {
       throw new FlowRuleError('ALREADY_VOTED');
     }
@@ -1804,10 +2023,20 @@ export async function recordVote(
       }
       throw error;
     }
-    const ballots = [...liveVotes.map((assessment) => assessment.ballot), input.ballot];
+    const counts = liveBallotCounts(
+      [
+        ...countedBallots(row),
+        {
+          ballot: input.ballot,
+          voidedAt: null,
+          compositionVersion: row.compositionVersion,
+        },
+      ],
+      row.compositionVersion,
+    );
     const outcome = voteResult({
-      grants: ballots.filter((ballot) => ballot === 'GRANT').length,
-      denies: ballots.filter((ballot) => ballot === 'DENY').length,
+      grants: counts.grants,
+      denies: counts.denies,
       quorum: row.schemeVersion.caseRule?.votingQuorum ?? 2,
     });
     if (outcome === 'PENDING') {
@@ -1820,9 +2049,22 @@ export async function recordVote(
       };
     }
     if (outcome === 'DENY') {
+      const confirmer =
+        row.proposals.find((proposal) => proposal.userId === input.actor.userId)
+          ?.confirmedByUserId ?? input.actor.userId;
+      await writeFreshDenyDecision(
+        db,
+        input.tenantId,
+        row,
+        confirmer,
+        input.reasoning,
+        input.now,
+        input.actor,
+        'DENY_QUORUM',
+      );
       await db.professionalCase.update({
         where: { tenantId_id: { tenantId: input.tenantId, id: row.id } },
-        data: { phase: 'DENIED' },
+        data: { phase: 'DENIED', caseVersion: { increment: 1 } },
       });
       await input.writeAudit(tx, { purpose: input.ballot, phase: 'DENIED', reason: outcome });
       return { caseId: row.id, outcome, phase: 'DENIED' as const, computedLevelCode: null };
@@ -1858,7 +2100,11 @@ export async function recordVote(
     );
     await db.professionalCase.update({
       where: { tenantId_id: { tenantId: input.tenantId, id: row.id } },
-      data: { phase: 'APPROVED_FOR_ISSUANCE', computedLevelCode: level },
+      data: {
+        phase: 'APPROVED_FOR_ISSUANCE',
+        computedLevelCode: level,
+        caseVersion: { increment: 1 },
+      },
     });
     await input.writeAudit(tx, {
       purpose: input.ballot,
@@ -1884,53 +2130,73 @@ export async function authorizeIssuance(
     registryConsent: boolean;
     note: string;
     now: Date;
+    writeAudit: GovernanceAudit;
+    writeCertificateAudit: CertificateAudit;
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
-  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
-  await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
-  const row = await loadCase(client, input.tenantId, input.caseId);
-  if (row.phase !== 'APPROVED_FOR_ISSUANCE' && row.phase !== 'ISSUED') {
-    throw new FlowRuleError('NOT_APPROVED');
-  }
-  const participants = await decisionParticipants(client, input.tenantId, row);
-  assertFourEyes(input.actor.userId, participants);
-  const decision = row.examResultId
-    ? await client.examCertificationDecision.findFirst({
-        where: { tenantId: input.tenantId, resultId: row.examResultId, supersededAt: null },
-      })
-    : null;
-  if (!decision) {
-    throw new FlowRuleError('DECISION_MISSING');
-  }
-  const existing = await client.issuanceAuthorization.findFirst({
-    where: { tenantId: input.tenantId, caseId: row.id },
-  });
-  if (!existing) {
-    await client.issuanceAuthorization.create({
-      data: {
-        id: randomUUID(),
-        tenantId: input.tenantId,
-        caseId: row.id,
-        authorisedByUserId: input.actor.userId,
-        note: input.note,
-        authorisedAt: input.now,
-      },
+  return client.$transaction(async (tx) => {
+    await lockCase(tx, input.tenantId, input.caseId);
+    const db = asFlow(tx);
+    const row = await loadCase(db, input.tenantId, input.caseId);
+    await assertAssigned(db, input.tenantId, input.caseId, input.actor.userId);
+    await assertConflictCleared(db, input.tenantId, input.caseId, input.actor.userId);
+    if (row.phase !== 'APPROVED_FOR_ISSUANCE') {
+      throw new FlowRuleError('NOT_APPROVED');
+    }
+    const participants = await decisionParticipants(db, input.tenantId, row);
+    assertFourEyes(input.actor.userId, participants);
+    const decision = row.examResultId
+      ? await db.examCertificationDecision.findFirst({
+          where: { tenantId: input.tenantId, resultId: row.examResultId, supersededAt: null },
+        })
+      : null;
+    if (!decision || decision.outcome !== 'GRANT') {
+      throw new FlowRuleError('DECISION_MISSING');
+    }
+    const existing = await db.issuanceAuthorization.findFirst({
+      where: { tenantId: input.tenantId, caseId: row.id },
     });
-  }
-  const issued = await issuePersonnelCertificate(client as unknown as PersonnelClient, {
-    tenantId: input.tenantId,
-    actor: input.actor,
-    decisionId: decision.id,
-    holderDisplayName: input.holderDisplayName,
-    registryConsent: input.registryConsent,
-    now: input.now,
+    if (!existing) {
+      await db.issuanceAuthorization.create({
+        data: {
+          id: randomUUID(),
+          tenantId: input.tenantId,
+          caseId: row.id,
+          authorisedByUserId: input.actor.userId,
+          note: input.note,
+          authorisedAt: input.now,
+        },
+      });
+    }
+    const issued = await issuePersonnelCertificateInTransaction(
+      tx,
+      {
+        tenantId: input.tenantId,
+        actor: input.actor,
+        decisionId: decision.id,
+        holderDisplayName: input.holderDisplayName,
+        registryConsent: input.registryConsent,
+        now: input.now,
+        writeCertificateAudit: input.writeCertificateAudit,
+      },
+      true,
+    );
+    const issuedCase = await db.professionalCase.findFirst({
+      where: { tenantId: input.tenantId, id: row.id },
+      select: { phase: true },
+    });
+    if (issuedCase?.phase !== 'ISSUED') {
+      throw new FlowRuleError('NOT_APPROVED');
+    }
+    await input.writeAudit(tx, {
+      purpose: 'ISSUE',
+      phase: 'ISSUED',
+      reason: input.note,
+      documentNumber: issued.certificateNumber,
+    });
+    return issued;
   });
-  await client.professionalCase.update({
-    where: { tenantId_id: { tenantId: input.tenantId, id: row.id } },
-    data: { phase: 'ISSUED' },
-  });
-  return issued;
 }
 
 export async function assistFacts(
@@ -1938,9 +2204,9 @@ export async function assistFacts(
   input: { tenantId: string; actor: Actor; caseId: string },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  const row = await loadCase(client, input.tenantId, input.caseId);
   await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
-  const row = await loadCase(client, input.tenantId, input.caseId);
   const facts = [
     `faza ${row.phase}`,
     `put ${row.path}`,
@@ -1965,9 +2231,9 @@ export async function persistSuggestion(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  const row = await loadCase(client, input.tenantId, input.caseId);
   await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
-  const row = await loadCase(client, input.tenantId, input.caseId);
   const id = randomUUID();
   await client.aiCaseSuggestion.create({
     data: {

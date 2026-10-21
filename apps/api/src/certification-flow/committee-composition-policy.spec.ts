@@ -1,6 +1,7 @@
 import {
   decideCompositionActor,
   decideCompositionApproval,
+  decideReviewSide,
   decideSeatConfirmation,
   planComposition,
 } from './committee-composition-policy';
@@ -133,12 +134,15 @@ describe('committee composition governance', () => {
     ).toEqual({ action: 'deny', code: 'COMPOSITION_REVIEW_REQUIRED' });
   });
 
-  it('allows a deputy only for a side whose holders are all conflicted', () => {
+  it('allows a deputy when a side is conflicted or has no holder', () => {
     expect(
       decideCompositionActor({
         roles: ['COM_CERT'],
         grants: [{ kind: 'CERTIFICATION_BODY_DEPUTY' }],
-        offices: [{ side: 'OVERSIGHT', conflicted: false }],
+        offices: [
+          { side: 'CHAIR', conflicted: false },
+          { side: 'OVERSIGHT', conflicted: false },
+        ],
         signed: true,
         hasConflict: false,
       }),
@@ -147,11 +151,78 @@ describe('committee composition governance', () => {
       decideCompositionActor({
         roles: ['COM_CERT'],
         grants: [{ kind: 'CERTIFICATION_BODY_DEPUTY' }],
-        offices: [{ side: 'OVERSIGHT', conflicted: true }],
+        offices: [
+          { side: 'CHAIR', conflicted: false },
+          { side: 'OVERSIGHT', conflicted: true },
+        ],
         signed: true,
         hasConflict: false,
       }),
     ).toEqual({ action: 'allow', side: 'OVERSIGHT' });
+    expect(
+      decideCompositionActor({
+        roles: ['COM_CERT'],
+        grants: [{ kind: 'CERTIFICATION_BODY_DEPUTY' }],
+        offices: [{ side: 'CHAIR', conflicted: false }],
+        signed: true,
+        hasConflict: false,
+      }),
+    ).toEqual({ action: 'allow', side: 'OVERSIGHT' });
+  });
+
+  it('does not let one person propose and approve, even with both grants', () => {
+    expect(
+      decideCompositionActor({
+        roles: ['COM_CERT', 'QUALITY_MANAGER'],
+        grants: [{ kind: 'COMMITTEE_CHAIR' }, { kind: 'SCHEME_COMMITTEE_OVERSIGHT' }],
+        offices: [
+          { side: 'CHAIR', conflicted: false },
+          { side: 'OVERSIGHT', conflicted: false },
+        ],
+        signed: true,
+        hasConflict: false,
+      }),
+    ).toEqual({ action: 'allow', side: 'CHAIR' });
+    expect(
+      decideCompositionApproval({
+        proposerUserId: chair,
+        proposerSide: 'CHAIR',
+        approverUserId: chair,
+        approverSide: 'OVERSIGHT',
+        approverIsSubject: false,
+        grounds: 'Sukob je evidentiran u izjavi.',
+        recordedCoiReview: 'Izjave o sukobu su pregledane.',
+        competenceReview: 'Članovi imaju važeću kompetenciju.',
+        priorVoteImpact: 'Raniji glas se poništava i ostaje u istoriji.',
+      }),
+    ).toEqual({ action: 'deny', code: 'COMPOSITION_SELF_APPROVAL' });
+  });
+
+  it('requires the other side to decide a review', () => {
+    expect(
+      decideReviewSide({
+        openerUserId: chair,
+        deciderUserId: chair,
+        openerSide: 'OVERSIGHT',
+        deciderSide: 'CHAIR',
+      }),
+    ).toEqual({ action: 'deny', code: 'REVIEW_SELF_DECISION' });
+    expect(
+      decideReviewSide({
+        openerUserId: chair,
+        deciderUserId: manager,
+        openerSide: 'OVERSIGHT',
+        deciderSide: 'OVERSIGHT',
+      }),
+    ).toEqual({ action: 'deny', code: 'REVIEW_SAME_SIDE' });
+    expect(
+      decideReviewSide({
+        openerUserId: chair,
+        deciderUserId: manager,
+        openerSide: 'OVERSIGHT',
+        deciderSide: 'CHAIR',
+      }),
+    ).toEqual({ action: 'allow' });
   });
 
   it('does not let a member confirm themselves or a colleague', () => {

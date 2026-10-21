@@ -110,6 +110,33 @@ export function levelChosenByCommittee(computed: string | null): string | null {
   return computed;
 }
 
+export type CountedBallot = {
+  ballot: 'GRANT' | 'DENY';
+  voidedAt: Date | null;
+  compositionVersion: number;
+};
+
+/** Quorum input is the current composition only. Voided ballots stay in history and are not counted. */
+export function liveBallotCounts(
+  ballots: readonly CountedBallot[],
+  compositionVersion: number,
+): { grants: number; denies: number } {
+  let grants = 0;
+  let denies = 0;
+  for (const ballot of ballots) {
+    if (ballot.voidedAt !== null || ballot.compositionVersion !== compositionVersion) {
+      continue;
+    }
+    if (ballot.ballot === 'GRANT') {
+      grants += 1;
+    }
+    if (ballot.ballot === 'DENY') {
+      denies += 1;
+    }
+  }
+  return { grants, denies };
+}
+
 export function voteResult(input: {
   grants: number;
   denies: number;

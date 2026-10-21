@@ -2377,7 +2377,8 @@ model ExamCertificationDecision {
   decider User                    @relation(fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
   personnelIssue ExamPersonnelCredentialLink?
 
-  /// One live decision per result is ExamCertificationDecision_live_result_key.
+  /// Protected partial unique index ExamCertificationDecision_live_result_key
+  /// WHERE "supersededAt" IS NULL. A later migration must not DROP INDEX it.
   @@unique([tenantId, id])
   @@index([tenantId, resultId])
   @@index([tenantId, decidedByUserId])
@@ -2644,6 +2645,8 @@ model ProfessionalCase {
   computedLevelCode          String?                  @db.VarChar(32)
   examResultId               String?                  @db.Uuid
   compositionVersion         Int                      @default(1)
+  /// Optimistic case version. Issuance updates it only while the phase and this value still match.
+  caseVersion                Int                      @default(1)
   createdAt                  DateTime                 @default(now()) @db.Timestamptz(3)
   updatedAt                  DateTime                 @updatedAt @db.Timestamptz(3)
 
@@ -2790,6 +2793,8 @@ model CommitteeProposal {
   state              CommitteeSlotState
   exclusionReason    String?             @db.VarChar(64)
   confirmedByUserId  String?             @db.Uuid
+  /// Composition version this confirmation belongs to. An older confirmation cannot outlive that version.
+  compositionVersion Int                 @default(1)
   createdAt          DateTime            @default(now()) @db.Timestamptz(3)
 
   tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
@@ -2816,7 +2821,10 @@ model CommitteeAssessment {
   case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
   member User             @relation(fields: [tenantId, memberUserId], references: [tenantId, id], onDelete: Restrict)
 
-  /// Live votes: CommitteeAssessment_one_live_vote_key and CommitteeAssessment_live_vote_per_version_key.
+  /// Protected partial unique indexes. Prisma 6 cannot declare them.
+  /// CommitteeAssessment_one_live_vote_key WHERE "voidedAt" IS NULL
+  /// CommitteeAssessment_live_vote_per_version_key WHERE "voidedAt" IS NULL
+  /// A later migration must not DROP INDEX these names.
   @@unique([tenantId, id])
   @@index([tenantId, caseId, memberUserId])
 }
@@ -2959,6 +2967,8 @@ model CertificationBodyReview {
   outcome          String?                    @db.VarChar(64)
   rationale        String?                    @db.Text
   openedByUserId   String                     @db.Uuid
+  /// Side that opened the review. A decision requires the other side.
+  openedSide       CommitteeOfficeSide?
   decidedByUserId  String?                    @db.Uuid
   openedAt         DateTime                   @db.Timestamptz(3)
   decidedAt        DateTime?                  @db.Timestamptz(3)
@@ -2969,6 +2979,8 @@ model CertificationBodyReview {
   opener  User             @relation("CertificationReviewOpener", fields: [tenantId, openedByUserId], references: [tenantId, id], onDelete: Restrict)
   decider User?            @relation("CertificationReviewDecider", fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
 
+  /// Protected partial unique index CertificationBodyReview_one_open_key
+  /// WHERE "status" = 'OPEN'. A later migration must not DROP INDEX it.
   @@unique([tenantId, id])
   @@index([tenantId, caseId, status])
 }
