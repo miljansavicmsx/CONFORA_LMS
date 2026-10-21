@@ -11,15 +11,15 @@ Defines how CONFORA governance and architecture documents are owned, changed, re
 
 ## 1. Governance document ownership
 
-| Document class | Owner(s) |
-|----------------|----------|
-| Canonical Development Baseline | Repository Owner **and** Architecture Lead |
-| Engineering Constitution / Change Control | Repository Owner **and** Architecture Lead |
-| Owner Decision Register / Package | Repository Owner |
-| ADRs | Architecture Lead (draft) + Repository Owner (approval of supersession) |
-| Compliance mappings | Compliance **and** Architecture review |
-| Standards Reference Policy | Architecture Lead + Compliance |
-| Evidence packages | Task author (append-only; not normative) |
+| Document class                            | Owner(s)                                                                |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| Canonical Development Baseline            | Repository Owner **and** Architecture Lead                              |
+| Engineering Constitution / Change Control | Repository Owner **and** Architecture Lead                              |
+| Owner Decision Register / Package         | Repository Owner                                                        |
+| ADRs                                      | Architecture Lead (draft) + Repository Owner (approval of supersession) |
+| Compliance mappings                       | Compliance **and** Architecture review                                  |
+| Standards Reference Policy                | Architecture Lead + Compliance                                          |
+| Evidence packages                         | Task author (append-only; not normative)                                |
 
 ## 2. Baseline modification approval
 
@@ -68,6 +68,14 @@ Governance documents carry a Document ID and are versioned through git history. 
 ## 12. Conflict resolution
 
 Conflicts between documents are recorded and escalated per `GOVERNANCE_HIERARCHY.md`. An agent must not silently resolve a conflict.
+
+## 13. Security Review Gate
+
+Owner decision of 2026-10-21. Normative text: [SECURITY_REVIEW_GATE.md](./SECURITY_REVIEW_GATE.md).
+
+Every pull request that changes authentication, authorization, RBAC, tenant isolation, processing of sensitive data, or other security-critical functionality must pass an independent review before merge approval. The reviewer must not be the author of the changes. The review covers change analysis, access-control verification (authn, authz, tenant isolation), regression tests proving the fix and no breakage, all relevant CI checks passing, and an independent reasoned GO/NO-GO tied to a specific commit SHA. Any later change to security-relevant code requires re-review of that part. Known tenant-isolation gaps block production use with real data until fixed.
+
+The pull-request template checklist records these items. Merge approval waits for the independent GO on the reviewed SHA.
 
 ---
 

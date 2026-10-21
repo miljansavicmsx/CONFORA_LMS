@@ -77,7 +77,7 @@ export type SubjectResolution = {
 };
 
 function normalizeLocaleTag(locale: string): string {
-  return String(locale).trim().toLowerCase().slice(0, 2);
+  return locale.trim().toLowerCase().slice(0, 2);
 }
 
 function asSupportedLocale(tag: string): NotificationLocale | null {

@@ -12,6 +12,11 @@ export {
   SUPPORTED_LOCALES,
 } from './keys.js';
 export type { A11yKey, A11yMessages, SupportedLocale } from './keys.js';
-export { a11yResources, conforaI18nResources } from './resources.js';
+export {
+  // Compatibility alias. New callers use conforaI18nResources.
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- public re-export of the deprecated alias
+  a11yResources,
+  conforaI18nResources,
+} from './resources.js';
 export { createConforaI18n } from './create-i18n.js';
 export type { CreateConforaI18nOptions } from './create-i18n.js';

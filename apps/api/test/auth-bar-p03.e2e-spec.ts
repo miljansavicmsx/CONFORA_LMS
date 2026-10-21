@@ -139,7 +139,7 @@ describe('BAR-P03 auth e2e', () => {
         exp: now + 300,
         iat: now,
       },
-      privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+      privateKey.export({ type: 'pkcs8', format: 'pem' }),
       { algorithm: 'RS256', keyid: fixture.kid },
     );
     await request(httpServer(app))
@@ -213,7 +213,7 @@ describe('BAR-P03 auth e2e', () => {
         exp: now + 300,
         iat: now,
       },
-      privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+      privateKey.export({ type: 'pkcs8', format: 'pem' }),
       { algorithm: 'RS256', keyid: 'after-stop' },
     );
     await request(httpServer(app))
@@ -267,13 +267,15 @@ describe('BAR-P03 auth e2e', () => {
       // ProbeController exists only inside this e2e suite and is not production surface.
       .filter((entry) => !entry.endsWith('/probe') && !entry.endsWith('/v1/probe'));
 
-    // AUTH_30 exact post-P08 canonical inventory (OD3). Unexpected sixth route must fail.
+    // Post-P08 routes plus the mounted MD05 role-administration command.
+    // Any other route still fails this exact inventory.
     expect(productionRoutes).toEqual([
       'GET /v1/health',
       'GET /v1/me/certification/applications',
       'GET /v1/me/certification/applications/:id',
       'GET /v1/staff/reports/certification-applications/by-status',
       'GET /v1/staff/reports/certification-applications/by-scheme-ref',
+      'POST /v1/role-administration/commands',
     ]);
   });
 });
