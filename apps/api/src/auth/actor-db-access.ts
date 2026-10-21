@@ -1,8 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 
 import { TenantAccessViolationError } from '../prisma/tenant-prisma.util';
-import type { PrismaService } from '../prisma/prisma.service';
-import { resolveAuthUserIdWithMeta } from './resolve-db-user';
 import type { ConforaUser } from './types/confora-user';
 
 export type ActorDbAccess = {
@@ -10,12 +8,49 @@ export type ActorDbAccess = {
   readonly tenantId: string;
 };
 
+type ActorUserRow = {
+  readonly id: string;
+  readonly tenantId: string;
+};
+
 /**
- * Resolve authenticated actor to DB user + tenant for learner wallet / recert flows.
+ * Lookup port for the historical helper. The shipping PrismaService has no `db`
+ * property and does not resolve users by email.
+ */
+export type ActorUserLookup = {
+  readonly user: {
+    findUnique: (args: { where: { id?: string; email?: string } }) => Promise<ActorUserRow | null>;
+  };
+};
+
+type ActorResolution = {
+  readonly userId: string | null;
+  readonly tenantId: string | null;
+};
+
+async function resolveAuthUserIdWithMeta(
+  db: ActorUserLookup,
+  actor: ConforaUser,
+): Promise<ActorResolution> {
+  const email = actor.payload.email;
+  if (!email) {
+    return { userId: null, tenantId: null };
+  }
+  const row = await db.user.findUnique({ where: { email } });
+  if (!row) {
+    return { userId: null, tenantId: null };
+  }
+  return { userId: row.id, tenantId: row.tenantId };
+}
+
+/**
+ * Resolve an authenticated actor to a DB user and tenant for learner wallet
+ * and recertification helpers that are outside the Nest build.
  * Converts expected cross-tenant Prisma guard violations into HTTP 403.
+ * This is not the BAR-P03 identity resolver.
  */
 export async function resolveActorDbAccess(
-  db: PrismaService['db'],
+  db: ActorUserLookup,
   actor: ConforaUser,
 ): Promise<ActorDbAccess> {
   try {
