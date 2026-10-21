@@ -1,0 +1,33 @@
+# CI smoke image for the Vite frontend (OD-2026-10-20).
+# The default target is smoke. It is not a production release.
+# The production target does not set PLAYWRIGHT_F4_SMOKE. vite.config.ts
+# refuses a production build when that variable is set.
+FROM node:20-bookworm-slim AS workspace
+
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
+
+COPY . .
+
+# The image has no git metadata. Husky's prepare script exits cleanly when this is set.
+ENV HUSKY=0
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @confora/ui build && pnpm --filter @confora/i18n build
+
+FROM workspace AS production
+
+EXPOSE 5173
+RUN pnpm --filter confora-frontend-app exec vite build
+RUN chown -R node:node /app
+USER node
+CMD ["pnpm", "--filter", "confora-frontend-app", "exec", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]
+
+FROM workspace AS smoke
+
+ENV PLAYWRIGHT_F4_SMOKE=1
+EXPOSE 5173
+RUN pnpm --filter confora-frontend-app exec vite build --mode smoke
+RUN chown -R node:node /app
+USER node
+CMD ["pnpm", "--filter", "confora-frontend-app", "exec", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]

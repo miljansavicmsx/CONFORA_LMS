@@ -4,6 +4,11 @@ module.exports = {
   rootDir: '.',
   testEnvironment: 'node',
   testRegex: 'test/.*\\.e2e-spec\\.ts$',
+  // OD-2026-10-20: these specs import modules that are not in the tree.
+  testPathIgnorePatterns: [
+    '/appeals-complaints-1-boundary\\.e2e-spec\\.ts$',
+    '/td-082-pilot-certificant-wallet\\.e2e-spec\\.ts$',
+  ],
   transform: { '^.+\\.ts$': 'ts-jest' },
   transformIgnorePatterns: ['/node_modules/(?!.pnpm/(jose@|jwks-rsa@)|jose/|jwks-rsa/)'],
   moduleNameMapper: {

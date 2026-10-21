@@ -165,7 +165,7 @@ export function createAiGatewayClient(config: AiGatewayClientConfig) {
         throw new Error(`AI Gateway request failed: ${String(response.status)}`);
       }
 
-      return response.json() as Promise<unknown>;
+      return response.json();
     },
   };
 }

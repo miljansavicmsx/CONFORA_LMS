@@ -10,7 +10,8 @@ const baseVars = {
 };
 
 test('interpolateMjmlAllowlisted HTML-escapes script and quotes in body vars', () => {
-  const template = '<mj-text>{{heading}}</mj-text><mj-text>{{bodyText}}</mj-text><mj-text>{{footer}}</mj-text>';
+  const template =
+    '<mj-text>{{heading}}</mj-text><mj-text>{{bodyText}}</mj-text><mj-text>{{footer}}</mj-text>';
   const out = interpolateMjmlAllowlisted(template, {
     heading: '<script>x</script>',
     bodyText: `a & b "c" 'd'`,
@@ -54,5 +55,7 @@ test('interpolateMjmlAllowlisted does not allow raw HTML passthrough', () => {
 });
 
 test('legacy interpolate() fails closed', () => {
+  // The call is the assertion: the removed API must stay unreachable for template authors.
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- exercise the fail-closed stub
   assert.throws(() => interpolate('{{heading}}', baseVars), /removed as unsafe/);
 });

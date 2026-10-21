@@ -6,8 +6,9 @@ import { DEFAULT_TENANT_ID, parseTenantClaim } from './tenant.js';
 describe('parseTenantClaim', () => {
   it('accepts tenant_id claim', () => {
     const result = parseTenantClaim({ tenant_id: DEFAULT_TENANT_ID });
-    assert.equal(result?.tenantId, DEFAULT_TENANT_ID);
-    assert.equal(result?.claimSource, 'tenant_id');
+    assert.ok(result);
+    assert.equal(result.tenantId, DEFAULT_TENANT_ID);
+    assert.equal(result.claimSource, 'tenant_id');
   });
 
   it('accepts tenantId claim', () => {

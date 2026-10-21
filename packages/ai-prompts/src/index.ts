@@ -61,7 +61,8 @@ function assertPromptBundle(raw: unknown, expectedId: AiPromptIdV1): PromptBundl
   }
   const o = raw as Record<string, unknown>;
   for (const key of ['version', 'purpose', 'reviewNote', 'system', 'user_template'] as const) {
-    if (typeof o[key] !== 'string' || o[key].length === 0) {
+    const value = o[key];
+    if (typeof value !== 'string' || value.length === 0) {
       throw new Error(`Invalid prompt JSON for "${expectedId}": missing string field "${key}"`);
     }
   }

@@ -8,12 +8,15 @@ import {
   TENANT_UPSERT_OPERATIONS,
   TENANT_WRITE_WHERE_OPERATIONS,
   assertRecordTenantOwnership,
-  extractTenantIdFromRecord,
   injectTenantIntoCreateData,
   injectTenantIntoCreateManyData,
   mergeTenantIntoWhere,
 } from './tenant-prisma.util';
-import { getActiveTenantIdForPrisma } from '../tenant/tenant-context.store';
+/**
+ * Explicit resolver. BAR-P04 forbids async-local tenant storage, so the
+ * extension cannot read TenantContextStore by itself.
+ */
+export type ActiveTenantIdResolver = () => string | undefined;
 
 type QueryArgs = Record<string, unknown>;
 
@@ -96,26 +99,18 @@ function validateTenantResult(
   }
 
   if (TENANT_UNIQUE_READ_OPERATIONS.has(operation)) {
-    assertRecordTenantOwnership(
-      result as { tenantId?: string | null } | null,
-      tenantId,
-      operation,
-    );
+    assertRecordTenantOwnership(result as { tenantId?: string | null } | null, tenantId, operation);
     return result;
   }
 
   if (operation === 'create' || operation === 'upsert' || operation === 'update') {
-    assertRecordTenantOwnership(
-      result as { tenantId?: string | null } | null,
-      tenantId,
-      operation,
-    );
+    assertRecordTenantOwnership(result as { tenantId?: string | null } | null, tenantId, operation);
   }
 
   return result;
 }
 
-export function createTenantQueryExtension() {
+export function createTenantQueryExtension(resolveTenantId: ActiveTenantIdResolver) {
   return {
     query: {
       $allModels: {
@@ -130,7 +125,7 @@ export function createTenantQueryExtension() {
           args: unknown;
           query: (a: unknown) => Promise<unknown>;
         }) {
-          const tenantId = getActiveTenantIdForPrisma();
+          const tenantId = resolveTenantId();
 
           if (!tenantId || !TENANT_SCOPED_PRISMA_MODELS.has(model)) {
             return query(args);
@@ -147,10 +142,9 @@ export function createTenantQueryExtension() {
             return query(args);
           }
 
-          const patched =
-            TENANT_UNIQUE_READ_OPERATIONS.has(operation)
-              ? asArgs(args)
-              : applyTenantArgs(model, operation, args, tenantId);
+          const patched = TENANT_UNIQUE_READ_OPERATIONS.has(operation)
+            ? asArgs(args)
+            : applyTenantArgs(model, operation, args, tenantId);
 
           const result = await query(patched);
           return validateTenantResult(model, operation, tenantId, result);
@@ -160,7 +154,10 @@ export function createTenantQueryExtension() {
   };
 }
 
-export function createExtendedPrismaClientWithTenant(base?: PrismaClient) {
+export function createExtendedPrismaClientWithTenant(
+  resolveTenantId: ActiveTenantIdResolver,
+  base?: PrismaClient,
+) {
   const client = base ?? new PrismaClient();
-  return client.$extends(createTenantQueryExtension());
+  return client.$extends(createTenantQueryExtension(resolveTenantId));
 }

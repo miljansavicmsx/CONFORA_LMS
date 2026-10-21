@@ -140,7 +140,7 @@ describe('BAR-P03 auth e2e', () => {
         exp: now + 300,
         iat: now,
       },
-      privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+      privateKey.export({ type: 'pkcs8', format: 'pem' }),
       { algorithm: 'RS256', keyid: fixture.kid },
     );
     await request(httpServer(app))
@@ -214,7 +214,7 @@ describe('BAR-P03 auth e2e', () => {
         exp: now + 300,
         iat: now,
       },
-      privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+      privateKey.export({ type: 'pkcs8', format: 'pem' }),
       { algorithm: 'RS256', keyid: 'after-stop' },
     );
     await request(httpServer(app))
@@ -268,7 +268,8 @@ describe('BAR-P03 auth e2e', () => {
       // ProbeController exists only inside this e2e suite and is not production surface.
       .filter((entry) => !entry.endsWith('/probe') && !entry.endsWith('/v1/probe'));
 
-    // AUTH_30 exact inventory. Equality stays strict; the list is the full authorized surface.
+    // Exact inventory, including learning, exams, and the mounted MD05 command.
+    // Equality stays strict; a missing or extra route fails.
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
     expect(PRODUCTION_ROUTE_COUNT).toBe(90);

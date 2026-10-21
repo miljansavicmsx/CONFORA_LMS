@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       zap_target:
-        description: "Public URL for OWASP ZAP baseline (optional)"
+        description: 'Public URL for OWASP ZAP baseline (optional)'
         required: false
-        default: ""
+        default: ''
 
 jobs:
   unit-and-compliance:
@@ -18,16 +18,16 @@ jobs:
           version: 9.14.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          node-version: '20'
+          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @confora/database run generate
+      - name: Generate Prisma client and build API dependencies
+        run: pnpm exec turbo build --filter=@confora/api
       - name: API unit tests
         run: pnpm --filter @confora/api test
       - name: API compliance suite
         run: pnpm --filter @confora/api test:compliance
-      - name: Worker tests
-        run: pnpm --filter @confora/worker test
+      # OD-2026-10-20: apps/worker is not in the tree.
 
   zap-baseline:
     if: ${{ github.event.inputs.zap_target != '' }}
