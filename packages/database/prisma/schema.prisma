@@ -111,6 +111,20 @@ model Tenant {
   examPersonnelCredentialLinks    ExamPersonnelCredentialLink[]
   recertificationReminders        RecertificationReminder[]
   cpdRecords                      CpdRecord[]
+  schemeLevelCriteria             SchemeLevelCriterion[]
+  schemeDecisionMakers            SchemeDecisionMaker[]
+  schemeCaseRules                 SchemeCaseRule[]
+  professionalCases               ProfessionalCase[]
+  educationCompletionDocuments    EducationCompletionDocument[]
+  examPassAttestations            ExamPassAttestation[]
+  caseEvidenceItems               CaseEvidenceItem[]
+  refereeConfirmations            RefereeConfirmation[]
+  messageOutbox                   MessageOutbox[]
+  committeeProposals              CommitteeProposal[]
+  committeeAssessments            CommitteeAssessment[]
+  issuanceAuthorizations          IssuanceAuthorization[]
+  aiCaseSuggestions               AiCaseSuggestion[]
+  publicDocumentAccessLogs        PublicDocumentAccessLog[]
 }
 
 model User {
@@ -174,6 +188,13 @@ model User {
   examCertificationDecisions         ExamCertificationDecision[]
   examProctorFlagReviews             ExamProctorFlagReview[]
   cpdRecords                         CpdRecord[]
+  schemeDecisionMakers               SchemeDecisionMaker[]
+  professionalCasesAsApplicant       ProfessionalCase[]                 @relation("ProfessionalCaseApplicant")
+  educationCompletionDocuments       EducationCompletionDocument[]
+  examPassAttestations               ExamPassAttestation[]
+  committeeProposalsAsMember         CommitteeProposal[]                @relation("CommitteeProposalMember")
+  committeeAssessments               CommitteeAssessment[]
+  issuanceAuthorizations             IssuanceAuthorization[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -765,8 +786,9 @@ model Enrolment {
   trainer         EnrolmentTrainer?
   lessonProgress  LessonProgress[]
   paymentIntent   EnrolmentPaymentIntent?
-  quizAttempts    ChapterQuizAttempt[]
-  attendanceLinks AttendanceCredentialLink[]
+  quizAttempts                 ChapterQuizAttempt[]
+  attendanceLinks              AttendanceCredentialLink[]
+  educationCompletionDocument  EducationCompletionDocument?
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId, courseId])
@@ -1312,6 +1334,10 @@ model CertificationSchemeVersion {
   examFormSchemes        ExamFormScheme[]
   examBlueprints         ExamBlueprint[]
   examPersonnelLinks     ExamPersonnelCredentialLink[]
+  levelCriteria          SchemeLevelCriterion[]
+  decisionMakers         SchemeDecisionMaker[]
+  caseRule               SchemeCaseRule?
+  professionalCases      ProfessionalCase[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, schemeId, versionLabel])
@@ -2302,6 +2328,7 @@ model CertificationExamResult {
   tenant   Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   session  CertificationExamSession   @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
   decision ExamCertificationDecision?
+  examPass ExamPassAttestation?
 
   @@unique([tenantId, id])
   @@unique([tenantId, sessionId])
@@ -2465,4 +2492,330 @@ model ExamFormReliability {
 
   @@unique([tenantId, id])
   @@unique([tenantId, formId])
+}
+
+/// Three documents stay distinct (OD-PP-19, ISO/IEC 17024:2026 3.6).
+enum ProfessionalCasePhase {
+  ELIGIBILITY
+  DOSSIER
+  COMMITTEE
+  APPROVED_FOR_ISSUANCE
+  ISSUED
+  DENIED
+}
+
+enum CertificationJourneyPath {
+  CONFORA_EDUCATION
+  DIRECT
+}
+
+enum ExperienceCheckMode {
+  INDEPENDENT_REFERENCES
+  OTHER_VERIFIABLE_EVIDENCE
+}
+
+enum AttestationState {
+  PENDING_REVIEW
+  ISSUED
+}
+
+enum CaseEvidenceKind {
+  EDUCATION
+  QUALIFICATION
+  EXPERIENCE
+  WORK
+  OTHER
+}
+
+enum RefereeLinkState {
+  PENDING
+  CONFIRMED
+  DECLINED
+  EXPIRED
+}
+
+enum OutboxStatus {
+  QUEUED
+  LOGGED
+}
+
+enum CommitteeSlotState {
+  PROPOSED
+  CONFIRMED
+  EXCLUDED
+}
+
+enum CommitteeBallot {
+  GRANT
+  DENY
+}
+
+model SchemeLevelCriterion {
+  id                   String  @id @default(uuid()) @db.Uuid
+  tenantId             String  @db.Uuid
+  schemeVersionId      String  @db.Uuid
+  code                 String  @db.VarChar(32)
+  title                String  @db.VarChar(128)
+  rank                 Int
+  minExperienceMonths  Int
+  requiresExamPass     Boolean @default(true)
+  createdAt            DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeVersionId, code])
+}
+
+model SchemeDecisionMaker {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid
+  schemeVersionId   String   @db.Uuid
+  userId            String   @db.Uuid
+  competenceNote    String   @db.Text
+  authorisedFrom    DateTime @db.Timestamptz(3)
+  authorisedUntil   DateTime @db.Timestamptz(3)
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  user          User                       @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeVersionId, userId])
+}
+
+model SchemeCaseRule {
+  id                      String              @id @default(uuid()) @db.Uuid
+  tenantId                String              @db.Uuid
+  schemeVersionId         String              @db.Uuid
+  votingQuorum            Int                 @default(2)
+  experienceMayFollowExam Boolean             @default(true)
+  experienceMode          ExperienceCheckMode @default(INDEPENDENT_REFERENCES)
+  referenceCount          Int                 @default(2)
+  createdAt               DateTime            @default(now()) @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeVersionId])
+}
+
+/// Basic application through issuance. certificationApplicationId is a plain UUID (frozen table).
+model ProfessionalCase {
+  id                         String                   @id @default(uuid()) @db.Uuid
+  tenantId                   String                   @db.Uuid
+  applicantUserId            String                   @db.Uuid
+  schemeVersionId            String                   @db.Uuid
+  certificationApplicationId String                   @db.Uuid
+  path                       CertificationJourneyPath
+  phase                      ProfessionalCasePhase    @default(ELIGIBILITY)
+  prerequisitesAcknowledgedAt DateTime?               @db.Timestamptz(3)
+  experienceMonths           Int                      @default(0)
+  computedLevelCode          String?                  @db.VarChar(32)
+  examResultId               String?                  @db.Uuid
+  createdAt                  DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt                  DateTime                 @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  applicant     User                       @relation("ProfessionalCaseApplicant", fields: [tenantId, applicantUserId], references: [tenantId, id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  evidence      CaseEvidenceItem[]
+  referees      RefereeConfirmation[]
+  proposals     CommitteeProposal[]
+  assessments   CommitteeAssessment[]
+  authorization IssuanceAuthorization?
+  suggestions   AiCaseSuggestion[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, applicantUserId, phase])
+}
+
+model EducationCompletionDocument {
+  id                     String   @id @default(uuid()) @db.Uuid
+  tenantId               String   @db.Uuid
+  enrolmentId            String   @db.Uuid
+  holderUserId           String   @db.Uuid
+  publicUid              String    @unique @db.VarChar(32)
+  verificationId         String    @unique @db.VarChar(64)
+  nameConsentAt          DateTime? @db.Timestamptz(3)
+  courseTitle            String   @db.VarChar(256)
+  participationSeconds   Int
+  statement              String   @db.Text
+  issuedAt               DateTime @db.Timestamptz(3)
+  createdAt              DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  enrolment Enrolment @relation(fields: [tenantId, enrolmentId], references: [tenantId, id], onDelete: Restrict)
+  holder    User      @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, enrolmentId])
+}
+
+model ExamPassAttestation {
+  id              String           @id @default(uuid()) @db.Uuid
+  tenantId        String           @db.Uuid
+  resultId        String           @db.Uuid
+  holderUserId    String           @db.Uuid
+  publicUid        String           @unique @db.VarChar(32)
+  verificationId   String           @unique @db.VarChar(64)
+  nameConsentAt    DateTime?        @db.Timestamptz(3)
+  state            AttestationState
+  examTitle       String           @db.VarChar(256)
+  passed          Boolean
+  autoIssued      Boolean
+  statement       String           @db.Text
+  issuedAt        DateTime?        @db.Timestamptz(3)
+  reviewedByUserId String?         @db.Uuid
+  createdAt       DateTime         @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  result CertificationExamResult @relation(fields: [tenantId, resultId], references: [tenantId, id], onDelete: Restrict)
+  holder User                    @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, resultId])
+}
+
+model PublicDocumentAccessLog {
+  id                  String   @id @default(uuid()) @db.Uuid
+  tenantId            String?  @db.Uuid
+  verificationKeyHash String   @db.Char(64)
+  sourceIp            String   @db.VarChar(64)
+  outcome             String   @db.VarChar(16)
+  recordedAt          DateTime @db.Timestamptz(3)
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId, recordedAt])
+}
+
+model CaseEvidenceItem {
+  id        String           @id @default(uuid()) @db.Uuid
+  tenantId  String           @db.Uuid
+  caseId    String           @db.Uuid
+  kind      CaseEvidenceKind
+  title     String           @db.VarChar(256)
+  objectKey String?          @db.VarChar(512)
+  summary   String?          @db.Text
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId])
+}
+
+model RefereeConfirmation {
+  id               String           @id @default(uuid()) @db.Uuid
+  tenantId         String           @db.Uuid
+  caseId           String           @db.Uuid
+  refereeName      String           @db.VarChar(256)
+  organization     String           @db.VarChar(256)
+  email            String           @db.VarChar(256)
+  tokenHash        String           @unique @db.Char(64)
+  expiresAt        DateTime         @db.Timestamptz(3)
+  state            RefereeLinkState @default(PENDING)
+  requestedFacts   String           @db.Text
+  confirmedFacts   String?          @db.Text
+  discrepancies    String?          @db.Text
+  confirmedAt      DateTime?        @db.Timestamptz(3)
+  relevanceNote    String?          @db.Text
+  credible         Boolean?
+  assessedByUserId String?          @db.Uuid
+  assessedAt       DateTime?        @db.Timestamptz(3)
+  createdAt        DateTime         @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId])
+}
+
+model MessageOutbox {
+  id        String       @id @default(uuid()) @db.Uuid
+  tenantId  String       @db.Uuid
+  toAddress String       @db.VarChar(256)
+  subject   String       @db.VarChar(256)
+  body      String       @db.Text
+  status    OutboxStatus @default(LOGGED)
+  createdAt DateTime     @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+}
+
+model CommitteeProposal {
+  id                 String              @id @default(uuid()) @db.Uuid
+  tenantId           String              @db.Uuid
+  caseId             String              @db.Uuid
+  userId             String              @db.Uuid
+  state              CommitteeSlotState
+  exclusionReason    String?             @db.VarChar(64)
+  confirmedByUserId  String?             @db.Uuid
+  createdAt          DateTime            @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  member User             @relation("CommitteeProposalMember", fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, caseId, userId])
+}
+
+model CommitteeAssessment {
+  id           String           @id @default(uuid()) @db.Uuid
+  tenantId     String           @db.Uuid
+  caseId       String           @db.Uuid
+  memberUserId String           @db.Uuid
+  ballot       CommitteeBallot
+  reasoning    String           @db.Text
+  createdAt    DateTime         @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  member User             @relation(fields: [tenantId, memberUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, caseId, memberUserId])
+}
+
+model IssuanceAuthorization {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid
+  caseId             String   @db.Uuid
+  authorisedByUserId String   @db.Uuid
+  note               String   @db.Text
+  authorisedAt       DateTime @db.Timestamptz(3)
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case       ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  authoriser User             @relation(fields: [tenantId, authorisedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, caseId])
+}
+
+model AiCaseSuggestion {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid
+  caseId     String   @db.Uuid
+  purpose    String   @db.VarChar(64)
+  suggestion String   @db.Text
+  model      String   @db.VarChar(64)
+  promptHash String   @db.Char(64)
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId])
 }

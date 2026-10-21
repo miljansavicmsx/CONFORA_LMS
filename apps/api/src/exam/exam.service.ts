@@ -331,6 +331,26 @@ export class ExamService {
     if (!('resultId' in view)) {
       return view;
     }
+    try {
+      const prepared = await this.tenantPrisma.flow.noteExamPass(view.resultId);
+      if (prepared) {
+        await this.audit.append(actor, {
+          idempotencyKey: randomUUID(),
+          eventType: 'EXAM_PASS_PREPARED',
+          outcome: 'SUCCESS',
+          occurredAt: new Date(),
+          resourceType: 'ExamPassAttestation',
+          resourceId: prepared.attestationId,
+          metadata: {
+            documentNumber: prepared.publicUid,
+            phase: prepared.state,
+            caseId: view.resultId,
+          },
+        });
+      }
+    } catch {
+      /* A pass attestation must not undo a stored result. */
+    }
     const { resultId: _resultId, statementId: _statementId, ...rest } = view;
     return rest;
   }

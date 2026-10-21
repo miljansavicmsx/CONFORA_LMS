@@ -21,7 +21,8 @@ describe('LearningService', () => {
     statistics: jest.fn(),
   };
   const audit = { append: jest.fn() };
-  const service = new LearningService({ learning } as never, audit as never);
+  const flow = { noteEducation: jest.fn().mockResolvedValue(null) };
+  const service = new LearningService({ learning, flow } as never, audit as never);
 
   beforeEach(() => {
     jest.clearAllMocks();

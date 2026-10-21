@@ -23,6 +23,7 @@ export const AI_PROMPT_IDS_V1 = [
   'chat.support',
   'question.generate',
   'risk.suggest',
+  'certification.assist',
   'default',
 ] as const;
 
@@ -36,6 +37,7 @@ export const AI_PROMPT_PLACEHOLDERS_V1: Readonly<Record<AiPromptIdV1, readonly s
   'chat.support': ['user_message'],
   'question.generate': ['blueprint', 'constraints'],
   'risk.suggest': ['audit_events_last_30d', 'complaints_by_subject', 'instruction'],
+  'certification.assist': ['dossier_facts'],
   default: ['user_message'],
 };
 

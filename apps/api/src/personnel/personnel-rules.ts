@@ -62,6 +62,7 @@ export function assertIssuer(input: {
   issuerUserId: string;
   holderUserId: string;
   trainerOfCandidate: boolean;
+  decisionParticipantIds?: readonly string[];
 }): void {
   if (!input.roles.includes('COM_CERT')) {
     throw new PersonnelRuleError('ROLE_SEPARATION');
@@ -71,6 +72,9 @@ export function assertIssuer(input: {
   }
   if (input.trainerOfCandidate) {
     throw new PersonnelRuleError('TRAINER_CANNOT_ISSUE');
+  }
+  if ((input.decisionParticipantIds ?? []).includes(input.issuerUserId)) {
+    throw new PersonnelRuleError('FOUR_EYES');
   }
 }
 

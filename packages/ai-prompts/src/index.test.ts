@@ -21,6 +21,7 @@ test('getPromptBundleV1 rejects unknown prompt ID (fail closed)', () => {
 
 test('closed prompt ID list is complete', () => {
   assert.deepEqual([...AI_PROMPT_IDS_V1].sort(), [
+    'certification.assist',
     'chat.educational',
     'chat.support',
     'default',
@@ -45,9 +46,13 @@ test('fillTemplate rejects triple braces', () => {
 test('fillTemplate rejects unknown placeholder vs explicit allowlist', () => {
   assert.throws(
     () =>
-      fillTemplate('{{user_message}} {{evil}}', { user_message: 'a', evil: 'b' }, {
-        allowedPlaceholders: ['user_message'],
-      }),
+      fillTemplate(
+        '{{user_message}} {{evil}}',
+        { user_message: 'a', evil: 'b' },
+        {
+          allowedPlaceholders: ['user_message'],
+        },
+      ),
     /Unknown template placeholder/,
   );
 });

@@ -177,12 +177,31 @@ export async function issuePersonnelCertificate(
         enrolment: { userId: holderUserId },
       },
     });
+    const participants = new Set<string>([decision.decidedByUserId]);
+    const flowCase = await tx.professionalCase.findFirst({
+      where: { tenantId: input.tenantId, examResultId: decision.resultId },
+      include: { assessments: true, proposals: true },
+    });
+    if (flowCase) {
+      for (const assessment of flowCase.assessments) {
+        participants.add(assessment.memberUserId);
+      }
+      for (const proposal of flowCase.proposals) {
+        if (proposal.confirmedByUserId) {
+          participants.add(proposal.confirmedByUserId);
+        }
+      }
+    }
     assertIssuer({
       roles: input.actor.roles,
       issuerUserId: input.actor.userId,
       holderUserId,
       trainerOfCandidate: Boolean(trainer),
+      decisionParticipantIds: [...participants],
     });
+    if (!flowCase || (flowCase.phase !== 'APPROVED_FOR_ISSUANCE' && flowCase.phase !== 'ISSUED')) {
+      throw new PersonnelRuleError('CASE_NOT_ISSUABLE');
+    }
     const profile = await tx.userProfile.findUnique({
       where: { tenantId_userId: { tenantId: input.tenantId, userId: holderUserId } },
     });

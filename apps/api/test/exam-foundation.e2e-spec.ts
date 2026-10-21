@@ -2,12 +2,13 @@ import { type INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import type { Server } from 'node:http';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { PrismaClient } from '@confora/database';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
+import { openDelivery } from '../src/certification-flow/referee-delivery';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
 
 const IMAGE =
@@ -46,6 +47,7 @@ describe('certification exam foundation e2e', () => {
   const invigilatorId = randomUUID();
   const trainerId = randomUUID();
   const deciderId = randomUUID();
+  const issuerId = randomUUID();
   const sysadminId = randomUUID();
   const schemeId = randomUUID();
   const versionId = randomUUID();
@@ -59,6 +61,7 @@ describe('certification exam foundation e2e', () => {
   const otherSubject = 'exam-other';
   const trainerSubject = 'exam-trainer';
   const deciderSubject = 'exam-decider';
+  const issuerSubject = 'exam-issuer';
   const sysadminSubject = 'exam-sysadmin';
 
   let itemA = '';
@@ -137,6 +140,7 @@ describe('certification exam foundation e2e', () => {
       [invigilatorId, 'invigilator@exam.test', 'exam-invigilator'],
       [trainerId, 'trainer@exam.test', trainerSubject],
       [deciderId, 'decider@exam.test', deciderSubject],
+      [issuerId, 'issuer@exam.test', issuerSubject],
       [sysadminId, 'sysadmin@exam.test', sysadminSubject],
     ] as const;
     for (const [id, email] of people) {
@@ -668,7 +672,184 @@ describe('certification exam foundation e2e', () => {
       .post('/v1/committee/certificates')
       .set(auth(deciderSubject, ['COM_CERT']))
       .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
+      .expect(403);
+    const blocked = await request(httpServer(app))
+      .post('/v1/committee/certificates')
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
       .expect(400);
+    expect((blocked.body as { message: string }).message).toBe('CASE_NOT_ISSUABLE');
+    expect(await requirePrisma().credential.count({ where: { tenantId } })).toBe(0);
+    expect(await requirePrisma().attendanceCredentialLink.count({ where: { tenantId } })).toBe(0);
+    const result = await requirePrisma().certificationExamResult.findFirst({
+      where: { tenantId, id: passResultId },
+    });
+    expect(result?.provisional).toBe(false);
+
+    await requirePrisma().certificationSchemeVersion.update({
+      where: { tenantId_id: { tenantId, id: versionId } },
+      data: { lifecycle: 'PUBLISHED' },
+    });
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/levels`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        code: 'PRACTITIONER',
+        title: 'Practitioner',
+        rank: 1,
+        minExperienceMonths: 0,
+        requiresExamPass: true,
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/case-rules`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        votingQuorum: 1,
+        experienceMayFollowExam: true,
+        experienceMode: 'INDEPENDENT_REFERENCES',
+        referenceCount: 2,
+      })
+      .expect(201);
+    for (const userId of [trainerId, invigilatorId, authorId, approverId, deciderId, issuerId]) {
+      await request(httpServer(app))
+        .post(`/v1/staff/schemes/${versionId}/decision-makers`)
+        .set(auth(approverSubject, ['COM_TECH']))
+        .send({
+          userId,
+          competenceNote: 'Imenovan za šemu.',
+          authorisedFrom: '2020-01-01T00:00:00.000Z',
+          authorisedUntil: '2030-01-01T00:00:00.000Z',
+        })
+        .expect(201);
+    }
+    const direct = await request(httpServer(app))
+      .post('/v1/me/certification-cases')
+      .set(auth(otherSubject, ['USR_CAND']))
+      .send({
+        schemeVersionId: versionId,
+        path: 'DIRECT',
+        prerequisitesAcknowledged: true,
+        certificationApplicationId: otherApplicationId,
+        experienceMonths: 0,
+      })
+      .expect(201);
+    expect((direct.body as { trainingGates: boolean; path: string }).trainingGates).toBe(false);
+    expect((direct.body as { path: string }).path).toBe('DIRECT');
+    const educated = await request(httpServer(app))
+      .post('/v1/me/certification-cases')
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({
+        schemeVersionId: versionId,
+        path: 'CONFORA_EDUCATION',
+        prerequisitesAcknowledged: true,
+        certificationApplicationId: applicationId,
+        experienceMonths: 0,
+      })
+      .expect(201);
+    expect((educated.body as { trainingGates: boolean }).trainingGates).toBe(false);
+    const caseId = (educated.body as { caseId: string }).caseId;
+    await request(httpServer(app))
+      .post(`/v1/me/certification-cases/${caseId}/link-exam`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ resultId: passResultId })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/me/certification-cases/${caseId}/dossier`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ experienceMonths: 0 })
+      .expect(201);
+    const info = jest.spyOn(console, 'info').mockImplementation(() => undefined);
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      const requested = await request(httpServer(app))
+        .post(`/v1/me/certification-cases/${caseId}/referees`)
+        .set(auth(candidateSubject, ['USR_CAND']))
+        .send({
+          refereeName: 'Referent Test',
+          organization: 'Nezavisna kuća',
+          email: 'referee@exam.test',
+          requestedFacts: 'Trajanje angažmana.',
+        })
+        .expect(201);
+      expect(requested.body).not.toHaveProperty('token');
+      const outbox = await requirePrisma().messageOutbox.findFirst({
+        where: { tenantId, toAddress: 'referee@exam.test' },
+      });
+      expect(outbox?.body.startsWith('enc:v1:')).toBe(true);
+      const opened = openDelivery(outbox?.body ?? '');
+      const refereeToken = opened.split('/').pop() ?? '';
+      expect(refereeToken.length).toBeGreaterThan(20);
+      expect(JSON.stringify(requested.body)).not.toContain(refereeToken);
+      expect(outbox?.body).not.toContain(refereeToken);
+      expect(info.mock.calls.flat().join(' ')).not.toContain(refereeToken);
+      expect(logSpy.mock.calls.flat().join(' ')).not.toContain(refereeToken);
+      const confirmed = await request(httpServer(app))
+        .post(`/v1/public/referees/${encodeURIComponent(refereeToken)}`)
+        .send({ accept: true, confirmedFacts: 'Tačno.' })
+        .expect(201);
+      expect(JSON.stringify(confirmed.body)).not.toContain(refereeToken);
+      await request(httpServer(app))
+        .post(`/v1/public/referees/${encodeURIComponent(refereeToken)}`)
+        .send({ accept: true })
+        .expect(400);
+    } finally {
+      info.mockRestore();
+      logSpy.mockRestore();
+    }
+    const proposed = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ declaredConflictUserIds: [] })
+      .expect(201);
+    const slots = (
+      proposed.body as {
+        slots: { userId: string; state: string; exclusionReason: string | null }[];
+      }
+    ).slots;
+    expect(slots.find((slot) => slot.userId === trainerId)?.exclusionReason).toBe('TRAINER');
+    expect(slots.find((slot) => slot.userId === invigilatorId)?.exclusionReason).toBe('EXAMINER');
+    expect(slots.find((slot) => slot.userId === authorId)?.state).toBe('EXCLUDED');
+    expect(slots.find((slot) => slot.userId === authorId)?.exclusionReason).toBe('EXAMINER');
+    expect(slots.find((slot) => slot.userId === approverId)?.exclusionReason).toBe('EXAMINER');
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: authorId })
+      .expect(400);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: deciderId })
+      .expect(201);
+    const voted = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/votes`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ ballot: 'GRANT', reasoning: 'Kriterij Practitioner je ispunjen.' })
+      .expect(201);
+    expect((voted.body as { computedLevelCode: string }).computedLevelCode).toBe('PRACTITIONER');
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/issue-authorization`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({
+        holderDisplayName: 'Demo Kandidat',
+        registryConsent: false,
+        note: 'Administrativna provjera.',
+      })
+      .expect(403);
+    const suggestion = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/assist`)
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({ purpose: 'summary' })
+      .expect(201);
+    expect((suggestion.body as { suggestion: string }).suggestion).toContain('Prijedlog');
+    expect((suggestion.body as { decides: boolean }).decides).toBe(false);
+    const unverified = await request(httpServer(app))
+      .post('/v1/committee/certificates')
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
+      .expect(400);
+    expect((unverified.body as { message: string }).message).toBe('IDENTITY_UNVERIFIED');
     await requirePrisma().userProfile.create({
       data: {
         id: randomUUID(),
@@ -679,9 +860,148 @@ describe('certification exam foundation e2e', () => {
         identityVerificationState: 'VERIFIED',
       },
     });
+    const passDoc = await requirePrisma().examPassAttestation.findFirst({
+      where: { tenantId, resultId: passResultId },
+    });
+    expect(passDoc?.state).toBe('ISSUED');
+    expect(passDoc?.publicUid.startsWith('EXM-')).toBe(true);
+    if (!passDoc?.verificationId || !passDoc.publicUid || !passDoc.issuedAt) {
+      throw new Error('Exam pass was not stored.');
+    }
+    const verificationId = passDoc.verificationId;
+    const recordNumber = passDoc.publicUid;
+    const issuedOn = passDoc.issuedAt.toISOString().slice(0, 10);
+    expect(verificationId).not.toBe(recordNumber);
+    const enrolment = await requirePrisma().enrolment.findFirst({
+      where: { tenantId, userId: candidateId },
+    });
+    if (!enrolment) {
+      throw new Error('Enrolment was not stored.');
+    }
+    const eduVerificationId = randomBytes(32).toString('base64url');
+    const eduNumber = `EDU-2026-${randomUUID().slice(0, 4)}`;
+    await requirePrisma().educationCompletionDocument.create({
+      data: {
+        id: randomUUID(),
+        tenantId,
+        enrolmentId: enrolment.id,
+        holderUserId: candidateId,
+        publicUid: eduNumber,
+        verificationId: eduVerificationId,
+        courseTitle: 'Skriveni kurs',
+        participationSeconds: 3600,
+        statement: 'Interna izjava koja ne smije izaći.',
+        issuedAt: new Date('2026-10-21T00:00:00.000Z'),
+      },
+    });
+    const hiddenShape = {
+      status: 'INVALID',
+      documentType: null,
+      issuedAt: null,
+      holderName: null,
+    };
+    const byNumber = await request(httpServer(app))
+      .get(`/v1/public/documents/${recordNumber}`)
+      .expect(200);
+    const byUnknown = await request(httpServer(app))
+      .get(`/v1/public/documents/${randomUUID()}`)
+      .expect(200);
+    expect(byNumber.body).toEqual(hiddenShape);
+    expect(byUnknown.body).toEqual(hiddenShape);
+    const beforeConsent = await request(httpServer(app))
+      .get(`/v1/public/documents/${verificationId}`)
+      .expect(200);
+    expect(beforeConsent.body).toEqual({
+      status: 'VALID',
+      documentType: 'EXAM_PASS',
+      issuedAt: issuedOn,
+      holderName: null,
+    });
+    expect(JSON.stringify(beforeConsent.body)).not.toMatch(
+      /passed|statement|participation|položio|email|EXM-|Skriveni/i,
+    );
+    const educationHidden = await request(httpServer(app))
+      .get(`/v1/public/documents/${eduVerificationId}`)
+      .expect(200);
+    expect(educationHidden.body).toEqual({
+      status: 'VALID',
+      documentType: 'EDUCATION_COMPLETION',
+      issuedAt: '2026-10-21',
+      holderName: null,
+    });
+    expect(JSON.stringify(educationHidden.body)).not.toContain('Interna izjava');
+    expect(JSON.stringify(educationHidden.body)).not.toContain('3600');
+    const pdfBefore = await request(httpServer(app))
+      .get(`/v1/public/documents/${verificationId}/pdf`)
+      .expect(200);
+    expect(pdfBefore.headers['content-type']).toContain('application/pdf');
+    const pdfUnknown = await request(httpServer(app))
+      .get(`/v1/public/documents/${randomUUID()}/pdf`)
+      .expect(200);
+    expect(pdfUnknown.headers['content-type']).toContain('application/pdf');
+    await request(httpServer(app))
+      .put(`/v1/me/documents/${verificationId}/name-consent`)
+      .set(auth(otherSubject, ['USR_CAND']))
+      .send({ granted: true })
+      .expect(404);
+    await request(httpServer(app))
+      .put(`/v1/me/documents/${verificationId}/name-consent`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ granted: true })
+      .expect(200);
+    const named = await request(httpServer(app))
+      .get(`/v1/public/documents/${verificationId}`)
+      .expect(200);
+    expect(named.body).toEqual({
+      status: 'VALID',
+      documentType: 'EXAM_PASS',
+      issuedAt: issuedOn,
+      holderName: 'Demo Kandidat',
+    });
+    expect(JSON.stringify(named.body)).not.toMatch(/passed|položio|statement|participation/i);
+    const educationStillHidden = await request(httpServer(app))
+      .get(`/v1/public/documents/${eduVerificationId}`)
+      .expect(200);
+    expect((educationStillHidden.body as { holderName: string | null }).holderName).toBeNull();
+    await request(httpServer(app))
+      .put(`/v1/me/documents/${verificationId}/name-consent`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ granted: false })
+      .expect(200);
+    const revoked = await request(httpServer(app))
+      .get(`/v1/public/documents/${verificationId}`)
+      .expect(200);
+    expect(revoked.body).toEqual({
+      status: 'VALID',
+      documentType: 'EXAM_PASS',
+      issuedAt: issuedOn,
+      holderName: null,
+    });
+    const afterRevoke = await requirePrisma().examPassAttestation.findFirst({
+      where: { tenantId, id: passDoc.id },
+    });
+    expect(afterRevoke?.state).toBe('ISSUED');
+    expect(afterRevoke?.passed).toBe(true);
+    expect(afterRevoke?.nameConsentAt).toBeNull();
+    const miss = await requirePrisma().publicDocumentAccessLog.findFirst({
+      where: {
+        verificationKeyHash: createHash('sha256').update(recordNumber).digest('hex'),
+      },
+    });
+    expect(miss?.outcome).toBe('INVALID');
+    expect(miss?.tenantId).toBeNull();
+    const hit = await requirePrisma().publicDocumentAccessLog.findFirst({
+      where: {
+        tenantId,
+        verificationKeyHash: createHash('sha256').update(verificationId).digest('hex'),
+      },
+    });
+    expect(hit?.outcome).toBe('VALID');
+    expect(hit?.verificationKeyHash).not.toBe(verificationId);
+
     const issued = await request(httpServer(app))
       .post('/v1/committee/certificates')
-      .set(auth(deciderSubject, ['COM_CERT']))
+      .set(auth(issuerSubject, ['COM_CERT']))
       .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
       .expect(201);
     const issuedBody = issued.body as {
@@ -694,7 +1014,6 @@ describe('certification exam foundation e2e', () => {
     expect(issuedBody.certificateNumber).toMatch(/^CON-\d{4}-\d{4}$/);
     expect(issuedBody.attendanceLinked).toBe(false);
     expect(await requirePrisma().credential.count({ where: { tenantId } })).toBe(1);
-    expect(await requirePrisma().attendanceCredentialLink.count({ where: { tenantId } })).toBe(0);
     await request(httpServer(app))
       .post('/v1/committee/certificates')
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -763,10 +1082,6 @@ describe('certification exam foundation e2e', () => {
     expect(reminders.body).toEqual(
       expect.arrayContaining([expect.objectContaining({ kind: 'NINETY_DAYS' })]),
     );
-    const result = await requirePrisma().certificationExamResult.findFirst({
-      where: { tenantId, id: passResultId },
-    });
-    expect(result?.provisional).toBe(false);
 
     const events = await requirePrisma().auditEvent.findMany({
       where: { tenantId },

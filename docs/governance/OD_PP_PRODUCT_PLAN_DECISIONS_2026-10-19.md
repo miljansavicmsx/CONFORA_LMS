@@ -1,10 +1,10 @@
 # Odluke vlasnika — plan proizvoda CONFORA
 
 **Document ID:** CON-GOV-OD-PP-2026-10-19
-**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20; OD-PP-15 … OD-PP-18 accepted 2026-10-20
+**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20; OD-PP-15 … OD-PP-18 accepted 2026-10-20; OD-PP-19 … OD-PP-25 accepted 2026-10-21
 **Owner:** Miljan Savić, Repository Owner
 **Authority level:** Governance Hierarchy Level 1
-**Companion:** [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) Part F (OD-PP-01 … OD-PP-18)
+**Companion:** [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) Part F (OD-PP-01 … OD-PP-30)
 
 Ovaj zapis prenosi odluke koje je vlasnik odobrio u ovom zadatku: specifikaciju proizvoda, analizu razlika (uključujući „Zahtjevi za akreditaciju”) i analizu primjenjivosti standarda. Tekst standarda nije unesen u repozitorij. Zapis nije elektronski potpis niti dokaz akreditacije. Mapiranje na klauzulu nije tvrdnja o usaglašenosti.
 
@@ -449,3 +449,122 @@ Nadzornik dodijeljen sesiji upisuje vrstu isprave. Zapis ne sadrži broj isprave
 | Dependencies    | OD-PP-06, OD-PP-07                                                                                                                         |
 | Exit criteria   | Zahtjev sa ulogom `STAFF_SYSADM` na banku stavki, potvrdu identiteta i odluku biva odbijen                                                 |
 | Supersession    | Potvrđuje OD-PP-07 za ispitnu banku i odluku. Ne daje sistem-administratoru širi pristup.                                                  |
+
+---
+
+## OD-PP-19 — Tri različita dokumenta
+
+| Field           | Value                                                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                                   |
+| Status          | ACCEPTED                                                                                                                                                                                     |
+| Approved option | Potvrda o završetku edukacije, potvrda o rezultatu ispita i profesionalni certifikat nemaju isto značenje (ISO/IEC 17024:2026, 3.6). Svaki ima svoj model, prefiks, PDF i stranicu provjere. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                               |
+| Rationale       | Vrijeme učenja je dokaz učešća, ne kompetencije. Potvrda o ispitu nije profesionalna certifikacija.                                                                                          |
+| Scope           | EDU, EXM i CON dokumenti                                                                                                                                                                     |
+| Residual risk   | Javni prikaz imena uz broj i dalje traži odluku o pristanku.                                                                                                                                 |
+| Dependencies    | OD-PP-01, OD-PP-14                                                                                                                                                                           |
+| Exit criteria   | Tri dokumenta se izdaju zasebno                                                                                                                                                              |
+| Supersession    | Pojašnjava da potvrda o pohađanju i potvrda o ispitu nisu certifikat osoblja.                                                                                                                |
+
+---
+
+## OD-PP-20 — Osnovna prijava prije ispita
+
+| Field           | Value                                                                                                                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                          |
+| Status          | ACCEPTED                                                                                                                                                                            |
+| Approved option | Prije formalnog ispita osoba podnosi osnovnu prijavu (3.18, 3.19, 9.2). Podobnost se provjerava prema šemi. Dokaz iskustva može doći kasnije ako šema to dozvoli (napomena uz 8.2). |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                      |
+| Rationale       | Prijava i ispit nisu isti čin.                                                                                                                                                      |
+| Scope           | Faza ELIGIBILITY                                                                                                                                                                    |
+| Residual risk   | Zamrznuta prijava ostaje bez stranog ključa.                                                                                                                                        |
+| Dependencies    | OD-PP-04, OD-PP-19                                                                                                                                                                  |
+| Exit criteria   | Objavljena šema i priznati preduslovi otvaraju prijavu bez obavezne obuke                                                                                                           |
+| Supersession    | —                                                                                                                                                                                   |
+
+---
+
+## OD-PP-21 — Dosije i potvrda referenta
+
+| Field           | Value                                                                                                                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                                         |
+| Status          | ACCEPTED                                                                                                                                                                                           |
+| Approved option | Nakon prolaza kandidat kompletira prijavu i može pozvati referenta sigurnom vezom bez prijave. Potvrda ne ispunjava uslov. Tijelo ocjenjuje relevantnost i vjerodostojnost. Pošta ide kroz outbox. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                     |
+| Rationale       | Šema bira reference ili drugi provjerljiv dokaz.                                                                                                                                                   |
+| Scope           | Dokazi, potvrde referenata, outbox                                                                                                                                                                 |
+| Residual risk   | Pravi e-mail provajder nije izabran.                                                                                                                                                               |
+| Dependencies    | OD-PP-20                                                                                                                                                                                           |
+| Exit criteria   | Zapis ko, kada, šta i neslaganja; uslov ostaje neispunjen samom potvrdom                                                                                                                           |
+| Supersession    | —                                                                                                                                                                                                  |
+
+---
+
+## OD-PP-22 — Odbor i nivo iz kriterija
+
+| Field           | Value                                                                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                   |
+| Status          | ACCEPTED                                                                                                                                                                     |
+| Approved option | Tijelo imenuje odlučioce. Sistem predlaže sastav, isključuje trenera i ispitivača (9.4.4) i provjerava ovlaštenje. Čovjek potvrđuje. Nivo računaju kriteriji šeme (8.2–8.4). |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                               |
+| Rationale       | Odbor ne bira nivo slobodno.                                                                                                                                                 |
+| Scope           | Kriteriji nivoa, imenovani odlučioci, prijedlog i glasovi                                                                                                                    |
+| Residual risk   | Širi registar sukoba interesa nije poseban izvor.                                                                                                                            |
+| Dependencies    | OD-PP-07, OD-PP-21                                                                                                                                                           |
+| Exit criteria   | Trener i ispitivač su isključeni; važi najviši ispunjeni rang                                                                                                                |
+| Supersession    | —                                                                                                                                                                            |
+
+---
+
+## OD-PP-23 — Četiri oka prije izdavanja
+
+| Field           | Value                                                                                                                                                                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                                                                                                                    |
+| Status          | ACCEPTED                                                                                                                                                                                                                                                                      |
+| Approved option | Nakon pozitivne odluke predmet je APPROVED_FOR_ISSUANCE. Izdavanje odobrava osoba koja nije zapisala ni potvrdila odluku (9.4.7–9.4.9). Zatim sistem generiše, numeriše, potpisuje, upisuje registar, QR i obavještava nosioca. Isto važi za postojeće izdavanje nakon GRANT. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                                                                |
+| Rationale       | Odluka i izdavanje nisu isti čin.                                                                                                                                                                                                                                             |
+| Scope           | Ovlaštenje za izdavanje i postojeći endpoint izdavanja                                                                                                                                                                                                                        |
+| Residual risk   | Promjena statusa i prijedlog AMF-a nisu čin izdavanja.                                                                                                                                                                                                                        |
+| Dependencies    | OD-PP-22                                                                                                                                                                                                                                                                      |
+| Exit criteria   | Učesnik odluke ne može izdati; druga ovlaštena osoba može                                                                                                                                                                                                                     |
+| Supersession    | Sužava izdavanje: izdavalac ne smije biti učesnik odluke.                                                                                                                                                                                                                     |
+
+---
+
+## OD-PP-24 — Dva jednaka puta
+
+| Field           | Value                                                                                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Date            | 2026-10-21                                                                                                                                             |
+| Status          | ACCEPTED                                                                                                                                               |
+| Approved option | Put A je edukacija CONFORA pa certifikacija. Put B je izravna certifikacija bez te obuke (5.2.3). Isti certifikat i isti kriteriji. Obuka nije kapija. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                         |
+| Rationale       | Certifikacija ne smije biti uslovljena vlastitom obukom.                                                                                               |
+| Scope           | CONFORA_EDUCATION i DIRECT                                                                                                                             |
+| Residual risk   | Jednakovrijedan dokaz opisuje šema.                                                                                                                    |
+| Dependencies    | OD-PP-01, OD-PP-20                                                                                                                                     |
+| Exit criteria   | Put B prolazi i kad obuka nije završena                                                                                                                |
+| Supersession    | —                                                                                                                                                      |
+
+---
+
+## OD-PP-25 — AI samo kao pomoć
+
+| Field           | Value                                                                                                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                                              |
+| Status          | ACCEPTED                                                                                                                                                                                                |
+| Approved option | AI smije predložiti kompletnost, sažetak, nesaglasnosti, obrazloženje sastava i nacrt obavijesti. Prijedlog je označen, upisan i ne odlučuje. Nema pristup banci stavki. Bez ključa radi određeni stub. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                          |
+| Rationale       | Odluku donosi čovjek.                                                                                                                                                                                   |
+| Scope           | AiCaseSuggestion                                                                                                                                                                                        |
+| Residual risk   | Produkcijski provajder nije izabran.                                                                                                                                                                    |
+| Dependencies    | OD-PP-21, OD-PP-22                                                                                                                                                                                      |
+| Exit criteria   | Prijedlog ne mijenja fazu, nivo ni certifikat                                                                                                                                                           |
+| Supersession    | —                                                                                                                                                                                                       |

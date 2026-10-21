@@ -33,6 +33,34 @@ import {
   type ExamClient,
 } from './exam-tenant-store';
 import {
+  addEvidence,
+  assessReferee,
+  authorizeIssuance,
+  completeDossier,
+  confirmProposal,
+  confirmReferee,
+  linkExamResult,
+  listEducation,
+  listExamPasses,
+  listMyCases,
+  maybeIssueEducation,
+  maybeIssueExamPass,
+  openProfessionalCase,
+  proposeCommittee,
+  publicDocument,
+  publicDocumentPdf,
+  readApplicantCase,
+  setDocumentNameConsent,
+  readCommitteeCase,
+  recordVote,
+  releaseExamPass,
+  requestReferee,
+  saveCaseRule,
+  saveDecisionMaker,
+  saveLevel,
+  storeSuggestion,
+} from './certification-flow-store';
+import {
   addCpdRecord,
   changePersonnelStatus,
   holderCredential,
@@ -471,6 +499,66 @@ export class TenantPrismaService {
         now,
       }),
     statusList: () => revocationStatusList(this.prisma),
+  };
+
+  readonly flow = {
+    open: (input: Omit<Parameters<typeof openProfessionalCase>[1], 'tenantId'>) =>
+      openProfessionalCase(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    listMine: (userId: string) => listMyCases(this.prisma, this.requiredTenantId(), userId),
+    mineOne: (userId: string, caseId: string) =>
+      readApplicantCase(this.prisma, this.requiredTenantId(), userId, caseId),
+    committeeOne: (actor: Parameters<typeof readCommitteeCase>[2], caseId: string) =>
+      readCommitteeCase(this.prisma, this.requiredTenantId(), actor, caseId),
+    linkExam: (input: Omit<Parameters<typeof linkExamResult>[1], 'tenantId'>) =>
+      linkExamResult(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    addEvidence: (input: Omit<Parameters<typeof addEvidence>[1], 'tenantId'>) =>
+      addEvidence(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    completeDossier: (input: Omit<Parameters<typeof completeDossier>[1], 'tenantId'>) =>
+      completeDossier(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    requestReferee: (input: Omit<Parameters<typeof requestReferee>[1], 'tenantId'>) =>
+      requestReferee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    confirmReferee: (input: Parameters<typeof confirmReferee>[1]) =>
+      confirmReferee(this.prisma, input),
+    saveLevel: (input: Omit<Parameters<typeof saveLevel>[1], 'tenantId'>) =>
+      saveLevel(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    saveDecisionMaker: (input: Omit<Parameters<typeof saveDecisionMaker>[1], 'tenantId'>) =>
+      saveDecisionMaker(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    saveCaseRule: (input: Omit<Parameters<typeof saveCaseRule>[1], 'tenantId'>) =>
+      saveCaseRule(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    propose: (input: Omit<Parameters<typeof proposeCommittee>[1], 'tenantId'>) =>
+      proposeCommittee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    confirm: (input: Omit<Parameters<typeof confirmProposal>[1], 'tenantId'>) =>
+      confirmProposal(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    vote: (input: Omit<Parameters<typeof recordVote>[1], 'tenantId'>) =>
+      recordVote(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    assessReferee: (input: Omit<Parameters<typeof assessReferee>[1], 'tenantId'>) =>
+      assessReferee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    assist: (input: Omit<Parameters<typeof storeSuggestion>[1], 'tenantId'>) =>
+      storeSuggestion(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    authorize: (input: Omit<Parameters<typeof authorizeIssuance>[1], 'tenantId'>) =>
+      authorizeIssuance(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    releaseExamPass: (input: Omit<Parameters<typeof releaseExamPass>[1], 'tenantId'>) =>
+      releaseExamPass(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    education: (userId: string) => listEducation(this.prisma, this.requiredTenantId(), userId),
+    examPasses: (userId: string) => listExamPasses(this.prisma, this.requiredTenantId(), userId),
+    publicDocument: (input: { verificationId: string; sourceIp: string; now: Date }) =>
+      publicDocument(this.prisma, input),
+    publicPdf: (input: { verificationId: string; sourceIp: string; now: Date }) =>
+      publicDocumentPdf(this.prisma, input),
+    setNameConsent: (input: Omit<Parameters<typeof setDocumentNameConsent>[1], 'tenantId'>) =>
+      setDocumentNameConsent(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    noteEducation: (enrolmentId: string) =>
+      maybeIssueEducation(this.prisma, {
+        tenantId: this.requiredTenantId(),
+        enrolmentId,
+        now: new Date(),
+      }),
+    noteExamPass: (resultId: string) =>
+      maybeIssueExamPass(this.prisma, {
+        tenantId: this.requiredTenantId(),
+        resultId,
+        now: new Date(),
+      }),
   };
 
   private requiredTenantId(): string {

@@ -4,6 +4,8 @@
  * Not part of migrations. The ready session does not issue a credential.
  * A separate historical pass is already decided and issued for the public registry.
  */
+import { randomUUID } from 'node:crypto';
+
 import { PrismaClient } from '@prisma/client';
 
 import { signPersonnelCredential } from '../../apps/api/src/personnel/personnel-vc';
@@ -307,6 +309,7 @@ async function main(): Promise<void> {
   await seedIssuedPersonnelCertificate();
   await seedPendingGrant();
   await seedUndecidedResult();
+  await seedDistinctDocuments();
   await seedOidcLinks();
   console.log(
     'Exam demo seed stored a ready session without images, issued CON-2026-0001, and left one GRANT unissued.',
@@ -532,6 +535,216 @@ async function seedUndecidedResult(): Promise<void> {
   });
 }
 
+async function seedDistinctDocuments(): Promise<void> {
+  const issuerId = '1f1f1f1f-1f1f-4f1f-8f1f-1f1f1f1f1f1f';
+  await user(issuerId, 'exam-issuer@demo.confora.test');
+  const courseId = 'c1c1c1c1-c1c1-4c1c-8c1c-c1c1c1c1c1c1';
+  const chapterId = 'c2c2c2c2-c2c2-4c2c-8c2c-c2c2c2c2c2c2';
+  const lessonId = 'c3c3c3c3-c3c3-4c3c-8c3c-c3c3c3c3c3c3';
+  const enrolmentId = 'c4c4c4c4-c4c4-4c4c-8c4c-c4c4c4c4c4c4';
+  const progressId = 'c5c5c5c5-c5c5-4c5c-8c5c-c5c5c5c5c5c5';
+  const educationId = 'c6c6c6c6-c6c6-4c6c-8c6c-c6c6c6c6c6c6';
+  const examPassId = 'c7c7c7c7-c7c7-4c7c-8c7c-c7c7c7c7c7c7';
+  const caseId = 'c8c8c8c8-c8c8-4c8c-8c8c-c8c8c8c8c8c8';
+  const levelId = 'c9c9c9c9-c9c9-4c9c-8c9c-c9c9c9c9c9c9';
+  const ruleId = 'cb0cb0cb-cb00-4cb0-8cb0-cb0cb0cb0cb0';
+  await prisma.certificationSchemeVersion.update({
+    where: { tenantId_id: { tenantId, id: versionId } },
+    data: { lifecycle: 'PUBLISHED' },
+  });
+  await prisma.course.upsert({
+    where: { tenantId_id: { tenantId, id: courseId } },
+    create: {
+      id: courseId,
+      tenantId,
+      code: 'DIGCOMP-EDU',
+      title: 'Uvod u digitalnu kompetenciju',
+      description: 'Edukacija nije certifikat.',
+      areaCode: 'DIGCOMP',
+      language: 'bs',
+      priceAmount: '0.00',
+      priceCurrency: 'BAM',
+      authorUserId: authorId,
+      lifecycle: 'PUBLISHED',
+    },
+    update: { title: 'Uvod u digitalnu kompetenciju' },
+  });
+  await prisma.courseChapter.upsert({
+    where: { tenantId_id: { tenantId, id: chapterId } },
+    create: { id: chapterId, tenantId, courseId, sequence: 1, title: 'Osnove' },
+    update: { title: 'Osnove' },
+  });
+  await prisma.courseLesson.upsert({
+    where: { tenantId_id: { tenantId, id: lessonId } },
+    create: { id: lessonId, tenantId, chapterId, sequence: 1, title: 'Šta je kompetencija' },
+    update: { title: 'Šta je kompetencija' },
+  });
+  await prisma.enrolment.upsert({
+    where: { tenantId_id: { tenantId, id: enrolmentId } },
+    create: {
+      id: enrolmentId,
+      tenantId,
+      userId: candidateId,
+      courseId,
+      enrolledAt: new Date('2026-10-01T00:00:00.000Z'),
+      completedAt: new Date('2026-10-18T00:00:00.000Z'),
+    },
+    update: { completedAt: new Date('2026-10-18T00:00:00.000Z') },
+  });
+  await prisma.lessonProgress.upsert({
+    where: { tenantId_id: { tenantId, id: progressId } },
+    create: {
+      id: progressId,
+      tenantId,
+      enrolmentId,
+      lessonId,
+      timeSpentSeconds: 3600,
+      completedAt: new Date('2026-10-18T00:00:00.000Z'),
+    },
+    update: { timeSpentSeconds: 3600, completedAt: new Date('2026-10-18T00:00:00.000Z') },
+  });
+  const educationStatement =
+    'Ovo je potvrda o završetku edukacije. Utrošeno vrijeme je dokaz učešća, a ne dokaz kompetencije. Ovo nije profesionalni certifikat.';
+  await prisma.educationCompletionDocument.upsert({
+    where: { tenantId_id: { tenantId, id: educationId } },
+    create: {
+      id: educationId,
+      tenantId,
+      enrolmentId,
+      holderUserId: candidateId,
+      publicUid: 'EDU-2026-0001',
+      courseTitle: 'Uvod u digitalnu kompetenciju',
+      participationSeconds: 3600,
+      statement: educationStatement,
+      issuedAt: new Date('2026-10-18T00:00:00.000Z'),
+    },
+    update: { statement: educationStatement },
+  });
+  const examStatement = 'Ovo je potvrda o rezultatu ispita. Ovo NIJE profesionalna certifikacija.';
+  await prisma.examPassAttestation.upsert({
+    where: { tenantId_id: { tenantId, id: examPassId } },
+    create: {
+      id: examPassId,
+      tenantId,
+      resultId: issuedResultId,
+      holderUserId: candidateId,
+      publicUid: 'EXM-2026-0001',
+      state: 'ISSUED',
+      examTitle: 'Digitalna kompetencija — ispit',
+      passed: true,
+      autoIssued: true,
+      statement: examStatement,
+      issuedAt: new Date('2026-10-18T12:00:00.000Z'),
+    },
+    update: { state: 'ISSUED', statement: examStatement },
+  });
+  await prisma.schemeLevelCriterion.upsert({
+    where: { tenantId_id: { tenantId, id: levelId } },
+    create: {
+      id: levelId,
+      tenantId,
+      schemeVersionId: versionId,
+      code: 'PRACTITIONER',
+      title: 'Practitioner',
+      rank: 1,
+      minExperienceMonths: 0,
+      requiresExamPass: true,
+    },
+    update: { code: 'PRACTITIONER' },
+  });
+  await prisma.schemeCaseRule.upsert({
+    where: { tenantId_id: { tenantId, id: ruleId } },
+    create: {
+      id: ruleId,
+      tenantId,
+      schemeVersionId: versionId,
+      votingQuorum: 1,
+      experienceMayFollowExam: true,
+      experienceMode: 'INDEPENDENT_REFERENCES',
+      referenceCount: 2,
+    },
+    update: { votingQuorum: 1 },
+  });
+  await prisma.professionalCase.upsert({
+    where: { tenantId_id: { tenantId, id: caseId } },
+    create: {
+      id: caseId,
+      tenantId,
+      applicantUserId: candidateId,
+      schemeVersionId: versionId,
+      certificationApplicationId: applicationId,
+      path: 'DIRECT',
+      phase: 'APPROVED_FOR_ISSUANCE',
+      prerequisitesAcknowledgedAt: new Date('2026-10-10T00:00:00.000Z'),
+      experienceMonths: 12,
+      computedLevelCode: 'PRACTITIONER',
+      examResultId: pendingResultId,
+    },
+    update: { phase: 'APPROVED_FOR_ISSUANCE', path: 'DIRECT', computedLevelCode: 'PRACTITIONER' },
+  });
+  await prisma.userProfile.upsert({
+    where: { tenantId_userId: { tenantId, userId: candidateId } },
+    create: {
+      id: 'd1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1',
+      tenantId,
+      userId: candidateId,
+      givenName: 'Demo',
+      familyName: 'Kandidat',
+    },
+    update: { givenName: 'Demo', familyName: 'Kandidat' },
+  });
+  await prisma.caseEvidenceItem.upsert({
+    where: { tenantId_id: { tenantId, id: 'd0d0d0d0-d0d0-4d0d-8d0d-d0d0d0d0d0d0' } },
+    create: {
+      id: 'd0d0d0d0-d0d0-4d0d-8d0d-d0d0d0d0d0d0',
+      tenantId,
+      caseId,
+      kind: 'EXPERIENCE',
+      title: 'Projekat digitalne kompetencije',
+      summary: 'Dvanaest mjeseci rada.',
+    },
+    update: { title: 'Projekat digitalne kompetencije' },
+  });
+  await prisma.refereeConfirmation.upsert({
+    where: { tenantId_id: { tenantId, id: 'd2d2d2d2-d2d2-4d2d-8d2d-d2d2d2d2d2d2' } },
+    create: {
+      id: 'd2d2d2d2-d2d2-4d2d-8d2d-d2d2d2d2d2d2',
+      tenantId,
+      caseId,
+      refereeName: 'Ana Referent',
+      organization: 'Nezavisna organizacija',
+      email: 'ana@example.test',
+      tokenHash: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      expiresAt: new Date('2026-11-04T00:00:00.000Z'),
+      state: 'CONFIRMED',
+      requestedFacts: 'Rad na projektima digitalne kompetencije.',
+      confirmedFacts: 'Kandidat je radio dvanaest mjeseci.',
+      confirmedAt: new Date('2026-10-19T00:00:00.000Z'),
+    },
+    update: { state: 'CONFIRMED' },
+  });
+  const proposals = [
+    ['cc0cc0cc-cc00-4cc0-8cc0-cc0cc0cc0cc0', authorId, 'EXCLUDED', 'TRAINER'],
+    ['cd0cd0cd-cd00-4cd0-8cd0-cd0cd0cd0cd0', invigilatorId, 'EXCLUDED', 'EXAMINER'],
+    ['ce0ce0ce-ce00-4ce0-8ce0-ce0ce0ce0ce0', deciderId, 'CONFIRMED', null],
+  ] as const;
+  for (const [id, userId, state, reason] of proposals) {
+    await prisma.committeeProposal.upsert({
+      where: { tenantId_id: { tenantId, id } },
+      create: {
+        id,
+        tenantId,
+        caseId,
+        userId,
+        state,
+        exclusionReason: reason,
+        confirmedByUserId: state === 'CONFIRMED' ? deciderId : null,
+      },
+      update: { state, exclusionReason: reason },
+    });
+  }
+}
+
 async function seedOidcLinks(): Promise<void> {
   const issuer = process.env['EXAM_DEMO_OIDC_ISSUER'];
   if (!issuer) {
@@ -540,13 +753,22 @@ async function seedOidcLinks(): Promise<void> {
   const links = [
     ['a11a11a1-a11a-411a-811a-a11a11a11a11', candidateId, 'exam-candidate'],
     ['a22a22a2-a22a-422a-822a-a22a22a22a22', deciderId, 'exam-committee'],
+    ['a33a33a3-a33a-433a-833a-a33a33a33a33', '1f1f1f1f-1f1f-4f1f-8f1f-1f1f1f1f1f1f', 'exam-issuer'],
   ] as const;
-  for (const [id, userId, subject] of links) {
-    await prisma.externalIdentityLink.upsert({
+  for (const [, userId, subject] of links) {
+    const existing = await prisma.externalIdentityLink.findUnique({
       where: { tenantId_issuer_subject: { tenantId, issuer, subject } },
-      create: { id, tenantId, userId, issuer, subject },
-      update: { userId },
     });
+    if (existing) {
+      await prisma.externalIdentityLink.update({
+        where: { id: existing.id },
+        data: { userId },
+      });
+    } else {
+      await prisma.externalIdentityLink.create({
+        data: { id: randomUUID(), tenantId, userId, issuer, subject },
+      });
+    }
   }
 }
 

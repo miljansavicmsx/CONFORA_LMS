@@ -141,7 +141,7 @@ function CertificateIssuancePanel(): JSX.Element {
       <div>
         <h2 id="issuance-heading" className="text-lg font-semibold">Izdavanje certifikata osoblja</h2>
         <p className="mt-2 text-sm text-text-secondary">
-          Ovlaštena osoba izdaje certifikat tek nakon odluke GRANT. Valjanost je tri godine. Pristanak određuje da li se ime pojavljuje u pretrazi registra.
+          Ovlaštena osoba izdaje certifikat tek nakon odluke GRANT. Osoba koja je zapisala ili potvrdila odluku ne smije izdati certifikat. Valjanost je tri godine. Pristanak određuje da li se ime pojavljuje u pretrazi registra.
         </p>
       </div>
       <form

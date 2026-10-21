@@ -46,6 +46,15 @@ describe('personnel certificate rules', () => {
         trainerOfCandidate: true,
       });
     }).toThrow('TRAINER_CANNOT_ISSUE');
+    expect(() => {
+      assertIssuer({
+        roles: ['COM_CERT'],
+        issuerUserId: 'decider',
+        holderUserId: 'candidate',
+        trainerOfCandidate: false,
+        decisionParticipantIds: ['decider'],
+      });
+    }).toThrow('FOUR_EYES');
   });
 
   it('signs an Open Badge and sets a revocation bit', () => {

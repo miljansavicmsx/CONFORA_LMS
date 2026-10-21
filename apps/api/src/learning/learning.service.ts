@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 import type { AuthenticatedActor } from '../auth/request-principal';
@@ -110,6 +111,22 @@ export class LearningService {
         analyticsConsent: result.analyticsConsent,
       },
     });
+    try {
+      const issued = await this.tenantPrisma.flow.noteEducation(enrolmentId);
+      if (issued) {
+        await this.audit.append(actor, {
+          idempotencyKey: randomUUID(),
+          eventType: 'EDUCATION_DOCUMENT_ISSUED',
+          outcome: 'SUCCESS',
+          occurredAt: now,
+          resourceType: 'EducationCompletionDocument',
+          resourceId: issued.documentId,
+          metadata: { caseId: enrolmentId, documentNumber: issued.publicUid, phase: 'ISSUED' },
+        });
+      }
+    } catch {
+      /* A completion document must not undo recorded progress. */
+    }
     return result;
   }
 
