@@ -94,10 +94,10 @@
       "prettier --write"
     ],
     "apps/**/*.{ts,tsx}": [
-      "eslint --fix --max-warnings 0 --no-warn-ignored"
+      "eslint --fix --max-warnings 0"
     ],
     "packages/**/*.{ts,tsx}": [
-      "eslint --fix --max-warnings 0 --no-warn-ignored"
+      "eslint --fix --max-warnings 0"
     ]
   },
   "devDependencies": {
