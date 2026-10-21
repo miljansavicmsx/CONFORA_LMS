@@ -28,8 +28,8 @@ describe('JwtStrategy cryptographic and claim contract', () => {
   const { privateKey, publicKey } = generateKeyPairSync('rsa', {
     modulusLength: 2048,
   });
-  const privatePem = privateKey.export({ type: 'pkcs8', format: 'pem' }) as string;
-  const publicPem = publicKey.export({ type: 'spki', format: 'pem' }) as string;
+  const privatePem = privateKey.export({ type: 'pkcs8', format: 'pem' });
+  const publicPem = publicKey.export({ type: 'spki', format: 'pem' });
   const tenantId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
   const subject = 'opaque-keycloak-sub-001';
 

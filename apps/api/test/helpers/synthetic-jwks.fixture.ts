@@ -17,7 +17,7 @@ export function importJWK(jwk: Record<string, unknown>, _alg?: string): Promise<
 }
 
 export function exportSPKI(key: KeyObject): Promise<string> {
-  return Promise.resolve(key.export({ type: 'spki', format: 'pem' }) as string);
+  return Promise.resolve(key.export({ type: 'spki', format: 'pem' }));
 }
 
 export type SyntheticJwksFixture = Readonly<{
@@ -59,11 +59,11 @@ export async function startSyntheticJwksFixture(options?: {
   const privateKeyPem = privateKey.export({
     type: 'pkcs8',
     format: 'pem',
-  }) as string;
+  });
   const publicKeyPem = publicKey.export({
     type: 'spki',
     format: 'pem',
-  }) as string;
+  });
 
   let kid = `bar-p03-${randomUUID()}`;
   let currentPublicPem = publicKeyPem;
@@ -140,7 +140,7 @@ export async function startSyntheticJwksFixture(options?: {
       currentPublicPem = rotated.publicKey.export({
         type: 'spki',
         format: 'pem',
-      }) as string;
+      });
       kid = `bar-p03-rotated-${randomUUID()}`;
     },
     stop: () =>

@@ -6,8 +6,8 @@ type SkipToMainLinkBaseProps = Parameters<typeof SkipToMainLink>[0];
 import { useMemo, type ReactNode } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 
-import { createConforaI18n, type CreateConforaI18nOptions } from './create-i18n.js';
-import { A11Y_NS, AUTH_NS, CANDIDATE_PORTAL_NS, CERTIFICATION_STAFF_NS, SHELL_NS, type SupportedLocale } from './keys.js';
+import { createConforaI18n } from './create-i18n.js';
+import { A11Y_NS, type SupportedLocale } from './keys.js';
 
 export type ConforaI18nProviderProps = {
   readonly children: ReactNode;

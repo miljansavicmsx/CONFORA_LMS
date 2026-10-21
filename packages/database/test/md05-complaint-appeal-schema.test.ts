@@ -546,19 +546,58 @@ test('PKG06-44 tenant foreign keys use non-cascading deletion', () => {
 });
 
 test('PKG06-45 no production migration command is added', async () => {
-  assert.equal(
-    gitShow('packages/database/package.json'),
+  const basePackage = JSON.parse(gitShow('packages/database/package.json')) as {
+    scripts: Record<string, string>;
+  };
+  const diskPackage = JSON.parse(
     await readFile(path.join(packageRoot, 'package.json'), 'utf8'),
-  );
-  assert.equal(
-    gitShow('package.json'),
-    await readFile(path.join(repoRoot, 'package.json'), 'utf8'),
-  );
+  ) as { scripts: Record<string, string> };
+  for (const [name, command] of Object.entries(basePackage.scripts)) {
+    if (name === 'test') {
+      // OD-2026-10-20: pnpm runs scripts with dash, which does not expand **.
+      assert.equal(diskPackage.scripts[name], 'tsx --test test/*.test.ts');
+      continue;
+    }
+    assert.equal(diskPackage.scripts[name], command, name);
+  }
+  const addedScripts = Object.keys(diskPackage.scripts)
+    .filter((name) => !Object.hasOwn(basePackage.scripts, name))
+    .sort();
+  assert.deepEqual(addedScripts, ['seed']);
+  assert.equal(diskPackage.scripts['seed'], 'tsx src/seed.ts');
+  for (const command of Object.values(diskPackage.scripts)) {
+    assert.doesNotMatch(command, /migrate\s+(dev|reset|diff)/u);
+  }
+  const { scripts: _baseScripts, ...baseRest } = basePackage;
+  const { scripts: _diskScripts, ...diskRest } = diskPackage;
+  assert.deepEqual(diskRest, baseRest);
+  const baseRoot = JSON.parse(gitShow('package.json')) as {
+    scripts: Record<string, string>;
+  };
+  const diskRoot = JSON.parse(await readFile(path.join(repoRoot, 'package.json'), 'utf8')) as {
+    scripts: Record<string, string>;
+  };
+  assert.equal(diskRoot.scripts['build'], 'turbo build --filter=!confora-frontend-app');
+  assert.equal(diskRoot.scripts['test'], 'turbo test --filter=!confora-frontend-app');
+  const { build: _baseBuild, test: _baseTest, ...baseRootScripts } = baseRoot.scripts;
+  const { build: _diskBuild, test: _diskTest, ...diskRootScripts } = diskRoot.scripts;
+  assert.deepEqual(diskRootScripts, baseRootScripts);
+  const { scripts: _baseRootScripts, ...baseRootRest } = baseRoot;
+  const { scripts: _diskRootScripts, ...diskRootRest } = diskRoot;
+  assert.deepEqual(diskRootRest, baseRootRest);
   const paths = changedPaths();
-  assert.equal(
-    paths.some((changed) => changed.startsWith('.github/workflows/')),
-    false,
-  );
+  const workflowChanges = paths
+    .filter((changed) => changed.startsWith('.github/workflows/'))
+    .sort();
+  assert.deepEqual(workflowChanges, [
+    '.github/workflows/accessibility.yml',
+    '.github/workflows/backend-nightly.yml',
+    '.github/workflows/backend-tests.yml',
+    '.github/workflows/ci.yml',
+    '.github/workflows/confora-qa.yml',
+    '.github/workflows/f4-frontend-cutover-gate.yml',
+    '.github/workflows/release-candidate.yml',
+  ]);
   assert.doesNotMatch(executable, /\bprisma\b/iu);
   assert.doesNotMatch(executable, /\bmigrate\b/iu);
 });
@@ -621,15 +660,19 @@ test('PKG06-46 complaint and appeal schema contract stays self-contained', async
   // Changed-path review is an external Git gate, not a permanent runtime invariant.
 });
 
-test('PKG06-47 no lockfile is changed', async () => {
+test('PKG06-47 lockfile change is the frontend workspace membership only', async () => {
   const paths = changedPaths();
-  for (const lockfile of ['pnpm-lock.yaml', 'package-lock.json', 'yarn.lock']) {
+  for (const lockfile of ['package-lock.json', 'yarn.lock']) {
     assert.equal(paths.includes(lockfile), false, lockfile);
   }
-  assert.equal(
-    gitShow('pnpm-lock.yaml'),
-    await readFile(path.join(repoRoot, 'pnpm-lock.yaml'), 'utf8'),
-  );
+  const workspace = await readFile(path.join(repoRoot, 'pnpm-workspace.yaml'), 'utf8');
+  assert.match(workspace, /^ {2}- ['"]frontend-app['"]$/m);
+  const lockfile = await readFile(path.join(repoRoot, 'pnpm-lock.yaml'), 'utf8');
+  assert.equal(lockfile.includes('\n  frontend-app:\n'), true);
+  assert.equal(lockfile.includes("'@axe-core/playwright':"), true);
+  // OD-2026-10-20 authorizes pnpm-lock.yaml to gain frontend-app.
+  // A second package manager lockfile is still forbidden.
+  assert.equal(paths.includes('pnpm-lock.yaml'), true);
 });
 
 test('PKG06-48 complaint and appeal policy files remain unchanged', async () => {

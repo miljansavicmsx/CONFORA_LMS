@@ -249,7 +249,7 @@ describe('BAR-P08 reports module e2e', () => {
     clearThrottle();
   });
 
-  it('P08_TEST_005/006 exact production route inventory', () => {
+  it('P08_TEST_005/006 exact production route inventory includes MD05 role administration', () => {
     const adapter = requireApp(app).getHttpAdapter();
     const instance = adapter.getInstance() as {
       _router?: { stack?: Array<{ route?: { path: string; methods: Record<string, boolean> } }> };
