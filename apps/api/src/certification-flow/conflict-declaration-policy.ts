@@ -8,16 +8,26 @@ export type ConflictDeclarationDecision =
   | { readonly action: 'unchanged' }
   | { readonly action: 'deny'; readonly code: 'CONFLICT_CLEARANCE_REQUIRED' };
 
+/** Committee chair designation and the canonical quality-manager role may clear a conflict. */
+export const CONFLICT_CLEARANCE_ROLES = ['COMMITTEE_CHAIR', 'QUALITY_MANAGER'] as const;
+
+export function isDesignatedConflictClearer(roles: readonly string[]): boolean {
+  return CONFLICT_CLEARANCE_ROLES.some((role) => roles.includes(role));
+}
+
 /**
  * Declarations are append-only.
  * The subject may move from no conflict to conflict.
- * Clearing a conflict requires a different person from both the subject and the recorder.
+ * Clearing a conflict requires a designated role (committee chair or quality manager)
+ * who is not the declaring member, not the recorder, and has no conflict of their own.
  */
 export function decideConflictDeclaration(input: {
   readonly actorUserId: string;
   readonly subjectUserId: string;
   readonly hasConflict: boolean;
   readonly latest: ConflictDeclarationState | null;
+  readonly designatedClearer: boolean;
+  readonly actorHasConflict: boolean;
 }): ConflictDeclarationDecision {
   const self = input.actorUserId === input.subjectUserId;
   const latest = input.latest;
@@ -34,9 +44,9 @@ export function decideConflictDeclaration(input: {
     return { action: 'append', reason: 'conflict' };
   }
   const clearing = latest.hasConflict && !input.hasConflict;
-  const secondPerson =
+  const independent =
     input.actorUserId !== input.subjectUserId && input.actorUserId !== latest.recordedByUserId;
-  if (clearing && secondPerson) {
+  if (clearing && independent && input.designatedClearer && !input.actorHasConflict) {
     return { action: 'append', reason: 'conflict-cleared' };
   }
   return { action: 'deny', code: 'CONFLICT_CLEARANCE_REQUIRED' };

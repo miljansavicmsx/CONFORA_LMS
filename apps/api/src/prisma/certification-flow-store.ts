@@ -3,7 +3,10 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { Prisma } from '@confora/database';
 
 import type { CaseSuggestionPurpose } from '../certification-flow/case-suggestions';
-import { decideConflictDeclaration } from '../certification-flow/conflict-declaration-policy';
+import {
+  decideConflictDeclaration,
+  isDesignatedConflictClearer,
+} from '../certification-flow/conflict-declaration-policy';
 import {
   assertFourEyes,
   assertRole,
@@ -102,6 +105,22 @@ async function assertConflictCleared(
   }
   if (row.hasConflict) {
     throw new FlowRuleError('CONFLICT_DECLARED');
+  }
+}
+
+/** Assignment is a proposal that has not been excluded. Missing and excluded slots are refused. */
+async function assertAssigned(
+  client: FlowClient,
+  tenantId: string,
+  caseId: string,
+  userId: string,
+): Promise<void> {
+  const slot = await client.committeeProposal.findFirst({
+    where: { tenantId, caseId, userId, state: { not: 'EXCLUDED' } },
+    select: { id: true },
+  });
+  if (!slot) {
+    throw new FlowRuleError('NOT_ASSIGNED');
   }
 }
 
@@ -396,6 +415,7 @@ export async function readCommitteeCase(
   caseId: string,
 ) {
   assertRole(actor.roles, 'COM_CERT');
+  await assertAssigned(client, tenantId, caseId, actor.userId);
   await assertConflictCleared(client, tenantId, caseId, actor.userId);
   const row = await loadCase(client, tenantId, caseId);
   return present(row, await examPassedFor(client, tenantId, row.examResultId));
@@ -431,6 +451,7 @@ export async function signConflictDeclaration(
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
   await loadCase(client, input.tenantId, input.caseId);
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   const subjectUserId = input.subjectUserId ?? input.actor.userId;
   const latest = await latestConflictDeclaration(
     client,
@@ -438,10 +459,16 @@ export async function signConflictDeclaration(
     input.caseId,
     subjectUserId,
   );
+  const actorLatest =
+    input.actor.userId === subjectUserId
+      ? latest
+      : await latestConflictDeclaration(client, input.tenantId, input.caseId, input.actor.userId);
   const decision = decideConflictDeclaration({
     actorUserId: input.actor.userId,
     subjectUserId,
     hasConflict: input.hasConflict,
+    designatedClearer: isDesignatedConflictClearer(input.actor.roles),
+    actorHasConflict: actorLatest?.hasConflict === true,
     latest: latest
       ? { hasConflict: latest.hasConflict, recordedByUserId: latest.recordedByUserId }
       : null,
@@ -564,6 +591,7 @@ export async function completeDossier(
     where: { tenantId_id: { tenantId: input.tenantId, id: row.id } },
     data: { phase: 'COMMITTEE', experienceMonths: input.experienceMonths },
   });
+  await ensureCommitteeAssignments(client, input.tenantId, row, new Date());
   return { caseId: row.id, phase: 'COMMITTEE' as const };
 }
 
@@ -677,6 +705,7 @@ export async function assessReferee(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const referee = await client.refereeConfirmation.findFirst({
     where: { tenantId: input.tenantId, id: input.refereeId, caseId: input.caseId },
@@ -696,6 +725,84 @@ export async function assessReferee(
   return { refereeId: referee.id, requirementsSatisfied: requirementsSatisfiedByReferee() };
 }
 
+async function writeCommitteeProposals(
+  client: FlowClient,
+  input: {
+    tenantId: string;
+    row: LoadedCase;
+    declaredConflictUserIds: readonly string[];
+    now: Date;
+  },
+) {
+  const makers = await client.schemeDecisionMaker.findMany({
+    where: { tenantId: input.tenantId, schemeVersionId: input.row.schemeVersionId },
+  });
+  const trainers = await client.enrolmentTrainer.findMany({
+    where: { tenantId: input.tenantId, enrolment: { userId: input.row.applicantUserId } },
+  });
+  const examinerIds: string[] = [];
+  if (input.row.examResultId) {
+    const result = await client.certificationExamResult.findFirst({
+      where: { tenantId: input.tenantId, id: input.row.examResultId },
+      include: { session: true },
+    });
+    if (result) {
+      examinerIds.push(result.session.invigilatorUserId);
+    }
+  }
+  const slots = [];
+  for (const maker of makers) {
+    const authorised =
+      maker.authorisedFrom.getTime() <= input.now.getTime() &&
+      maker.authorisedUntil.getTime() >= input.now.getTime();
+    const reason = exclusionReason({
+      userId: maker.userId,
+      candidateUserId: input.row.applicantUserId,
+      trainerUserIds: trainers.map((trainer) => trainer.trainerUserId),
+      examinerUserIds: examinerIds,
+      conflictUserIds: input.declaredConflictUserIds,
+      authorised,
+    });
+    await client.committeeProposal.create({
+      data: {
+        id: randomUUID(),
+        tenantId: input.tenantId,
+        caseId: input.row.id,
+        userId: maker.userId,
+        state: reason ? 'EXCLUDED' : 'PROPOSED',
+        exclusionReason: reason,
+      },
+    });
+    slots.push({
+      userId: maker.userId,
+      state: reason ? ('EXCLUDED' as const) : ('PROPOSED' as const),
+      exclusionReason: reason,
+    });
+  }
+  return slots;
+}
+
+/** First slots are created when the case reaches the committee, before any member acts. */
+async function ensureCommitteeAssignments(
+  client: FlowClient,
+  tenantId: string,
+  row: LoadedCase,
+  now: Date,
+): Promise<void> {
+  const existing = await client.committeeProposal.count({
+    where: { tenantId, caseId: row.id },
+  });
+  if (existing > 0) {
+    return;
+  }
+  await writeCommitteeProposals(client, {
+    tenantId,
+    row,
+    declaredConflictUserIds: [],
+    now,
+  });
+}
+
 export async function proposeCommittee(
   client: FlowClient,
   input: {
@@ -707,60 +814,21 @@ export async function proposeCommittee(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const row = await loadCase(client, input.tenantId, input.caseId);
   if (row.phase !== 'COMMITTEE' && row.phase !== 'APPROVED_FOR_ISSUANCE') {
     throw new FlowRuleError('NOT_IN_COMMITTEE');
   }
-  const makers = await client.schemeDecisionMaker.findMany({
-    where: { tenantId: input.tenantId, schemeVersionId: row.schemeVersionId },
-  });
-  const trainers = await client.enrolmentTrainer.findMany({
-    where: { tenantId: input.tenantId, enrolment: { userId: row.applicantUserId } },
-  });
-  const examinerIds: string[] = [];
-  if (row.examResultId) {
-    const result = await client.certificationExamResult.findFirst({
-      where: { tenantId: input.tenantId, id: row.examResultId },
-      include: { session: true },
-    });
-    if (result) {
-      examinerIds.push(result.session.invigilatorUserId);
-    }
-  }
   await client.committeeProposal.deleteMany({
     where: { tenantId: input.tenantId, caseId: row.id },
   });
-  const slots = [];
-  for (const maker of makers) {
-    const authorised =
-      maker.authorisedFrom.getTime() <= input.now.getTime() &&
-      maker.authorisedUntil.getTime() >= input.now.getTime();
-    const reason = exclusionReason({
-      userId: maker.userId,
-      candidateUserId: row.applicantUserId,
-      trainerUserIds: trainers.map((trainer) => trainer.trainerUserId),
-      examinerUserIds: examinerIds,
-      conflictUserIds: input.declaredConflictUserIds,
-      authorised,
-    });
-    const id = randomUUID();
-    await client.committeeProposal.create({
-      data: {
-        id,
-        tenantId: input.tenantId,
-        caseId: row.id,
-        userId: maker.userId,
-        state: reason ? 'EXCLUDED' : 'PROPOSED',
-        exclusionReason: reason,
-      },
-    });
-    slots.push({
-      userId: maker.userId,
-      state: reason ? 'EXCLUDED' : 'PROPOSED',
-      exclusionReason: reason,
-    });
-  }
+  const slots = await writeCommitteeProposals(client, {
+    tenantId: input.tenantId,
+    row,
+    declaredConflictUserIds: input.declaredConflictUserIds,
+    now: input.now,
+  });
   return { caseId: row.id, slots };
 }
 
@@ -769,6 +837,7 @@ export async function confirmProposal(
   input: { tenantId: string; actor: Actor; caseId: string; memberUserId: string },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const slot = await client.committeeProposal.findFirst({
     where: { tenantId: input.tenantId, caseId: input.caseId, userId: input.memberUserId },
@@ -823,6 +892,7 @@ export async function recordVote(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const row = await loadCase(client, input.tenantId, input.caseId);
   const slot = row.proposals.find((proposal) => proposal.userId === input.actor.userId);
@@ -930,6 +1000,7 @@ export async function authorizeIssuance(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const row = await loadCase(client, input.tenantId, input.caseId);
   if (row.phase !== 'APPROVED_FOR_ISSUANCE' && row.phase !== 'ISSUED') {
@@ -980,6 +1051,7 @@ export async function assistFacts(
   input: { tenantId: string; actor: Actor; caseId: string },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const row = await loadCase(client, input.tenantId, input.caseId);
   const facts = [
@@ -1006,6 +1078,7 @@ export async function persistSuggestion(
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
+  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
   await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const row = await loadCase(client, input.tenantId, input.caseId);
   const id = randomUUID();

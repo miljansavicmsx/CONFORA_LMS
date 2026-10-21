@@ -133,8 +133,8 @@ describe('AI gateway', () => {
     expect(order).toEqual(['reserve:3:2', 'DENIED']);
   });
 
-  it('releases the reservation and audits FAILURE when the provider throws', async () => {
-    const records: string[] = [];
+  it('audits FAILURE before releasing the reservation when the provider throws', async () => {
+    const order: string[] = [];
     const released: number[] = [];
     const failing: AiProvider = {
       id: 'deterministic-stub',
@@ -148,17 +148,41 @@ describe('AI gateway', () => {
         provider: failing,
         reserve: () => Promise.resolve(true),
         release: (units, costMinor) => {
+          order.push('release');
           released.push(units, costMinor);
           return Promise.resolve();
         },
         record: (entry) => {
-          records.push(entry.outcome);
+          order.push(entry.outcome);
           expect(entry.costMinor).toBeGreaterThan(0);
           return Promise.resolve();
         },
       }),
     ).rejects.toThrow('PROVIDER_DOWN');
+    expect(order).toEqual(['FAILURE', 'release']);
     expect(released).toEqual([3, quoteAiCost('deterministic-stub', 2, 1)]);
+  });
+
+  it('keeps the FAILURE audit when releasing the reservation throws', async () => {
+    const records: string[] = [];
+    const failing: AiProvider = {
+      id: 'deterministic-stub',
+      model: 'deterministic-stub',
+      plan: () => ({ promptUnits: 2, completionUnits: 1 }),
+      complete: () => Promise.reject(new Error('PROVIDER_DOWN')),
+    };
+    await expect(
+      completeAiUse({
+        request,
+        provider: failing,
+        reserve: () => Promise.resolve(true),
+        release: () => Promise.reject(new Error('RELEASE_FAILED')),
+        record: (entry) => {
+          records.push(entry.outcome);
+          return Promise.resolve();
+        },
+      }),
+    ).rejects.toThrow('RELEASE_FAILED');
     expect(records).toEqual(['FAILURE']);
   });
 

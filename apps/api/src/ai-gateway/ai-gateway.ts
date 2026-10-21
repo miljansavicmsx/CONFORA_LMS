@@ -38,7 +38,8 @@ export type AiUseRecord = {
  * Single completion entry. Callers never talk to a provider.
  * Cost comes from the model price table. The budget reservation is taken before the provider call
  * and released or reduced to the actual quote afterwards.
- * A provider exception is audited as FAILURE and then rethrown.
+ * A provider exception is audited as FAILURE before the reservation is released, then rethrown.
+ * The failure entry is written even when releasing the reservation throws.
  * The result cannot carry a decision: humanValidationRequired stays true and decides stays false.
  */
 export async function completeAiUse(input: {
@@ -85,7 +86,6 @@ export async function completeAiUse(input: {
       prompt: input.request.prompt,
     });
   } catch (error) {
-    await input.release(reservedUnits, reservedCost);
     await input.record({
       useId,
       outcome: 'FAILURE',
@@ -95,6 +95,7 @@ export async function completeAiUse(input: {
       completionUnits: planned.completionUnits,
       costMinor: reservedCost,
     });
+    await input.release(reservedUnits, reservedCost);
     throw error;
   }
   const actualCost = quoteAiCost(raw.model, raw.promptUnits, raw.completionUnits);

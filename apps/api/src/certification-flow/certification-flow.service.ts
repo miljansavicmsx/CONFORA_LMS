@@ -20,6 +20,7 @@ const DENIED = new Set([
   'CONFLICT_UNSIGNED',
   'CONFLICT_DECLARED',
   'CONFLICT_CLEARANCE_REQUIRED',
+  'NOT_ASSIGNED',
 ]);
 
 function fail(error: unknown): never {

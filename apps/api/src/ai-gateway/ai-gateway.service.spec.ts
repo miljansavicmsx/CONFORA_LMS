@@ -13,15 +13,27 @@ jest.mock('./ai-provider', () => ({
 }));
 
 describe('AiGatewayService provider failure', () => {
-  it('writes a FAILURE audit entry and rethrows the provider error', async () => {
-    const audits: Array<{ outcome: string; metadata: { costMinor: number } }> = [];
-    const released: number[] = [];
+  const actor = { userId: '11111111-1111-4111-8111-111111111111' } as AuthenticatedActor;
+  const request = {
+    purpose: 'summary',
+    dataCategory: 'case_summary',
+    system: 'Pomoć.',
+    prompt: 'Činjenice.',
+  };
+
+  function serviceFor(input: {
+    order: string[];
+    audits: Array<{ outcome: string; metadata: { costMinor: number } }>;
+    released: number[];
+    release: () => Promise<void>;
+  }): AiGatewayService {
     const tenantPrisma = {
       aiBudget: {
         reserve: () => Promise.resolve(true),
         release: (_now: Date, units: number, costMinor: number) => {
-          released.push(units, costMinor);
-          return Promise.resolve();
+          input.order.push('release');
+          input.released.push(units, costMinor);
+          return input.release();
         },
       },
     };
@@ -30,26 +42,46 @@ describe('AiGatewayService provider failure', () => {
         _actor: AuthenticatedActor,
         event: { outcome: string; metadata: { costMinor: number } },
       ) => {
-        audits.push(event);
+        input.order.push(event.outcome);
+        input.audits.push(event);
         return Promise.resolve();
       },
     };
-    const service = new AiGatewayService(
+    return new AiGatewayService(
       tenantPrisma as unknown as TenantPrismaService,
       audit as unknown as AuditService,
     );
-    const actor = { userId: '11111111-1111-4111-8111-111111111111' } as AuthenticatedActor;
-    await expect(
-      service.complete(actor, {
-        purpose: 'summary',
-        dataCategory: 'case_summary',
-        system: 'Pomoć.',
-        prompt: 'Činjenice.',
-      }),
-    ).rejects.toThrow('PROVIDER_DOWN');
+  }
+
+  it('writes a FAILURE audit entry before release and rethrows the provider error', async () => {
+    const order: string[] = [];
+    const audits: Array<{ outcome: string; metadata: { costMinor: number } }> = [];
+    const released: number[] = [];
+    const service = serviceFor({
+      order,
+      audits,
+      released,
+      release: () => Promise.resolve(),
+    });
+    await expect(service.complete(actor, request)).rejects.toThrow('PROVIDER_DOWN');
+    expect(order).toEqual(['FAILURE', 'release']);
     expect(audits).toHaveLength(1);
     expect(audits[0]?.outcome).toBe('FAILURE');
     expect(audits[0]?.metadata.costMinor).toBeGreaterThan(0);
     expect(released[0]).toBeGreaterThan(0);
+  });
+
+  it('still writes the FAILURE audit when release throws', async () => {
+    const order: string[] = [];
+    const audits: Array<{ outcome: string; metadata: { costMinor: number } }> = [];
+    const service = serviceFor({
+      order,
+      audits,
+      released: [],
+      release: () => Promise.reject(new Error('RELEASE_FAILED')),
+    });
+    await expect(service.complete(actor, request)).rejects.toThrow('RELEASE_FAILED');
+    expect(order).toEqual(['FAILURE', 'release']);
+    expect(audits[0]?.outcome).toBe('FAILURE');
   });
 });

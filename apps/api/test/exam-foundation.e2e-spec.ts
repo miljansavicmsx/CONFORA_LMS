@@ -47,6 +47,8 @@ describe('certification exam foundation e2e', () => {
   const trainerId = randomUUID();
   const deciderId = randomUUID();
   const issuerId = randomUUID();
+  const bystanderId = randomUUID();
+  const qualityId = randomUUID();
   const sysadminId = randomUUID();
   const schemeId = randomUUID();
   const versionId = randomUUID();
@@ -61,6 +63,8 @@ describe('certification exam foundation e2e', () => {
   const trainerSubject = 'exam-trainer';
   const deciderSubject = 'exam-decider';
   const issuerSubject = 'exam-issuer';
+  const bystanderSubject = 'exam-bystander';
+  const qualitySubject = 'exam-quality';
   const sysadminSubject = 'exam-sysadmin';
 
   let itemA = '';
@@ -140,6 +144,8 @@ describe('certification exam foundation e2e', () => {
       [trainerId, 'trainer@exam.test', trainerSubject],
       [deciderId, 'decider@exam.test', deciderSubject],
       [issuerId, 'issuer@exam.test', issuerSubject],
+      [bystanderId, 'bystander@exam.test', bystanderSubject],
+      [qualityId, 'quality@exam.test', qualitySubject],
       [sysadminId, 'sysadmin@exam.test', sysadminSubject],
     ] as const;
     for (const [id, email] of people) {
@@ -828,7 +834,7 @@ describe('certification exam foundation e2e', () => {
         referenceCount: 2,
       })
       .expect(201);
-    for (const userId of [trainerId, invigilatorId, deciderId, issuerId]) {
+    for (const userId of [trainerId, invigilatorId, deciderId, issuerId, qualityId]) {
       await request(httpServer(app))
         .post(`/v1/staff/schemes/${versionId}/decision-makers`)
         .set(auth(approverSubject, ['COM_TECH']))
@@ -876,6 +882,61 @@ describe('certification exam foundation e2e', () => {
       .set(auth(candidateSubject, ['USR_CAND']))
       .send({ experienceMonths: 0 })
       .expect(201);
+    const unassignedAction = {
+      vote: { ballot: 'GRANT', reasoning: 'Nisam imenovan na predmet.' },
+      propose: { declaredConflictUserIds: [] as string[] },
+      assist: { purpose: 'summary' },
+      confirm: { memberUserId: deciderId },
+      assess: {
+        refereeId: '44444444-4444-4444-8444-444444444444',
+        relevanceNote: 'Nisam imenovan.',
+        credible: true,
+      },
+      issue: {
+        holderDisplayName: 'Demo Kandidat',
+        registryConsent: false,
+        note: 'Nisam imenovan na predmet.',
+      },
+    };
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Nisam imenovan na predmet.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/votes`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(unassignedAction.vote)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(unassignedAction.propose)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/assist`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(unassignedAction.assist)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(unassignedAction.confirm)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/evidence-assessment`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(unassignedAction.assess)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/issue-authorization`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(unassignedAction.issue)
+      .expect(403);
     await request(httpServer(app))
       .get(`/v1/committee/cases/${caseId}`)
       .set(auth(candidateSubject, ['USR_CAND']))
@@ -886,21 +947,26 @@ describe('certification exam foundation e2e', () => {
       .expect(403);
     await request(httpServer(app))
       .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({ hasConflict: true, statement: 'Obučavao sam kandidata.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/votes`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send(unassignedAction.vote)
+      .expect(403);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
       .set(auth(deciderSubject, ['COM_CERT']))
       .expect(403);
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
       .set(auth(candidateSubject, ['USR_CAND']))
       .send({ hasConflict: false, statement: 'Nema sukoba.' })
-      .expect(403);
-    await request(httpServer(app))
-      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
-      .set(auth(trainerSubject, ['COM_CERT']))
-      .send({ hasConflict: true, statement: 'Obučavao sam kandidata.' })
-      .expect(201);
-    await request(httpServer(app))
-      .get(`/v1/committee/cases/${caseId}`)
-      .set(auth(trainerSubject, ['COM_CERT']))
       .expect(403);
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/votes`)
@@ -917,30 +983,29 @@ describe('certification exam foundation e2e', () => {
       .set(auth(deciderSubject, ['COM_CERT']))
       .expect(200);
     expect((visible.body as { caseId: string }).caseId).toBe(caseId);
-    const beforeAssignment = await request(httpServer(app))
+    const unassignedList = await request(httpServer(app))
+      .get('/v1/committee/cases')
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .expect(200);
+    expect(JSON.stringify(unassignedList.body)).not.toContain(caseId);
+    expect(JSON.stringify(unassignedList.body)).not.toContain('path');
+    const assignedEarly = await request(httpServer(app))
       .get('/v1/committee/cases')
       .set(auth(deciderSubject, ['COM_CERT']))
       .expect(200);
-    expect(JSON.stringify(beforeAssignment.body)).not.toContain(caseId);
-    expect(JSON.stringify(beforeAssignment.body)).not.toContain('path');
-    await request(httpServer(app))
-      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
-      .set(auth(trainerSubject, ['COM_CERT']))
-      .send({ hasConflict: false, statement: 'Povlačim sukob sam.' })
-      .expect(403);
+    expect(assignedEarly.body).toEqual([
+      expect.objectContaining({ caseId, phase: 'COMMITTEE', assigned: true }),
+    ]);
+    expect(JSON.stringify(assignedEarly.body)).not.toContain('path');
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
       .set(auth(deciderSubject, ['COM_CERT']))
       .send({
         hasConflict: false,
-        statement: 'Druga osoba potvrđuje da sukob više ne postoji.',
+        statement: 'Član bez ovlaštenja ne može skinuti sukob.',
         subjectUserId: trainerId,
       })
-      .expect(201);
-    await request(httpServer(app))
-      .get(`/v1/committee/cases/${caseId}`)
-      .set(auth(trainerSubject, ['COM_CERT']))
-      .expect(200);
+      .expect(403);
     const proposed = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/propose`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -1038,7 +1103,30 @@ describe('certification exam foundation e2e', () => {
       .set(auth(issuerSubject, ['COM_CERT']))
       .send({
         hasConflict: false,
-        statement: 'Druga osoba skida sukob.',
+        statement: 'Član komiteta bez uloge ne skida sukob.',
+        subjectUserId: deciderId,
+      })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({ hasConflict: true, statement: 'Imam vlastiti sukob na predmetu.' })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({
+        hasConflict: false,
+        statement: 'Menadžer kvaliteta sa sukobom ne skida tuđi sukob.',
+        subjectUserId: deciderId,
+      })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(issuerSubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({
+        hasConflict: false,
+        statement: 'Menadžer kvaliteta skida sukob.',
         subjectUserId: deciderId,
       })
       .expect(201);
