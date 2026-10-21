@@ -711,7 +711,7 @@ describe('certification exam foundation e2e', () => {
         referenceCount: 2,
       })
       .expect(201);
-    for (const userId of [trainerId, invigilatorId, deciderId, issuerId]) {
+    for (const userId of [trainerId, invigilatorId, authorId, approverId, deciderId, issuerId]) {
       await request(httpServer(app))
         .post(`/v1/staff/schemes/${versionId}/decision-makers`)
         .set(auth(approverSubject, ['COM_TECH']))
@@ -809,6 +809,14 @@ describe('certification exam foundation e2e', () => {
     ).slots;
     expect(slots.find((slot) => slot.userId === trainerId)?.exclusionReason).toBe('TRAINER');
     expect(slots.find((slot) => slot.userId === invigilatorId)?.exclusionReason).toBe('EXAMINER');
+    expect(slots.find((slot) => slot.userId === authorId)?.state).toBe('EXCLUDED');
+    expect(slots.find((slot) => slot.userId === authorId)?.exclusionReason).toBe('EXAMINER');
+    expect(slots.find((slot) => slot.userId === approverId)?.exclusionReason).toBe('EXAMINER');
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: authorId })
+      .expect(400);
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/confirm`)
       .set(auth(deciderSubject, ['COM_CERT']))
