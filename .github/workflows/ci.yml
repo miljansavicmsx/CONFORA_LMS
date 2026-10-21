@@ -262,5 +262,6 @@ jobs:
         with:
           context: .
           file: infra/docker/Dockerfile.frontend-app
+          target: smoke
           push: false
           tags: confora/frontend-app:ci

@@ -8,6 +8,7 @@
     "ensure:confora-packages": "npm --prefix ../packages/ui run build && npm --prefix ../packages/i18n run build",
     "prebuild": "npm run ensure:confora-packages",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit --pretty false",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

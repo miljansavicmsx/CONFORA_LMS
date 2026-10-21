@@ -1,7 +1,8 @@
 # CI smoke image for the Vite frontend (OD-2026-10-20).
-# PLAYWRIGHT_F4_SMOKE resolves modules that are absent from the tree.
-# A real source file still wins. This image is not a production release.
-FROM node:20-bookworm-slim
+# The default target is smoke. It is not a production release.
+# The production target does not set PLAYWRIGHT_F4_SMOKE. vite.config.ts
+# refuses a production build when that variable is set.
+FROM node:20-bookworm-slim AS workspace
 
 WORKDIR /app
 
@@ -14,9 +15,19 @@ ENV HUSKY=0
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @confora/ui build && pnpm --filter @confora/i18n build
 
-ENV PLAYWRIGHT_F4_SMOKE=1
-RUN pnpm --filter confora-frontend-app exec vite build
+FROM workspace AS production
 
 EXPOSE 5173
+RUN pnpm --filter confora-frontend-app exec vite build
+RUN chown -R node:node /app
+USER node
+CMD ["pnpm", "--filter", "confora-frontend-app", "exec", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]
 
+FROM workspace AS smoke
+
+ENV PLAYWRIGHT_F4_SMOKE=1
+EXPOSE 5173
+RUN pnpm --filter confora-frontend-app exec vite build --mode smoke
+RUN chown -R node:node /app
+USER node
 CMD ["pnpm", "--filter", "confora-frontend-app", "exec", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]

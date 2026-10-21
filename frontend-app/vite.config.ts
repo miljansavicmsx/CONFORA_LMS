@@ -46,12 +46,18 @@ function testLocalMissingModuleAliases(): Array<{ find: RegExp; replacement: str
   ];
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
+  const smokeAliasesRequested = process.env.PLAYWRIGHT_F4_SMOKE === "1";
+  if (command === "build" && mode === "production" && smokeAliasesRequested) {
+    throw new Error(
+      "Refusing production build: PLAYWRIGHT_F4_SMOKE aliases absent modules to test stubs.",
+    );
+  }
   const vitestLocal =
     mode === "test" ||
     process.env.VITEST === "true" ||
     process.env.VITEST === "1" ||
-    process.env.PLAYWRIGHT_F4_SMOKE === "1";
+    (smokeAliasesRequested && mode !== "production");
 
   return {
     plugins: [react(), cspPreviewPlugin()],

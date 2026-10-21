@@ -11,8 +11,10 @@ COPY . .
 ENV HUSKY=0
 RUN pnpm install --frozen-lockfile
 RUN pnpm exec turbo build --filter=@confora/api
+RUN chown -R node:node /app
 
 ENV API_PORT=4000
 EXPOSE 4000
 
+USER node
 CMD ["node", "apps/api/dist/main.js"]

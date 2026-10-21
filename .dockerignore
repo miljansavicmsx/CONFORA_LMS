@@ -4,3 +4,5 @@
 **/.turbo
 docs/evidence
 *.md
+.env*
+!.env.example

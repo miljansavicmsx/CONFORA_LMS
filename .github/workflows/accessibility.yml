@@ -26,7 +26,7 @@ env:
   VITE_API_URL: http://127.0.0.1:4000
 
 jobs:
-  compliance-iso:
+  compliance-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     services:
@@ -131,7 +131,7 @@ jobs:
         run: |
           pnpm --filter @confora/ui build
           pnpm --filter @confora/i18n build
-          pnpm --filter confora-frontend-app exec vite build
+          pnpm --filter confora-frontend-app exec vite build --mode smoke
 
       - name: Install Playwright Chromium
         run: pnpm --filter confora-frontend-app exec playwright install chromium --with-deps

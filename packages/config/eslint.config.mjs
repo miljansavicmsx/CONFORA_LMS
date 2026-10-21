@@ -27,9 +27,8 @@ export default function createConforaEslintConfig(rootDir) {
         /**
          * OD-2026-10-20: outside apps/api/tsconfig.build.json.
          * They reference models or modules the frozen schema does not contain.
-         * Rules are unchanged; these files are not part of the shipping program.
+         * Rules are unchanged. actor-db-access.ts is linted; its spec stays here.
          */
-        '**/actor-db-access.ts',
         '**/actor-db-access.spec.ts',
         '**/recertification.service.ts',
         '**/me-certificates.service.ts',
