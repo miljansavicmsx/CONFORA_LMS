@@ -236,18 +236,24 @@ export class CertificationFlowService {
     resourceType: string,
   ) {
     return async (
-      tx: Parameters<AuditService['appendUsing']>[0],
+      tx: NonNullable<Parameters<AuditService['executeInTransaction']>[2]>,
       fact: { purpose: string; phase: string; reason: string },
     ): Promise<void> => {
-      await this.audit.appendUsing(tx, actor, {
-        idempotencyKey,
-        eventType,
-        outcome: 'SUCCESS',
-        occurredAt: now,
-        resourceType,
-        resourceId: caseId,
-        metadata: { caseId, reason: fact.reason, purpose: fact.purpose, phase: fact.phase },
-      });
+      await this.audit.executeInTransaction(
+        actor,
+        async (ops) => {
+          await ops.append({
+            idempotencyKey,
+            eventType,
+            outcome: 'SUCCESS',
+            occurredAt: now,
+            resourceType,
+            resourceId: caseId,
+            metadata: { caseId, reason: fact.reason, purpose: fact.purpose, phase: fact.phase },
+          });
+        },
+        tx,
+      );
     };
   }
 

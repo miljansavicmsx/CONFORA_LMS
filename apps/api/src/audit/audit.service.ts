@@ -134,23 +134,25 @@ export class AuditService {
     return this.executeInTransaction(actor, async (ops) => ops.append(input));
   }
 
-  /** Append on a transaction the caller already opened. A failure rolls that transaction back. */
-  async appendUsing(
-    tx: AuditWriteClient,
-    actor: AuthenticatedActor,
-    input: AuditAppendInput,
-  ): Promise<AuditEventView> {
-    this.assertActor(actor);
-    this.assertTenantAgreement(actor);
-    return this.appendWithin(new AuditPersistenceApi(tx), actor, input);
-  }
-
+  /**
+   * `joinedTransaction` appends inside a transaction the caller already opened.
+   * A failure propagates so that transaction rolls back. The public method list
+   * stays append and executeInTransaction.
+   */
   async executeInTransaction<T>(
     actor: AuthenticatedActor,
     work: (ops: AuditTransactionOps) => Promise<T>,
+    joinedTransaction?: AuditWriteClient,
   ): Promise<T> {
     this.assertActor(actor);
     this.assertTenantAgreement(actor);
+    if (joinedTransaction) {
+      const ops: AuditTransactionOps = {
+        append: (rawInput) =>
+          this.appendWithin(new AuditPersistenceApi(joinedTransaction), actor, rawInput),
+      };
+      return work(ops);
+    }
 
     return this.withSerializableRetry(async () =>
       this.repository.runSerializableTransaction(async (api) => {
