@@ -47,7 +47,10 @@ import {
   RoleAdministrationAuthorityGuard,
   RoleAdministrationController,
 } from './role-administration.controller';
-import { RoleAdministrationWorkflowService } from './role-administration-workflow.service';
+import {
+  RoleAdministrationWorkflowService,
+  type RoleAdministrationWorkflowResult,
+} from './role-administration-workflow.service';
 import { UnboundExternalIdpRoleManagementAdapter } from './unbound-external-idp-role-management.adapter';
 
 const TENANT = '11111111-1111-4111-8111-111111111111';
@@ -101,8 +104,18 @@ function parse(body: unknown, trustedTenantId = TENANT): RoleAdministrationComma
   return parseRoleAdministrationCommandDto(body, trustedTenantId);
 }
 
+function responseObject(body: unknown): Record<string, unknown> {
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+    throw new Error('Expected object response body');
+  }
+  return body;
+}
+
 describe('RoleAdministrationController', () => {
-  const execute = jest.fn();
+  const execute = jest.fn<
+    Promise<RoleAdministrationWorkflowResult>,
+    [AuthenticatedActor | null | undefined, unknown]
+  >();
   const workflow = { execute } as unknown as RoleAdministrationWorkflowService;
   const controller = new RoleAdministrationController(workflow);
   const guard = new RoleAdministrationAuthorityGuard();
@@ -189,9 +202,9 @@ describe('RoleAdministrationController', () => {
   });
 
   it('requires an authenticated server actor', async () => {
-    await expect(controller.execute(requestWith(undefined), grantRequested())).rejects.toBeInstanceOf(
-      UnauthorizedException,
-    );
+    await expect(
+      controller.execute(requestWith(undefined), grantRequested()),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
     expect(execute).not.toHaveBeenCalled();
   });
 
@@ -330,7 +343,9 @@ class RoutePrincipalMiddleware {
   use(req: Request & RequestWithPrincipal, _res: Response, next: NextFunction): void {
     const encoded = req.header('x-test-principal');
     if (encoded !== undefined && encoded.length > 0) {
-      req.user = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as AuthenticatedActor;
+      req.user = JSON.parse(
+        Buffer.from(encoded, 'base64url').toString('utf8'),
+      ) as AuthenticatedActor;
     }
     next();
   }
@@ -348,10 +363,11 @@ class RouteAuthenticationGuard implements CanActivate {
 }
 
 const routeActiveAssurance: Pick<ActiveAssuranceService, 'assertActiveTenantAndUser'> = {
-  async assertActiveTenantAndUser(actor: AuthenticatedActor): Promise<void> {
+  assertActiveTenantAndUser(actor: AuthenticatedActor): Promise<void> {
     if (actor.userId.trim().length === 0 || actor.tenantId.trim().length === 0) {
       throw new AccessDeniedError();
     }
+    return Promise.resolve();
   },
 };
 
@@ -400,7 +416,7 @@ function grantApprovalBody(overrides: Record<string, unknown> = {}): Record<stri
 
 describe('RoleAdministrationController HTTP route', () => {
   let app: INestApplication;
-  let portSpy: jest.SpyInstance;
+  let portSpy: jest.SpiedFunction<ExternalIdpRoleManagementPort['requestRoleChange']>;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -414,10 +430,12 @@ describe('RoleAdministrationController HTTP route', () => {
     const original = port.requestRoleChange.bind(port);
     portSpy = jest
       .spyOn(port, 'requestRoleChange')
-      .mockImplementation((...args: Parameters<ExternalIdpRoleManagementPort['requestRoleChange']>) => {
-        routeEffects.push('port');
-        return original(...args);
-      });
+      .mockImplementation(
+        (...args: Parameters<ExternalIdpRoleManagementPort['requestRoleChange']>) => {
+          routeEffects.push('port');
+          return original(...args);
+        },
+      );
   });
 
   afterAll(async () => {
@@ -454,19 +472,21 @@ describe('RoleAdministrationController HTTP route', () => {
       reviewObligationCreated: false,
       codes: ['PROVIDER_UNBOUND'],
     });
-    expect(response.body.auditEvents).toEqual(['ROLE_GRANT_APPROVED', 'ROLE_GRANT_FAILED']);
-    expect(response.body.auditEvents).not.toContain('ROLE_GRANT_APPLIED');
+    expect(responseObject(response.body).auditEvents).toEqual([
+      'ROLE_GRANT_APPROVED',
+      'ROLE_GRANT_FAILED',
+    ]);
+    expect(responseObject(response.body).auditEvents).not.toContain('ROLE_GRANT_APPLIED');
     expect(routeEffects).toEqual(['audit:ROLE_GRANT_APPROVED', 'port', 'audit:ROLE_GRANT_FAILED']);
     expect(routeAudit.append.mock.calls[0]?.[0]).toMatchObject({
       userId: APPROVER,
       tenantId: TENANT,
     });
     expect(portSpy).toHaveBeenCalledTimes(1);
-    const command = portSpy.mock.calls[0]?.[1] as {
-      tenantId: string;
-      targetTenantId: string;
-      initiatorTenantId: string;
-    };
+    const command = portSpy.mock.calls[0]?.[1];
+    if (command === undefined) {
+      throw new Error('Expected role-change command');
+    }
     expect(command.tenantId).toBe(approver.tenantId);
     expect(command.targetTenantId).toBe(approver.tenantId);
     expect(command.initiatorTenantId).toBe(approver.tenantId);
@@ -504,7 +524,7 @@ describe('RoleAdministrationController HTTP route', () => {
         .set('x-test-principal', principalHeader(actor()))
         .send({ ...grantRequested(), ...extra })
         .expect(422);
-      expect(response.body.codes).toEqual(['COMMAND_FIELD_FORBIDDEN']);
+      expect(responseObject(response.body).codes).toEqual(['COMMAND_FIELD_FORBIDDEN']);
       expect(portSpy).not.toHaveBeenCalled();
       expect(routeAudit.append).not.toHaveBeenCalled();
     }
@@ -516,17 +536,23 @@ describe('RoleAdministrationController HTTP route', () => {
       routeAudit.append.mockClear();
       const response = await request(http())
         .post('/v1/role-administration/commands')
-        .set('x-test-principal', principalHeader(actor({ userId: APPROVER, subject: 'approver-subject' })))
+        .set(
+          'x-test-principal',
+          principalHeader(actor({ userId: APPROVER, subject: 'approver-subject' })),
+        )
         .send(grantApprovalBody({ decision }))
         .expect(422);
-      expect(response.body.codes).toEqual(['CLIENT_APPLIED_DECISION_FORBIDDEN']);
+      expect(responseObject(response.body).codes).toEqual(['CLIENT_APPLIED_DECISION_FORBIDDEN']);
       expect(portSpy).not.toHaveBeenCalled();
       expect(routeAudit.append).not.toHaveBeenCalled();
     }
   });
 
   it('rejects a missing principal', async () => {
-    await request(http()).post('/v1/role-administration/commands').send(grantRequested()).expect(401);
+    await request(http())
+      .post('/v1/role-administration/commands')
+      .send(grantRequested())
+      .expect(401);
     expect(portSpy).not.toHaveBeenCalled();
     expect(routeAudit.append).not.toHaveBeenCalled();
   });
@@ -537,7 +563,7 @@ describe('RoleAdministrationController HTTP route', () => {
       .set('x-test-principal', principalHeader(actor({ roles: ['STAFF_DIR'] })))
       .send(grantRequested())
       .expect(403);
-    expect(response.body.codes).toEqual(['ACTOR_AUTHORITY_ROLE_MISSING']);
+    expect(responseObject(response.body).codes).toEqual(['ACTOR_AUTHORITY_ROLE_MISSING']);
     expect(portSpy).not.toHaveBeenCalled();
   });
 
@@ -547,7 +573,7 @@ describe('RoleAdministrationController HTTP route', () => {
       .set('x-test-principal', principalHeader(actor({ mfaVerified: false })))
       .send(grantRequested())
       .expect(403);
-    expect(response.body.code).toBe('MFA_REQUIRED');
+    expect(responseObject(response.body).code).toBe('MFA_REQUIRED');
     expect(portSpy).not.toHaveBeenCalled();
     expect(routeAudit.append).not.toHaveBeenCalled();
   });
@@ -580,9 +606,9 @@ describe('RoleAdministrationController HTTP route', () => {
         }),
       )
       .expect(422);
-    expect(response.body.codes).toEqual(['COMMAND_FIELD_FORBIDDEN']);
+    expect(responseObject(response.body).codes).toEqual(['COMMAND_FIELD_FORBIDDEN']);
     expect(portSpy).not.toHaveBeenCalled();
-    const passedActor = routeAudit.append.mock.calls[0]?.[0] as AuthenticatedActor | undefined;
+    const passedActor = routeAudit.append.mock.calls[0]?.[0];
     expect(passedActor).toBeUndefined();
   });
 });

@@ -13,7 +13,7 @@ const HTML_ESCAPES: ReadonlyArray<readonly [RegExp, string]> = [
 
 /** Escape a string for insertion into HTML / MJML text nodes. */
 export function escapeHtmlText(value: string): string {
-  let out = String(value);
+  let out = value;
   for (const [pattern, replacement] of HTML_ESCAPES) {
     out = out.replace(pattern, replacement);
   }
@@ -25,5 +25,7 @@ export function escapeHtmlText(value: string): string {
  * Does not HTML-escape — subjects are not MJML/HTML body context.
  */
 export function sanitizePlainTextSubject(value: string): string {
-  return String(value).replace(/[\r\n\u0000]+/g, ' ').trim();
+  // NUL is stripped on purpose: it is a header-injection control character, not an accident in the pattern.
+  // eslint-disable-next-line no-control-regex -- intentional NUL strip for subject header hardening
+  return value.replace(/[\r\n\u0000]+/g, ' ').trim();
 }

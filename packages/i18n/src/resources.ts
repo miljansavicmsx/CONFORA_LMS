@@ -69,7 +69,7 @@ type LocaleBundle = {
 
 const localeBundles: Record<SupportedLocale, LocaleBundle> = {
   en: {
-    a11y: enA11y as A11yMessages,
+    a11y: enA11y,
     auth: enAuth,
     shell: enShell,
     certificationStaff: enCertificationStaff,
@@ -79,7 +79,7 @@ const localeBundles: Record<SupportedLocale, LocaleBundle> = {
     common: enCommon,
   },
   bs: {
-    a11y: bsA11y as A11yMessages,
+    a11y: bsA11y,
     auth: bsAuth,
     shell: bsShell,
     certificationStaff: bsCertificationStaff,
@@ -89,7 +89,7 @@ const localeBundles: Record<SupportedLocale, LocaleBundle> = {
     common: bsCommon,
   },
   sr: {
-    a11y: srA11y as A11yMessages,
+    a11y: srA11y,
     auth: srAuth,
     shell: srShell,
     certificationStaff: srCertificationStaff,
@@ -99,7 +99,7 @@ const localeBundles: Record<SupportedLocale, LocaleBundle> = {
     common: srCommon,
   },
   hr: {
-    a11y: hrA11y as A11yMessages,
+    a11y: hrA11y,
     auth: hrAuth,
     shell: hrShell,
     certificationStaff: hrCertificationStaff,
@@ -109,7 +109,7 @@ const localeBundles: Record<SupportedLocale, LocaleBundle> = {
     common: hrCommon,
   },
   sl: {
-    a11y: slA11y as A11yMessages,
+    a11y: slA11y,
     auth: slAuth,
     shell: slShell,
     certificationStaff: slCertificationStaff,

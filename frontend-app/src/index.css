@@ -41,8 +41,16 @@
     --muted-foreground: 215 20% 65%;
   }
 
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   body {
     @apply font-sans antialiased;
+    margin: 0;
+    min-width: 320px;
     background-color: #f8fafc;
     color: hsl(var(--foreground));
   }
