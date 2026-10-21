@@ -101,6 +101,27 @@ export function publicJwk(): Record<string, unknown> {
   return { ...jwk, kid: VC_KEY_ID, alg: 'EdDSA' };
 }
 
+export function importVerificationJwk(jwk: Record<string, unknown>): KeyObject {
+  const kty = jwk['kty'];
+  const crv = jwk['crv'];
+  const x = jwk['x'];
+  if (kty !== 'OKP' || crv !== 'Ed25519' || typeof x !== 'string' || x.length === 0) {
+    throw new Error('VC_MALFORMED');
+  }
+  const key = createPublicKey({
+    key: { kty, crv, x },
+    format: 'jwk',
+  });
+  assertSigningKeyAllowed(key);
+  return key;
+}
+
+export function importVerificationSpki(der: Buffer): KeyObject {
+  const key = createPublicKey({ key: der, format: 'der', type: 'spki' });
+  assertSigningKeyAllowed(key);
+  return key;
+}
+
 function b64url(value: Buffer | string): string {
   const buffer = typeof value === 'string' ? Buffer.from(value) : value;
   return buffer.toString('base64url');
@@ -173,20 +194,6 @@ export function signPersonnelCredential(claims: PersonnelVcClaims): {
   };
 }
 
-export function verifyPersonnelCredential(jwt: string): Record<string, unknown> {
-  const parts = jwt.split('.');
-  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
-    throw new Error('VC_MALFORMED');
-  }
-  const signingInput = Buffer.from(`${parts[0]}.${parts[1]}`);
-  const signature = Buffer.from(parts[2], 'base64url');
-  const ok = verify(null, signingInput, createPublicKey(privateKey()), signature);
-  if (!ok) {
-    throw new Error('VC_SIGNATURE');
-  }
-  return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')) as Record<string, unknown>;
-}
-
 export function wasSignedWithBurnedKey(jwt: string): boolean {
   const parts = jwt.split('.');
   if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
@@ -204,6 +211,73 @@ export function wasSignedWithBurnedKey(jwt: string): boolean {
   } catch {
     return false;
   }
+}
+
+function verifyEd25519Jwt(jwt: string): Record<string, unknown> {
+  if (wasSignedWithBurnedKey(jwt)) {
+    throw new Error('VC_KEY_DENIED');
+  }
+  const parts = jwt.split('.');
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
+    throw new Error('VC_MALFORMED');
+  }
+  const signingInput = Buffer.from(`${parts[0]}.${parts[1]}`);
+  const signature = Buffer.from(parts[2], 'base64url');
+  const ok = verify(null, signingInput, createPublicKey(privateKey()), signature);
+  if (!ok) {
+    throw new Error('VC_SIGNATURE');
+  }
+  return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')) as Record<string, unknown>;
+}
+
+export function verifyPersonnelCredential(jwt: string): Record<string, unknown> {
+  return verifyEd25519Jwt(jwt);
+}
+
+export function signStatusList(credential: Record<string, unknown>): string {
+  const header = b64url(JSON.stringify({ alg: 'EdDSA', typ: 'vc+jwt', kid: VC_KEY_ID }));
+  const encodedBody = b64url(
+    JSON.stringify({
+      iss: 'https://confora.example/issuers/development',
+      vc: credential,
+    }),
+  );
+  const signingInput = Buffer.from(`${header}.${encodedBody}`);
+  const signature = sign(null, signingInput, privateKey());
+  return `${header}.${encodedBody}.${b64url(signature)}`;
+}
+
+export function verifyStatusList(jwt: string): Record<string, unknown> {
+  const body = verifyEd25519Jwt(jwt);
+  const vc = body['vc'];
+  if (!vc || typeof vc !== 'object') {
+    throw new Error('VC_MALFORMED');
+  }
+  return vc as Record<string, unknown>;
+}
+
+export function publishStatusList(credential: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...credential,
+    proof: {
+      type: 'Ed25519Signature2020',
+      jwt: signStatusList(credential),
+    },
+  };
+}
+
+export function verifyPublishedStatusList(
+  document: Record<string, unknown>,
+): Record<string, unknown> {
+  const proof = document['proof'];
+  if (!proof || typeof proof !== 'object' || Array.isArray(proof)) {
+    throw new Error('VC_MALFORMED');
+  }
+  const jwt = (proof as Record<string, unknown>)['jwt'];
+  if (typeof jwt !== 'string') {
+    throw new Error('VC_MALFORMED');
+  }
+  return verifyStatusList(jwt);
 }
 
 function ticketSecret(): string {

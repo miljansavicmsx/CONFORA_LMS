@@ -172,6 +172,8 @@ export class AuditService {
       actor.tenantId,
     );
 
+    await api.lockTenantChain(actor.tenantId);
+
     const fingerprint = buildIdempotencyFingerprint({
       actorUserId: actor.userId,
       eventType: input.eventType,

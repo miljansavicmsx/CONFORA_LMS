@@ -41,3 +41,11 @@ Treat every credential and PDF ticket produced before this change as signed or a
 6. PDF download tickets issued with the old secret are invalid. Issue a new ticket from `PERSONNEL_PDF_TICKET_SECRET`.
 
 A signature that does not verify under the burned public key was not produced by that key. Do not revoke it for this incident.
+
+## Git history
+
+The burned private key remains in git history. It is permanently burned and denylisted. History is not rewritten.
+
+Rewriting history would change every descendant commit SHA, break the review record for the branches that already contain the key, and would not erase copies that clones, forks, and CI caches already fetched. Removing the key from the current tree and refusing it at verification is the control that still works after those copies exist.
+
+CI runs `node scripts/ci/scan-burned-vc-key.mjs` on the current tree. The scan fails when the public SPKI fingerprint appears outside the denylist, this incident record, the verification tests, and the scanner. The scan does not read git history and does not store the private key. A signature that verifies under the burned public key is refused with `VC_KEY_DENIED` on credential verification, status-list verification, and verification-key import. `GET /v1/public/certificates/jwks` publishes only the configured public key, and that key is passed through the same denylist before it is returned. A PDF download ticket authenticated with the burned secret does not verify under `PERSONNEL_PDF_TICKET_SECRET`.
