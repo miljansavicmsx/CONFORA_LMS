@@ -170,6 +170,7 @@ describe('MD05 PKG-00 production audit append enforcement', () => {
     sequence = 0;
     mockApi = {
       findEventByIdempotency: jest.fn().mockResolvedValue(null),
+      lockTenantChain: jest.fn().mockResolvedValue(undefined),
       findChainHead: jest.fn().mockResolvedValue(null),
       createInitialChainHead: jest.fn().mockResolvedValue({
         tenantId: TENANT,
