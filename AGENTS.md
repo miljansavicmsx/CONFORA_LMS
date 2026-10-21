@@ -78,6 +78,28 @@ Always preserve:
 - accessibility,
 - tenant isolation.
 
+# CONFORA – Security Review Gate
+
+Mandatory owner decision, 2026-10-21. Normative restatement:
+`docs/governance/SECURITY_REVIEW_GATE.md`.
+
+Every PR that changes authentication, authorization, RBAC, tenant isolation,
+processing of sensitive data, or other security-critical functionality must
+pass an independent review before merge approval. The review covers:
+
+1. Change analysis (security risks, regressions).
+2. Access-control verification (authn, authz, tenant isolation).
+3. Regression tests proving the fix and no breakage.
+4. All relevant CI checks passing.
+5. An independent reasoned GO/NO-GO tied to a specific commit SHA.
+
+The reviewer must not be the author of the changes. Any later change to
+security-relevant code requires re-review of that part. Known tenant-isolation
+gaps block production use with real data until fixed.
+
+Do not treat a green CI run, or an author-written summary, as that review.
+Do not approve merge without the independent GO for the reviewed SHA.
+
 # Never
 
 Never generate:

@@ -12,7 +12,7 @@
 ## 0. Repository State Rebaseline Addendum (R0-1B1)
 
 **Added:** 2026-07-26 during R0-1B1 Authority Chain promotion.
-**Status:** Normative. This addendum records the **verified current repository state** so the canonical direction below is not misread as a claim of completion. Where §4 and later sections describe canonical *intent*, this addendum records what is *actually verified today*.
+**Status:** Normative. This addendum records the **verified current repository state** so the canonical direction below is not misread as a claim of completion. Where §4 and later sections describe canonical _intent_, this addendum records what is _actually verified today_.
 
 > A requirement stated in this Baseline is **not** evidence of implementation. Implementation claims require repository evidence that distinguishes requirement, implementation, verification, and residual gap (see `STANDARDS_REFERENCE_POLICY.md`).
 
@@ -239,23 +239,23 @@ Canonical roles shall be maintained in `roles.md` and implemented in shared type
 
 Minimum canonical roles:
 
-| Code | Role |
-|---|---|
-| `USR_CAND` | Candidate |
-| `USR_CERT` | Certified person |
-| `STAFF_DIR` | Director |
-| `STAFF_SYSADM` | System administrator |
-| `STAFF_TRAINADM` | Training administrator |
-| `QUALITY_MANAGER` | Quality manager |
+| Code                  | Role                               |
+| --------------------- | ---------------------------------- |
+| `USR_CAND`            | Candidate                          |
+| `USR_CERT`            | Certified person                   |
+| `STAFF_DIR`           | Director                           |
+| `STAFF_SYSADM`        | System administrator               |
+| `STAFF_TRAINADM`      | Training administrator             |
+| `QUALITY_MANAGER`     | Quality manager                    |
 | `AI_SECURITY_MANAGER` | AI Governance and Security Manager |
-| `COM_TECH` | Technical committee |
-| `COM_CERT` | Certification committee |
-| `COM_IMP` | Impartiality committee |
-| `COM_APP` | Appeals committee |
-| `STAFF_AUD` | Internal auditor |
-| `SME` | Subject-matter expert |
-| `EXAMINER` | Examiner |
-| `INVIGILATOR` | Invigilator |
+| `COM_TECH`            | Technical committee                |
+| `COM_CERT`            | Certification committee            |
+| `COM_IMP`             | Impartiality committee             |
+| `COM_APP`             | Appeals committee                  |
+| `STAFF_AUD`           | Internal auditor                   |
+| `SME`                 | Subject-matter expert              |
+| `EXAMINER`            | Examiner                           |
+| `INVIGILATOR`         | Invigilator                        |
 
 All staff, committee and privileged roles require MFA.
 
@@ -327,19 +327,19 @@ Any future IAL-3 implementation requires:
 
 The following retention rules are mandatory for MVP:
 
-| Data category | Retention | Disposal |
-|---|---:|---|
-| KYC ID document image | 14 days after verification | Hard delete |
-| KYC verification record | 10 years | Retain / anonymize where legally required |
-| Exam video/screen evidence | 60 days unless appeal/legal hold | Hard delete |
-| Exam behavioral/anomaly logs | 1 year | Hard delete |
-| Examination answers | 10 years | Anonymize after retention where applicable |
-| Examination scores | 10 years | Anonymize after retention where applicable |
-| Audit logs | 10 years minimum | Immutable retain |
-| COI records | 10 years | Retain |
-| Complaint/appeal records | 10 years | Retain |
-| Certificate records | Permanent | Public registry record retained |
-| Support tickets | 3 years | Hard delete |
+| Data category                |                        Retention | Disposal                                   |
+| ---------------------------- | -------------------------------: | ------------------------------------------ |
+| KYC ID document image        |       14 days after verification | Hard delete                                |
+| KYC verification record      |                         10 years | Retain / anonymize where legally required  |
+| Exam video/screen evidence   | 60 days unless appeal/legal hold | Hard delete                                |
+| Exam behavioral/anomaly logs |                           1 year | Hard delete                                |
+| Examination answers          |                         10 years | Anonymize after retention where applicable |
+| Examination scores           |                         10 years | Anonymize after retention where applicable |
+| Audit logs                   |                 10 years minimum | Immutable retain                           |
+| COI records                  |                         10 years | Retain                                     |
+| Complaint/appeal records     |                         10 years | Retain                                     |
+| Certificate records          |                        Permanent | Public registry record retained            |
+| Support tickets              |                          3 years | Hard delete                                |
 
 CONFORA shall not intentionally process biometric data in MVP.
 
@@ -349,16 +349,16 @@ CONFORA shall not intentionally process biometric data in MVP.
 
 MVP may include the following schemes as seed data:
 
-| Code | Scheme | Process | MVP IAL |
-|---|---|---|---|
-| `CFR-27001-FD` | ISO/IEC 27001 Foundation | Fast-Track | IAL-2 |
-| `CFR-27001-TR` | ISO/IEC 27001 Transition | Fast-Track | IAL-2 |
-| `CFR-17025-FD` | ISO/IEC 17025 Foundation | Fast-Track | IAL-2 |
-| `CFR-27001-LA` | ISO/IEC 27001 Lead Auditor | Standard | IAL-2 |
-| `CFR-27001-LI` | ISO/IEC 27001 Lead Implementer | Standard | IAL-2 |
-| `CFR-9001-LA` | ISO 9001 Lead Auditor | Standard | IAL-2 |
-| `CFR-17025-LI` | ISO/IEC 17025 Lead Implementer | Standard | IAL-2 |
-| `CFR-17025-LA` | ISO/IEC 17025 Lead Assessor | Standard | IAL-2 |
+| Code           | Scheme                         | Process    | MVP IAL |
+| -------------- | ------------------------------ | ---------- | ------- |
+| `CFR-27001-FD` | ISO/IEC 27001 Foundation       | Fast-Track | IAL-2   |
+| `CFR-27001-TR` | ISO/IEC 27001 Transition       | Fast-Track | IAL-2   |
+| `CFR-17025-FD` | ISO/IEC 17025 Foundation       | Fast-Track | IAL-2   |
+| `CFR-27001-LA` | ISO/IEC 27001 Lead Auditor     | Standard   | IAL-2   |
+| `CFR-27001-LI` | ISO/IEC 27001 Lead Implementer | Standard   | IAL-2   |
+| `CFR-9001-LA`  | ISO 9001 Lead Auditor          | Standard   | IAL-2   |
+| `CFR-17025-LI` | ISO/IEC 17025 Lead Implementer | Standard   | IAL-2   |
+| `CFR-17025-LA` | ISO/IEC 17025 Lead Assessor    | Standard   | IAL-2   |
 
 Any previous IAL-3 mapping in scheme catalogues is suspended for MVP.
 
@@ -618,18 +618,25 @@ Any deviation requires documented ADR approval.
 
 ---
 
-## 23. Governance registry cross-references (F6-LOCAL-2)
+## 23. Security Review Gate (owner decision 2026-10-21)
+
+Approved owner decision. Every PR that changes authentication, authorization, RBAC, tenant isolation, processing of sensitive data, or other security-critical functionality must pass an independent review before merge approval. The review covers change analysis, access-control verification, regression tests, all relevant CI checks, and an independent reasoned GO/NO-GO tied to a specific commit SHA. The reviewer must not be the author. A later change to security-relevant code requires re-review of that part. Known tenant-isolation gaps block production use with real data until fixed.
+
+Normative text: `docs/governance/SECURITY_REVIEW_GATE.md`. This section does not authorize production use while a tenant-isolation gap remains open.
+
+## 24. Governance registry cross-references (F6-LOCAL-2)
 
 The following documents govern the **controlled local release candidate** without weakening baseline rules. They do not claim production or cloud readiness.
 
-| Document | Purpose |
-|----------|---------|
-| `docs/governance/TECH_DEBT.md` | Canonical technical debt register (21 F6 items) |
-| `docs/governance/LOCAL_RELEASE_CANDIDATE_LOCK.md` | CLRC scope, evidence, freeze rules |
-| `docs/governance/CLOUD_STAGING_PRECONDITIONS.md` | AWS/staging deferrals and minimum preconditions |
-| `docs/governance/LEGAL_PRIVACY_PRECONDITIONS.md` | GDPR v2.0, retention, IAL-2 legal gates |
-| `docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md` | FastAPI coexistence and retirement proof |
-| `docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md` | `frontend-app` vs `apps/web`/`apps/admin` |
-| `docs/governance/ADR_ALIGNMENT_NOTE.md` | ADR path and RabbitMQ/Kafka position |
+| Document                                                  | Purpose                                                      |
+| --------------------------------------------------------- | ------------------------------------------------------------ |
+| `docs/governance/TECH_DEBT.md`                            | Canonical technical debt register (21 F6 items)              |
+| `docs/governance/LOCAL_RELEASE_CANDIDATE_LOCK.md`         | CLRC scope, evidence, freeze rules                           |
+| `docs/governance/CLOUD_STAGING_PRECONDITIONS.md`          | AWS/staging deferrals and minimum preconditions              |
+| `docs/governance/LEGAL_PRIVACY_PRECONDITIONS.md`          | GDPR v2.0, retention, IAL-2 legal gates                      |
+| `docs/governance/LEGACY_STRANGLER_RETIREMENT_CRITERIA.md` | FastAPI coexistence and retirement proof                     |
+| `docs/governance/FRONTEND_CANONICALIZATION_GAP_NOTE.md`   | `frontend-app` vs `apps/web`/`apps/admin`                    |
+| `docs/governance/ADR_ALIGNMENT_NOTE.md`                   | ADR path and RabbitMQ/Kafka position                         |
+| `docs/governance/SECURITY_REVIEW_GATE.md`                 | Independent review before merge of security-critical changes |
 
 Evidence: `docs/evidence/f6-local-governance-sync/2026-06-18T16-02-38/`

@@ -74,7 +74,11 @@ export default function VerifyLookupPage(): JSX.Element {
       <p className="mt-2 text-xs text-text-muted">Javna provjera je samo za čitanje — bez izmjene statusa certifikata.</p>
 
       <div className="mt-5 flex flex-wrap gap-2">
+        <label className="sr-only" htmlFor="verify-lookup-input">
+          Referenca ili verification hash
+        </label>
         <input
+          id="verify-lookup-input"
           data-testid="verify-lookup-input"
           value={reference}
           onChange={(e) => setReference(e.target.value)}

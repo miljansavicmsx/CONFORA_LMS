@@ -20,6 +20,7 @@ Signed owner decisions are the highest authority.
 | ----------------------- | ---------------------------------------------------------- |
 | Owner Decision Register | [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) |
 | Owner Decision Package  | [OWNER_DECISION_PACKAGE.md](./OWNER_DECISION_PACKAGE.md)   |
+| Security Review Gate    | [SECURITY_REVIEW_GATE.md](./SECURITY_REVIEW_GATE.md)       |
 
 Covers OQ-1…OQ-7, OD-R03-1…OD-R03-5, OD-R01-1…OD-R01-10, OD-R07E-1…OD-R07E-8, Part E Model D formal register (MD01…MD17), and Part F product-plan decisions (OD-PP-01…OD-PP-14).
 
