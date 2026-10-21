@@ -31,21 +31,21 @@ export default {
       colors: {
         border: "hsl(var(--border) / <alpha-value>)",
         linkedin: "#0A66C2",
-        /** CONFORA LMS dark shell (D.2) */
+        /** Light public shell on :root; dark dashboard shell on `.dark`. */
         surface: {
-          primary: "#0F172A",
-          secondary: "#1E293B",
-          tertiary: "#334155",
+          primary: "hsl(var(--surface-primary) / <alpha-value>)",
+          secondary: "hsl(var(--surface-secondary) / <alpha-value>)",
+          tertiary: "hsl(var(--surface-tertiary) / <alpha-value>)",
         },
         brand: {
-          DEFAULT: "#0EA5E9",
-          solid: "#0369A1",
-          hover: "#0284C7",
+          DEFAULT: "hsl(var(--brand) / <alpha-value>)",
+          solid: "hsl(var(--brand-solid) / <alpha-value>)",
+          hover: "hsl(var(--brand-hover) / <alpha-value>)",
         },
         text: {
-          primary: "#F8FAFC",
-          secondary: "#94A3B8",
-          muted: "#8A9BB2",
+          primary: "hsl(var(--text-primary) / <alpha-value>)",
+          secondary: "hsl(var(--text-secondary) / <alpha-value>)",
+          muted: "hsl(var(--text-muted) / <alpha-value>)",
         },
         confora: {
           primary: "#1F4E79",
