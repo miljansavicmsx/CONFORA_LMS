@@ -74,18 +74,18 @@ Legend — Status: `ACCEPTED` / `ACCEPTED (DEFERRED)` / `OPEN` /
 
 ### OQ-4 — Canonical frontend
 
-| Field           | Value                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| Date            | 2026-07-26                                                                                  |
-| Status          | OPEN                                                                                        |
-| Approved option | `frontend-app` is current operational canonical frontend pending an ADR superseding ADR-001 |
-| Owner           | Repository Owner                                                                            |
-| Rationale       | Pilot operational truth diverges from ADR-001; see Frontend Canonicalization Gap Note       |
-| Scope           | `frontend-app`, `apps/web`, `apps/admin`, ADR-001                                           |
-| Residual risk   | ADR-001 contradiction remains until superseded                                              |
-| Dependencies    | R0-1B2 ADR supersession                                                                     |
-| Exit criteria   | Superseding ADR accepted; parity migration criteria met                                     |
-| Supersession    | Pending (R0-1B2)                                                                            |
+| Field           | Value                                                                                                                                                                                                             |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-07-26                                                                                                                                                                                                        |
+| Status          | OPEN                                                                                                                                                                                                              |
+| Approved option | `frontend-app` is current operational canonical frontend pending an ADR superseding ADR-001. Product-plan delivery is decided separately by OD-PP-12 (2026-10-20): stay on Vite `frontend-app`; Next.js deferred. |
+| Owner           | Repository Owner                                                                                                                                                                                                  |
+| Rationale       | Pilot operational truth diverges from ADR-001; see Frontend Canonicalization Gap Note. OD-PP-12 does not meet these exit criteria.                                                                                |
+| Scope           | `frontend-app`, `apps/web`, `apps/admin`, ADR-001                                                                                                                                                                 |
+| Residual risk   | ADR-001 contradiction remains until superseded. Baseline §0.2 and §4.1 still name Next.js as the intended target.                                                                                                 |
+| Dependencies    | R0-1B2 ADR supersession; Architecture Lead together with the Owner before any Baseline text change (Change Control §2)                                                                                            |
+| Exit criteria   | Superseding ADR accepted; parity migration criteria met, or those criteria rewritten because Next.js is deferred. Neither is done.                                                                                |
+| Supersession    | Pending (R0-1B2). OD-PP-12 does not close this question and does not rewrite Baseline text.                                                                                                                       |
 
 ### OQ-5 — Identity / RBAC / SoD
 
@@ -1183,3 +1183,221 @@ Normative rule, preserved from the owner instruction:
 > CONFORA – Security Review Gate: Every PR that changes authentication, authorization, RBAC, tenant isolation, processing of sensitive data or other security-critical functionality must pass an independent review before merge approval. The review covers: 1) change analysis (security risks, regressions), 2) access-control verification (authn, authz, tenant isolation), 3) regression tests proving the fix and no breakage, 4) all relevant CI checks passing, 5) an independent reasoned GO/NO-GO tied to a specific commit SHA. The reviewer must not be the author of the changes. Any later change to security-relevant code requires re-review of that part. Known tenant-isolation gaps block production use with real data until fixed.
 
 New decisions are appended here with the same fields. Provisional recommendations from evidence packages are **not** owner decisions until recorded in this register.
+
+---
+
+## Part F — Product plan decisions (OD-PP-01 … OD-PP-14)
+
+Recorded 2026-10-19 from the owner-approved product plan (specification, gap analysis including „Zahtjevi za akreditaciju”, and standards applicability analysis). Full Bosnian text, conflict log, NFR list and application-security catalogue: [OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md](./OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md).
+
+OD-PP-12 was confirmed by the owner on 2026-10-20: product-plan delivery stays on Vite `frontend-app` and Next.js is deferred. That confirmation does not close OQ-4, does not supersede ADR-001, and does not rewrite Baseline §0.2 or §4.1. Those still need the Owner and the Architecture Lead together. This part does not resolve MD05, does not authorize deployment, and does not authorize processing of webcam images, identity-document images or JMBG before a DPIA. ISO/BAS standard texts are not added to the repository.
+
+### OD-PP-01 — Razdvajanje obuke i certifikacije
+
+| Field           | Value                                                                                                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                                                                   |
+| Status          | ACCEPTED                                                                                                                                                                                                                                     |
+| Approved option | Obuka i certifikacija su odvojene. Postoji put vanjske obuke. Trener ne smije ispitivati niti nadzirati vlastitog polaznika. PDF nakon kviza je samo potvrda o pohađanju. Certifikat osobe izdaje se samo odlukom komiteta za certifikaciju. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                               |
+| Rationale       | ISO/IEC 17024:2026, 5.2.3. Specifikacija 6.1 i Baseline §11.1 Fast-Track ne smiju automatski izdati certifikat osobe.                                                                                                                        |
+| Scope           | Put prijave, SoD, tipovi isprava                                                                                                                                                                                                             |
+| Residual risk   | Tekst Baseline §11.1 nije prepisan. Izdavanje nije implementirano.                                                                                                                                                                           |
+| Dependencies    | OD-PP-06, OD-PP-14                                                                                                                                                                                                                           |
+| Exit criteria   | Pravilo je u procesu; šema nosi tipove; workflow izdavanja čeka kasniji paket i nezavisni pregled zamjene Baseline rečenica                                                                                                                  |
+| Supersession    | Za certifikat osobe zamjenjuje Baseline §11.1 tačku 7 i rečenicu da Fast-Track ne traži glas komiteta. Ne dira potvrdu o pohađanju.                                                                                                          |
+
+### OD-PP-02 — AMF, pristup i suspenzija
+
+| Field           | Value                                                                                                                                                                                                                                                                  |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                                                                                             |
+| Status          | ACCEPTED                                                                                                                                                                                                                                                               |
+| Approved option | Članarina AMF ne uslovljava pristup certifikaciji. Neplaćanje otvara prijedlog suspenzije koji traži ljudsku potvrdu. Suspenzija je vremenski ograničena, zatim slijedi povlačenje. Statusi isprave: Active, Expired, Suspended, Withdrawn, plus Scope reduced za 9.5. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                                                         |
+| Rationale       | ISO/IEC 17024:2026, 4.3.6 i 9.5. Automatski prelazak iz specifikacije tačke 2 nije prihvaćen.                                                                                                                                                                          |
+| Scope           | Članarina, prijedlog, životni ciklus isprave                                                                                                                                                                                                                           |
+| Residual risk   | Pravni tekst pravila šeme i ugovor o neisticanju nisu u ovom paketu.                                                                                                                                                                                                   |
+| Dependencies    | OD-PP-01                                                                                                                                                                                                                                                               |
+| Exit criteria   | Objavljena pravila šeme; prijava nije vezana za članarinu                                                                                                                                                                                                              |
+| Supersession    | Zamjenjuje automatsku AMF suspenziju iz specifikacije tačke 2. Naknada koju šema objavi kao naknadu, a ne kao članstvo, i dalje može postojati (Baseline §11.1 tačka 2).                                                                                               |
+
+### OD-PP-03 — Politika upotrebe AI
+
+| Field           | Value                                                                                                                                                                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                                                                           |
+| Status          | ACCEPTED                                                                                                                                                                                                                                             |
+| Approved option | AI samo pomaže. Čovjek prihvata ili odbija prijedlog. Izlaz nosi is_ai_generated. Vodi se AI audit zapis. Kandidat prije AI interakcije dobija obavještenje i potvrdu. Svaka AI funkcija ima AIIA po ISO/IEC 42005. AI proctoring ne diskvalifikuje. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                                       |
+| Rationale       | Baseline §12, ISO/IEC 17024:2026 4.3.5 i 6.5.                                                                                                                                                                                                        |
+| Scope           | Tutor, nacrti, analiza grešaka, signal proctoringa                                                                                                                                                                                                   |
+| Residual risk   | ISO/IEC 42001 nije u biblioteci. AIIA dokumenti nisu popunjeni.                                                                                                                                                                                      |
+| Dependencies    | OD-PP-04, OD-PP-05, OD-PP-08                                                                                                                                                                                                                         |
+| Exit criteria   | Svaka uključena funkcija ima sistem, AIIA referencu, ljudski pregled i potvrdu kandidata                                                                                                                                                             |
+| Supersession    | Dopuna Baseline §12. Ne sužava postojeće zabrane.                                                                                                                                                                                                    |
+
+### OD-PP-04 — Online ispit
+
+| Field           | Value                                                                                                                                                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                   |
+| Status          | ACCEPTED                                                                                                                                                                                     |
+| Approved option | Online ispit uključuje prihvaćena pravila, NDA, nadzornika uživo, ljudsku provjeru identiteta (samo HUMAN_VISUAL) i MFA. AI proctoring je signal. Ponovno polaganje je najranije za 90 dana. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                               |
+| Rationale       | ISO/IEC 17024:2026 7.4.4 i specifikacija tačke 3 i 7, usklađeno s Baseline §8 i §9.                                                                                                          |
+| Scope           | Ispitna sesija, identitet, nadzor, MFA referenca, proctor zapis                                                                                                                              |
+| Residual risk   | Siguran preglednik i psihometrija nisu u ovom paketu. Prikupljanje slike čeka OD-PP-05.                                                                                                      |
+| Dependencies    | OD-PP-01, OD-PP-03, OD-PP-05                                                                                                                                                                 |
+| Exit criteria   | Prvi akreditabilni online ispit ne kreće bez ovih kontrola                                                                                                                                   |
+| Supersession    | Ne uvodi IAL-3. Biometrijski šablon i prepoznavanje lica ostaju zabranjeni u MVP-u.                                                                                                          |
+
+### OD-PP-05 — DPIA prije webkamere, isprave i JMBG-a
+
+| Field           | Value                                                                                                                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                                                    |
+| Status          | ACCEPTED                                                                                                                                                                                                                      |
+| Approved option | Obrada slike s webkamere, slike lične isprave i JMBG-a nije dozvoljena dok se ne završi DPIA po ISO/IEC 29100:2024 i ISO/IEC 27018:2025. Do nabavke 29134 i 27701 koriste se načela 29100, kontrole 27018 i smjernice EDPB-a. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                |
+| Rationale       | Baseline §8 i §9; specifikacija 7 i 12.1.                                                                                                                                                                                     |
+| Scope           | Identitet, proctoring, nacionalni identifikator                                                                                                                                                                               |
+| Residual risk   | DPIA nije izrađena. Kolone u šemi nisu odobrenje za prikupljanje.                                                                                                                                                             |
+| Dependencies    | OD-PP-04, OD-PP-08                                                                                                                                                                                                            |
+| Exit criteria   | DPIA potvrđena prije upisa ovih podataka                                                                                                                                                                                      |
+| Supersession    | —                                                                                                                                                                                                                             |
+
+### OD-PP-06 — Mapiranje uloga
+
+| Field           | Value                                                                                                                                                                                                                                                                                                                                                             |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                                                                                                                                                                                        |
+| Status          | ACCEPTED                                                                                                                                                                                                                                                                                                                                                          |
+| Approved option | Nazivi specifikacije mapiraju se na kanonske kodove (USR_CAND/USR_CERT, STAFF_DIR, STAFF_SYSADM, STAFF_TRAINADM, COM_TECH, COM_CERT, COM_APP, COM_IMP, STAFF_AUD, EXAMINER, INVIGILATOR, SME, QUALITY_MANAGER, AI_SECURITY_MANAGER). COMPLAINT_HANDLER i STAFF_ROLEADM ostaju iz MD05. Lokalna baza ne dodjeljuje ulogu. Članstvo u komitetu je zapis imenovanja. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                                                                                                                                                    |
+| Rationale       | Baseline §6. MD05: izvor ovlaštenja je vanjski IdP.                                                                                                                                                                                                                                                                                                               |
+| Scope           | Specifikacija 11.1 i 12.1                                                                                                                                                                                                                                                                                                                                         |
+| Residual risk   | Kodovi nisu time upisani u IdP. STAFF_ROLEADM i COMPLAINT_HANDLER ostaju neimplementirani.                                                                                                                                                                                                                                                                        |
+| Dependencies    | MD05 Phase 0 freeze R2                                                                                                                                                                                                                                                                                                                                            |
+| Exit criteria   | IdP dodjela i zapis imenovanja koriste iste kodove                                                                                                                                                                                                                                                                                                                |
+| Supersession    | Ne uvodi nove kodove.                                                                                                                                                                                                                                                                                                                                             |
+
+### OD-PP-07 — Najmanja ovlaštenja i break-glass
+
+| Field           | Value                                                                                                                                                             |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                        |
+| Status          | ACCEPTED                                                                                                                                                          |
+| Approved option | „Sys admin vidi sve” se ne usvaja. Širi pristup ide preko break-glass zapisa s razlogom, opsegom i vremenom. Sistem-administrator ne mijenja ishod certifikacije. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                    |
+| Rationale       | AGENTS.md, Baseline §7.5.                                                                                                                                         |
+| Scope           | Specifikacija 12                                                                                                                                                  |
+| Residual risk   | Aplikacijski tok break-glass još ne postoji.                                                                                                                      |
+| Dependencies    | OD-PP-06                                                                                                                                                          |
+| Exit criteria   | Nema stalne uloge „vidi sve”; svaki prošireni pristup ima zapis                                                                                                   |
+| Supersession    | Zamjenjuje specifikaciju 12 u dijelu „sve vidi”.                                                                                                                  |
+
+### OD-PP-08 — Osnova politike privatnosti
+
+| Field           | Value                                                                                                                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                               |
+| Status          | ACCEPTED                                                                                                                                                                                                 |
+| Approved option | Osnova politike privatnosti je ISO/IEC 29100:2024. PII u oblaku dodatno se oslanja na ISO/IEC 27018:2025. Rokovi Baseline §9 ostaju. Log javne provjere tretira se kao audit zapis (najmanje 10 godina). |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                           |
+| Rationale       | 17024 7.3.2. MD05 je ranije bilježio da osnova privatnosti nije upisana.                                                                                                                                 |
+| Scope           | Identifikator osnove, ne tekst politike i ne završena DPIA                                                                                                                                               |
+| Residual risk   | MD05 ostaje neriješen. Tekst obavještenja nije napisan.                                                                                                                                                  |
+| Dependencies    | OD-PP-05                                                                                                                                                                                                 |
+| Exit criteria   | Objavljena politika i DPIA pozivaju se na ove oznake                                                                                                                                                     |
+| Supersession    | Popunjava identifikator osnove. Ne zatvara MD05 i ne odobrava žalbe ni prigovore.                                                                                                                        |
+
+### OD-PP-09 — Nefunkcionalni zahtjevi
+
+| Field           | Value                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Date            | 2026-10-19                                                                                                                     |
+| Status          | ACCEPTED                                                                                                                       |
+| Approved option | Usvojena je lista NFR-01 … NFR-16 u odluci, mapirana na karakteristike ISO/IEC 25010:2023. Lista je zahtjev, ne dokaz izvedbe. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                 |
+| Rationale       | Analiza standarda, korak 0.                                                                                                    |
+| Scope           | Moduli specifikacije 1–12                                                                                                      |
+| Residual risk   | Nema mjerenja ni izvještaja evaluacije.                                                                                        |
+| Dependencies    | —                                                                                                                              |
+| Exit criteria   | Kasniji moduli navode koji NFR dotiču i kako se provjerava                                                                     |
+| Supersession    | —                                                                                                                              |
+
+### OD-PP-10 — Katalog sigurnosnih kontrola aplikacije
+
+| Field           | Value                                                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                  |
+| Status          | ACCEPTED                                                                                                                    |
+| Approved option | Usvojen je katalog ASC-01 … ASC-15 u odluci, u smislu ISO/IEC 27034. Katalog nije certifikat i ne zamjenjuje ISO/IEC 27001. |
+| Owner           | Miljan Savić, Repository Owner                                                                                              |
+| Rationale       | Analiza standarda, korak 0.                                                                                                 |
+| Scope           | Aplikacija, posebno ispit, registar, AI i javna provjera                                                                    |
+| Residual risk   | OQ-7 ostaje otvoren. Većina kontrola je zahtjev, ne zatvorena implementacija.                                               |
+| Dependencies    | OD-PP-07, OD-PP-08                                                                                                          |
+| Exit criteria   | Kontrola se smije zvati zatvorenom tek uz implementaciju i test                                                             |
+| Supersession    | —                                                                                                                           |
+
+### OD-PP-11 — xAPI zapisi od prvog dana
+
+| Field           | Value                                                                                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Date            | 2026-10-19                                                                                                                                             |
+| Status          | ACCEPTED                                                                                                                                               |
+| Approved option | Lekcija, kviz i ispit od prvog dana upisuju xAPI zapis. Historija se ne rekonstruše naknadno. Saglasnost za analitiku je posebna od zapisa aktivnosti. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                         |
+| Rationale       | ISO/IEC/IEEE 39274-1-1:2025. Specifikacija 2.2 i 12.1.                                                                                                 |
+| Scope           | LearningActivityRecord                                                                                                                                 |
+| Residual risk   | Emiter u aplikaciji nije dio ovog paketa.                                                                                                              |
+| Dependencies    | OD-PP-08                                                                                                                                               |
+| Exit criteria   | Prvi player i prvi ispit pišu zapis zajedno s napretkom                                                                                                |
+| Supersession    | —                                                                                                                                                      |
+
+### OD-PP-12 — Frontend Vite ili Next.js
+
+| Field           | Value                                                                                                                                                                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-20                                                                                                                                                                                                                                            |
+| Status          | ACCEPTED                                                                                                                                                                                                                                              |
+| Approved option | Isporučujemo na Vite `frontend-app` (opcija A). Next.js (`apps/web`, `apps/admin`) je odgođen.                                                                                                                                                        |
+| Owner           | Miljan Savić, Repository Owner — potvrda 2026-10-20                                                                                                                                                                                                   |
+| Rationale       | Operativni frontend i F5 dokazi već su na `frontend-app`. Vlasnik je potvrdio preporuku. Baseline §0.2 i §4.1 i dalje opisuju Next.js kao cilj; ADR-001 ostaje u suprotnosti.                                                                         |
+| Scope           | Površina isporuke plana proizvoda: `frontend-app`. Ne uključuje prepis Baselinea ni gašenje `apps/web` / `apps/admin`.                                                                                                                                |
+| Residual risk   | Tekst Baseline §0.2 i §4.1 i ADR-001 nisu usklađeni s ovom odlukom. OQ-4 ostaje OPEN jer izlazni uslovi (zamjenski ADR i kriteriji pariteta) nisu ispunjeni.                                                                                          |
+| Dependencies    | Change Control §2: izmjena teksta Baselinea traži vlasnika i Architecture Lead zajedno. OQ-4 / R0-1B2 za zamjenu ADR-001.                                                                                                                             |
+| Exit criteria   | Odluka o površini isporuke je ispunjena ovom potvrdom. Preostaje: (1) tekst Baseline §0.2 i §4.1 nije prepisan; (2) ADR-001 nije zamijenjen; (3) OQ-4 nije zatvoren; (4) kriteriji pariteta iz gap note važe za kasniji prelazak, ne za ovu isporuku. |
+| Supersession    | Za isporuku plana proizvoda bira Vite `frontend-app` i odgađa Next.js. Ne zatvara OQ-4, ne zamjenjuje ADR-001 i ne prepisuje Baseline.                                                                                                                |
+
+### OD-PP-13 — Pojednostavljenje procesa
+
+| Field           | Value                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                         |
+| Status          | NOT_ADOPTED                                                                                        |
+| Approved option | Preporuka da se R0/MD evidencija pojednostavi za feature rad nije usvojena.                        |
+| Owner           | Miljan Savić, Repository Owner                                                                     |
+| Rationale       | Sukob s Change Controlom i hijerarhijom. Sukob je zabilježen umjesto tihe izmjene.                 |
+| Scope           | Proces odobravanja i evidencije                                                                    |
+| Residual risk   | Feature rad i dalje traži opseg i evidenciju.                                                      |
+| Dependencies    | Change Control                                                                                     |
+| Exit criteria   | Ostaje nevažeće dok vlasnik i Architecture Lead, uz nezavisni pregled, izričito ne zamijene proces |
+| Supersession    | —                                                                                                  |
+
+### OD-PP-14 — Ovlaštenje za domenski model
+
+| Field           | Value                                                                                                                                                                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-19                                                                                                                                                                                                                                         |
+| Status          | ACCEPTED                                                                                                                                                                                                                                           |
+| Approved option | Ovaj paket smije proširiti Prisma šemu, dodati jednu naprednu migraciju, opis modela i testove šeme. Zamrznuti modeli ostaju neizmijenjeni. Veza na CertificationApplication nema strani ključ. Profil i potrebe pristupačnosti su zasebne tabele. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                                     |
+| Rationale       | Korak 1 plana, prije API-ja i sučelja.                                                                                                                                                                                                             |
+| Scope           | `packages/database/prisma/**`, `docs/architecture/PRODUCT_PLAN_DOMAIN_MODEL.md`, test šeme                                                                                                                                                         |
+| Residual risk   | Integritet veze na zamrznutu prijavu je aplikacijski dok se model ne odmrzne posebnim ovlaštenjem.                                                                                                                                                 |
+| Dependencies    | OD-PP-01 … OD-PP-11                                                                                                                                                                                                                                |
+| Exit criteria   | prisma validate, generate, typecheck, lint i postojeći testovi prolaze                                                                                                                                                                             |
+| Supersession    | Ne mijenja PKG-06 zamrzavanje CertificationApplication, ComplaintCase, AppealCase, AuditEvent i AuditChainHead.                                                                                                                                    |

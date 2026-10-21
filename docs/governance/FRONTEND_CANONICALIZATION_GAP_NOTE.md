@@ -11,12 +11,12 @@
 
 ## Current `frontend-app` status
 
-| Attribute | Value |
-|-----------|-------|
-| Stack | Vite + React |
-| Role | **Active pilot learner UI** (CLRC-2026-06) |
-| API target | Nest `http://127.0.0.1:4000` (RB-01) |
-| F5 proof | S-01–S-20 E2E via this UI |
+| Attribute          | Value                                                      |
+| ------------------ | ---------------------------------------------------------- |
+| Stack              | Vite + React                                               |
+| Role               | **Active pilot learner UI** (CLRC-2026-06)                 |
+| API target         | Nest `http://127.0.0.1:4000` (RB-01)                       |
+| F5 proof           | S-01–S-20 E2E via this UI                                  |
 | Baseline alignment | **Drift** — Baseline §4.1 specifies Next.js 14+ `apps/web` |
 
 `frontend-app` is **operational truth** for the locked local release candidate. It is technical debt (TD-F6-01, TD-F6-14), not deprecated for pilot.
@@ -25,10 +25,10 @@
 
 ## `apps/web` and `apps/admin` target state
 
-| App | Baseline intent | Current status |
-|-----|-----------------|----------------|
-| `apps/web` | Canonical learner Next.js 14+ | Exists; **not** sole pilot UI |
-| `apps/admin` | Canonical staff/admin portal | Exists; staff flows via **Nest API smokes**, not full admin Next E2E |
+| App          | Baseline intent               | Current status                                                       |
+| ------------ | ----------------------------- | -------------------------------------------------------------------- |
+| `apps/web`   | Canonical learner Next.js 14+ | Exists; **not** sole pilot UI                                        |
+| `apps/admin` | Canonical staff/admin portal  | Exists; staff flows via **Nest API smokes**, not full admin Next E2E |
 
 **Target:** Both become canonical UIs before production UI consolidation claim.
 
@@ -36,27 +36,27 @@
 
 ## What F4 / F5 frontend gates proved
 
-| Gate | Proved |
-|------|--------|
+| Gate               | Proved                                               |
+| ------------------ | ---------------------------------------------------- |
 | F4-9 module smokes | API contracts, RBAC, tenant, audit for pilot modules |
-| F5 E2E S-01–S-20 | End-to-end flows via `frontend-app` + Nest |
-| F5-3 security | Tenant isolation, auth modes |
-| F5-5 GDPR/audit | Local pilot posture (hCaptcha caveat SEC-12) |
-| F5 C-01–C-11 | Mandatory checklist 11/11 PASS |
-| Public verify | `frontend-public` + Nest verification API |
+| F5 E2E S-01–S-20   | End-to-end flows via `frontend-app` + Nest           |
+| F5-3 security      | Tenant isolation, auth modes                         |
+| F5-5 GDPR/audit    | Local pilot posture (hCaptcha caveat SEC-12)         |
+| F5 C-01–C-11       | Mandatory checklist 11/11 PASS                       |
+| Public verify      | `frontend-public` + Nest verification API            |
 
 ---
 
 ## What F4 / F5 did not prove
 
-| Gap | Impact |
-|-----|--------|
+| Gap                                           | Impact                                    |
+| --------------------------------------------- | ----------------------------------------- |
 | Next.js `apps/web` parity with `frontend-app` | Cannot claim baseline §4.1 full alignment |
-| `apps/admin` full UI E2E | Admin UX consolidation unproven |
-| WCAG 2.2 AA | BL-14-02 NOT_PROVEN (TD-F6-19) |
-| i18n bs-BA / en-US full coverage | BL-14-01 NOT_PROVEN (TD-F6-18) |
-| Production CDN / SSR deployment | Cloud deferral (CD-14) |
-| Single UI codebase for learner + admin | Architecture drift |
+| `apps/admin` full UI E2E                      | Admin UX consolidation unproven           |
+| WCAG 2.2 AA                                   | BL-14-02 NOT_PROVEN (TD-F6-19)            |
+| i18n bs-BA / en-US full coverage              | BL-14-01 NOT_PROVEN (TD-F6-18)            |
+| Production CDN / SSR deployment               | Cloud deferral (CD-14)                    |
+| Single UI codebase for learner + admin        | Architecture drift                        |
 
 ---
 
@@ -74,3 +74,16 @@
 **CLRC lock:** Migration **not started**; gap **governed**.
 
 **Related:** `LOCAL_RELEASE_CANDIDATE_LOCK.md`, `TECH_DEBT.md` (TD-F6-01, TD-F6-14)
+
+---
+
+## Update 2026-10-20 — OD-PP-12 accepted
+
+Miljan Savić confirmed [OD-PP-12](./OD_PP_PRODUCT_PLAN_DECISIONS_2026-10-19.md) on 2026-10-20: product-plan delivery stays on Vite `frontend-app`. Next.js (`apps/web`, `apps/admin`) is deferred.
+
+Still open, and not done by that confirmation:
+
+1. Baseline §0.2 and §4.1 still name Next.js as the intended target. Change Control §2 requires the Owner and the Architecture Lead together before that text changes. The Baseline was not rewritten.
+2. ADR-001 is still contradicted and is not superseded.
+3. OQ-4 stays **OPEN**. Its exit criteria (a superseding ADR, and parity-migration criteria met or rewritten because Next.js is deferred) are not met.
+4. The parity matrix, Next.js E2E re-run, and `frontend-app` sunset plan above remain the criteria for a later move. They are not a gate on the accepted Vite delivery.
