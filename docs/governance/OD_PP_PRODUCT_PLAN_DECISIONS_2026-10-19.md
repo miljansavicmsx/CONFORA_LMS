@@ -1,10 +1,10 @@
 # Odluke vlasnika — plan proizvoda CONFORA
 
 **Document ID:** CON-GOV-OD-PP-2026-10-19
-**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20; OD-PP-15 … OD-PP-18 accepted 2026-10-20; OD-PP-19 … OD-PP-25 accepted 2026-10-21; OD-PP-26 … OD-PP-29 accepted 2026-10-21
+**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20; OD-PP-15 … OD-PP-18 accepted 2026-10-20; OD-PP-19 … OD-PP-25 accepted 2026-10-21; OD-PP-26 … OD-PP-29 accepted 2026-10-21; OD-PP-30 OWNER_APPROVED, FINAL 2026-10-21
 **Owner:** Miljan Savić, Repository Owner
 **Authority level:** Governance Hierarchy Level 1
-**Companion:** [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) Part F (OD-PP-01 … OD-PP-29)
+**Companion:** [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) Part F (OD-PP-01 … OD-PP-30)
 
 Ovaj zapis prenosi odluke koje je vlasnik odobrio u ovom zadatku: specifikaciju proizvoda, analizu razlika (uključujući „Zahtjevi za akreditaciju”) i analizu primjenjivosti standarda. Tekst standarda nije unesen u repozitorij. Zapis nije elektronski potpis niti dokaz akreditacije. Mapiranje na klauzulu nije tvrdnja o usaglašenosti.
 

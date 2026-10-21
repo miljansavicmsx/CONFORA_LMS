@@ -4,13 +4,14 @@ import { BadRequestException, HttpException, Injectable, NotFoundException } fro
 import { AiGatewayService } from '../ai-gateway/ai-gateway.service';
 import { AuditService } from '../audit/audit.service';
 import type { AuthenticatedActor } from '../auth/request-principal';
+import { ExamRuleError } from '../exam/exam-rules';
+import { PersonnelRuleError } from '../personnel/personnel-rules';
 import { FlowNotFoundError } from '../prisma/certification-flow-store';
 import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
 import { labelSuggestion, prepareAssistPrompt } from './case-suggestions';
 import { FlowRuleError } from './certification-flow-rules';
-import { PersonnelRuleError } from '../personnel/personnel-rules';
 
 const DENIED = new Set([
   'ROLE_SEPARATION',
@@ -21,6 +22,9 @@ const DENIED = new Set([
   'CONFLICT_DECLARED',
   'CONFLICT_CLEARANCE_REQUIRED',
   'NOT_ASSIGNED',
+  'EXAMINER_CANNOT_DECIDE',
+  'TRAINER_CANNOT_DECIDE',
+  'CANDIDATE_CANNOT_DECIDE',
 ]);
 
 function fail(error: unknown): never {
@@ -33,7 +37,7 @@ function fail(error: unknown): never {
     }
     throw new BadRequestException(error.code);
   }
-  if (error instanceof FlowRuleError) {
+  if (error instanceof ExamRuleError || error instanceof FlowRuleError) {
     if (error.code === 'RATE_LIMIT') {
       throw new HttpException(error.code, 429);
     }
@@ -379,11 +383,38 @@ export class CertificationFlowService {
     return this.tenantPrisma.flow.examPasses(actor.userId).catch(fail);
   }
 
-  publicDocument(publicUid: string) {
-    return this.tenantPrisma.flow.publicDocument(publicUid).catch(fail);
+  publicDocument(verificationId: string, sourceIp: string) {
+    return this.tenantPrisma.flow
+      .publicDocument({ verificationId, sourceIp, now: new Date() })
+      .catch(fail);
   }
 
-  publicPdf(publicUid: string) {
-    return this.tenantPrisma.flow.publicPdf(publicUid).catch(fail);
+  publicPdf(verificationId: string, sourceIp: string) {
+    return this.tenantPrisma.flow
+      .publicPdf({ verificationId, sourceIp, now: new Date() })
+      .catch(fail);
+  }
+
+  setNameConsent(actor: AuthenticatedActor, verificationId: string, granted: boolean) {
+    const now = new Date();
+    return this.tenantPrisma.flow
+      .setNameConsent({ userId: actor.userId, verificationId, granted, now })
+      .then(async (result) => {
+        await this.audit.append(actor, {
+          idempotencyKey: randomUUID(),
+          eventType: 'DOCUMENT_NAME_CONSENT',
+          outcome: 'SUCCESS',
+          occurredAt: now,
+          resourceType: 'PublicDocument',
+          resourceId: result.documentId,
+          metadata: {
+            caseId: result.documentId,
+            documentNumber: result.recordNumber,
+            reason: result.granted ? 'GRANTED' : 'REVOKED',
+          },
+        });
+        return result;
+      })
+      .catch(fail);
   }
 }

@@ -141,3 +141,55 @@ export function assertRole(roles: readonly string[], required: string): void {
     throw new FlowRuleError('ROLE_SEPARATION');
   }
 }
+
+export const PUBLIC_VERIFICATION_STATEMENT =
+  'Javna provjera autentičnosti dokumenta. Ime se prikazuje samo uz poseban pristanak nosioca.';
+
+export type PublicDocumentType = 'EDUCATION_COMPLETION' | 'EXAM_PASS';
+
+export type PublicVerificationView = {
+  status: 'VALID' | 'INVALID';
+  documentType: PublicDocumentType | null;
+  issuedAt: string | null;
+  holderName: string | null;
+};
+
+export const INVALID_PUBLIC_VERIFICATION: PublicVerificationView = {
+  status: 'INVALID',
+  documentType: null,
+  issuedAt: null,
+  holderName: null,
+};
+
+/** Public EDU/EXM view: status, type, and issue date. Name only while consent is active. */
+export function presentPublicVerification(input: {
+  documentType: PublicDocumentType;
+  issuedAt: Date | null;
+  nameConsentAt: Date | null;
+  holderName: string | null;
+}): PublicVerificationView {
+  if (!input.issuedAt) {
+    return INVALID_PUBLIC_VERIFICATION;
+  }
+  return {
+    status: 'VALID',
+    documentType: input.documentType,
+    issuedAt: input.issuedAt.toISOString().slice(0, 10),
+    holderName: input.nameConsentAt ? input.holderName : null,
+  };
+}
+
+export function publicVerificationPdfLines(view: PublicVerificationView): readonly string[] {
+  if (view.status !== 'VALID' || !view.documentType || !view.issuedAt) {
+    return ['Status: INVALID'];
+  }
+  const typeLabel =
+    view.documentType === 'EDUCATION_COMPLETION'
+      ? 'Potvrda o završetku edukacije'
+      : 'Potvrda o ispitu';
+  const lines = [`Vrsta: ${typeLabel}`, `Datum izdavanja: ${view.issuedAt}`];
+  if (view.holderName) {
+    lines.push(`Ime: ${view.holderName}`);
+  }
+  return lines;
+}

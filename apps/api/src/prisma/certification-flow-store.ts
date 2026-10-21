@@ -16,13 +16,20 @@ import {
   examPassDisposition,
   exclusionReason,
   EXAM_PASS_STATEMENT,
+  INVALID_PUBLIC_VERIFICATION,
   levelChosenByCommittee,
+  presentPublicVerification,
+  PUBLIC_VERIFICATION_STATEMENT,
+  publicVerificationPdfLines,
   REFEREE_LINK_DAYS,
   requirementsSatisfiedByReferee,
   voteResult,
   FlowRuleError,
   type JourneyPath,
+  type PublicVerificationView,
 } from '../certification-flow/certification-flow-rules';
+import { sealDelivery } from '../certification-flow/referee-delivery';
+import { assertCertificationDecision, ExamRuleError } from '../exam/exam-rules';
 import { drawDocumentPage, openUnicodePdf } from '../personnel/document-pdf';
 import { issuePersonnelCertificate, type PersonnelClient } from './personnel-certificate-store';
 
@@ -53,6 +60,7 @@ export type FlowClient = {
   | 'issuanceAuthorization'
   | 'aiCaseSuggestion'
   | 'committeeConflictDeclaration'
+  | 'publicDocumentAccessLog'
   | 'enrolment'
   | 'enrolmentTrainer'
   | 'certificationSchemeVersion'
@@ -73,8 +81,20 @@ const caseInclude = {
 
 type LoadedCase = Prisma.ProfessionalCaseGetPayload<{ include: typeof caseInclude }>;
 
-function appOrigin(): string {
-  return process.env['PUBLIC_APP_ORIGIN'] ?? 'http://127.0.0.1:3001';
+export function publicAppOrigin(): string {
+  const configured = process.env['PUBLIC_APP_ORIGIN']?.trim() ?? '';
+  if (configured.length > 0) {
+    return configured;
+  }
+  const env = process.env['NODE_ENV'];
+  if (env === 'development' || env === 'test') {
+    return 'http://127.0.0.1:3001';
+  }
+  throw new FlowRuleError('ORIGIN_UNCONFIGURED');
+}
+
+function randomVerificationId(): string {
+  return randomBytes(32).toString('base64url');
 }
 
 function hashToken(token: string): string {
@@ -615,6 +635,7 @@ export async function requestReferee(
   const token = randomBytes(32).toString('base64url');
   const id = randomUUID();
   const expiresAt = new Date(input.now.getTime() + REFEREE_LINK_DAYS * 86_400_000);
+  const link = `${publicAppOrigin()}/referee/${token}`;
   await client.refereeConfirmation.create({
     data: {
       id,
@@ -628,24 +649,19 @@ export async function requestReferee(
       requestedFacts: input.requestedFacts,
     },
   });
-  const link = `${appOrigin()}/referee/${token}`;
   await client.messageOutbox.create({
     data: {
       id: randomUUID(),
       tenantId: input.tenantId,
       toAddress: input.email,
       subject: 'Potvrda iskustva',
-      body: `Sigurna veza ističe ${expiresAt.toISOString()}. ${link}`,
+      body: sealDelivery(link),
       status: 'LOGGED',
     },
   });
-  if (process.env['NODE_ENV'] !== 'test') {
-    console.info(`referee-outbox ${input.email} ${link}`);
-  }
   return {
     refereeId: id,
     expiresAt: expiresAt.toISOString(),
-    token,
     requirementsSatisfied: requirementsSatisfiedByReferee(),
   };
 }
@@ -660,24 +676,13 @@ export async function confirmReferee(
     now: Date;
   },
 ) {
-  const row = await client.refereeConfirmation.findFirst({
-    where: { tokenHash: hashToken(input.token) },
-  });
-  if (!row) {
-    throw new FlowNotFoundError();
-  }
-  if (row.expiresAt.getTime() < input.now.getTime()) {
-    await client.refereeConfirmation.update({
-      where: { tenantId_id: { tenantId: row.tenantId, id: row.id } },
-      data: { state: 'EXPIRED' },
-    });
-    throw new FlowRuleError('LINK_EXPIRED');
-  }
-  if (row.state !== 'PENDING') {
-    throw new FlowRuleError('LINK_USED');
-  }
-  await client.refereeConfirmation.update({
-    where: { tenantId_id: { tenantId: row.tenantId, id: row.id } },
+  const tokenHash = hashToken(input.token);
+  const updated = await client.refereeConfirmation.updateMany({
+    where: {
+      tokenHash,
+      state: 'PENDING',
+      expiresAt: { gt: input.now },
+    },
     data: {
       state: input.accept ? 'CONFIRMED' : 'DECLINED',
       confirmedFacts: input.confirmedFacts ?? null,
@@ -685,11 +690,31 @@ export async function confirmReferee(
       confirmedAt: input.now,
     },
   });
-  return {
-    refereeId: row.id,
-    state: input.accept ? ('CONFIRMED' as const) : ('DECLINED' as const),
-    requirementsSatisfied: requirementsSatisfiedByReferee(),
-  };
+  if (updated.count === 1) {
+    const row = await client.refereeConfirmation.findFirst({ where: { tokenHash } });
+    if (!row) {
+      throw new FlowNotFoundError();
+    }
+    return {
+      refereeId: row.id,
+      state: input.accept ? ('CONFIRMED' as const) : ('DECLINED' as const),
+      requirementsSatisfied: requirementsSatisfiedByReferee(),
+    };
+  }
+  const row = await client.refereeConfirmation.findFirst({ where: { tokenHash } });
+  if (!row) {
+    throw new FlowNotFoundError();
+  }
+  if (row.expiresAt.getTime() <= input.now.getTime()) {
+    if (row.state === 'PENDING') {
+      await client.refereeConfirmation.updateMany({
+        where: { tokenHash, state: 'PENDING' },
+        data: { state: 'EXPIRED' },
+      });
+    }
+    throw new FlowRuleError('LINK_EXPIRED');
+  }
+  throw new FlowRuleError('LINK_USED');
 }
 
 export async function assessReferee(
@@ -880,6 +905,47 @@ async function decisionParticipants(
   return [...ids];
 }
 
+/**
+ * ISO/IEC 17024 certification decision only. Exam scoring does not use this gate.
+ * The confirmer who would be recorded as the decision maker must not have trained
+ * or examined the candidate. An examiner may still score the session they ran.
+ */
+async function assertRecordedDecisionMaker(
+  client: FlowClient,
+  tenantId: string,
+  row: LoadedCase,
+  confirmerUserId: string,
+  actor: Actor,
+): Promise<void> {
+  const result = row.examResultId
+    ? await client.certificationExamResult.findFirst({
+        where: { tenantId, id: row.examResultId },
+        include: { session: true },
+      })
+    : null;
+  const trainer = await client.enrolmentTrainer.findFirst({
+    where: {
+      tenantId,
+      trainerUserId: confirmerUserId,
+      enrolment: { userId: row.applicantUserId },
+    },
+  });
+  try {
+    assertCertificationDecision({
+      makerUserId: confirmerUserId,
+      candidateUserId: row.applicantUserId,
+      roles: confirmerUserId === actor.userId ? actor.roles : ['COM_CERT'],
+      trainerOfCandidate: Boolean(trainer),
+      examinedCandidate: result?.session.invigilatorUserId === confirmerUserId,
+    });
+  } catch (error) {
+    if (error instanceof ExamRuleError) {
+      throw new FlowRuleError(error.code);
+    }
+    throw error;
+  }
+}
+
 export async function recordVote(
   client: FlowClient,
   input: {
@@ -904,6 +970,33 @@ export async function recordVote(
   );
   if (existing) {
     throw new FlowRuleError('ALREADY_VOTED');
+  }
+  const pendingBallots = [...row.assessments.map((assessment) => assessment.ballot), input.ballot];
+  const pendingOutcome = voteResult({
+    grants: pendingBallots.filter((ballot) => ballot === 'GRANT').length,
+    denies: pendingBallots.filter((ballot) => ballot === 'DENY').length,
+    quorum: row.schemeVersion.caseRule?.votingQuorum ?? 2,
+  });
+  if (pendingOutcome === 'GRANT' && row.examResultId) {
+    const passedNow = await examPassedFor(client, input.tenantId, row.examResultId);
+    const levelNow = levelChosenByCommittee(
+      computeEligibleLevel({
+        experienceMonths: row.experienceMonths,
+        examPassed: passedNow,
+        criteria: criteriaOf(row),
+      }),
+    );
+    if (levelNow) {
+      const priorDecision = await client.examCertificationDecision.findFirst({
+        where: { tenantId: input.tenantId, resultId: row.examResultId },
+      });
+      if (!priorDecision) {
+        const confirmer =
+          row.proposals.find((proposal) => proposal.confirmedByUserId)?.confirmedByUserId ??
+          input.actor.userId;
+        await assertRecordedDecisionMaker(client, input.tenantId, row, confirmer, input.actor);
+      }
+    }
   }
   await client.committeeAssessment.create({
     data: {
@@ -1143,6 +1236,7 @@ export async function maybeIssueEducation(
     where: { publicUid: { startsWith: `EDU-${String(year)}-` } },
   });
   const publicUid = numbered('EDU', year, count);
+  const verificationId = randomVerificationId();
   await client.educationCompletionDocument.create({
     data: {
       id,
@@ -1150,6 +1244,7 @@ export async function maybeIssueEducation(
       enrolmentId: enrolment.id,
       holderUserId: enrolment.userId,
       publicUid,
+      verificationId,
       courseTitle: enrolment.course.title,
       participationSeconds: seconds,
       statement: EDUCATION_STATEMENT,
@@ -1159,6 +1254,7 @@ export async function maybeIssueEducation(
   return {
     documentId: id,
     publicUid,
+    verificationId,
     holderName: profileName(enrolment.learner.profile),
   };
 }
@@ -1197,6 +1293,7 @@ export async function maybeIssueExamPass(
     where: { publicUid: { startsWith: `EXM-${String(year)}-` } },
   });
   const publicUid = numbered('EXM', year, count);
+  const verificationId = randomVerificationId();
   const issued = disposition === 'AUTO';
   await client.examPassAttestation.create({
     data: {
@@ -1205,6 +1302,7 @@ export async function maybeIssueExamPass(
       resultId: result.id,
       holderUserId: result.session.candidateUserId,
       publicUid,
+      verificationId,
       state: issued ? 'ISSUED' : 'PENDING_REVIEW',
       examTitle: result.session.form.title,
       passed: result.passed,
@@ -1216,6 +1314,7 @@ export async function maybeIssueExamPass(
   return {
     attestationId: id,
     publicUid,
+    verificationId,
     state: issued ? ('ISSUED' as const) : ('PENDING_REVIEW' as const),
   };
 }
@@ -1249,6 +1348,8 @@ export async function listEducation(client: FlowClient, tenantId: string, userId
   return rows.map((row) => ({
     documentId: row.id,
     number: row.publicUid,
+    verificationId: row.verificationId,
+    nameConsent: row.nameConsentAt !== null,
     courseTitle: row.courseTitle,
     participationSeconds: row.participationSeconds,
     statement: row.statement,
@@ -1265,6 +1366,8 @@ export async function listExamPasses(client: FlowClient, tenantId: string, userI
   return rows.map((row) => ({
     attestationId: row.id,
     number: row.publicUid,
+    verificationId: row.verificationId,
+    nameConsent: row.nameConsentAt !== null,
     examTitle: row.examTitle,
     state: row.state,
     passed: row.passed,
@@ -1274,68 +1377,161 @@ export async function listExamPasses(client: FlowClient, tenantId: string, userI
   }));
 }
 
-export async function publicDocument(client: FlowClient, publicUid: string) {
+function consentedHolderName(
+  profile: {
+    givenName: string;
+    familyName: string;
+    identityVerificationState: string;
+  } | null,
+  nameConsentAt: Date | null,
+): string | null {
+  if (!nameConsentAt || profile?.identityVerificationState !== 'VERIFIED') {
+    return null;
+  }
+  return profileName(profile);
+}
+
+async function logPublicLookup(
+  client: FlowClient,
+  input: {
+    tenantId: string | null;
+    verificationKey: string;
+    sourceIp: string;
+    outcome: 'VALID' | 'INVALID';
+    now: Date;
+  },
+): Promise<void> {
+  await client.publicDocumentAccessLog.create({
+    data: {
+      id: randomUUID(),
+      tenantId: input.tenantId,
+      verificationKeyHash: createHash('sha256').update(input.verificationKey).digest('hex'),
+      sourceIp: input.sourceIp.slice(0, 64) || 'unknown',
+      outcome: input.outcome,
+      recordedAt: input.now,
+    },
+  });
+}
+
+export async function publicDocument(
+  client: FlowClient,
+  input: { verificationId: string; sourceIp: string; now: Date },
+): Promise<PublicVerificationView> {
+  const key = input.verificationId.trim();
   const education = await client.educationCompletionDocument.findFirst({
-    where: { publicUid },
+    where: { verificationId: key },
     include: { holder: { include: { profile: true } } },
   });
   if (education) {
+    const view = presentPublicVerification({
+      documentType: 'EDUCATION_COMPLETION',
+      issuedAt: education.issuedAt,
+      nameConsentAt: education.nameConsentAt,
+      holderName: consentedHolderName(education.holder.profile, education.nameConsentAt),
+    });
+    await logPublicLookup(client, {
+      tenantId: education.tenantId,
+      verificationKey: key,
+      sourceIp: input.sourceIp,
+      outcome: view.status,
+      now: input.now,
+    });
+    return view;
+  }
+  const exam = await client.examPassAttestation.findFirst({
+    where: { verificationId: key },
+    include: { holder: { include: { profile: true } } },
+  });
+  const issued = exam?.state === 'ISSUED' ? exam : null;
+  const view = issued
+    ? presentPublicVerification({
+        documentType: 'EXAM_PASS',
+        issuedAt: issued.issuedAt,
+        nameConsentAt: issued.nameConsentAt,
+        holderName: consentedHolderName(issued.holder.profile, issued.nameConsentAt),
+      })
+    : INVALID_PUBLIC_VERIFICATION;
+  await logPublicLookup(client, {
+    tenantId: exam?.tenantId ?? null,
+    verificationKey: key,
+    sourceIp: input.sourceIp,
+    outcome: view.status,
+    now: input.now,
+  });
+  return view;
+}
+
+export async function publicDocumentPdf(
+  client: FlowClient,
+  input: { verificationId: string; sourceIp: string; now: Date },
+) {
+  const document = await publicDocument(client, input);
+  const { pdf, font } = await openUnicodePdf();
+  const title =
+    document.documentType === 'EDUCATION_COMPLETION'
+      ? 'Potvrda o završetku edukacije'
+      : document.documentType === 'EXAM_PASS'
+        ? 'Potvrda o ispitu'
+        : 'Provjera dokumenta';
+  await drawDocumentPage(pdf, font, {
+    kicker: 'Javna provjera',
+    title,
+    statement: PUBLIC_VERIFICATION_STATEMENT,
+    lines: publicVerificationPdfLines(document),
+    verifyUrl: `${publicAppOrigin()}/verify/${input.verificationId}`,
+  });
+  return { bytes: await pdf.save(), filename: 'verification.pdf' };
+}
+
+export async function setDocumentNameConsent(
+  client: FlowClient,
+  input: {
+    tenantId: string;
+    userId: string;
+    verificationId: string;
+    granted: boolean;
+    now: Date;
+  },
+) {
+  const education = await client.educationCompletionDocument.findFirst({
+    where: {
+      tenantId: input.tenantId,
+      verificationId: input.verificationId,
+      holderUserId: input.userId,
+    },
+  });
+  if (education) {
+    await client.educationCompletionDocument.update({
+      where: { tenantId_id: { tenantId: input.tenantId, id: education.id } },
+      data: { nameConsentAt: input.granted ? input.now : null },
+    });
     return {
-      kind: 'EDUCATION' as const,
-      number: education.publicUid,
-      holderName: profileName(education.holder.profile),
-      title: education.courseTitle,
-      issuedAt: education.issuedAt.toISOString(),
-      statement: education.statement,
-      participationSeconds: education.participationSeconds,
-      professionalCertificate: false as const,
+      documentId: education.id,
+      recordNumber: education.publicUid,
+      documentType: 'EDUCATION_COMPLETION' as const,
+      granted: input.granted,
+      documentRemainsValid: true as const,
     };
   }
   const exam = await client.examPassAttestation.findFirst({
-    where: { publicUid, state: 'ISSUED' },
-    include: { holder: { include: { profile: true } } },
+    where: {
+      tenantId: input.tenantId,
+      verificationId: input.verificationId,
+      holderUserId: input.userId,
+    },
   });
-  if (!exam || !exam.issuedAt) {
+  if (!exam) {
     throw new FlowNotFoundError();
   }
-  return {
-    kind: 'EXAM_PASS' as const,
-    number: exam.publicUid,
-    holderName: profileName(exam.holder.profile),
-    title: exam.examTitle,
-    issuedAt: exam.issuedAt.toISOString(),
-    statement: exam.statement,
-    passed: exam.passed,
-    professionalCertificate: false as const,
-  };
-}
-
-export async function publicDocumentPdf(client: FlowClient, publicUid: string) {
-  const document = await publicDocument(client, publicUid);
-  const { pdf, font } = await openUnicodePdf();
-  const lines =
-    document.kind === 'EDUCATION'
-      ? [
-          `Kurs: ${document.title}`,
-          `Broj: ${document.number}`,
-          `Izdato: ${document.issuedAt.slice(0, 10)}`,
-          `Učešće (sekunde): ${String(document.participationSeconds)}`,
-        ]
-      : [
-          `Ispit: ${document.title}`,
-          `Broj: ${document.number}`,
-          `Rezultat: ${document.passed ? 'položio' : 'nije položio'}`,
-          `Datum: ${document.issuedAt.slice(0, 10)}`,
-        ];
-  await drawDocumentPage(pdf, font, {
-    kicker: document.kind === 'EDUCATION' ? 'ISO 21001' : 'Rezultat ispita',
-    title:
-      document.kind === 'EDUCATION'
-        ? 'Potvrda o završetku edukacije'
-        : 'Potvrda o rezultatu ispita',
-    statement: document.statement,
-    lines,
-    verifyUrl: `${appOrigin()}/verify/${document.number}`,
+  await client.examPassAttestation.update({
+    where: { tenantId_id: { tenantId: input.tenantId, id: exam.id } },
+    data: { nameConsentAt: input.granted ? input.now : null },
   });
-  return { bytes: await pdf.save(), filename: `${document.number}.pdf` };
+  return {
+    documentId: exam.id,
+    recordNumber: exam.publicUid,
+    documentType: 'EXAM_PASS' as const,
+    granted: input.granted,
+    documentRemainsValid: exam.state === 'ISSUED',
+  };
 }

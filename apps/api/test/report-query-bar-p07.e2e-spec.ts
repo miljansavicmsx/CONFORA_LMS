@@ -353,7 +353,7 @@ describe('BAR-P07 report-query e2e', () => {
       .flat();
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(90);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(91);
   });
 
   it('P07 exact 365 day span works at runtime', async () => {

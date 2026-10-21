@@ -46,6 +46,7 @@ export type PersonnelClient = {
   | 'amfSuspensionProposal'
   | 'amfSuspensionConfirmation'
   | 'verificationLog'
+  | 'userProfile'
 >;
 
 type Actor = { userId: string; roles: readonly string[] };
@@ -75,17 +76,31 @@ function asLifecycle(value: string): StoredLifecycle {
   throw new PersonnelRuleError('STATUS_TRANSITION');
 }
 
+function configuredOrigin(
+  name: 'PUBLIC_APP_ORIGIN' | 'API_PUBLIC_ORIGIN',
+  devFallback: string,
+): string {
+  const configured = process.env[name]?.trim() ?? '';
+  if (configured.length > 0) {
+    return configured;
+  }
+  const env = process.env['NODE_ENV'];
+  if (env === 'development' || env === 'test') {
+    return devFallback;
+  }
+  throw new PersonnelRuleError('ORIGIN_UNCONFIGURED');
+}
+
 function statusListUrl(): string {
-  const origin = process.env['API_PUBLIC_ORIGIN'] ?? 'http://127.0.0.1:4000';
-  return `${origin}/v1/public/certificates/status-list`;
+  return `${configuredOrigin('API_PUBLIC_ORIGIN', 'http://127.0.0.1:4000')}/v1/public/certificates/status-list`;
 }
 
 function appOrigin(): string {
-  return process.env['PUBLIC_APP_ORIGIN'] ?? 'http://127.0.0.1:3001';
+  return configuredOrigin('PUBLIC_APP_ORIGIN', 'http://127.0.0.1:3001');
 }
 
 function apiOrigin(): string {
-  return process.env['API_PUBLIC_ORIGIN'] ?? 'http://127.0.0.1:4000';
+  return configuredOrigin('API_PUBLIC_ORIGIN', 'http://127.0.0.1:4000');
 }
 
 async function nextPublicUid(tx: Tx, year: number): Promise<string> {
@@ -184,6 +199,19 @@ export async function issuePersonnelCertificate(
       trainerOfCandidate: Boolean(trainer),
       decisionParticipantIds: [...participants],
     });
+    if (!flowCase || (flowCase.phase !== 'APPROVED_FOR_ISSUANCE' && flowCase.phase !== 'ISSUED')) {
+      throw new PersonnelRuleError('CASE_NOT_ISSUABLE');
+    }
+    const profile = await tx.userProfile.findUnique({
+      where: { tenantId_userId: { tenantId: input.tenantId, userId: holderUserId } },
+    });
+    if (!profile || profile.identityVerificationState !== 'VERIFIED') {
+      throw new PersonnelRuleError('IDENTITY_UNVERIFIED');
+    }
+    const holderName = `${profile.givenName} ${profile.familyName}`.replace(/\s+/g, ' ').trim();
+    if (holderName.length < 2) {
+      throw new PersonnelRuleError('IDENTITY_UNVERIFIED');
+    }
     const version = decision.result.session.form.blueprint.schemeVersion;
     const issuedAt = input.now;
     const expiresAt = addYears(issuedAt, PERSONNEL_VALIDITY_YEARS);
@@ -192,7 +220,7 @@ export async function issuePersonnelCertificate(
     const index = await tx.examPersonnelCredentialLink.count();
     const claims: PersonnelVcClaims = {
       certificateNumber: publicUid,
-      holderName: input.holderDisplayName,
+      holderName,
       scheme: version.scheme.title,
       schemeVersion: version.versionLabel,
       issuedAt: issuedAt.toISOString(),
@@ -225,7 +253,7 @@ export async function issuePersonnelCertificate(
         tenantId: input.tenantId,
         credentialId,
         achievementTitle: version.scheme.title,
-        holderName: input.holderDisplayName,
+        holderName,
         awardingBodyName: 'CONFORA',
         awardingBodyIdentifier: 'CONFORA-CB',
         awardedAt: issuedAt,
@@ -254,7 +282,7 @@ export async function issuePersonnelCertificate(
         credentialId,
         examDecisionId: decision.id,
         schemeVersionId: version.id,
-        holderDisplayName: input.holderDisplayName,
+        holderDisplayName: holderName,
         registryListed: input.registryConsent,
         registryConsentAt: input.registryConsent ? issuedAt : null,
         statusListIndex: index,
@@ -667,11 +695,14 @@ function verificationResult(
 
 export async function searchPublicRegistry(
   client: PersonnelClient,
-  input: { number?: string; name?: string; now: Date },
+  input: { tenantId: string; number?: string; name?: string; now: Date },
 ) {
+  if (input.tenantId.trim().length === 0) {
+    throw new PersonnelRuleError('TENANT_REQUIRED');
+  }
   if (input.number) {
     const row = await client.credential.findFirst({
-      where: { publicUid: input.number, credentialType: 'PERSONNEL' },
+      where: { tenantId: input.tenantId, publicUid: input.number, credentialType: 'PERSONNEL' },
       include: includeIssued,
     });
     if (!row?.examPersonnelLink) {
@@ -680,11 +711,12 @@ export async function searchPublicRegistry(
     return [presentPublic(row, input.now, true)];
   }
   const name = input.name?.trim() ?? '';
-  if (name.length < 2) {
+  if (name.length < 3) {
     throw new PersonnelRuleError('SEARCH_REQUIRED');
   }
   const rows = await client.examPersonnelCredentialLink.findMany({
     where: {
+      tenantId: input.tenantId,
       registryListed: true,
       holderDisplayName: { contains: name, mode: 'insensitive' },
     },
