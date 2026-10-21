@@ -400,6 +400,22 @@ export function assertCertificationDecision(input: {
   return { independentOfTraining: true, trainerOfCandidate: false };
 }
 
+/**
+ * Every exam session in the certification process counts, including an earlier
+ * failed attempt. Invigilating any of those sessions, or reviewing a proctor
+ * flag on any of them, is examining the candidate.
+ */
+export function candidateWasExaminedBy(input: {
+  userId: string;
+  invigilatorUserIds: readonly string[];
+  proctorReviewerUserIds: readonly string[];
+}): boolean {
+  return (
+    input.invigilatorUserIds.includes(input.userId) ||
+    input.proctorReviewerUserIds.includes(input.userId)
+  );
+}
+
 export type CandidateItemView = {
   id: string;
   domainCode: string;

@@ -6,6 +6,7 @@ import {
   assertApplicationEligible,
   assertBlueprintDomains,
   assertCertificationDecision,
+  candidateWasExaminedBy,
   assertChoiceSet,
   assertItemTransition,
   assertNonImageIdentity,
@@ -1325,6 +1326,29 @@ export async function decisionQueue(client: ExamClient, tenantId: string, actor:
   }));
 }
 
+export async function examinationActorsForApplication(
+  client: Pick<Tx, 'certificationExamSession'>,
+  tenantId: string,
+  certificationApplicationId: string,
+): Promise<{ invigilatorUserIds: string[]; proctorReviewerUserIds: string[] }> {
+  const sessions = await client.certificationExamSession.findMany({
+    where: { tenantId, certificationApplicationId },
+    select: {
+      invigilatorUserId: true,
+      proctorFlags: { select: { reviews: { select: { reviewerUserId: true } } } },
+    },
+  });
+  const invigilatorUserIds = [...new Set(sessions.map((session) => session.invigilatorUserId))];
+  const proctorReviewerUserIds = [
+    ...new Set(
+      sessions.flatMap((session) =>
+        session.proctorFlags.flatMap((flag) => flag.reviews.map((review) => review.reviewerUserId)),
+      ),
+    ),
+  ];
+  return { invigilatorUserIds, proctorReviewerUserIds };
+}
+
 export async function recordDecision(
   client: ExamClient,
   input: {
@@ -1354,12 +1378,21 @@ export async function recordDecision(
         enrolment: { userId: result.session.candidateUserId },
       },
     });
+    const actors = await examinationActorsForApplication(
+      tx,
+      input.tenantId,
+      result.session.certificationApplicationId,
+    );
     const gate = assertCertificationDecision({
       makerUserId: input.actor.userId,
       candidateUserId: result.session.candidateUserId,
       roles: input.actor.roles,
       trainerOfCandidate: Boolean(trainer),
-      examinedCandidate: input.actor.userId === result.session.invigilatorUserId,
+      examinedCandidate: candidateWasExaminedBy({
+        userId: input.actor.userId,
+        invigilatorUserIds: actors.invigilatorUserIds,
+        proctorReviewerUserIds: actors.proctorReviewerUserIds,
+      }),
     });
     const id = randomUUID();
     await tx.examCertificationDecision.create({

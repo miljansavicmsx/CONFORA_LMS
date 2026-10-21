@@ -5,6 +5,7 @@ import {
   angoffCutScoreBasisPoints,
   assertApplicationEligible,
   assertCertificationDecision,
+  candidateWasExaminedBy,
   assertItemTransition,
   assertNonImageIdentity,
   assertRetakeWindowDays,
@@ -273,6 +274,39 @@ describe('exam rules', () => {
     expect(scoring).not.toContain('assertCertificationDecision');
     expect(scoring).not.toContain('EXAMINER_CANNOT_DECIDE');
     expect(decision).toContain('examinedCandidate');
-    expect(decision).toContain('invigilatorUserId');
+    expect(decision).toContain('examinationActorsForApplication');
+    expect(decision).toContain('candidateWasExaminedBy');
+    expect(decision).toContain('certificationApplicationId');
+    const actors = source.slice(
+      source.indexOf('export async function examinationActorsForApplication'),
+      source.indexOf('export async function recordDecision'),
+    );
+    expect(actors).toContain('invigilatorUserId');
+    expect(actors).toContain('reviewerUserId');
+    expect(actors).toContain('proctorFlags');
+  });
+
+  it('treats every session invigilator and proctor reviewer as having examined the candidate', () => {
+    expect(
+      candidateWasExaminedBy({
+        userId: 'earlier-invigilator',
+        invigilatorUserIds: ['earlier-invigilator', 'later-invigilator'],
+        proctorReviewerUserIds: ['reviewer'],
+      }),
+    ).toBe(true);
+    expect(
+      candidateWasExaminedBy({
+        userId: 'reviewer',
+        invigilatorUserIds: ['later-invigilator'],
+        proctorReviewerUserIds: ['reviewer'],
+      }),
+    ).toBe(true);
+    expect(
+      candidateWasExaminedBy({
+        userId: 'decider',
+        invigilatorUserIds: ['earlier-invigilator', 'later-invigilator'],
+        proctorReviewerUserIds: ['reviewer'],
+      }),
+    ).toBe(false);
   });
 });
