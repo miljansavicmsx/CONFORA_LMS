@@ -3,6 +3,19 @@ import type { CertificationApplicationStatus } from '@prisma/client';
 
 import { TenantContextStore } from '../tenant/tenant-context.store';
 import { TenantAccessDeniedError } from '../tenant/tenant-errors';
+import {
+  enrolInCourse,
+  getAnalyticsConsent,
+  getLearningStatistics,
+  getPlayer,
+  getPublishedCourse,
+  listMyEnrolments,
+  listPublishedCourses,
+  recordLessonProgress,
+  setAnalyticsConsent,
+  submitChapterQuiz,
+  type LearningClient,
+} from './learning-tenant-store';
 import { PrismaService } from './prisma.service';
 import { isTenantRegisteredModel } from './tenant-model-policy';
 
@@ -283,6 +296,56 @@ export class TenantPrismaService {
       }));
     },
   };
+
+  /**
+   * Learner catalogue writes stay on this allowlisted facade.
+   * Every call forces the request tenant. Callers cannot pass tenantId.
+   */
+  readonly learning = {
+    listPublishedCourses: (areaCode?: string) =>
+      listPublishedCourses(this.learningClient(), this.requiredTenantId(), areaCode),
+    getPublishedCourse: (courseId: string) =>
+      getPublishedCourse(this.learningClient(), this.requiredTenantId(), courseId),
+    enrol: (input: { userId: string; courseId: string; now: Date }) =>
+      enrolInCourse(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
+    listMyEnrolments: (userId: string) =>
+      listMyEnrolments(this.learningClient(), this.requiredTenantId(), userId),
+    getPlayer: (userId: string, enrolmentId: string) =>
+      getPlayer(this.learningClient(), this.requiredTenantId(), userId, enrolmentId),
+    recordLessonProgress: (input: {
+      userId: string;
+      enrolmentId: string;
+      lessonId: string;
+      additionalSeconds: number;
+      statementId: string;
+      analyticsConsent?: boolean;
+      now: Date;
+    }) =>
+      recordLessonProgress(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
+    submitChapterQuiz: (input: {
+      userId: string;
+      enrolmentId: string;
+      quizId: string;
+      statementId: string;
+      answers: readonly { itemId: string; choiceKey: string }[];
+      analyticsConsent?: boolean;
+      now: Date;
+    }) => submitChapterQuiz(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
+    statistics: (userId: string) =>
+      getLearningStatistics(this.learningClient(), this.requiredTenantId(), userId),
+    getAnalyticsConsent: (userId: string) =>
+      getAnalyticsConsent(this.learningClient(), this.requiredTenantId(), userId),
+    setAnalyticsConsent: (input: { userId: string; granted: boolean; now: Date }) =>
+      setAnalyticsConsent(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
+  };
+
+  private requiredTenantId(): string {
+    return this.tenantContext.getRequiredTenantId();
+  }
+
+  private learningClient(): LearningClient {
+    return this.prisma;
+  }
 
   // Explicit denial surface for contract tests — methods must not exist as writable API.
   create = undefined;

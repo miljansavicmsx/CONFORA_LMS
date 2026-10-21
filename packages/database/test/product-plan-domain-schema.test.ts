@@ -16,6 +16,16 @@ const migrationPath = path.join(
 
 const schema = await readFile(schemaPath, 'utf8');
 const migration = await readFile(migrationPath, 'utf8');
+const learningRuntimeMigration = await readFile(
+  path.join(
+    packageRoot,
+    'prisma',
+    'migrations',
+    '20261020120000_learning_catalogue_runtime',
+    'migration.sql',
+  ),
+  'utf8',
+);
 
 const REQUIRED_MODELS = [
   'UserProfile',
@@ -299,6 +309,22 @@ test('AI suggestion, audit and candidate acknowledgement are separate records', 
     modelBlock(schema, 'AiSystem'),
     /\bhumanOversightRequired\s+Boolean\s+@default\(true\)/,
   );
+});
+
+test('learning runtime adds payment stub, consent and chapter quiz attempts', () => {
+  assert.deepEqual(enumMembers(schema, 'EnrolmentPaymentState'), [
+    'PENDING_PAYMENT',
+    'NOT_REQUIRED',
+  ]);
+  assert.match(modelBlock(schema, 'EnrolmentPaymentIntent'), /\bstate\s+EnrolmentPaymentState/);
+  assert.match(modelBlock(schema, 'LearnerAnalyticsConsent'), /\bgranted\s+Boolean/);
+  assert.match(modelBlock(schema, 'ChapterQuizAttempt'), /\bscorePercent\b/);
+  assert.match(modelBlock(schema, 'ChapterQuizAttemptAnswer'), /\bselectedChoiceKey\b/);
+  assert.match(learningRuntimeMigration, /CREATE TABLE "EnrolmentPaymentIntent"/);
+  assert.doesNotMatch(learningRuntimeMigration, /\bINSERT\b/i);
+  assert.doesNotMatch(learningRuntimeMigration, /\bDROP\b/i);
+  assert.doesNotMatch(learningRuntimeMigration, /ALTER TABLE "User"/);
+  assert.doesNotMatch(learningRuntimeMigration, /ALTER TABLE "Enrolment"/);
 });
 
 test('domain migration is additive and does not rewrite frozen tables', () => {

@@ -268,11 +268,21 @@ describe('BAR-P08 reports module e2e', () => {
       'GET /v1/health',
       'GET /v1/me/certification/applications',
       'GET /v1/me/certification/applications/:id',
+      'GET /v1/me/learning/courses',
+      'GET /v1/me/learning/courses/:courseId',
+      'POST /v1/me/learning/enrolments',
+      'GET /v1/me/learning/enrolments',
+      'GET /v1/me/learning/enrolments/:enrolmentId/player',
+      'POST /v1/me/learning/enrolments/:enrolmentId/lessons/:lessonId/progress',
+      'POST /v1/me/learning/enrolments/:enrolmentId/quizzes/:quizId/attempts',
+      'GET /v1/me/learning/statistics',
+      'GET /v1/me/learning/analytics-consent',
+      'PUT /v1/me/learning/analytics-consent',
       'GET /v1/staff/reports/certification-applications/by-status',
       'GET /v1/staff/reports/certification-applications/by-scheme-ref',
       'POST /v1/role-administration/commands',
     ]);
-    expect(productionRoutes).toHaveLength(6);
+    expect(productionRoutes).toHaveLength(16);
   });
 
   it('P08_TEST_009 unauthenticated -> 401', async () => {

@@ -13,9 +13,9 @@ import {
 } from "../locale-preference";
 
 describe("locale-preference", () => {
-  it("defaults to hr when storage and env unset", () => {
+  it("defaults to bs when storage and env unset", () => {
     localStorage.removeItem(LOCALE_STORAGE_KEY);
-    expect(resolveInitialUiLocale()).toBe("hr");
+    expect(resolveInitialUiLocale()).toBe("bs");
   });
 
   it("reads persisted locale from localStorage", () => {

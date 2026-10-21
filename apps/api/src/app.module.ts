@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { CertificationApplicationsModule } from './certification-applications/certification-applications.module';
+import { LearningModule } from './learning/learning.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { MfaAssuranceGuard } from './auth/mfa-assurance.guard';
 import { PrismaModule } from './prisma/prisma.module';
@@ -27,6 +28,7 @@ import { TenantModule } from './tenant/tenant.module';
     TenantModule,
     AuditModule,
     CertificationApplicationsModule,
+    LearningModule,
     ReportQueryModule,
     ReportsModule,
     RoleAdministrationModule,

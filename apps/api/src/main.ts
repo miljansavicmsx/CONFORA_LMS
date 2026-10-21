@@ -23,6 +23,16 @@ function resolvePort(value: string | undefined): number {
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1');
+  app.enableCors({
+    origin: [
+      'http://localhost:3001',
+      'http://127.0.0.1:3001',
+      'http://localhost:4173',
+      'http://127.0.0.1:4173',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
+  });
   app.useGlobalPipes(new ZodValidationPipe());
   app.enableShutdownHooks();
   await app.listen(resolvePort(process.env['API_PORT']));

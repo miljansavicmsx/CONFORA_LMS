@@ -2,9 +2,13 @@ import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../prisma/prisma.module';
 import { TenantModule } from '../tenant/tenant.module';
-import { AuditEventRegistry } from './audit-event.registry';
+import {
+  AuditEventRegistry,
+  ROLE_ADMINISTRATION_AUDIT_EVENT_DEFINITIONS,
+} from './audit-event.registry';
 import { AuditHashService } from './audit-hash.service';
 import { AuditIntegrityService } from './audit-integrity.service';
+import { LEARNING_AUDIT_EVENT_DEFINITIONS } from './learning-audit-events';
 import { AuditRepository } from './audit.repository';
 import { AUDIT_EVENT_REGISTRY, AuditService } from './audit.service';
 
@@ -17,7 +21,11 @@ import { AUDIT_EVENT_REGISTRY, AuditService } from './audit.service';
     AuditIntegrityService,
     {
       provide: AUDIT_EVENT_REGISTRY,
-      useFactory: () => AuditEventRegistry.production(),
+      useFactory: () =>
+        new AuditEventRegistry([
+          ...ROLE_ADMINISTRATION_AUDIT_EVENT_DEFINITIONS,
+          ...LEARNING_AUDIT_EVENT_DEFINITIONS,
+        ]),
     },
     AuditService,
   ],

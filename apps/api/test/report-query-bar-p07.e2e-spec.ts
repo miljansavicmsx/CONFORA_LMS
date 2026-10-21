@@ -333,7 +333,7 @@ describe('BAR-P07 report-query e2e', () => {
   });
 
   it('P07_TEST_088 production route inventory includes P08 report routes (forward-compat)', () => {
-    // Inventory includes BAR-P08 report routes and the mounted MD05 command.
+    // Exact inventory includes learning, BAR-P08 report routes, and the MD05 command.
     // P07 service/privacy/tenant/date semantics stay as written.
     const adapter = app.getHttpAdapter();
     const instance = adapter.getInstance() as {
@@ -354,6 +354,16 @@ describe('BAR-P07 report-query e2e', () => {
       'GET /v1/health',
       'GET /v1/me/certification/applications',
       'GET /v1/me/certification/applications/:id',
+      'GET /v1/me/learning/courses',
+      'GET /v1/me/learning/courses/:courseId',
+      'POST /v1/me/learning/enrolments',
+      'GET /v1/me/learning/enrolments',
+      'GET /v1/me/learning/enrolments/:enrolmentId/player',
+      'POST /v1/me/learning/enrolments/:enrolmentId/lessons/:lessonId/progress',
+      'POST /v1/me/learning/enrolments/:enrolmentId/quizzes/:quizId/attempts',
+      'GET /v1/me/learning/statistics',
+      'GET /v1/me/learning/analytics-consent',
+      'PUT /v1/me/learning/analytics-consent',
       'GET /v1/staff/reports/certification-applications/by-status',
       'GET /v1/staff/reports/certification-applications/by-scheme-ref',
       'POST /v1/role-administration/commands',

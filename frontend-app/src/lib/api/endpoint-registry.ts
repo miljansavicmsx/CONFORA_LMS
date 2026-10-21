@@ -572,6 +572,9 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
   if (isNestOnlyComplaintPath(normalized)) {
     return "nest";
   }
+  if (normalized === "/v1/me/learning" || normalized.startsWith("/v1/me/learning/")) {
+    return "nest";
+  }
   if (provider === "legacy") return "legacy";
   if (provider === "nest") return "nest";
   return resolveHybridOwnerForPath(normalized);
