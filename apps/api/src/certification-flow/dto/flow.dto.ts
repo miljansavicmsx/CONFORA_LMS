@@ -98,6 +98,7 @@ export class ConflictDeclarationDto extends createZodDto(
     .object({
       hasConflict: z.boolean(),
       statement: z.string().trim().min(3).max(4000),
+      subjectUserId: uuid.optional(),
     })
     .strict(),
 ) {}

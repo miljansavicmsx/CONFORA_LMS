@@ -200,7 +200,8 @@ model User {
   committeeProposalsAsMember         CommitteeProposal[]                @relation("CommitteeProposalMember")
   committeeAssessments               CommitteeAssessment[]
   issuanceAuthorizations             IssuanceAuthorization[]
-  conflictDeclarations               CommitteeConflictDeclaration[]
+  conflictDeclarations               CommitteeConflictDeclaration[] @relation("ConflictDeclarationSubject")
+  recordedConflictDeclarations       CommitteeConflictDeclaration[] @relation("ConflictDeclarationRecorder")
   noticeJobs                         NoticeJob[]
   inAppNotices                       InAppNotice[]
   annualFeeObligations               AnnualFeeObligation[]
@@ -2816,23 +2817,25 @@ model AiCaseSuggestion {
   @@index([tenantId, caseId])
 }
 
-/// Signed before a committee member views a case or records a decision.
+/// Append-only conflict history. The latest row for a member is the effective declaration.
 model CommitteeConflictDeclaration {
-  id          String   @id @default(uuid()) @db.Uuid
-  tenantId    String   @db.Uuid
-  caseId      String   @db.Uuid
-  userId      String   @db.Uuid
-  hasConflict Boolean
-  statement   String   @db.Text
-  signedAt    DateTime @db.Timestamptz(3)
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid
+  caseId           String   @db.Uuid
+  userId           String   @db.Uuid
+  recordedByUserId String   @db.Uuid
+  hasConflict      Boolean
+  statement        String   @db.Text
+  signedAt         DateTime @db.Timestamptz(3)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
 
-  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
-  member User             @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case       ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  member     User             @relation("ConflictDeclarationSubject", fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  recordedBy User             @relation("ConflictDeclarationRecorder", fields: [tenantId, recordedByUserId], references: [tenantId, id], onDelete: Restrict)
 
   @@unique([tenantId, id])
-  @@unique([tenantId, caseId, userId])
+  @@index([tenantId, caseId, userId, signedAt])
 }
 
 model TenantAiBudget {

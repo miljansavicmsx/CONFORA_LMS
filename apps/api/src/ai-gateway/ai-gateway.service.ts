@@ -19,14 +19,12 @@ export class AiGatewayService {
     request: { purpose: string; dataCategory: string; system: string; prompt: string },
   ): Promise<AiGatewayResult> {
     const now = new Date();
-    const budget = await this.tenantPrisma.aiBudget.load(now);
     try {
       return await completeAiUse({
         request,
         provider: selectAiProvider(),
-        budget,
-        persistUsage: (promptUnits, completionUnits, costMinor) =>
-          this.tenantPrisma.aiBudget.consume(now, promptUnits, completionUnits, costMinor),
+        reserve: (units, costMinor) => this.tenantPrisma.aiBudget.reserve(now, units, costMinor),
+        release: (units, costMinor) => this.tenantPrisma.aiBudget.release(now, units, costMinor),
         record: async (entry) => {
           await this.audit.append(actor, {
             idempotencyKey: entry.useId,

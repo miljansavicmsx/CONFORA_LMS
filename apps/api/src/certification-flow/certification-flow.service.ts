@@ -19,6 +19,7 @@ const DENIED = new Set([
   'NOT_MEMBER',
   'CONFLICT_UNSIGNED',
   'CONFLICT_DECLARED',
+  'CONFLICT_CLEARANCE_REQUIRED',
 ]);
 
 function fail(error: unknown): never {
@@ -318,7 +319,7 @@ export class CertificationFlowService {
   declareConflict(
     actor: AuthenticatedActor,
     caseId: string,
-    body: { hasConflict: boolean; statement: string },
+    body: { hasConflict: boolean; statement: string; subjectUserId?: string | undefined },
   ) {
     const now = new Date();
     return this.tenantPrisma.flow
@@ -332,7 +333,7 @@ export class CertificationFlowService {
             occurredAt: now,
             resourceType: 'ProfessionalCase',
             resourceId: caseId,
-            metadata: { caseId, reason: result.hasConflict ? 'conflict' : 'no-conflict' },
+            metadata: { caseId, reason: result.reason },
           });
         }
         return result;

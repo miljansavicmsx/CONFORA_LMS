@@ -7,33 +7,45 @@ export type AiCompletionRequest = {
   prompt: string;
 };
 
-export type AiProviderResult = {
-  text: string;
-  model: string;
+export type AiUsage = {
   promptUnits: number;
   completionUnits: number;
-  costMinor: number;
+};
+
+export type AiProviderResult = AiUsage & {
+  text: string;
+  model: string;
 };
 
 export interface AiProvider {
   readonly id: string;
+  readonly model: string;
+  plan(request: AiCompletionRequest): AiUsage;
   complete(request: AiCompletionRequest): Promise<AiProviderResult>;
 }
 
 /** Owner-designated primary provider. The runtime does not construct it. */
 export const DESIGNATED_PRIMARY_PROVIDER_ID = 'openai';
 
+export const OPENAI_MODEL = 'gpt-4.1-mini';
+export const OPENAI_MAX_COMPLETION_UNITS = 1024;
+
 export class StubAiProvider implements AiProvider {
   readonly id = 'deterministic-stub';
+  readonly model = 'deterministic-stub';
+
+  plan(request: AiCompletionRequest): AiUsage {
+    return {
+      promptUnits: Math.min(32, Math.max(1, request.prompt.length)),
+      completionUnits: 8,
+    };
+  }
 
   complete(request: AiCompletionRequest): Promise<AiProviderResult> {
-    const promptUnits = Math.min(32, Math.max(1, request.prompt.length));
     return Promise.resolve({
       text: `Sažetak ulaza (${request.dataCategory}).`,
-      model: this.id,
-      promptUnits,
-      completionUnits: 8,
-      costMinor: 0,
+      model: this.model,
+      ...this.plan(request),
     });
   }
 }
@@ -51,15 +63,23 @@ export type AiHttp = (
 /**
  * OpenAI chat adapter. Present so the gateway has one provider contract.
  * Nothing in the process selects this class, and no API key is read.
+ * Cost is not computed here.
  */
 export class OpenAiProvider implements AiProvider {
   readonly id = DESIGNATED_PRIMARY_PROVIDER_ID;
+  readonly model = OPENAI_MODEL;
 
   constructor(
     private readonly apiKey: string,
     private readonly http: AiHttp,
-    private readonly model = 'gpt-4.1-mini',
   ) {}
+
+  plan(request: AiCompletionRequest): AiUsage {
+    return {
+      promptUnits: Math.max(1, request.system.length + request.prompt.length),
+      completionUnits: OPENAI_MAX_COMPLETION_UNITS,
+    };
+  }
 
   async complete(request: AiCompletionRequest): Promise<AiProviderResult> {
     const response = await this.http('https://api.openai.com/v1/chat/completions', {
@@ -70,6 +90,7 @@ export class OpenAiProvider implements AiProvider {
       },
       body: JSON.stringify({
         model: this.model,
+        max_tokens: OPENAI_MAX_COMPLETION_UNITS,
         messages: [
           { role: 'system', content: request.system },
           { role: 'user', content: request.prompt },
@@ -87,14 +108,11 @@ export class OpenAiProvider implements AiProvider {
     if (typeof text !== 'string' || text.length === 0) {
       throw new Error('OPENAI_EMPTY');
     }
-    const promptUnits = numberOrZero(json.usage?.prompt_tokens);
-    const completionUnits = numberOrZero(json.usage?.completion_tokens);
     return {
       text,
       model: this.model,
-      promptUnits,
-      completionUnits,
-      costMinor: 0,
+      promptUnits: numberOrZero(json.usage?.prompt_tokens),
+      completionUnits: numberOrZero(json.usage?.completion_tokens),
     };
   }
 }

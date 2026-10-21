@@ -102,7 +102,6 @@ export type ExamPassRow = {
 export type AssignedCaseRow = {
   readonly caseId: string;
   readonly phase: string;
-  readonly path: string;
   readonly assigned: boolean;
 };
 

@@ -917,11 +917,30 @@ describe('certification exam foundation e2e', () => {
       .set(auth(deciderSubject, ['COM_CERT']))
       .expect(200);
     expect((visible.body as { caseId: string }).caseId).toBe(caseId);
-    const assigned = await request(httpServer(app))
+    const beforeAssignment = await request(httpServer(app))
       .get('/v1/committee/cases')
       .set(auth(deciderSubject, ['COM_CERT']))
       .expect(200);
-    expect(JSON.stringify(assigned.body)).toContain(caseId);
+    expect(JSON.stringify(beforeAssignment.body)).not.toContain(caseId);
+    expect(JSON.stringify(beforeAssignment.body)).not.toContain('path');
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Povlačim sukob sam.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({
+        hasConflict: false,
+        statement: 'Druga osoba potvrđuje da sukob više ne postoji.',
+        subjectUserId: trainerId,
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .expect(200);
     const proposed = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/propose`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -939,6 +958,16 @@ describe('certification exam foundation e2e', () => {
       .set(auth(deciderSubject, ['COM_CERT']))
       .send({ memberUserId: deciderId })
       .expect(201);
+    const assigned = await request(httpServer(app))
+      .get('/v1/committee/cases')
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(200);
+    expect(assigned.body).toEqual([
+      expect.objectContaining({ caseId, phase: 'COMMITTEE', assigned: true }),
+    ]);
+    expect(JSON.stringify(assigned.body)).not.toContain('path');
+    expect(JSON.stringify(assigned.body)).not.toContain('DIRECT');
+    expect(JSON.stringify(assigned.body)).not.toContain('CONFORA_EDUCATION');
     const voted = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/votes`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -974,6 +1003,13 @@ describe('certification exam foundation e2e', () => {
     expect((suggestion.body as { humanValidationRequired: boolean }).humanValidationRequired).toBe(
       true,
     );
+    const aiUse = await requirePrisma().auditEvent.findFirst({
+      where: { tenantId, eventType: 'AI_USE_RECORDED', outcome: 'SUCCESS' },
+      select: { metadata: true },
+    });
+    const pricedMatch = /"costMinor":(\d+)/.exec(JSON.stringify(aiUse?.metadata ?? null));
+    const pricedCost = pricedMatch === null ? 0 : Number(pricedMatch[1]);
+    expect(pricedCost).toBeGreaterThan(0);
     await requirePrisma().tenantAiBudget.updateMany({
       where: { tenantId },
       data: { unitsUsed: 100_000, unitLimit: 100_000 },
@@ -983,10 +1019,37 @@ describe('certification exam foundation e2e', () => {
       .set(auth(issuerSubject, ['COM_CERT']))
       .send({ purpose: 'summary' })
       .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ hasConflict: true, statement: 'Kasnije sam uočio sukob.' })
+      .expect(201);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Sam povlačim sukob.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({
+        hasConflict: false,
+        statement: 'Druga osoba skida sukob.',
+        subjectUserId: deciderId,
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .get(`/v1/committee/cases/${caseId}`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .expect(200);
 
     const events = await requirePrisma().auditEvent.findMany({
       where: { tenantId },
-      select: { eventType: true },
+      select: { eventType: true, metadata: true },
     });
     const types = new Set(events.map((event) => event.eventType));
     expect(types.has('EXAM_ITEM_APPROVED')).toBe(true);
@@ -998,6 +1061,18 @@ describe('certification exam foundation e2e', () => {
     expect(types.has('EXAM_IDENTITY_CONFIRMED')).toBe(true);
     expect(types.has('AI_USE_RECORDED')).toBe(true);
     expect(types.has('CONFLICT_SIGNED')).toBe(true);
+    const conflictReasons = events
+      .filter((event) => event.eventType === 'CONFLICT_SIGNED')
+      .map((event) =>
+        event.metadata !== null &&
+        typeof event.metadata === 'object' &&
+        'reason' in event.metadata &&
+        typeof event.metadata.reason === 'string'
+          ? event.metadata.reason
+          : '',
+      );
+    expect(conflictReasons).toContain('conflict');
+    expect(conflictReasons).toContain('conflict-cleared');
     expect(types.has('FEE_OBLIGATION_OPENED')).toBe(true);
     expect(types.has('NOTICE_RESULT')).toBe(true);
 

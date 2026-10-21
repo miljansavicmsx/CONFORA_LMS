@@ -13,6 +13,10 @@ Ovaj dokument nije dokaz da je domena autentikovana.
 3. Uključiti Easy DKIM u SES-u i objaviti tri CNAME zapisa koje SES izda. Pošta mora biti potpisana prije produkcije.
 4. Objaviti DMARC `TXT` zapis na `_dmarc`. Početi sa `p=none` i izvještajima, pa preći na `quarantine` ili `reject` kad izvještaji budu čisti.
 5. Uskladiti adresu pošiljaoca (`From`) sa domenom u SPF i DKIM, inače DMARC ne prolazi.
-6. Bounce i complaint pretplatu usmjeriti na zaštićeni poziv. Trenutna kuka je `POST /v1/staff/notices/:jobId/bounce` i `POST /v1/staff/notices/:jobId/complaint`, samo za `COM_TECH`. Javni nepotpisani webhook nije uključen.
+6. Bounce i complaint pretplatu usmjeriti na zaštićeni poziv. Trenutna kuka je `POST /v1/staff/notices/:jobId/bounce` i `POST /v1/staff/notices/:jobId/complaint`, samo za `COM_TECH`. To je operativni unos, a ne SES pretplata.
 
-Bez ova četiri koraka (identitet, SPF, DKIM, DMARC) transport ostaje stub.
+## Potpisani SES/SNS webhook
+
+Prije povezivanja SES-a mora postojati stvarni Amazon SNS webhook s provjerom potpisa. Provjera obuhvata `SigningCertURL` (samo Amazonov certifikat) i potpis tijela poruke. Nepotpisana kuka, uključujući autentikovane rute za `COM_TECH`, nije zamjena za tu provjeru. Dok potpisani webhook nije uključen, transport ostaje stub i SES se ne povezuje.
+
+Bez identiteta, SPF, DKIM, DMARC i potpisanog SNS webhooka transport ostaje stub.

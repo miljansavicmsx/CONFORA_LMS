@@ -3,6 +3,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { Prisma } from '@confora/database';
 
 import type { CaseSuggestionPurpose } from '../certification-flow/case-suggestions';
+import { decideConflictDeclaration } from '../certification-flow/conflict-declaration-policy';
 import {
   assertFourEyes,
   assertRole,
@@ -77,15 +78,25 @@ function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
 
+async function latestConflictDeclaration(
+  client: FlowClient,
+  tenantId: string,
+  caseId: string,
+  userId: string,
+) {
+  return client.committeeConflictDeclaration.findFirst({
+    where: { tenantId, caseId, userId },
+    orderBy: [{ signedAt: 'desc' }, { createdAt: 'desc' }],
+  });
+}
+
 async function assertConflictCleared(
   client: FlowClient,
   tenantId: string,
   caseId: string,
   userId: string,
 ): Promise<void> {
-  const row = await client.committeeConflictDeclaration.findUnique({
-    where: { tenantId_caseId_userId: { tenantId, caseId, userId } },
-  });
+  const row = await latestConflictDeclaration(client, tenantId, caseId, userId);
   if (!row) {
     throw new FlowRuleError('CONFLICT_UNSIGNED');
   }
@@ -393,17 +404,16 @@ export async function readCommitteeCase(
 export async function listCommitteeCases(client: FlowClient, tenantId: string, actor: Actor) {
   assertRole(actor.roles, 'COM_CERT');
   const rows = await client.professionalCase.findMany({
-    where: { tenantId },
-    include: { proposals: true },
+    where: {
+      tenantId,
+      proposals: { some: { userId: actor.userId, state: { not: 'EXCLUDED' } } },
+    },
     orderBy: { createdAt: 'desc' },
   });
   return rows.map((row) => ({
     caseId: row.id,
     phase: row.phase,
-    path: row.path,
-    assigned: row.proposals.some(
-      (proposal) => proposal.userId === actor.userId && proposal.state !== 'EXCLUDED',
-    ),
+    assigned: true as const,
   }));
 }
 
@@ -413,6 +423,7 @@ export async function signConflictDeclaration(
     tenantId: string;
     actor: Actor;
     caseId: string;
+    subjectUserId?: string | undefined;
     hasConflict: boolean;
     statement: string;
     now: Date;
@@ -420,29 +431,43 @@ export async function signConflictDeclaration(
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
   await loadCase(client, input.tenantId, input.caseId);
-  const existing = await client.committeeConflictDeclaration.findUnique({
-    where: {
-      tenantId_caseId_userId: {
-        tenantId: input.tenantId,
-        caseId: input.caseId,
-        userId: input.actor.userId,
-      },
-    },
+  const subjectUserId = input.subjectUserId ?? input.actor.userId;
+  const latest = await latestConflictDeclaration(
+    client,
+    input.tenantId,
+    input.caseId,
+    subjectUserId,
+  );
+  const decision = decideConflictDeclaration({
+    actorUserId: input.actor.userId,
+    subjectUserId,
+    hasConflict: input.hasConflict,
+    latest: latest
+      ? { hasConflict: latest.hasConflict, recordedByUserId: latest.recordedByUserId }
+      : null,
   });
-  if (existing) {
+  if (decision.action === 'deny') {
+    throw new FlowRuleError(decision.code);
+  }
+  if (decision.action === 'unchanged' && latest) {
     return {
       caseId: input.caseId,
-      hasConflict: existing.hasConflict,
-      signedAt: existing.signedAt.toISOString(),
+      hasConflict: latest.hasConflict,
+      signedAt: latest.signedAt.toISOString(),
       created: false as const,
+      reason: latest.hasConflict ? ('conflict' as const) : ('no-conflict' as const),
     };
+  }
+  if (decision.action !== 'append') {
+    throw new FlowRuleError('CONFLICT_CLEARANCE_REQUIRED');
   }
   await client.committeeConflictDeclaration.create({
     data: {
       id: randomUUID(),
       tenantId: input.tenantId,
       caseId: input.caseId,
-      userId: input.actor.userId,
+      userId: subjectUserId,
+      recordedByUserId: input.actor.userId,
       hasConflict: input.hasConflict,
       statement: input.statement,
       signedAt: input.now,
@@ -453,6 +478,7 @@ export async function signConflictDeclaration(
     hasConflict: input.hasConflict,
     signedAt: input.now.toISOString(),
     created: true as const,
+    reason: decision.reason,
   };
 }
 

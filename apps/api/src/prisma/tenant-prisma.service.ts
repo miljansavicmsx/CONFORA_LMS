@@ -62,7 +62,7 @@ import {
   saveLevel,
   signConflictDeclaration,
 } from './certification-flow-store';
-import { consumeAiBudget, loadAiBudget } from '../ai-gateway/ai-budget-store';
+import { releaseAiBudget, reserveAiBudget } from '../ai-gateway/ai-budget-store';
 import {
   chargeRecertification,
   includeFirstYear,
@@ -580,16 +580,10 @@ export class TenantPrismaService {
   };
 
   readonly aiBudget = {
-    load: (now: Date) => loadAiBudget(this.prisma, this.requiredTenantId(), now),
-    consume: (now: Date, promptUnits: number, completionUnits: number, costMinor: number) =>
-      consumeAiBudget(
-        this.prisma,
-        this.requiredTenantId(),
-        now,
-        promptUnits,
-        completionUnits,
-        costMinor,
-      ),
+    reserve: (now: Date, units: number, costMinor: number) =>
+      reserveAiBudget(this.prisma, this.requiredTenantId(), now, units, costMinor),
+    release: (now: Date, units: number, costMinor: number) =>
+      releaseAiBudget(this.prisma, this.requiredTenantId(), now, units, costMinor),
   };
 
   readonly notices = {
