@@ -19,6 +19,7 @@ import type {
   AuditPersistenceApi,
   AuditRepository,
 } from './audit.repository';
+import { AUDIT_RETRY_FLOOR_MS } from './audit-retry';
 import { AuditService } from './audit.service';
 
 const ACTOR: AuthenticatedActor = {
@@ -214,7 +215,9 @@ describe('AuditService', () => {
       },
     );
 
+    const started = Date.now();
     const view = await service.append(ACTOR, baseAppendInput());
+    expect(Date.now() - started).toBeGreaterThanOrEqual(AUDIT_RETRY_FLOOR_MS);
     expect(attempts).toBe(2);
     expect(view.tenantId).toBe(ACTOR.tenantId);
     expect(view.eventType).toBe('TEST_EVENT');
