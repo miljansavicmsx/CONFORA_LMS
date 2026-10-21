@@ -3,8 +3,9 @@
   "compilerOptions": {
     "composite": true,
     "noEmit": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["jest", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "locales/**/*.json"],
-  "exclude": ["dist", "node_modules", "test"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "locales/**/*.json", "test/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

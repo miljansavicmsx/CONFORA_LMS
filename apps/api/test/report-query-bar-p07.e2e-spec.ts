@@ -334,7 +334,7 @@ describe('BAR-P07 report-query e2e', () => {
   });
 
   it('P07_TEST_088 production route inventory includes P08 report routes (forward-compat)', () => {
-    // Exact inventory, including learning, certification exams, and role administration.
+    // Exact inventory, including learning, certification exams, and the MD05 command.
     // P07 service/privacy/tenant/date semantics are not weakened by this adaptation.
     const adapter = app.getHttpAdapter();
     const instance = adapter.getInstance() as {

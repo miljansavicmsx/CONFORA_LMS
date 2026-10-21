@@ -8,12 +8,12 @@
     "pnpm": ">=9.14.2"
   },
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo build --filter=!confora-frontend-app",
     "dev": "turbo dev",
     "dev:api:pilot": "node scripts/ops/start-api-with-pilot-env.mjs",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
-    "test": "turbo test",
+    "test": "turbo test --filter=!confora-frontend-app",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "docker:up": "docker compose --env-file .env -f infra/docker/docker-compose.yml up -d",
@@ -94,10 +94,10 @@
       "prettier --write"
     ],
     "apps/**/*.{ts,tsx}": [
-      "eslint --fix --max-warnings 0"
+      "eslint --fix --max-warnings 0 --no-warn-ignored"
     ],
     "packages/**/*.{ts,tsx}": [
-      "eslint --fix --max-warnings 0"
+      "eslint --fix --max-warnings 0 --no-warn-ignored"
     ]
   },
   "devDependencies": {

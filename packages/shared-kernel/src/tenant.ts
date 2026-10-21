@@ -1,8 +1,7 @@
 /** Branded tenant identifier (UUID string). */
 export type TenantId = string & { readonly __brand: 'TenantId' };
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** Default tenant seeded in P0 migration (single-tenant backfill). */
 export const DEFAULT_TENANT_ID = '00000000-0000-4000-8000-000000000001' as TenantId;
@@ -43,7 +42,7 @@ export function parseTenantClaim(
   for (const key of CLAIM_KEYS) {
     const raw = payload[key];
     if (typeof raw === 'string' && raw.length > 0 && isTenantId(raw)) {
-      return { tenantId: raw as TenantId, claimSource: key };
+      return { tenantId: raw, claimSource: key };
     }
   }
   return undefined;
