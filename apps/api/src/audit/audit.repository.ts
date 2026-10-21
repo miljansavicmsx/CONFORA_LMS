@@ -65,6 +65,15 @@ export class AuditPersistenceApi {
     return row;
   }
 
+  /**
+   * Queue writers of one tenant chain. The lock ends when the transaction
+   * commits or rolls back, so a failed append leaves no sequence hole.
+   * Other tenants use a different key and stay concurrent.
+   */
+  async lockTenantChain(tenantId: string): Promise<void> {
+    await this.tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${tenantId}, ${0n}))`;
+  }
+
   async findChainHead(tenantId: string): Promise<AuditChainHeadRow | null> {
     const row = await this.tx.auditChainHead.findUnique({ where: { tenantId } });
     return row;
@@ -129,11 +138,14 @@ export class AuditRepository {
 
   /**
    * Direct Prisma transaction executor (BAR-P05 allowlist path #7).
-   * Isolation: SERIALIZABLE.
+   * Each tenant chain is serialized by pg_advisory_xact_lock. Read Committed
+   * is required so a writer that waited for that lock reads the head committed
+   * by the previous holder. A serializable snapshot is taken before the lock
+   * is granted, and those waiters then exhaust the retry budget.
    */
   async runSerializableTransaction<T>(work: (api: AuditPersistenceApi) => Promise<T>): Promise<T> {
     return this.prisma.$transaction(async (tx) => work(new AuditPersistenceApi(tx)), {
-      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
     });
   }
 

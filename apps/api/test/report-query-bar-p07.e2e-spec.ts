@@ -7,6 +7,7 @@ import { PrismaClient } from '@confora/database';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
+import { PRODUCTION_ROUTE_COUNT, PRODUCTION_ROUTE_INVENTORY } from './production-route-inventory';
 import type { AuthenticatedActor } from '../src/auth/request-principal';
 import { REQUEST_PRINCIPAL_KEY } from '../src/auth/request-principal';
 import { ReportQueryService } from '../src/report-query/report-query.service';
@@ -333,8 +334,8 @@ describe('BAR-P07 report-query e2e', () => {
   });
 
   it('P07_TEST_088 production route inventory includes P08 report routes (forward-compat)', () => {
-    // Exact inventory includes learning, BAR-P08 report routes, and the MD05 command.
-    // P07 service/privacy/tenant/date semantics stay as written.
+    // Exact inventory, including learning, certification exams, and the MD05 command.
+    // P07 service/privacy/tenant/date semantics are not weakened by this adaptation.
     const adapter = app.getHttpAdapter();
     const instance = adapter.getInstance() as {
       _router?: { stack?: Array<{ route?: { path: string; methods: Record<string, boolean> } }> };
@@ -350,24 +351,9 @@ describe('BAR-P07 report-query e2e', () => {
         return methods.map((m) => `${m} ${route.path}`);
       })
       .flat();
-    expect(productionRoutes).toEqual([
-      'GET /v1/health',
-      'GET /v1/me/certification/applications',
-      'GET /v1/me/certification/applications/:id',
-      'GET /v1/me/learning/courses',
-      'GET /v1/me/learning/courses/:courseId',
-      'POST /v1/me/learning/enrolments',
-      'GET /v1/me/learning/enrolments',
-      'GET /v1/me/learning/enrolments/:enrolmentId/player',
-      'POST /v1/me/learning/enrolments/:enrolmentId/lessons/:lessonId/progress',
-      'POST /v1/me/learning/enrolments/:enrolmentId/quizzes/:quizId/attempts',
-      'GET /v1/me/learning/statistics',
-      'GET /v1/me/learning/analytics-consent',
-      'PUT /v1/me/learning/analytics-consent',
-      'GET /v1/staff/reports/certification-applications/by-status',
-      'GET /v1/staff/reports/certification-applications/by-scheme-ref',
-      'POST /v1/role-administration/commands',
-    ]);
+    expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
+    expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(42);
   });
 
   it('P07 exact 365 day span works at runtime', async () => {

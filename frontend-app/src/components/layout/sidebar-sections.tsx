@@ -130,6 +130,7 @@ export function collectTaggedSidebarSections(ctx: IsoNavContext): TaggedSidebarS
     addWorkspace(tagged, "learning", {
       titleKey: "personCertification",
       items: [
+        { to: "/dashboard/exams/sessions", labelKey: "exams", icon: ClipboardCheck, end: false },
         { to: "/dashboard/certification/applications", labelKey: "certApplications", icon: ClipboardList, end: false },
         { to: "/dashboard/my-certificates", labelKey: "myCertificates", icon: Medal, end: false },
         { to: "/dashboard/my-recertifications", labelKey: "recertification", icon: ClipboardCheck, end: false },
@@ -162,9 +163,18 @@ export function collectTaggedSidebarSections(ctx: IsoNavContext): TaggedSidebarS
   }
 
   if (showTechnicalCommitteeSidebar(ctx)) {
+    const items: SidebarNavItemDef[] = [
+      { to: "/dashboard/iso/reports", labelKey: "questionReports", icon: BarChart3, end: false },
+    ];
+    if (isTechnicalCommitteeMember(ctx)) {
+      items.unshift(
+        { to: "/dashboard/admin/item-bank", labelKey: "itemBank", icon: ClipboardList, end: true },
+        { to: "/dashboard/admin/exam-blueprint", labelKey: "examQuestions", icon: ClipboardCheck, end: true },
+      );
+    }
     addWorkspace(tagged, "learning", {
       titleKey: "technicalValidation",
-      items: [{ to: "/dashboard/iso/reports", labelKey: "questionReports", icon: BarChart3, end: false }],
+      items,
     });
   }
 
@@ -175,6 +185,14 @@ export function collectTaggedSidebarSections(ctx: IsoNavContext): TaggedSidebarS
       { to: "/dashboard/committee/pilot-applications", labelKey: "evidenceReview", icon: FolderKanban, end: false },
       { to: "/dashboard/admin/recertification", labelKey: "recertificationsAdmin", icon: ClipboardCheck, end: true },
     ];
+    if (isCertificationCommitteeMember(ctx)) {
+      items.push({
+        to: "/dashboard/committee/exam-queue",
+        labelKey: "committeeDecisions",
+        icon: ClipboardList,
+        end: true,
+      });
+    }
     if (canAccessReportsDomain(ctx)) {
       items.push({ to: "/dashboard/iso/reports", labelKey: "recertificationOverview", icon: ScrollText, end: false });
     }

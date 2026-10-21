@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { Prisma } from '@confora/database';
 
 import type { AuthenticatedActor } from '../auth/request-principal';
@@ -19,6 +22,7 @@ import type {
   AuditPersistenceApi,
   AuditRepository,
 } from './audit.repository';
+import { AUDIT_RETRY_FLOOR_MS } from './audit-retry';
 import { AuditService } from './audit.service';
 
 const ACTOR: AuthenticatedActor = {
@@ -97,6 +101,7 @@ describe('AuditService', () => {
 
   beforeEach(() => {
     mockApi = {
+      lockTenantChain: jest.fn().mockResolvedValue(undefined),
       findEventByIdempotency: jest.fn().mockResolvedValue(null),
       findChainHead: jest.fn().mockResolvedValue(null),
       createInitialChainHead: jest.fn().mockResolvedValue({
@@ -124,6 +129,26 @@ describe('AuditService', () => {
       tenantContext as unknown as TenantContextStore,
       testRegistry(),
     );
+  });
+
+  it('locks the actor tenant chain before the head is read', async () => {
+    const order: string[] = [];
+    mockApi.lockTenantChain.mockImplementation(() => {
+      order.push('lock');
+      return Promise.resolve();
+    });
+    mockApi.findChainHead.mockImplementation(() => {
+      order.push('head');
+      return Promise.resolve(null);
+    });
+    await service.append(ACTOR, baseAppendInput());
+    expect(mockApi.lockTenantChain.mock.calls[0]?.[0]).toBe(ACTOR.tenantId);
+    expect(order[0]).toBe('lock');
+    expect(order.indexOf('lock')).toBeLessThan(order.indexOf('head'));
+    const repository = readFileSync(join(__dirname, 'audit.repository.ts'), 'utf8');
+    expect(repository).toContain('pg_advisory_xact_lock');
+    expect(repository).toContain('ReadCommitted');
+    expect(repository).not.toContain('TransactionIsolationLevel.Serializable');
   });
 
   it('P05_TEST_011 tenantId derives from actor.tenantId', async () => {
@@ -214,7 +239,9 @@ describe('AuditService', () => {
       },
     );
 
+    const started = Date.now();
     const view = await service.append(ACTOR, baseAppendInput());
+    expect(Date.now() - started).toBeGreaterThanOrEqual(AUDIT_RETRY_FLOOR_MS);
     expect(attempts).toBe(2);
     expect(view.tenantId).toBe(ACTOR.tenantId);
     expect(view.eventType).toBe('TEST_EVENT');
