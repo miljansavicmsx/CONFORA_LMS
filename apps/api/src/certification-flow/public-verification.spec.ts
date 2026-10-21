@@ -50,7 +50,15 @@ describe('public verification and referee delivery wiring', () => {
     );
     expect(vote).toContain('assertCertificationDecision');
     expect(vote).toContain('examinedCandidate');
-    expect(vote).toContain('invigilatorUserId');
+    expect(vote).toContain('examinationActorsForApplication');
+    expect(vote).toContain('candidateWasExaminedBy');
+    const proposal = store.slice(
+      store.indexOf('async function writeCommitteeProposals'),
+      store.indexOf('export async function confirmProposal'),
+    );
+    expect(proposal).toContain('examinationActorsForApplication');
+    expect(proposal).toContain('proctorReviewerUserIds');
+    expect(proposal).toContain('writeCommitteeProposals');
     const pdf = store.slice(
       store.indexOf('export async function publicDocumentPdf'),
       store.indexOf('export async function setDocumentNameConsent'),

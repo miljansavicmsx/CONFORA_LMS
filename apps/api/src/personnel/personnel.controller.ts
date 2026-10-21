@@ -147,6 +147,13 @@ export class PublicCertificateController {
     return this.personnel.statusList();
   }
 
+  @Public()
+  @Get('jwks')
+  jwks(@Req() req: Request) {
+    limit(req);
+    return this.personnel.publicKeys();
+  }
+
   @Get()
   search(@Query() query: PublicSearchDto, @Req() req: Request) {
     limit(req);

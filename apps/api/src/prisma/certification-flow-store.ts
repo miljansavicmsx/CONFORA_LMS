@@ -29,8 +29,13 @@ import {
   type PublicVerificationView,
 } from '../certification-flow/certification-flow-rules';
 import { sealDelivery } from '../certification-flow/referee-delivery';
-import { assertCertificationDecision, ExamRuleError } from '../exam/exam-rules';
+import {
+  assertCertificationDecision,
+  candidateWasExaminedBy,
+  ExamRuleError,
+} from '../exam/exam-rules';
 import { drawDocumentPage, openUnicodePdf } from '../personnel/document-pdf';
+import { examinationActorsForApplication } from './exam-tenant-store';
 import { issuePersonnelCertificate, type PersonnelClient } from './personnel-certificate-store';
 
 export class FlowNotFoundError extends Error {
@@ -65,6 +70,7 @@ export type FlowClient = {
   | 'enrolmentTrainer'
   | 'certificationSchemeVersion'
   | 'certificationExamResult'
+  | 'certificationExamSession'
   | 'examCertificationDecision'
 >;
 
@@ -769,10 +775,15 @@ async function writeCommitteeProposals(
   if (input.row.examResultId) {
     const result = await client.certificationExamResult.findFirst({
       where: { tenantId: input.tenantId, id: input.row.examResultId },
-      include: { session: true },
+      select: { session: { select: { certificationApplicationId: true } } },
     });
     if (result) {
-      examinerIds.push(result.session.invigilatorUserId);
+      const actors = await examinationActorsForApplication(
+        client,
+        input.tenantId,
+        result.session.certificationApplicationId,
+      );
+      examinerIds.push(...actors.invigilatorUserIds, ...actors.proctorReviewerUserIds);
     }
   }
   const slots = [];
@@ -920,9 +931,16 @@ async function assertRecordedDecisionMaker(
   const result = row.examResultId
     ? await client.certificationExamResult.findFirst({
         where: { tenantId, id: row.examResultId },
-        include: { session: true },
+        select: { session: { select: { certificationApplicationId: true } } },
       })
     : null;
+  const actors = result
+    ? await examinationActorsForApplication(
+        client,
+        tenantId,
+        result.session.certificationApplicationId,
+      )
+    : { invigilatorUserIds: [], proctorReviewerUserIds: [] };
   const trainer = await client.enrolmentTrainer.findFirst({
     where: {
       tenantId,
@@ -936,7 +954,11 @@ async function assertRecordedDecisionMaker(
       candidateUserId: row.applicantUserId,
       roles: confirmerUserId === actor.userId ? actor.roles : ['COM_CERT'],
       trainerOfCandidate: Boolean(trainer),
-      examinedCandidate: result?.session.invigilatorUserId === confirmerUserId,
+      examinedCandidate: candidateWasExaminedBy({
+        userId: confirmerUserId,
+        invigilatorUserIds: actors.invigilatorUserIds,
+        proctorReviewerUserIds: actors.proctorReviewerUserIds,
+      }),
     });
   } catch (error) {
     if (error instanceof ExamRuleError) {

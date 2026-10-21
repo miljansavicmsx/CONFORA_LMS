@@ -570,6 +570,51 @@ describe('certification exam foundation e2e', () => {
       .expect(201);
     expect((reviewed.body as { passedAfter: boolean | null }).passedAfter).toBe(true);
 
+    const earlierFail = await request(httpServer(app))
+      .post('/v1/staff/exams/sessions')
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        formId,
+        candidateUserId: candidateId,
+        certificationApplicationId: applicationId,
+        invigilatorUserId: authorId,
+        scheduledStartAt: new Date().toISOString(),
+      })
+      .expect(201);
+    const earlierFailSessionId = (earlierFail.body as { sessionId: string }).sessionId;
+    await request(httpServer(app))
+      .post(`/v1/staff/exams/sessions/${earlierFailSessionId}/identity-check`)
+      .set(auth(authorSubject, ['INVIGILATOR']))
+      .send({ documentType: 'ID_CARD' })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/me/exams/sessions/${earlierFailSessionId}/start`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({ rulesAccepted: true, ndaAccepted: true })
+      .expect(201);
+    await request(httpServer(app))
+      .put(`/v1/me/exams/sessions/${earlierFailSessionId}/answers`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .send({
+        answers: [
+          { itemId: itemA, selectedKeys: ['B'] },
+          { itemId: itemB, selectedKeys: ['A'] },
+        ],
+      })
+      .expect(200);
+    const earlierFailed = await request(httpServer(app))
+      .post(`/v1/me/exams/sessions/${earlierFailSessionId}/submit`)
+      .set(auth(candidateSubject, ['USR_CAND']))
+      .expect(201);
+    expect((earlierFailed.body as { passed: boolean }).passed).toBe(false);
+    await requirePrisma().certificationExamSession.update({
+      where: { tenantId_id: { tenantId, id: earlierFailSessionId } },
+      data: {
+        scheduledStartAt: new Date('2026-01-01T00:00:00.000Z'),
+        submittedAt: new Date('2026-01-01T01:00:00.000Z'),
+      },
+    });
+
     const queue = await request(httpServer(app))
       .get('/v1/committee/exams/queue')
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -588,6 +633,24 @@ describe('certification exam foundation e2e', () => {
       .post('/v1/committee/exams/decisions')
       .set(auth('exam-invigilator', ['COM_CERT']))
       .send({ resultId: passResultId, outcome: 'GRANT', rationale: 'Ispitivač ne odlučuje.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post('/v1/committee/exams/decisions')
+      .set(auth(authorSubject, ['COM_CERT']))
+      .send({
+        resultId: passResultId,
+        outcome: 'GRANT',
+        rationale: 'Ispitivač ranijeg neuspjelog pokušaja ne odlučuje.',
+      })
+      .expect(403);
+    await request(httpServer(app))
+      .post('/v1/committee/exams/decisions')
+      .set(auth(approverSubject, ['COM_CERT']))
+      .send({
+        resultId: passResultId,
+        outcome: 'GRANT',
+        rationale: 'Pregledač proktorskog signala ne odlučuje.',
+      })
       .expect(403);
     const decision = await request(httpServer(app))
       .post('/v1/committee/exams/decisions')
@@ -654,7 +717,15 @@ describe('certification exam foundation e2e', () => {
         referenceCount: 2,
       })
       .expect(201);
-    for (const userId of [trainerId, invigilatorId, deciderId, issuerId, qualityId]) {
+    for (const userId of [
+      trainerId,
+      invigilatorId,
+      authorId,
+      approverId,
+      deciderId,
+      issuerId,
+      qualityId,
+    ]) {
       await request(httpServer(app))
         .post(`/v1/staff/schemes/${versionId}/decision-makers`)
         .set(auth(approverSubject, ['COM_TECH']))
@@ -876,6 +947,14 @@ describe('certification exam foundation e2e', () => {
     ).slots;
     expect(slots.find((slot) => slot.userId === trainerId)?.exclusionReason).toBe('TRAINER');
     expect(slots.find((slot) => slot.userId === invigilatorId)?.exclusionReason).toBe('EXAMINER');
+    expect(slots.find((slot) => slot.userId === authorId)?.state).toBe('EXCLUDED');
+    expect(slots.find((slot) => slot.userId === authorId)?.exclusionReason).toBe('EXAMINER');
+    expect(slots.find((slot) => slot.userId === approverId)?.exclusionReason).toBe('EXAMINER');
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: authorId })
+      .expect(400);
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/confirm`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -1390,6 +1469,6 @@ describe('certification exam foundation e2e', () => {
     const exposed = await requirePrisma().schemeExamItem.findFirst({
       where: { tenantId, id: itemA },
     });
-    expect(exposed?.exposureCount).toBe(2);
+    expect(exposed?.exposureCount).toBe(3);
   });
 });

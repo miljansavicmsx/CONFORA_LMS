@@ -52,6 +52,7 @@ export const PRODUCTION_ROUTE_INVENTORY = [
   'POST /v1/me/certificates/:credentialId/cpd',
   'GET /v1/me/certificates/:credentialId/reminders',
   'GET /v1/public/certificates/status-list',
+  'GET /v1/public/certificates/jwks',
   'GET /v1/public/certificates',
   'GET /v1/public/certificates/:publicUid/pdf',
   'GET /v1/public/certificates/:publicUid',
