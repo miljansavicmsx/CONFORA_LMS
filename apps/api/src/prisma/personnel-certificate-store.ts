@@ -164,6 +164,9 @@ export async function issuePersonnelCertificate(
     if (!decision) {
       throw new PersonnelNotFoundError();
     }
+    if (decision.supersededAt) {
+      throw new PersonnelRuleError('DECISION_SUPERSEDED');
+    }
     if (decision.outcome !== 'GRANT') {
       throw new PersonnelRuleError('DECISION_NOT_GRANT');
     }

@@ -52,6 +52,8 @@ export type AuditEventCreateData = {
  * Bounded persistence API for one SERIALIZABLE transaction.
  * Does not expose PrismaClient / TransactionClient to AuditModule callers.
  */
+export type AuditWriteClient = ConstructorParameters<typeof AuditPersistenceApi>[0];
+
 export class AuditPersistenceApi {
   constructor(private readonly tx: Prisma.TransactionClient) {}
 

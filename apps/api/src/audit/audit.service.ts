@@ -31,7 +31,12 @@ import {
 import { AuditHashService } from './audit-hash.service';
 import { buildIdempotencyFingerprint, fingerprintsEqual } from './audit-idempotency';
 import { waitForAuditRetry } from './audit-retry';
-import { AuditPersistenceApi, AuditRepository, type AuditEventRow } from './audit.repository';
+import {
+  AuditPersistenceApi,
+  AuditRepository,
+  type AuditEventRow,
+  type AuditWriteClient,
+} from './audit.repository';
 import { canonicalizeMetadata } from './audit-canonicalizer';
 import {
   enforceResourceTypePolicy,
@@ -127,6 +132,17 @@ export class AuditService {
 
   async append(actor: AuthenticatedActor, input: AuditAppendInput): Promise<AuditEventView> {
     return this.executeInTransaction(actor, async (ops) => ops.append(input));
+  }
+
+  /** Append on a transaction the caller already opened. A failure rolls that transaction back. */
+  async appendUsing(
+    tx: AuditWriteClient,
+    actor: AuthenticatedActor,
+    input: AuditAppendInput,
+  ): Promise<AuditEventView> {
+    this.assertActor(actor);
+    this.assertTenantAgreement(actor);
+    return this.appendWithin(new AuditPersistenceApi(tx), actor, input);
   }
 
   async executeInTransaction<T>(

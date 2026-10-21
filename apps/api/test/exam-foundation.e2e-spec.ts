@@ -950,13 +950,52 @@ describe('certification exam foundation e2e', () => {
     expect(slots.find((slot) => slot.userId === authorId)?.exclusionReason).toBe('EXAMINER');
     expect(slots.find((slot) => slot.userId === approverId)?.exclusionReason).toBe('EXAMINER');
     await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/decision-makers`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        userId: approverId,
+        kind: 'COMMITTEE_CHAIR',
+        competenceNote: 'Sam sebi ne dodjeljuje ovlaštenje.',
+        documentRef: 'Pokušaj samoodobrenja ovlaštenja.',
+        authorisedFrom: '2020-01-01T00:00:00.000Z',
+        authorisedUntil: '2030-01-01T00:00:00.000Z',
+      })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/decision-makers`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        userId: bystanderId,
+        kind: 'COMMITTEE_CHAIR',
+        competenceNote: 'Predsjedava komitetom šeme.',
+        documentRef: 'Odluka certifikacionog tijela o predsjedavanju.',
+        authorisedFrom: '2020-01-01T00:00:00.000Z',
+        authorisedUntil: '2030-01-01T00:00:00.000Z',
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Predsjedavajući nema sukob interesa.' })
+      .expect(201);
+    await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/confirm`)
       .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: authorId })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: deciderId })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
       .send({ memberUserId: authorId })
       .expect(400);
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/confirm`)
-      .set(auth(deciderSubject, ['COM_CERT']))
+      .set(auth(bystanderSubject, ['COM_CERT']))
       .send({ memberUserId: deciderId })
       .expect(201);
     const assigned = await request(httpServer(app))
@@ -969,12 +1008,32 @@ describe('certification exam foundation e2e', () => {
     expect(JSON.stringify(assigned.body)).not.toContain('path');
     expect(JSON.stringify(assigned.body)).not.toContain('DIRECT');
     expect(JSON.stringify(assigned.body)).not.toContain('CONFORA_EDUCATION');
-    const voted = await request(httpServer(app))
-      .post(`/v1/committee/cases/${caseId}/votes`)
-      .set(auth(deciderSubject, ['COM_CERT']))
-      .send({ ballot: 'GRANT', reasoning: 'Kriterij Practitioner je ispunjen.' })
-      .expect(201);
-    expect((voted.body as { computedLevelCode: string }).computedLevelCode).toBe('PRACTITIONER');
+    const voteBody = { ballot: 'GRANT' as const, reasoning: 'Kriterij Practitioner je ispunjen.' };
+    const raced = await Promise.all([
+      request(httpServer(app))
+        .post(`/v1/committee/cases/${caseId}/votes`)
+        .set(auth(deciderSubject, ['COM_CERT']))
+        .send(voteBody),
+      request(httpServer(app))
+        .post(`/v1/committee/cases/${caseId}/votes`)
+        .set(auth(deciderSubject, ['COM_CERT']))
+        .send(voteBody),
+    ]);
+    expect(raced.map((response) => response.status).sort()).toEqual([201, 400]);
+    const voted = raced.find((response) => response.status === 201);
+    const duplicate = raced.find((response) => response.status === 400);
+    expect((voted?.body as { computedLevelCode: string }).computedLevelCode).toBe('PRACTITIONER');
+    expect((duplicate?.body as { message: string }).message).toBe('ALREADY_VOTED');
+    expect(
+      await requirePrisma().committeeAssessment.count({
+        where: { tenantId, caseId, memberUserId: deciderId, voidedAt: null },
+      }),
+    ).toBe(1);
+    const supersededExamDecision = await requirePrisma().examCertificationDecision.findFirst({
+      where: { tenantId, id: decisionId },
+    });
+    expect(supersededExamDecision?.supersededAt).not.toBeNull();
+    expect(supersededExamDecision?.supersedeReason).toBe('QUORUM_REACHED');
     await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/issue-authorization`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -1012,6 +1071,23 @@ describe('certification exam foundation e2e', () => {
       .set(auth(deciderSubject, ['COM_CERT']))
       .send({ reason: 'Isključujem kolege iz odbora.' })
       .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({ reason: 'Sukob je evidentiran u izjavi člana.' })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/decision-makers`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        userId: qualityId,
+        kind: 'SCHEME_COMMITTEE_OVERSIGHT',
+        competenceNote: 'Nadzor komiteta za ovu šemu.',
+        documentRef: 'Ovlaštenje za nadzor komiteta šeme.',
+        authorisedFrom: '2020-01-01T00:00:00.000Z',
+        authorisedUntil: '2030-01-01T00:00:00.000Z',
+      })
+      .expect(201);
     const beforeChange = await request(httpServer(app))
       .get(`/v1/committee/cases/${caseId}`)
       .set(auth(deciderSubject, ['COM_CERT']))
@@ -1023,10 +1099,69 @@ describe('certification exam foundation e2e', () => {
     ).proposals;
     expect(beforeSlots.find((slot) => slot.userId === issuerId)?.state).not.toBe('EXCLUDED');
     expect(beforeSlots.find((slot) => slot.userId === deciderId)?.state).toBe('CONFIRMED');
-    const changed = await request(httpServer(app))
+    const pending = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/propose`)
       .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
       .send({ reason: 'Sukob je evidentiran u izjavi člana.' })
+      .expect(201);
+    const pendingBody = pending.body as {
+      requestId: string;
+      status: string;
+      changed: boolean;
+      slots: { userId: string; state: string }[];
+    };
+    expect(pendingBody.status).toBe('PENDING');
+    expect(pendingBody.changed).toBe(false);
+    expect(pendingBody.slots.find((slot) => slot.userId === issuerId)?.state).not.toBe('EXCLUDED');
+    expect(pendingBody.slots.find((slot) => slot.userId === deciderId)?.state).toBe('CONFIRMED');
+    const review = {
+      requestId: pendingBody.requestId,
+      grounds: 'Sukob je evidentiran u izjavi člana.',
+      recordedCoiReview: 'Provjerene su zabilježene izjave o sukobu.',
+      competenceReview: 'Predloženi članovi imaju važeću kompetentnost.',
+      priorVoteImpact: 'Raniji glasovi prestaju važiti i kvorum se ponavlja.',
+    };
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send(review)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send({ hasConflict: true, statement: 'Predsjedavajući je naknadno u sukobu.' })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(bystanderSubject, ['COM_CERT']))
+      .send(review)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send(review)
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/staff/schemes/${versionId}/decision-makers`)
+      .set(auth(approverSubject, ['COM_TECH']))
+      .send({
+        userId: trainerId,
+        kind: 'CERTIFICATION_BODY_DEPUTY',
+        competenceNote: 'Zamjena kada je strana u sukobu.',
+        documentRef: 'Posebno ovlaštenje certifikacionog tijela.',
+        authorisedFrom: '2020-01-01T00:00:00.000Z',
+        authorisedUntil: '2030-01-01T00:00:00.000Z',
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({ hasConflict: false, statement: 'Zamjena nema sukob na predmetu.' })
+      .expect(201);
+    const changed = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send(review)
       .expect(201);
     const changedSlots = (
       changed.body as {
@@ -1038,6 +1173,10 @@ describe('certification exam foundation e2e', () => {
     expect(changedSlots.find((slot) => slot.userId === deciderId)?.state).toBe('PROPOSED');
     expect((changed.body as { votesInvalidated: number }).votesInvalidated).toBe(1);
     expect((changed.body as { phase: string }).phase).toBe('COMMITTEE');
+    const supersededByComposition = await requirePrisma().examCertificationDecision.findFirst({
+      where: { tenantId, resultId: passResultId, supersededAt: null },
+    });
+    expect(supersededByComposition).toBeNull();
     const voidedVote = await requirePrisma().committeeAssessment.findFirst({
       where: { tenantId, caseId, memberUserId: deciderId },
       orderBy: { createdAt: 'asc' },
@@ -1059,14 +1198,30 @@ describe('certification exam foundation e2e', () => {
         subjectUserId: issuerId,
       })
       .expect(201);
-    await request(httpServer(app))
+    const restored = await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/propose`)
       .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
       .send({ reason: 'Sukob je skinut, član se vraća u sastav.' })
       .expect(201);
     await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({
+        requestId: (restored.body as { requestId: string }).requestId,
+        grounds: 'Sukob je skinut, član se vraća u sastav.',
+        recordedCoiReview: 'Izjava o sukobu je povučena od nezavisne strane.',
+        competenceReview: 'Vraćeni član i dalje ima važeću kompetentnost.',
+        priorVoteImpact: 'Nema važećeg glasa, pa se sastav samo dopunjuje.',
+      })
+      .expect(201);
+    await request(httpServer(app))
       .post(`/v1/committee/cases/${caseId}/confirm`)
       .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ memberUserId: deciderId })
+      .expect(403);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/confirm`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
       .send({ memberUserId: deciderId })
       .expect(201);
     const revoted = await request(httpServer(app))
@@ -1161,10 +1316,55 @@ describe('certification exam foundation e2e', () => {
       .get(`/v1/committee/cases/${caseId}`)
       .set(auth(deciderSubject, ['COM_CERT']))
       .expect(200);
-    const unverified = await request(httpServer(app))
+    expect(
+      await requirePrisma().committeeAssessment.count({
+        where: { tenantId, caseId, memberUserId: deciderId, voidedAt: null },
+      }),
+    ).toBe(0);
+    expect(
+      (
+        await requirePrisma().professionalCase.findFirst({
+          where: { tenantId, id: caseId },
+          select: { phase: true },
+        })
+      )?.phase,
+    ).toBe('COMMITTEE');
+    expect(
+      await requirePrisma().examCertificationDecision.count({
+        where: { tenantId, resultId: passResultId, supersededAt: null },
+      }),
+    ).toBe(0);
+    const revotedAfterConflict = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/votes`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ ballot: 'GRANT', reasoning: 'Novi kvorum nakon uklonjenog sukoba.' })
+      .expect(201);
+    expect((revotedAfterConflict.body as { computedLevelCode: string }).computedLevelCode).toBe(
+      'PRACTITIONER',
+    );
+    const issuanceDecision = await requirePrisma().examCertificationDecision.findFirst({
+      where: { tenantId, resultId: passResultId, supersededAt: null },
+    });
+    if (!issuanceDecision) {
+      throw new Error('Live certification decision was not stored.');
+    }
+    const issuanceDecisionId = issuanceDecision.id;
+    expect(issuanceDecisionId).not.toBe(decisionId);
+    expect(issuanceDecision.decidedByUserId).not.toBe(deciderId);
+    const staleDecision = await request(httpServer(app))
       .post('/v1/committee/certificates')
       .set(auth(issuerSubject, ['COM_CERT']))
       .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
+      .expect(400);
+    expect((staleDecision.body as { message: string }).message).toBe('DECISION_SUPERSEDED');
+    const unverified = await request(httpServer(app))
+      .post('/v1/committee/certificates')
+      .set(auth(issuerSubject, ['COM_CERT']))
+      .send({
+        decisionId: issuanceDecisionId,
+        holderDisplayName: 'Krivo Ime',
+        registryConsent: true,
+      })
       .expect(400);
     expect((unverified.body as { message: string }).message).toBe('IDENTITY_UNVERIFIED');
     await requirePrisma().userProfile.create({
@@ -1319,7 +1519,11 @@ describe('certification exam foundation e2e', () => {
     const issued = await request(httpServer(app))
       .post('/v1/committee/certificates')
       .set(auth(issuerSubject, ['COM_CERT']))
-      .send({ decisionId, holderDisplayName: 'Krivo Ime', registryConsent: true })
+      .send({
+        decisionId: issuanceDecisionId,
+        holderDisplayName: 'Krivo Ime',
+        registryConsent: true,
+      })
       .expect(201);
     const issuedBody = issued.body as {
       credentialId: string;
@@ -1334,7 +1538,11 @@ describe('certification exam foundation e2e', () => {
     await request(httpServer(app))
       .post('/v1/committee/certificates')
       .set(auth(deciderSubject, ['COM_CERT']))
-      .send({ decisionId, holderDisplayName: 'Demo Kandidat', registryConsent: true })
+      .send({
+        decisionId: issuanceDecisionId,
+        holderDisplayName: 'Demo Kandidat',
+        registryConsent: true,
+      })
       .expect(400);
     await request(httpServer(app))
       .get('/v1/public/certificates')
@@ -1523,6 +1731,82 @@ describe('certification exam foundation e2e', () => {
       expect.arrayContaining([expect.objectContaining({ kind: 'NINETY_DAYS' })]),
     );
 
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(issuerSubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({
+        hasConflict: false,
+        statement: 'Sukob nadzora je uklonjen nakon provjere.',
+        subjectUserId: qualityId,
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/conflict-declaration`)
+      .set(auth(deciderSubject, ['COM_CERT']))
+      .send({ hasConflict: true, statement: 'Sukob nakon izdavanja certifikata.' })
+      .expect(201);
+    const retained = await requirePrisma().examCertificationDecision.findFirst({
+      where: { tenantId, id: issuanceDecisionId },
+    });
+    expect(retained?.supersededAt).toBeNull();
+    const issuedChange = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({ reason: 'Sastav se mijenja nakon izdatog certifikata.' })
+      .expect(201);
+    const blockedChange = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({
+        requestId: (issuedChange.body as { requestId: string }).requestId,
+        grounds: 'Certifikat je izdat pa sastav ne mijenjam automatski.',
+        recordedCoiReview: 'Sukob člana je zabilježen nakon izdavanja.',
+        competenceReview: 'Kompetentnost ostalih članova ostaje važeća.',
+        priorVoteImpact: 'Odluka i certifikat ostaju do odluke tijela.',
+      })
+      .expect(400);
+    expect((blockedChange.body as { message: string }).message).toBe('ISSUED_REVIEW_REQUIRED');
+    const openedReview = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({
+        reviewAction: 'OPEN',
+        statement: 'Formalni pregled sastava nakon izdatog certifikata.',
+      })
+      .expect(201);
+    await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(qualitySubject, ['COM_CERT', 'QUALITY_MANAGER']))
+      .send({
+        reviewAction: 'DECIDE',
+        reviewId: (openedReview.body as { reviewId: string }).reviewId,
+        outcome: 'SUSTAIN',
+        rationale: 'Ista osoba ne smije odlučiti o pregledu koji je otvorila.',
+      })
+      .expect(403);
+    const decidedReview = await request(httpServer(app))
+      .post(`/v1/committee/cases/${caseId}/propose`)
+      .set(auth(trainerSubject, ['COM_CERT']))
+      .send({
+        reviewAction: 'DECIDE',
+        reviewId: (openedReview.body as { reviewId: string }).reviewId,
+        outcome: 'SUSTAIN',
+        rationale: 'Certifikat ostaje. Odluka se ne briše i ne povlači automatski.',
+      })
+      .expect(201);
+    expect((decidedReview.body as { decisionRetained: string | null }).decisionRetained).toBe(
+      issuanceDecisionId,
+    );
+    const afterReview = await requirePrisma().credential.findFirst({
+      where: { tenantId, id: issuedBody.credentialId },
+    });
+    expect(afterReview?.lifecycle).toBe('SUSPENDED');
+    expect(
+      await requirePrisma().examCertificationDecision.count({
+        where: { tenantId, id: issuanceDecisionId },
+      }),
+    ).toBe(1);
+
     const events = await requirePrisma().auditEvent.findMany({
       where: { tenantId },
       select: { eventType: true, metadata: true },
@@ -1538,6 +1822,11 @@ describe('certification exam foundation e2e', () => {
     expect(types.has('AI_USE_RECORDED')).toBe(true);
     expect(types.has('CONFLICT_SIGNED')).toBe(true);
     expect(types.has('COMMITTEE_COMPOSITION_CHANGED')).toBe(true);
+    expect(types.has('COMMITTEE_COMPOSITION_PROPOSED')).toBe(true);
+    expect(types.has('SCHEME_COMMITTEE_AUTHORITY_GRANTED')).toBe(true);
+    expect(types.has('COMMITTEE_COMPOSITION_REVIEW_OPENED')).toBe(true);
+    expect(types.has('COMMITTEE_COMPOSITION_REVIEW_DECIDED')).toBe(true);
+    expect(types.has('COMMITTEE_VOTE_RECORDED')).toBe(true);
     const compositionReasons = events
       .filter((event) => event.eventType === 'COMMITTEE_COMPOSITION_CHANGED')
       .map((event) =>

@@ -125,6 +125,9 @@ model Tenant {
   issuanceAuthorizations          IssuanceAuthorization[]
   aiCaseSuggestions               AiCaseSuggestion[]
   committeeConflictDeclarations   CommitteeConflictDeclaration[]
+  schemeCommitteeAuthorities      SchemeCommitteeAuthority[]
+  committeeCompositionRequests    CommitteeCompositionRequest[]
+  certificationBodyReviews        CertificationBodyReview[]
   tenantAiBudgets                 TenantAiBudget[]
   noticeJobs                      NoticeJob[]
   inAppNotices                    InAppNotice[]
@@ -203,6 +206,12 @@ model User {
   issuanceAuthorizations             IssuanceAuthorization[]
   conflictDeclarations               CommitteeConflictDeclaration[] @relation("ConflictDeclarationSubject")
   recordedConflictDeclarations       CommitteeConflictDeclaration[] @relation("ConflictDeclarationRecorder")
+  schemeCommitteeAuthoritiesHeld     SchemeCommitteeAuthority[]     @relation("SchemeCommitteeAuthorityHolder")
+  schemeCommitteeAuthoritiesGranted  SchemeCommitteeAuthority[]     @relation("SchemeCommitteeAuthorityGrantor")
+  compositionRequestsProposed        CommitteeCompositionRequest[]  @relation("CompositionRequestProposer")
+  compositionRequestsApproved        CommitteeCompositionRequest[]  @relation("CompositionRequestApprover")
+  certificationReviewsOpened         CertificationBodyReview[]      @relation("CertificationReviewOpener")
+  certificationReviewsDecided        CertificationBodyReview[]      @relation("CertificationReviewDecider")
   noticeJobs                         NoticeJob[]
   inAppNotices                       InAppNotice[]
   annualFeeObligations               AnnualFeeObligation[]
@@ -1310,6 +1319,7 @@ model CertificationScheme {
   tenant   Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   versions CertificationSchemeVersion[]
   examItems SchemeExamItem[]
+  committeeAuthorities SchemeCommitteeAuthority[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, code])
@@ -2341,7 +2351,7 @@ model CertificationExamResult {
 
   tenant   Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   session  CertificationExamSession   @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
-  decision ExamCertificationDecision?
+  decisions ExamCertificationDecision[]
   examPass ExamPassAttestation?
 
   @@unique([tenantId, id])
@@ -2358,6 +2368,8 @@ model ExamCertificationDecision {
   trainerOfCandidate     Boolean
   independentOfTraining  Boolean
   decidedAt              DateTime                         @db.Timestamptz(3)
+  supersededAt           DateTime?                        @db.Timestamptz(3)
+  supersedeReason        String?                          @db.VarChar(64)
   createdAt              DateTime                         @default(now()) @db.Timestamptz(3)
 
   tenant  Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
@@ -2365,8 +2377,9 @@ model ExamCertificationDecision {
   decider User                    @relation(fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
   personnelIssue ExamPersonnelCredentialLink?
 
+  /// One live decision per result is ExamCertificationDecision_live_result_key.
   @@unique([tenantId, id])
-  @@unique([tenantId, resultId])
+  @@index([tenantId, resultId])
   @@index([tenantId, decidedByUserId])
 }
 
@@ -2630,6 +2643,7 @@ model ProfessionalCase {
   experienceMonths           Int                      @default(0)
   computedLevelCode          String?                  @db.VarChar(32)
   examResultId               String?                  @db.Uuid
+  compositionVersion         Int                      @default(1)
   createdAt                  DateTime                 @default(now()) @db.Timestamptz(3)
   updatedAt                  DateTime                 @updatedAt @db.Timestamptz(3)
 
@@ -2643,6 +2657,8 @@ model ProfessionalCase {
   authorization IssuanceAuthorization?
   suggestions   AiCaseSuggestion[]
   conflictDeclarations CommitteeConflictDeclaration[]
+  compositionRequests CommitteeCompositionRequest[]
+  bodyReviews CertificationBodyReview[]
 
   @@unique([tenantId, id])
   @@index([tenantId, applicantUserId, phase])
@@ -2791,6 +2807,7 @@ model CommitteeAssessment {
   memberUserId String           @db.Uuid
   ballot       CommitteeBallot
   reasoning    String           @db.Text
+  compositionVersion Int       @default(1)
   voidedAt     DateTime?        @db.Timestamptz(3)
   voidReason   String?          @db.VarChar(64)
   createdAt    DateTime         @default(now()) @db.Timestamptz(3)
@@ -2799,6 +2816,7 @@ model CommitteeAssessment {
   case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
   member User             @relation(fields: [tenantId, memberUserId], references: [tenantId, id], onDelete: Restrict)
 
+  /// Live votes: CommitteeAssessment_one_live_vote_key and CommitteeAssessment_live_vote_per_version_key.
   @@unique([tenantId, id])
   @@index([tenantId, caseId, memberUserId])
 }
@@ -2856,6 +2874,103 @@ model CommitteeConflictDeclaration {
 
   @@unique([tenantId, id])
   @@index([tenantId, caseId, userId, signedAt])
+}
+
+enum SchemeCommitteeAuthorityKind {
+  COMMITTEE_CHAIR
+  SCHEME_COMMITTEE_OVERSIGHT
+  CERTIFICATION_BODY_DEPUTY
+}
+
+enum CommitteeOfficeSide {
+  CHAIR
+  OVERSIGHT
+}
+
+enum CompositionRequestStatus {
+  PENDING
+  APPLIED
+}
+
+enum CertificationReviewStatus {
+  OPEN
+  DECIDED
+}
+
+/// Documented scheme authority. The QUALITY_MANAGER role alone does not grant oversight.
+model SchemeCommitteeAuthority {
+  id              String                       @id @default(uuid()) @db.Uuid
+  tenantId        String                       @db.Uuid
+  schemeId        String                       @db.Uuid
+  userId          String                       @db.Uuid
+  kind            SchemeCommitteeAuthorityKind
+  documentRef     String                       @db.Text
+  validFrom       DateTime                     @db.Timestamptz(3)
+  validUntil      DateTime                     @db.Timestamptz(3)
+  grantedByUserId String                       @db.Uuid
+  createdAt       DateTime                     @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant               @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  scheme    CertificationScheme  @relation(fields: [tenantId, schemeId], references: [tenantId, id], onDelete: Restrict)
+  holder    User                 @relation("SchemeCommitteeAuthorityHolder", fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  grantor   User                 @relation("SchemeCommitteeAuthorityGrantor", fields: [tenantId, grantedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, schemeId, kind])
+}
+
+/// A composition change has no effect until a different authorized person approves it.
+model CommitteeCompositionRequest {
+  id                 String                   @id @default(uuid()) @db.Uuid
+  tenantId           String                   @db.Uuid
+  caseId             String                   @db.Uuid
+  proposedByUserId   String                   @db.Uuid
+  proposerSide       CommitteeOfficeSide
+  reason             String                   @db.Text
+  desiredKey         String                   @db.Text
+  status             CompositionRequestStatus @default(PENDING)
+  grounds            String?                  @db.Text
+  recordedCoiReview  String?                  @db.Text
+  competenceReview   String?                  @db.Text
+  priorVoteImpact    String?                  @db.Text
+  approvedByUserId   String?                  @db.Uuid
+  approverSide       CommitteeOfficeSide?
+  proposedAt         DateTime                 @db.Timestamptz(3)
+  approvedAt         DateTime?                @db.Timestamptz(3)
+  createdAt          DateTime                 @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case     ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  proposer User             @relation("CompositionRequestProposer", fields: [tenantId, proposedByUserId], references: [tenantId, id], onDelete: Restrict)
+  approver User?            @relation("CompositionRequestApprover", fields: [tenantId, approvedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId, status])
+}
+
+/// Required when a certificate is already issued. It does not withdraw or delete the decision.
+model CertificationBodyReview {
+  id               String                     @id @default(uuid()) @db.Uuid
+  tenantId         String                     @db.Uuid
+  caseId           String                     @db.Uuid
+  credentialId     String?                    @db.Uuid
+  status           CertificationReviewStatus  @default(OPEN)
+  statement        String                     @db.Text
+  outcome          String?                    @db.VarChar(64)
+  rationale        String?                    @db.Text
+  openedByUserId   String                     @db.Uuid
+  decidedByUserId  String?                    @db.Uuid
+  openedAt         DateTime                   @db.Timestamptz(3)
+  decidedAt        DateTime?                  @db.Timestamptz(3)
+  createdAt        DateTime                   @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case    ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  opener  User             @relation("CertificationReviewOpener", fields: [tenantId, openedByUserId], references: [tenantId, id], onDelete: Restrict)
+  decider User?            @relation("CertificationReviewDecider", fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId, status])
 }
 
 model TenantAiBudget {

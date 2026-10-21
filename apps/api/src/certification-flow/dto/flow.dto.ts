@@ -72,6 +72,10 @@ export class DecisionMakerDto extends createZodDto(
       competenceNote: z.string().trim().min(3).max(4000),
       authorisedFrom: z.string().datetime(),
       authorisedUntil: z.string().datetime(),
+      kind: z
+        .enum(['COMMITTEE_CHAIR', 'SCHEME_COMMITTEE_OVERSIGHT', 'CERTIFICATION_BODY_DEPUTY'])
+        .optional(),
+      documentRef: z.string().trim().min(3).max(4000).optional(),
     })
     .strict(),
 ) {}
@@ -87,8 +91,49 @@ export class CaseRuleDto extends createZodDto(
     .strict(),
 ) {}
 
+const reviewText = z.string().trim().min(12).max(4000);
+const officeSide = z.enum(['CHAIR', 'OVERSIGHT']);
+
 export class ProposeDto extends createZodDto(
-  z.object({ reason: z.string().trim().min(3).max(4000) }).strict(),
+  z
+    .object({
+      reason: z.string().trim().min(3).max(4000).optional(),
+      requestedSide: officeSide.optional(),
+      requestId: uuid.optional(),
+      grounds: reviewText.optional(),
+      recordedCoiReview: reviewText.optional(),
+      competenceReview: reviewText.optional(),
+      priorVoteImpact: reviewText.optional(),
+      reviewAction: z.enum(['OPEN', 'DECIDE']).optional(),
+      statement: reviewText.optional(),
+      reviewId: uuid.optional(),
+      outcome: z.enum(['SUSTAIN', 'RECOMPOSE_WITHOUT_WITHDRAWAL']).optional(),
+      rationale: reviewText.optional(),
+    })
+    .strict()
+    .superRefine((value, ctx) => {
+      const proposal =
+        value.reason !== undefined &&
+        value.requestId === undefined &&
+        value.reviewAction === undefined;
+      const approval =
+        value.requestId !== undefined &&
+        value.grounds !== undefined &&
+        value.recordedCoiReview !== undefined &&
+        value.competenceReview !== undefined &&
+        value.priorVoteImpact !== undefined &&
+        value.reason === undefined &&
+        value.reviewAction === undefined;
+      const opening = value.reviewAction === 'OPEN' && value.statement !== undefined;
+      const deciding =
+        value.reviewAction === 'DECIDE' &&
+        value.reviewId !== undefined &&
+        value.outcome !== undefined &&
+        value.rationale !== undefined;
+      if ([proposal, approval, opening, deciding].filter(Boolean).length !== 1) {
+        ctx.addIssue({ code: 'custom', message: 'COMPOSITION_BODY' });
+      }
+    }),
 ) {}
 
 export class ConfirmSlotDto extends createZodDto(z.object({ memberUserId: uuid }).strict()) {}

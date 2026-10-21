@@ -37,14 +37,18 @@ import {
   assessReferee,
   authorizeIssuance,
   completeDossier,
+  approveComposition,
   confirmProposal,
   confirmReferee,
+  decideIssuedReview,
+  grantSchemeCommitteeAuthority,
   linkExamResult,
   listEducation,
   listExamPasses,
   listMyCases,
   maybeIssueEducation,
   maybeIssueExamPass,
+  openIssuedReview,
   openProfessionalCase,
   proposeCommittee,
   publicDocument,
@@ -552,6 +556,16 @@ export class TenantPrismaService {
       saveCaseRule(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     propose: (input: Omit<Parameters<typeof proposeCommittee>[1], 'tenantId'>) =>
       proposeCommittee(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    approve: (input: Omit<Parameters<typeof approveComposition>[1], 'tenantId'>) =>
+      approveComposition(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    grantAuthority: (
+      input: Omit<Parameters<typeof grantSchemeCommitteeAuthority>[1], 'tenantId'>,
+    ) =>
+      grantSchemeCommitteeAuthority(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    openReview: (input: Omit<Parameters<typeof openIssuedReview>[1], 'tenantId'>) =>
+      openIssuedReview(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    decideReview: (input: Omit<Parameters<typeof decideIssuedReview>[1], 'tenantId'>) =>
+      decideIssuedReview(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     confirm: (input: Omit<Parameters<typeof confirmProposal>[1], 'tenantId'>) =>
       confirmProposal(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     vote: (input: Omit<Parameters<typeof recordVote>[1], 'tenantId'>) =>

@@ -59,7 +59,10 @@ describe('public verification and referee delivery wiring', () => {
     expect(proposal).toContain('examinationActorsForApplication');
     expect(proposal).toContain('proctorReviewerUserIds');
     expect(proposal).toContain('recordedConflictUserIds');
-    expect(proposal).toContain('decideCompositionAuthority');
+    expect(proposal).toContain('decideCompositionActor');
+    expect(proposal).toContain('decideCompositionApproval');
+    expect(proposal).toContain('lockCase');
+    expect(proposal).toContain('voidedAt: null');
     expect(proposal).not.toContain('declaredConflictUserIds');
     expect(proposal).not.toContain('committeeProposal.deleteMany');
     const recordedConflicts = store.slice(

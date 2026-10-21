@@ -23,8 +23,16 @@ const DENIED = new Set([
   'CONFLICT_CLEARANCE_REQUIRED',
   'NOT_ASSIGNED',
   'COMPOSITION_FORBIDDEN',
+  'COMPOSITION_AUTHORITY_REQUIRED',
+  'COMPOSITION_SELF_APPROVAL',
+  'COMPOSITION_SAME_SIDE',
   'ACTOR_IS_SUBJECT',
   'COMPOSITION_CLOSED',
+  'CONFIRM_FORBIDDEN',
+  'SELF_CONFIRMATION',
+  'GRANT_SELF',
+  'REVIEW_SELF_DECISION',
+  'DEPUTY_NOT_REQUIRED',
   'EXAMINER_CANNOT_DECIDE',
   'TRAINER_CANNOT_DECIDE',
   'CANDIDATE_CANNOT_DECIDE',
@@ -212,35 +220,96 @@ export class CertificationFlowService {
       .catch(fail);
   }
 
-  propose(actor: AuthenticatedActor, caseId: string, reason: string) {
+  private audited(
+    actor: AuthenticatedActor,
+    eventType:
+      | 'COMMITTEE_COMPOSITION_PROPOSED'
+      | 'COMMITTEE_COMPOSITION_CHANGED'
+      | 'COMMITTEE_VOTE_RECORDED'
+      | 'CONFLICT_SIGNED'
+      | 'SCHEME_COMMITTEE_AUTHORITY_GRANTED'
+      | 'COMMITTEE_COMPOSITION_REVIEW_OPENED'
+      | 'COMMITTEE_COMPOSITION_REVIEW_DECIDED',
+    caseId: string,
+    now: Date,
+    idempotencyKey: string,
+    resourceType: string,
+  ) {
+    return async (
+      tx: Parameters<AuditService['appendUsing']>[0],
+      fact: { purpose: string; phase: string; reason: string },
+    ): Promise<void> => {
+      await this.audit.appendUsing(tx, actor, {
+        idempotencyKey,
+        eventType,
+        outcome: 'SUCCESS',
+        occurredAt: now,
+        resourceType,
+        resourceId: caseId,
+        metadata: { caseId, reason: fact.reason, purpose: fact.purpose, phase: fact.phase },
+      });
+    };
+  }
+
+  propose(
+    actor: AuthenticatedActor,
+    caseId: string,
+    reason: string,
+    requestedSide?: 'CHAIR' | 'OVERSIGHT',
+  ) {
     const now = new Date();
     return this.tenantPrisma.flow
-      .propose({ actor: this.actor(actor), caseId, reason, now })
-      .then(async (result) => {
-        if (result.changed) {
-          await this.audit.append(actor, {
-            idempotencyKey: randomUUID(),
-            eventType: 'COMMITTEE_COMPOSITION_CHANGED',
-            outcome: 'SUCCESS',
-            occurredAt: now,
-            resourceType: 'CommitteeProposal',
-            resourceId: caseId,
-            metadata: {
-              caseId,
-              reason,
-              purpose: result.purpose,
-              phase: result.phase,
-            },
-          });
-        }
-        return result;
+      .propose({
+        actor: this.actor(actor),
+        caseId,
+        reason,
+        now,
+        ...(requestedSide ? { requestedSide } : {}),
+        writeAudit: this.audited(
+          actor,
+          'COMMITTEE_COMPOSITION_PROPOSED',
+          caseId,
+          now,
+          randomUUID(),
+          'CommitteeCompositionRequest',
+        ),
+      })
+      .catch(fail);
+  }
+
+  approveComposition(
+    actor: AuthenticatedActor,
+    caseId: string,
+    body: {
+      requestId: string;
+      grounds: string;
+      recordedCoiReview: string;
+      competenceReview: string;
+      priorVoteImpact: string;
+    },
+  ) {
+    const now = new Date();
+    return this.tenantPrisma.flow
+      .approve({
+        ...body,
+        actor: this.actor(actor),
+        caseId,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'COMMITTEE_COMPOSITION_CHANGED',
+          caseId,
+          now,
+          randomUUID(),
+          'CommitteeCompositionRequest',
+        ),
       })
       .catch(fail);
   }
 
   confirm(actor: AuthenticatedActor, caseId: string, memberUserId: string) {
     return this.tenantPrisma.flow
-      .confirm({ actor: this.actor(actor), caseId, memberUserId })
+      .confirm({ actor: this.actor(actor), caseId, memberUserId, now: new Date() })
       .catch(fail);
   }
 
@@ -251,18 +320,19 @@ export class CertificationFlowService {
   ) {
     const now = new Date();
     return this.tenantPrisma.flow
-      .vote({ ...body, actor: this.actor(actor), caseId, now })
-      .then(async (result) => {
-        await this.audit.append(actor, {
-          idempotencyKey: randomUUID(),
-          eventType: 'COMMITTEE_VOTE_RECORDED',
-          outcome: 'SUCCESS',
-          occurredAt: now,
-          resourceType: 'CommitteeAssessment',
-          resourceId: caseId,
-          metadata: { caseId, phase: result.phase, reason: result.outcome },
-        });
-        return result;
+      .vote({
+        ...body,
+        actor: this.actor(actor),
+        caseId,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'COMMITTEE_VOTE_RECORDED',
+          caseId,
+          now,
+          randomUUID(),
+          'CommitteeAssessment',
+        ),
       })
       .catch(fail);
   }
@@ -338,20 +408,99 @@ export class CertificationFlowService {
   ) {
     const now = new Date();
     return this.tenantPrisma.flow
-      .signConflict({ actor: this.actor(actor), caseId, ...body, now })
-      .then(async (result) => {
-        if (result.created) {
-          await this.audit.append(actor, {
-            idempotencyKey: randomUUID(),
-            eventType: 'CONFLICT_SIGNED',
-            outcome: 'SUCCESS',
-            occurredAt: now,
-            resourceType: 'ProfessionalCase',
-            resourceId: caseId,
-            metadata: { caseId, reason: result.reason },
-          });
-        }
-        return result;
+      .signConflict({
+        actor: this.actor(actor),
+        caseId,
+        ...body,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'CONFLICT_SIGNED',
+          caseId,
+          now,
+          randomUUID(),
+          'ProfessionalCase',
+        ),
+      })
+      .catch(fail);
+  }
+
+  grantSchemeAuthority(
+    actor: AuthenticatedActor,
+    schemeVersionId: string,
+    body: {
+      userId: string;
+      kind: 'COMMITTEE_CHAIR' | 'SCHEME_COMMITTEE_OVERSIGHT' | 'CERTIFICATION_BODY_DEPUTY';
+      documentRef: string;
+      validFrom: string;
+      validUntil: string;
+    },
+  ) {
+    const now = new Date();
+    return this.tenantPrisma.flow
+      .grantAuthority({
+        actor: this.actor(actor),
+        schemeVersionId,
+        userId: body.userId,
+        kind: body.kind,
+        documentRef: body.documentRef,
+        validFrom: new Date(body.validFrom),
+        validUntil: new Date(body.validUntil),
+        now,
+        writeAudit: this.audited(
+          actor,
+          'SCHEME_COMMITTEE_AUTHORITY_GRANTED',
+          schemeVersionId,
+          now,
+          randomUUID(),
+          'SchemeCommitteeAuthority',
+        ),
+      })
+      .catch(fail);
+  }
+
+  openIssuedReview(actor: AuthenticatedActor, caseId: string, statement: string) {
+    const now = new Date();
+    return this.tenantPrisma.flow
+      .openReview({
+        actor: this.actor(actor),
+        caseId,
+        statement,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'COMMITTEE_COMPOSITION_REVIEW_OPENED',
+          caseId,
+          now,
+          randomUUID(),
+          'CertificationBodyReview',
+        ),
+      })
+      .catch(fail);
+  }
+
+  decideIssuedReview(
+    actor: AuthenticatedActor,
+    caseId: string,
+    reviewId: string,
+    body: { outcome: 'SUSTAIN' | 'RECOMPOSE_WITHOUT_WITHDRAWAL'; rationale: string },
+  ) {
+    const now = new Date();
+    return this.tenantPrisma.flow
+      .decideReview({
+        ...body,
+        actor: this.actor(actor),
+        caseId,
+        reviewId,
+        now,
+        writeAudit: this.audited(
+          actor,
+          'COMMITTEE_COMPOSITION_REVIEW_DECIDED',
+          caseId,
+          now,
+          randomUUID(),
+          'CertificationBodyReview',
+        ),
       })
       .catch(fail);
   }

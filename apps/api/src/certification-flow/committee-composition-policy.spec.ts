@@ -1,114 +1,173 @@
-import { decideCompositionAuthority, planComposition } from './committee-composition-policy';
+import {
+  decideCompositionActor,
+  decideCompositionApproval,
+  decideSeatConfirmation,
+  planComposition,
+} from './committee-composition-policy';
 
 const chair = '33333333-3333-4333-8333-333333333333';
 const member = '44444444-4444-4444-8444-444444444444';
 const colleague = '55555555-5555-4555-8555-555555555555';
+const manager = '66666666-6666-4666-8666-666666666666';
 
-describe('committee composition policy', () => {
-  it('refuses an ordinary member, a conflicted chair, and the subject of the change', () => {
-    const updates = [
-      {
-        userId: colleague,
-        fromState: 'PROPOSED' as const,
-        toState: 'EXCLUDED' as const,
-        exclusionReason: 'CONFLICT',
-        clearConfirmation: true,
-        create: false,
-      },
-    ];
+describe('committee composition governance', () => {
+  it('refuses an ordinary member and a quality manager who has only the system role', () => {
     expect(
-      decideCompositionAuthority({
-        actorRoles: ['COM_CERT'],
-        actorSigned: true,
-        actorHasConflict: false,
-        actorUserId: member,
-        reason: 'Sukob je evidentiran.',
-        updates,
+      decideCompositionActor({
+        roles: ['COM_CERT'],
+        grants: [],
+        offices: [],
+        signed: true,
+        hasConflict: false,
       }),
     ).toEqual({ action: 'deny', code: 'COMPOSITION_FORBIDDEN' });
     expect(
-      decideCompositionAuthority({
-        actorRoles: ['COM_CERT', 'QUALITY_MANAGER'],
-        actorSigned: false,
-        actorHasConflict: false,
-        actorUserId: chair,
-        reason: 'Sukob je evidentiran.',
-        updates,
+      decideCompositionActor({
+        roles: ['COM_CERT', 'QUALITY_MANAGER'],
+        grants: [],
+        offices: [],
+        signed: true,
+        hasConflict: false,
       }),
-    ).toEqual({ action: 'deny', code: 'CONFLICT_UNSIGNED' });
+    ).toEqual({ action: 'deny', code: 'COMPOSITION_AUTHORITY_REQUIRED' });
+  });
+
+  it('refuses a conflicted approver and an unsigned chair', () => {
     expect(
-      decideCompositionAuthority({
-        actorRoles: ['COMMITTEE_CHAIR'],
-        actorSigned: true,
-        actorHasConflict: true,
-        actorUserId: chair,
-        reason: 'Sukob je evidentiran.',
-        updates,
+      decideCompositionActor({
+        roles: ['COM_CERT', 'QUALITY_MANAGER'],
+        grants: [{ kind: 'SCHEME_COMMITTEE_OVERSIGHT' }],
+        offices: [],
+        signed: true,
+        hasConflict: true,
       }),
     ).toEqual({ action: 'deny', code: 'CONFLICT_DECLARED' });
     expect(
-      decideCompositionAuthority({
-        actorRoles: ['COM_CERT', 'QUALITY_MANAGER'],
-        actorSigned: true,
-        actorHasConflict: false,
-        actorUserId: colleague,
-        reason: 'Sukob je evidentiran.',
-        updates,
+      decideCompositionActor({
+        roles: ['COM_CERT'],
+        grants: [{ kind: 'COMMITTEE_CHAIR' }],
+        offices: [],
+        signed: false,
+        hasConflict: false,
+      }),
+    ).toEqual({ action: 'deny', code: 'CONFLICT_UNSIGNED' });
+  });
+
+  it('lets the chair propose and a different oversight manager approve', () => {
+    expect(
+      decideCompositionActor({
+        roles: ['COM_CERT'],
+        grants: [{ kind: 'COMMITTEE_CHAIR' }],
+        offices: [],
+        signed: true,
+        hasConflict: false,
+      }),
+    ).toEqual({ action: 'allow', side: 'CHAIR' });
+    expect(
+      decideCompositionApproval({
+        proposerUserId: chair,
+        proposerSide: 'CHAIR',
+        approverUserId: manager,
+        approverSide: 'OVERSIGHT',
+        approverIsSubject: false,
+        grounds: 'Sukob je evidentiran u izjavi.',
+        recordedCoiReview: 'Izjave o sukobu su pregledane.',
+        competenceReview: 'Članovi imaju važeću kompetenciju.',
+        priorVoteImpact: 'Raniji glas se poništava i ostaje u istoriji.',
+      }),
+    ).toEqual({ action: 'allow' });
+  });
+
+  it('refuses self-approval, same-side approval, and a thin review', () => {
+    expect(
+      decideCompositionApproval({
+        proposerUserId: chair,
+        proposerSide: 'CHAIR',
+        approverUserId: chair,
+        approverSide: 'OVERSIGHT',
+        approverIsSubject: false,
+        grounds: 'Sukob je evidentiran u izjavi.',
+        recordedCoiReview: 'Izjave o sukobu su pregledane.',
+        competenceReview: 'Članovi imaju važeću kompetenciju.',
+        priorVoteImpact: 'Raniji glas se poništava i ostaje u istoriji.',
+      }),
+    ).toEqual({ action: 'deny', code: 'COMPOSITION_SELF_APPROVAL' });
+    expect(
+      decideCompositionApproval({
+        proposerUserId: chair,
+        proposerSide: 'CHAIR',
+        approverUserId: manager,
+        approverSide: 'CHAIR',
+        approverIsSubject: false,
+        grounds: 'Sukob je evidentiran u izjavi.',
+        recordedCoiReview: 'Izjave o sukobu su pregledane.',
+        competenceReview: 'Članovi imaju važeću kompetenciju.',
+        priorVoteImpact: 'Raniji glas se poništava i ostaje u istoriji.',
+      }),
+    ).toEqual({ action: 'deny', code: 'COMPOSITION_SAME_SIDE' });
+    expect(
+      decideCompositionApproval({
+        proposerUserId: chair,
+        proposerSide: 'CHAIR',
+        approverUserId: manager,
+        approverSide: 'OVERSIGHT',
+        approverIsSubject: true,
+        grounds: 'Sukob je evidentiran u izjavi.',
+        recordedCoiReview: 'Izjave o sukobu su pregledane.',
+        competenceReview: 'Članovi imaju važeću kompetenciju.',
+        priorVoteImpact: 'Raniji glas se poništava i ostaje u istoriji.',
       }),
     ).toEqual({ action: 'deny', code: 'ACTOR_IS_SUBJECT' });
     expect(
-      decideCompositionAuthority({
-        actorRoles: ['COM_CERT', 'QUALITY_MANAGER'],
-        actorSigned: true,
-        actorHasConflict: false,
-        actorUserId: chair,
-        reason: '  ',
-        updates,
+      decideCompositionApproval({
+        proposerUserId: chair,
+        proposerSide: 'CHAIR',
+        approverUserId: manager,
+        approverSide: 'OVERSIGHT',
+        approverIsSubject: false,
+        grounds: 'kratko',
+        recordedCoiReview: 'Izjave o sukobu su pregledane.',
+        competenceReview: 'Članovi imaju važeću kompetenciju.',
+        priorVoteImpact: 'Raniji glas se poništava i ostaje u istoriji.',
       }),
-    ).toEqual({ action: 'deny', code: 'COMPOSITION_REASON_REQUIRED' });
+    ).toEqual({ action: 'deny', code: 'COMPOSITION_REVIEW_REQUIRED' });
   });
 
-  it('lets a cleared quality manager apply a recorded exclusion without touching confirmations', () => {
-    const decision = decideCompositionAuthority({
-      actorRoles: ['COM_CERT', 'QUALITY_MANAGER'],
-      actorSigned: true,
-      actorHasConflict: false,
-      actorUserId: chair,
-      reason: 'Sukob je evidentiran u izjavi.',
-      updates: [
-        {
-          userId: colleague,
-          fromState: 'PROPOSED',
-          toState: 'EXCLUDED',
-          exclusionReason: 'CONFLICT',
-          clearConfirmation: true,
-          create: false,
-        },
-      ],
-    });
-    expect(decision).toEqual({ action: 'allow' });
-    const plan = planComposition({
-      votingStarted: false,
-      existing: [
-        { userId: member, state: 'CONFIRMED', exclusionReason: null },
-        { userId: colleague, state: 'PROPOSED', exclusionReason: null },
-      ],
-      desired: [
-        { userId: member, state: 'PROPOSED', exclusionReason: null },
-        { userId: colleague, state: 'EXCLUDED', exclusionReason: 'CONFLICT' },
-      ],
-    });
-    expect(plan.invalidateVotes).toBe(false);
-    expect(plan.updates).toEqual([
-      {
-        userId: colleague,
-        fromState: 'PROPOSED',
-        toState: 'EXCLUDED',
-        exclusionReason: 'CONFLICT',
-        clearConfirmation: true,
-        create: false,
-      },
-    ]);
+  it('allows a deputy only for a side whose holders are all conflicted', () => {
+    expect(
+      decideCompositionActor({
+        roles: ['COM_CERT'],
+        grants: [{ kind: 'CERTIFICATION_BODY_DEPUTY' }],
+        offices: [{ side: 'OVERSIGHT', conflicted: false }],
+        signed: true,
+        hasConflict: false,
+      }),
+    ).toEqual({ action: 'deny', code: 'DEPUTY_NOT_REQUIRED' });
+    expect(
+      decideCompositionActor({
+        roles: ['COM_CERT'],
+        grants: [{ kind: 'CERTIFICATION_BODY_DEPUTY' }],
+        offices: [{ side: 'OVERSIGHT', conflicted: true }],
+        signed: true,
+        hasConflict: false,
+      }),
+    ).toEqual({ action: 'allow', side: 'OVERSIGHT' });
+  });
+
+  it('does not let a member confirm themselves or a colleague', () => {
+    expect(
+      decideSeatConfirmation({ actorUserId: member, memberUserId: member, actorSide: 'CHAIR' }),
+    ).toEqual({ action: 'deny', code: 'SELF_CONFIRMATION' });
+    expect(
+      decideSeatConfirmation({ actorUserId: member, memberUserId: colleague, actorSide: null }),
+    ).toEqual({ action: 'deny', code: 'CONFIRM_FORBIDDEN' });
+    expect(
+      decideSeatConfirmation({
+        actorUserId: manager,
+        memberUserId: member,
+        actorSide: 'OVERSIGHT',
+      }),
+    ).toEqual({ action: 'allow' });
   });
 
   it('invalidates an open ballot and requires re-confirmation instead of dropping votes', () => {
@@ -125,36 +184,7 @@ describe('committee composition policy', () => {
     });
     expect(plan.invalidateVotes).toBe(true);
     expect(plan.reconfirmationRequired).toBe(true);
-    expect(plan.updates).toEqual([
-      {
-        userId: colleague,
-        fromState: 'PROPOSED',
-        toState: 'EXCLUDED',
-        exclusionReason: 'CONFLICT',
-        clearConfirmation: true,
-        create: false,
-      },
-      {
-        userId: member,
-        fromState: 'CONFIRMED',
-        toState: 'PROPOSED',
-        exclusionReason: null,
-        clearConfirmation: true,
-        create: false,
-      },
-    ]);
-    const reconfirmOnly = plan.updates.find((update) => update.userId === member);
-    expect(
-      decideCompositionAuthority({
-        actorRoles: ['COM_CERT', 'QUALITY_MANAGER'],
-        actorSigned: true,
-        actorHasConflict: false,
-        actorUserId: member,
-        reason: 'Sukob kolege je evidentiran.',
-        updates: plan.updates,
-      }).action,
-    ).toBe('allow');
-    expect(reconfirmOnly?.toState).toBe('PROPOSED');
+    expect(plan.updates.map((update) => update.userId)).toEqual([colleague, member]);
   });
 
   it('leaves recorded votes in place when composition does not change', () => {
@@ -169,10 +199,7 @@ describe('committee composition policy', () => {
         { userId: colleague, state: 'EXCLUDED', exclusionReason: 'CONFLICT' },
       ],
     });
-    expect(plan).toEqual({
-      updates: [],
-      invalidateVotes: false,
-      reconfirmationRequired: false,
-    });
+    expect(plan.invalidateVotes).toBe(false);
+    expect(plan.updates).toEqual([]);
   });
 });

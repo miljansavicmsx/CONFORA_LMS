@@ -38,6 +38,26 @@ export const CASE_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
     metadataSchema: CASE_METADATA,
   },
   {
+    eventType: 'COMMITTEE_COMPOSITION_PROPOSED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'COMMITTEE_COMPOSITION_REVIEW_OPENED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'COMMITTEE_COMPOSITION_REVIEW_DECIDED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'SCHEME_COMMITTEE_AUTHORITY_GRANTED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
     eventType: 'COMMITTEE_VOTE_RECORDED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: CASE_METADATA,
