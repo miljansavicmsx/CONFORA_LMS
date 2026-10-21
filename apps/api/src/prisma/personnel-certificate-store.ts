@@ -15,6 +15,7 @@ import {
 import { encodedStatusList, statusListCredential } from '../personnel/personnel-status-list';
 import {
   issueDownloadTicket,
+  publishStatusList,
   signPersonnelCredential,
   verifyDownloadTicket,
   type PersonnelVcClaims,
@@ -724,5 +725,5 @@ export async function revocationStatusList(client: PersonnelClient) {
     select: { statusListIndex: true },
   });
   const encodedList = encodedStatusList(withdrawn.map((row) => row.statusListIndex));
-  return statusListCredential(encodedList, statusListUrl());
+  return publishStatusList(statusListCredential(encodedList, statusListUrl()));
 }

@@ -7,6 +7,7 @@ import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
 import { PersonnelRuleError } from './personnel-rules';
+import { importVerificationJwk, publicJwk } from './personnel-vc';
 
 const DENIED = new Set([
   'ROLE_SEPARATION',
@@ -172,6 +173,12 @@ export class PersonnelCertificateService {
 
   statusList() {
     return this.tenantPrisma.personnel.statusList().catch(fail);
+  }
+
+  publicKeys() {
+    const jwk = publicJwk();
+    importVerificationJwk(jwk);
+    return { keys: [jwk] };
   }
 
   publicPdf(publicUid: string, ticket: string) {
