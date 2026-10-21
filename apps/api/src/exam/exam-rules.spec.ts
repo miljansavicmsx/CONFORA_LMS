@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import {
   angoffCutScoreBasisPoints,
   assertApplicationEligible,
+  assertCertificationDecision,
   assertItemTransition,
   assertNonImageIdentity,
   assertRetakeWindowDays,
@@ -219,5 +220,59 @@ describe('exam rules', () => {
     expect(JSON.stringify(view)).not.toContain('isCorrect');
     const first = shuffleStable(['a', 'b', 'c', 'd'], 42);
     expect(shuffleStable(['a', 'b', 'c', 'd'], 42)).toEqual(first);
+  });
+
+  it('refuses a certification decision by the trainer or the examiner', () => {
+    const base = {
+      makerUserId: 'maker',
+      candidateUserId: 'candidate',
+      roles: ['COM_CERT'] as const,
+      trainerOfCandidate: false,
+      examinedCandidate: false,
+    };
+    expect(assertCertificationDecision(base)).toEqual({
+      independentOfTraining: true,
+      trainerOfCandidate: false,
+    });
+    const trainer = (): void => {
+      assertCertificationDecision({ ...base, trainerOfCandidate: true });
+    };
+    const examiner = (): void => {
+      assertCertificationDecision({ ...base, makerUserId: 'examiner', examinedCandidate: true });
+    };
+    expect(trainer).toThrow(ExamRuleError);
+    expect(examiner).toThrow(ExamRuleError);
+    try {
+      trainer();
+    } catch (error) {
+      expect(error).toBeInstanceOf(ExamRuleError);
+      if (error instanceof ExamRuleError) {
+        expect(error.code).toBe('TRAINER_CANNOT_DECIDE');
+      }
+    }
+    try {
+      examiner();
+    } catch (error) {
+      expect(error).toBeInstanceOf(ExamRuleError);
+      if (error instanceof ExamRuleError) {
+        expect(error.code).toBe('EXAMINER_CANNOT_DECIDE');
+      }
+    }
+  });
+
+  it('keeps exam scoring free of the certification-decision separation', () => {
+    const source = readFileSync(join(__dirname, '../prisma/exam-tenant-store.ts'), 'utf8');
+    const scoring = source.slice(
+      source.indexOf('async function scoreSession'),
+      source.indexOf('function resultView'),
+    );
+    const decision = source.slice(
+      source.indexOf('export async function recordDecision'),
+      source.indexOf('export async function addProctorFlag'),
+    );
+    expect(scoring).not.toContain('assertCertificationDecision');
+    expect(scoring).not.toContain('EXAMINER_CANNOT_DECIDE');
+    expect(decision).toContain('examinedCandidate');
+    expect(decision).toContain('invigilatorUserId');
   });
 });

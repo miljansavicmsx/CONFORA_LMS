@@ -574,6 +574,11 @@ describe('certification exam foundation e2e', () => {
       .set(auth(trainerSubject, ['COM_CERT']))
       .send({ resultId: passResultId, outcome: 'GRANT', rationale: 'Trener ne odlučuje.' })
       .expect(403);
+    await request(httpServer(app))
+      .post('/v1/committee/exams/decisions')
+      .set(auth('exam-invigilator', ['COM_CERT']))
+      .send({ resultId: passResultId, outcome: 'GRANT', rationale: 'Ispitivač ne odlučuje.' })
+      .expect(403);
     const decision = await request(httpServer(app))
       .post('/v1/committee/exams/decisions')
       .set(auth(deciderSubject, ['COM_CERT']))
