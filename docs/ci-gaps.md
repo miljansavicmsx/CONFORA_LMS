@@ -35,3 +35,5 @@ The Accessibility workflow job that boots the Nest API and checks `GET /v1/healt
 ## Deferred: tenant extension wiring
 
 `mergeTenantIntoWhere` keeps caller `AND`, `OR`, and `NOT` with the active tenant. `PrismaService` does not install `createTenantQueryExtension`. `apps/api/src/prisma/prisma.service.ts` is the shipping client, and wiring the extension into that client is a separate pull request. This note does not change the shipping client.
+
+Under the Security Review Gate (2026-10-21), this known tenant-isolation gap blocks production use with real data until it is fixed.

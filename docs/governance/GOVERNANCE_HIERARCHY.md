@@ -16,27 +16,28 @@ Evidence packages **never** override normative governance.
 
 Signed owner decisions are the highest authority.
 
-| Document | Path |
-|----------|------|
+| Document                | Path                                                       |
+| ----------------------- | ---------------------------------------------------------- |
 | Owner Decision Register | [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) |
-| Owner Decision Package | [OWNER_DECISION_PACKAGE.md](./OWNER_DECISION_PACKAGE.md) |
+| Owner Decision Package  | [OWNER_DECISION_PACKAGE.md](./OWNER_DECISION_PACKAGE.md)   |
+| Security Review Gate    | [SECURITY_REVIEW_GATE.md](./SECURITY_REVIEW_GATE.md)       |
 
 Covers OQ-1…OQ-7, OD-R03-1…OD-R03-5, OD-R01-1…OD-R01-10, OD-R07E-1…OD-R07E-8, and Part E Model D formal register (MD01…MD17).
 
 ### Level 2 — Canonical Development Baseline
 
-| Document | Path |
-|----------|------|
+| Document                       | Path                                                                                     |
+| ------------------------------ | ---------------------------------------------------------------------------------------- |
 | Canonical Development Baseline | [CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md](./CONFORA_CANONICAL_DEVELOPMENT_BASELINE.md) |
 
 Controls architecture direction, security, ISO alignment, GDPR retention, AI governance, roles, SoD, multi-tenancy, and auditability. Its §0 Rebaseline Addendum records verified repository state.
 
 ### Level 3 — Engineering Constitution and Change Control
 
-| Document | Path |
-|----------|------|
-| Engineering Constitution | [ENGINEERING_CONSTITUTION.md](./ENGINEERING_CONSTITUTION.md) |
-| Change Control | [CHANGE_CONTROL.md](./CHANGE_CONTROL.md) |
+| Document                   | Path                                                             |
+| -------------------------- | ---------------------------------------------------------------- |
+| Engineering Constitution   | [ENGINEERING_CONSTITUTION.md](./ENGINEERING_CONSTITUTION.md)     |
+| Change Control             | [CHANGE_CONTROL.md](./CHANGE_CONTROL.md)                         |
 | Standards Reference Policy | [STANDARDS_REFERENCE_POLICY.md](./STANDARDS_REFERENCE_POLICY.md) |
 
 ### Level 4 — Accepted ADRs
@@ -59,10 +60,10 @@ Evidence packages under `docs/evidence/**`, independent reviews, and delivery ar
 
 ## Companion normative documents (Level 2 scope)
 
-| Document | Path | Note |
-|----------|------|------|
+| Document                           | Path                                                                             | Note                         |
+| ---------------------------------- | -------------------------------------------------------------------------------- | ---------------------------- |
 | Frontend Canonicalization Gap Note | [FRONTEND_CANONICALIZATION_GAP_NOTE.md](./FRONTEND_CANONICALIZATION_GAP_NOTE.md) | Preserves OQ-4 contradiction |
-| AI Agent Instructions | [../../AGENTS.md](../../AGENTS.md) | Must comply with Levels 1–2 |
+| AI Agent Instructions              | [../../AGENTS.md](../../AGENTS.md)                                               | Must comply with Levels 1–2  |
 
 `.cursor/rules/**` and `AGENTS.md` operational rules remain governed by **R0-2** (OQ-2) and are not tracked as normative governance in this task.
 
