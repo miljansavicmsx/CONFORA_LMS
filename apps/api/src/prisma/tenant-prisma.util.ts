@@ -44,10 +44,26 @@ export function mergeTenantIntoWhere(
   where: Record<string, unknown> | undefined,
   tenantId: string,
 ): Record<string, unknown> {
-  const base = where ? { ...where } : {};
-  delete base['tenantId'];
-  delete base['AND'];
-  return { AND: [{ tenantId }, base] };
+  if (!where) {
+    return { tenantId };
+  }
+  // Caller tenantId is replaced. AND, OR, and NOT are kept and combined with
+  // the active tenant so updateMany/deleteMany cannot drop the caller's filter.
+  const { tenantId: _callerTenantId, AND, OR, NOT, ...rest } = where;
+  const and: Record<string, unknown>[] = [{ tenantId }];
+  if (Object.keys(rest).length > 0) {
+    and.push(rest);
+  }
+  if (AND !== undefined) {
+    and.push({ AND });
+  }
+  if (OR !== undefined) {
+    and.push({ OR });
+  }
+  if (NOT !== undefined) {
+    and.push({ NOT });
+  }
+  return { AND: and };
 }
 
 export function injectTenantIntoCreateData(
