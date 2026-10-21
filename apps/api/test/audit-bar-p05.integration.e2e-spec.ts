@@ -65,6 +65,7 @@ function actorFor(tenantId: string, userId: string): AuthenticatedActor {
 describe('BAR-P05 audit integration e2e', () => {
   let prisma: PrismaClient;
   let databaseUrl: string;
+  let startedContainer = false;
   let tenantA: string;
   let tenantB: string;
   let userA: string;
@@ -83,20 +84,28 @@ describe('BAR-P05 audit integration e2e', () => {
   }
 
   beforeAll(async () => {
-    execSync(
-      `docker run -d --rm --name ${CONTAINER} -e POSTGRES_USER=confora -e POSTGRES_PASSWORD=confora_dev -e POSTGRES_DB=confora -p 127.0.0.1::5432 ${IMAGE}`,
-      { stdio: 'pipe' },
-    );
-    const hostPort = dockerHostPort(CONTAINER);
-    databaseUrl = `postgresql://confora:confora_dev@127.0.0.1:${hostPort}/confora`;
+    const external = process.env['AUDIT_E2E_DATABASE_URL'];
+    if (external) {
+      databaseUrl = external;
+    } else {
+      startedContainer = true;
+      execSync(
+        `docker run -d --rm --name ${CONTAINER} -e POSTGRES_USER=confora -e POSTGRES_PASSWORD=confora_dev -e POSTGRES_DB=confora -p 127.0.0.1::5432 ${IMAGE}`,
+        { stdio: 'pipe' },
+      );
+      const hostPort = dockerHostPort(CONTAINER);
+      databaseUrl = `postgresql://confora:confora_dev@127.0.0.1:${hostPort}/confora`;
+    }
     process.env['DATABASE_URL'] = databaseUrl;
 
-    for (let i = 0; i < 40; i += 1) {
-      try {
-        execSync(`docker exec ${CONTAINER} pg_isready -U confora -d confora`, { stdio: 'pipe' });
-        break;
-      } catch {
-        await new Promise((r) => setTimeout(r, 1000));
+    if (startedContainer) {
+      for (let i = 0; i < 40; i += 1) {
+        try {
+          execSync(`docker exec ${CONTAINER} pg_isready -U confora -d confora`, { stdio: 'pipe' });
+          break;
+        } catch {
+          await new Promise((r) => setTimeout(r, 1000));
+        }
       }
     }
 
@@ -126,10 +135,12 @@ describe('BAR-P05 audit integration e2e', () => {
 
   afterAll(async () => {
     await prisma.$disconnect();
-    try {
-      execSync(`docker rm -f ${CONTAINER}`, { stdio: 'pipe' });
-    } catch {
-      /* ignore */
+    if (startedContainer) {
+      try {
+        execSync(`docker rm -f ${CONTAINER}`, { stdio: 'pipe' });
+      } catch {
+        /* ignore */
+      }
     }
   });
 
@@ -480,5 +491,121 @@ describe('BAR-P05 audit integration e2e', () => {
     const head = await prisma.auditChainHead.findUniqueOrThrow({ where: { tenantId: tenantA } });
     expect(head.lastSequence).toBe(2n);
     expect(head.lastHash).toBe(result.second.chainHash);
+  });
+
+  it('P05_TEST_062 repeated concurrent appends keep both tenant chains intact', async () => {
+    const serviceA = makeService(tenantA);
+    const serviceB = makeService(tenantB);
+    const runs = 50;
+    const width = 8;
+    const idsA: string[] = [];
+    const idsB: string[] = [];
+    for (let run = 0; run < runs; run += 1) {
+      const batch = await Promise.all([
+        ...Array.from({ length: width }, (_, index) =>
+          serviceA.append(actorFor(tenantA, userA), {
+            idempotencyKey: randomUUID(),
+            eventType: 'TEST_EVENT',
+            outcome: 'SUCCESS',
+            occurredAt: new Date(Date.UTC(2026, 7, 31, 13, run, index)),
+          }),
+        ),
+        ...Array.from({ length: width }, (_, index) =>
+          serviceB.append(actorFor(tenantB, userB), {
+            idempotencyKey: randomUUID(),
+            eventType: 'TEST_EVENT',
+            outcome: 'SUCCESS',
+            occurredAt: new Date(Date.UTC(2026, 7, 31, 14, run, index)),
+          }),
+        ),
+      ]);
+      for (const view of batch.slice(0, width)) {
+        idsA.push(view.id);
+      }
+      for (const view of batch.slice(width)) {
+        idsB.push(view.id);
+      }
+    }
+    const expected = runs * width;
+    expect(idsA).toHaveLength(expected);
+    expect(idsB).toHaveLength(expected);
+    expect(new Set(idsA).size).toBe(expected);
+    expect(new Set(idsB).size).toBe(expected);
+    expect(new Set([...idsA, ...idsB]).size).toBe(expected * 2);
+
+    const rowsA = await prisma.auditEvent.findMany({
+      where: { tenantId: tenantA },
+      orderBy: { sequence: 'asc' },
+    });
+    const rowsB = await prisma.auditEvent.findMany({
+      where: { tenantId: tenantB },
+      orderBy: { sequence: 'asc' },
+    });
+    expect(rowsA.map((row) => row.sequence)).toEqual(
+      Array.from({ length: expected }, (_, index) => BigInt(index + 1)),
+    );
+    expect(rowsB.map((row) => row.sequence)).toEqual(
+      Array.from({ length: expected }, (_, index) => BigInt(index + 1)),
+    );
+    expect(new Set(rowsA.map((row) => row.chainHash)).size).toBe(expected);
+    expect(new Set(rowsB.map((row) => row.chainHash)).size).toBe(expected);
+    const headA = await prisma.auditChainHead.findUniqueOrThrow({ where: { tenantId: tenantA } });
+    const headB = await prisma.auditChainHead.findUniqueOrThrow({ where: { tenantId: tenantB } });
+    expect(headA.lastSequence).toBe(BigInt(expected));
+    expect(headB.lastSequence).toBe(BigInt(expected));
+    expect(headA.lastHash).not.toBe(headB.lastHash);
+    await expect(makeIntegrity().verifyTenantChain(tenantA)).resolves.toEqual({
+      status: 'PASS',
+      chainLength: expected,
+    });
+    await expect(makeIntegrity().verifyTenantChain(tenantB)).resolves.toEqual({
+      status: 'PASS',
+      chainLength: expected,
+    });
+  }, 180_000);
+
+  it('P05_TEST_063 a rolled-back append leaves no partial event and the next sequence is contiguous', async () => {
+    const service = makeService(tenantA);
+    const actor = actorFor(tenantA, userA);
+    const first = await service.append(actor, {
+      idempotencyKey: randomUUID(),
+      eventType: 'TEST_EVENT',
+      outcome: 'SUCCESS',
+      occurredAt: new Date('2026-08-31T15:00:00.000Z'),
+    });
+    expect(first.sequence).toBe(1n);
+    await expect(
+      service.executeInTransaction(actor, async (ops) => {
+        await ops.append({
+          idempotencyKey: randomUUID(),
+          eventType: 'TEST_EVENT',
+          outcome: 'SUCCESS',
+          occurredAt: new Date('2026-08-31T15:00:01.000Z'),
+        });
+        throw new Error('rollback');
+      }),
+    ).rejects.toBeInstanceOf(AuditError);
+    const second = await service.append(actor, {
+      idempotencyKey: randomUUID(),
+      eventType: 'TEST_EVENT',
+      outcome: 'SUCCESS',
+      occurredAt: new Date('2026-08-31T15:00:02.000Z'),
+    });
+    expect(second.sequence).toBe(2n);
+    const rows = await prisma.auditEvent.findMany({
+      where: { tenantId: tenantA },
+      orderBy: { sequence: 'asc' },
+    });
+    expect(rows.map((row) => row.sequence)).toEqual([1n, 2n]);
+    expect(rows.map((row) => row.id)).toEqual([first.id, second.id]);
+    const head = await prisma.auditChainHead.findUniqueOrThrow({ where: { tenantId: tenantA } });
+    expect(head.lastSequence).toBe(2n);
+    expect(head.lastHash).toBe(second.chainHash);
+    await expect(makeIntegrity().verifyTenantChain(tenantA)).resolves.toEqual({
+      status: 'PASS',
+      chainLength: 2,
+    });
+    expect(await prisma.auditEvent.count({ where: { tenantId: tenantB } })).toBe(0);
+    expect(await prisma.auditChainHead.count({ where: { tenantId: tenantB } })).toBe(0);
   });
 });
