@@ -24,6 +24,16 @@
     --muted-foreground: 215 16% 47%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    /* Light public shell. Each pair clears WCAG 2.2 AA 4.5:1 on #F8FAFC. */
+    --surface-primary: 210 40% 98%;
+    --surface-secondary: 210 40% 96%;
+    --surface-tertiary: 214 32% 91%;
+    --text-primary: 222 47% 11%;
+    --text-secondary: 215 25% 27%;
+    --text-muted: 215 19% 35%;
+    --brand: 201 96% 32%;
+    --brand-solid: 201 90% 27%;
+    --brand-hover: 201 96% 27%;
   }
 
   /* Premium dark shell (DashboardLayout `.dark`) — `border-border/50` itd. */
@@ -39,6 +49,16 @@
     --primary-foreground: 0 0% 100%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
+    /* Dark dashboard shell. Text stays light on #0F172A / #1E293B. */
+    --surface-primary: 222 47% 11%;
+    --surface-secondary: 217 33% 17%;
+    --surface-tertiary: 215 25% 27%;
+    --text-primary: 210 40% 98%;
+    --text-secondary: 215 20% 75%;
+    --text-muted: 215 16% 72%;
+    --brand: 199 89% 48%;
+    --brand-solid: 201 96% 32%;
+    --brand-hover: 199 89% 48%;
   }
 
   *,
