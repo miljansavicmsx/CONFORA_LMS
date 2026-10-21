@@ -30,6 +30,7 @@ import {
 } from './audit-event.types';
 import { AuditHashService } from './audit-hash.service';
 import { buildIdempotencyFingerprint, fingerprintsEqual } from './audit-idempotency';
+import { waitForAuditRetry } from './audit-retry';
 import { AuditPersistenceApi, AuditRepository, type AuditEventRow } from './audit.repository';
 import { canonicalizeMetadata } from './audit-canonicalizer';
 import {
@@ -326,6 +327,10 @@ export class AuditService {
           attempt + 1 < maxAttempts
         ) {
           attempt += 1;
+          // Wait before the next attempt. An immediate retry repeats the same
+          // serialization conflict: every writer aborts, none commits, and the
+          // hash-chain append is rejected even though the chain was not forked.
+          await waitForAuditRetry(attempt);
           continue;
         }
         if (isPrismaKnownRequestError(error) && error.code === RETRYABLE_PRISMA_ERROR_CODE) {
