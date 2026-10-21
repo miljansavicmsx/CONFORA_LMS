@@ -267,12 +267,22 @@ describe('BAR-P03 auth e2e', () => {
       // ProbeController exists only inside this e2e suite and is not production surface.
       .filter((entry) => !entry.endsWith('/probe') && !entry.endsWith('/v1/probe'));
 
-    // Post-P08 routes plus the mounted MD05 role-administration command.
-    // Any other route still fails this exact inventory.
+    // Exact inventory: certification reads, learning, reports, and the MD05 command.
+    // Any missing or extra route fails this equality.
     expect(productionRoutes).toEqual([
       'GET /v1/health',
       'GET /v1/me/certification/applications',
       'GET /v1/me/certification/applications/:id',
+      'GET /v1/me/learning/courses',
+      'GET /v1/me/learning/courses/:courseId',
+      'POST /v1/me/learning/enrolments',
+      'GET /v1/me/learning/enrolments',
+      'GET /v1/me/learning/enrolments/:enrolmentId/player',
+      'POST /v1/me/learning/enrolments/:enrolmentId/lessons/:lessonId/progress',
+      'POST /v1/me/learning/enrolments/:enrolmentId/quizzes/:quizId/attempts',
+      'GET /v1/me/learning/statistics',
+      'GET /v1/me/learning/analytics-consent',
+      'PUT /v1/me/learning/analytics-consent',
       'GET /v1/staff/reports/certification-applications/by-status',
       'GET /v1/staff/reports/certification-applications/by-scheme-ref',
       'POST /v1/role-administration/commands',
