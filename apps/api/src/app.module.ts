@@ -7,6 +7,7 @@ import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { CertificationApplicationsModule } from './certification-applications/certification-applications.module';
 import { ExamModule } from './exam/exam.module';
+import { PersonnelCertificateModule } from './personnel/personnel.module';
 import { LearningModule } from './learning/learning.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { MfaAssuranceGuard } from './auth/mfa-assurance.guard';
@@ -31,6 +32,7 @@ import { TenantModule } from './tenant/tenant.module';
     CertificationApplicationsModule,
     LearningModule,
     ExamModule,
+    PersonnelCertificateModule,
     ReportQueryModule,
     ReportsModule,
     RoleAdministrationModule,

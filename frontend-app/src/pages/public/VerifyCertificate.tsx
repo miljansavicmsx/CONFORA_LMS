@@ -2,13 +2,27 @@ import { useEffect, useState, type JSX } from "react";
 import { Link, useParams } from "react-router";
 
 import { verifyCertificate, type VerifiedCertificatePublic } from "@/lib/api-certificates";
+import {
+  fetchPublicPersonnelCertificate,
+  formatPersonnelDate,
+  isPersonnelCertificateNumber,
+  personnelStatusLabel,
+  type PublicPersonnelRecord,
+} from "@/lib/personnel-public";
 
-type VerificationState =
+type HashState =
   | { readonly kind: "loading" }
   | { readonly kind: "invalid" }
   | { readonly kind: "not_found" }
   | { readonly kind: "error" }
   | { readonly kind: "result"; readonly certificate: VerifiedCertificatePublic };
+
+type PersonnelState =
+  | { readonly kind: "loading" }
+  | { readonly kind: "not_found" }
+  | { readonly kind: "rate_limited" }
+  | { readonly kind: "error" }
+  | { readonly kind: "result"; readonly certificate: PublicPersonnelRecord };
 
 function isHash(value: string | undefined): value is string {
   return typeof value === "string" && /^[0-9a-f]{64}$/iu.test(value);
@@ -22,10 +36,8 @@ function statusLabel(certificate: VerifiedCertificatePublic): string {
   return certificate.effectiveStatus ?? certificate.verificationResult ?? certificate.status;
 }
 
-/** Public, read-only display of the existing trusted verification response. */
-export default function VerifyCertificate(): JSX.Element {
-  const { verificationHash } = useParams();
-  const [state, setState] = useState<VerificationState>(() => (isHash(verificationHash) ? { kind: "loading" } : { kind: "invalid" }));
+function HashVerification({ verificationHash }: { readonly verificationHash: string | undefined }): JSX.Element {
+  const [state, setState] = useState<HashState>(() => (isHash(verificationHash) ? { kind: "loading" } : { kind: "invalid" }));
 
   useEffect(() => {
     if (!isHash(verificationHash)) {
@@ -70,4 +82,61 @@ export default function VerifyCertificate(): JSX.Element {
       <p className="mt-6 text-sm"><Link className="text-brand underline" to="/verify">Verify another certificate</Link></p>
     </main>
   );
+}
+
+function PersonnelVerification({ certificateNumber }: { readonly certificateNumber: string }): JSX.Element {
+  const [state, setState] = useState<PersonnelState>({ kind: "loading" });
+
+  useEffect(() => {
+    let active = true;
+    setState({ kind: "loading" });
+    void fetchPublicPersonnelCertificate(certificateNumber).then((result) => {
+      if (!active) return;
+      if (result.kind === "ok") setState({ kind: "result", certificate: result.data });
+      else setState({ kind: result.kind });
+    }).catch(() => {
+      if (active) setState({ kind: "error" });
+    });
+    return () => { active = false; };
+  }, [certificateNumber]);
+
+  return (
+    <main className="mx-auto max-w-2xl px-4 py-10" data-testid="personnel-verify-page" aria-labelledby="personnel-verify-heading">
+      <h1 id="personnel-verify-heading" className="text-2xl font-bold text-text-primary">Provjera certifikata osoblja</h1>
+      <p className="mt-1 text-sm text-text-secondary">
+        Javna provjera bez prijave. Prikazani su samo ime, šema, status i datumi. Ovo nije potvrda o pohađanju kursa.
+      </p>
+      {state.kind === "loading" ? <p className="mt-6 text-sm text-text-secondary" role="status">Provjera zapisa…</p> : null}
+      {state.kind === "not_found" ? <p className="mt-6 text-sm text-text-secondary" role="status">Certifikat s ovim brojem nije pronađen.</p> : null}
+      {state.kind === "rate_limited" ? <p className="mt-6 text-sm text-text-secondary" role="status">Previše zahtjeva. Pokušajte ponovo za koji trenutak.</p> : null}
+      {state.kind === "error" ? <p className="mt-6 text-sm text-text-secondary" role="alert">Provjera trenutno nije dostupna.</p> : null}
+      {state.kind === "result" ? (
+        <section className="mt-6 rounded-xl border border-border/50 p-5" data-testid="personnel-verify-result" aria-labelledby="personnel-status-label">
+          <h2 id="personnel-status-label" className="text-lg font-semibold text-text-primary">
+            Status: {personnelStatusLabel(state.certificate.status)}
+          </h2>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <div><dt className="text-text-muted">Ime</dt><dd className="font-medium text-text-primary">{state.certificate.holderName ?? "—"}</dd></div>
+            <div><dt className="text-text-muted">Šema</dt><dd className="font-medium text-text-primary">{state.certificate.scheme}</dd></div>
+            <div><dt className="text-text-muted">Verzija</dt><dd className="font-medium text-text-primary">{state.certificate.schemeVersion}</dd></div>
+            <div><dt className="text-text-muted">Broj</dt><dd className="font-mono font-medium text-text-primary">{state.certificate.certificateNumber}</dd></div>
+            <div><dt className="text-text-muted">Izdato</dt><dd className="font-medium text-text-primary">{formatPersonnelDate(state.certificate.issuedAt)}</dd></div>
+            <div><dt className="text-text-muted">Ističe</dt><dd className="font-medium text-text-primary">{formatPersonnelDate(state.certificate.expiresAt)}</dd></div>
+          </dl>
+        </section>
+      ) : null}
+      <p className="mt-6 text-sm">
+        <Link className="text-brand underline" to="/registry">Javni registar</Link>
+      </p>
+    </main>
+  );
+}
+
+/** Hash links keep the existing verification page. Personnel numbers use the public registry record. */
+export default function VerifyCertificate(): JSX.Element {
+  const { verificationHash } = useParams();
+  if (verificationHash && isPersonnelCertificateNumber(verificationHash)) {
+    return <PersonnelVerification certificateNumber={verificationHash.trim().toUpperCase()} />;
+  }
+  return <HashVerification verificationHash={verificationHash} />;
 }

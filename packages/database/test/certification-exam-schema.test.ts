@@ -16,6 +16,16 @@ const migration = await readFile(
   ),
   'utf8',
 );
+const personnelMigration = await readFile(
+  path.join(
+    packageRoot,
+    'prisma',
+    'migrations',
+    '20261020180000_personnel_certificate_registry',
+    'migration.sql',
+  ),
+  'utf8',
+);
 const identityMigration = await readFile(
   path.join(
     packageRoot,
@@ -89,4 +99,17 @@ test('exam migration is additive and leaves frozen tables untouched', () => {
   assert.doesNotMatch(identityMigration, /\bINSERT\b/i);
   assert.doesNotMatch(identityMigration, /\bDROP\b/i);
   assert.doesNotMatch(identityMigration, /image|jmbg/i);
+  assert.match(personnelMigration, /CREATE TABLE "ExamPersonnelCredentialLink"/);
+  assert.match(personnelMigration, /CREATE TABLE "RecertificationReminder"/);
+  assert.match(personnelMigration, /CREATE TABLE "CpdRecord"/);
+  assert.doesNotMatch(personnelMigration, /\bINSERT\b/i);
+  assert.doesNotMatch(personnelMigration, /\bDROP\b/i);
+  assert.doesNotMatch(personnelMigration, /ALTER TABLE "Credential"/);
+  for (const name of ['ExamPersonnelCredentialLink', 'RecertificationReminder', 'CpdRecord']) {
+    const block = modelBlock(schema, name);
+    assert.match(block, /\btenantId\b/, name);
+    assert.match(block, /onDelete:\s*Restrict/, name);
+  }
+  assert.match(modelBlock(schema, 'ExamPersonnelCredentialLink'), /registryListed/);
+  assert.match(schema, /@@unique\(\[statusListIndex\]\)/);
 });

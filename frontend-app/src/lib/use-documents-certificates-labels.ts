@@ -57,6 +57,7 @@ export function useDocumentsCertificatesLabels() {
       refresh: t("wallet.refresh"),
       publicVerify: t("wallet.publicVerify"),
       downloadPdf: t("wallet.downloadPdf"),
+      downloadCredential: t("wallet.downloadCredential"),
     }),
     [t, learnerDocumentTypeLabel, learnerCertificateStatusLabel],
   );

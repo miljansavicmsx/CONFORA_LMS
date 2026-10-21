@@ -136,7 +136,7 @@ erDiagram
 
 `DecisionParticipant` nosi izjavu o sukobu, oznaku da je učesnik trener kandidata i oznaku da bi ispitivao vlastitog polaznika, te da li je provjera čista.
 
-`Credential.credentialType` je `ATTENDANCE` ili `PERSONNEL`. Potvrda o pohađanju veže se na kurs i upis. Certifikat osobe veže se na odluku komiteta i verziju šeme. Javni identifikator je `publicUid` u obliku `CON-YYYY-NNNN`. `payloadHash`, `signature` i `qrVerifyToken` služe provjeri. Životni ciklus: `ACTIVE`, `EXPIRED`, `SUSPENDED`, `WITHDRAWN`, `SCOPE_REDUCED`.
+`Credential.credentialType` je `ATTENDANCE` ili `PERSONNEL`. Potvrda o pohađanju veže se na kurs i upis preko `AttendanceCredentialLink`. Certifikat osobe nakon ispitne odluke veže se preko `ExamPersonnelCredentialLink` na `ExamCertificationDecision` i verziju šeme. `PersonnelCredentialLink` ostaje veza na odluku o prijavi i ne preusmjerava se. Javni identifikator je `publicUid` u obliku `CON-YYYY-NNNN`. `payloadHash`, `signature` i `qrVerifyToken` služe provjeri. Životni ciklus: `ACTIVE`, `EXPIRED`, `SUSPENDED`, `WITHDRAWN`, `SCOPE_REDUCED`. Javni status `VALID` je projekcija `ACTIVE` dok `expiresAt` nije prošao; `SUSPENDED` i `WITHDRAWN` imaju prednost nad istekom. Pretraga registra po imenu zahtijeva `registryListed` i `registryConsentAt`. Promjenu statusa radi ovlaštena osoba, uz razlog i zapis u hash lancu. Neplaćeni AMF samo predlaže suspenziju. `RecertificationReminder` (90 dana, 30 dana, na dan isteka) i `CpdRecord` pripremaju recertifikaciju i ne donose odluku.
 
 `AchievementRecord` drži naziv postignuća, ime nosioca, izdavaoca, datum, rezultat, kriterij, jezik i `supplement` za dopunski zapis (ISO/IEC 19479). To su polja CONFORA-e.
 

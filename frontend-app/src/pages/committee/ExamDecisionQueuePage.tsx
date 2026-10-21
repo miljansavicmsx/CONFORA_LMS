@@ -3,6 +3,11 @@ import { type FormEvent, type JSX, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { fetchDecisionQueue, recordExamDecision } from "@/lib/exam-api";
+import {
+  changePersonnelCertificateStatus,
+  issuePersonnelCertificate,
+  proposePersonnelAmfSuspension,
+} from "@/lib/personnel-public";
 
 /** Human certification decision. The maker must be independent of the candidate's training. */
 export default function ExamDecisionQueuePage(): JSX.Element {
@@ -72,6 +77,134 @@ export default function ExamDecisionQueuePage(): JSX.Element {
         {decideM.isSuccess ? <p role="status" className="text-sm">Odluka je zabilježena. Certifikat nije izdat.</p> : null}
         {decideM.isError ? <p role="alert" className="text-sm">Odluka nije zabilježena. Trener kandidata i sam kandidat ne mogu odlučivati.</p> : null}
       </form>
+      <CertificateIssuancePanel />
     </main>
+  );
+}
+
+function CertificateIssuancePanel(): JSX.Element {
+  const [decisionId, setDecisionId] = useState("");
+  const [holderName, setHolderName] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [credentialId, setCredentialId] = useState("");
+  const [toStatus, setToStatus] = useState<"ACTIVE" | "SUSPENDED" | "WITHDRAWN">("SUSPENDED");
+  const [reason, setReason] = useState("");
+  const [amfReason, setAmfReason] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const issueM = useMutation({
+    mutationFn: () => issuePersonnelCertificate({
+      decisionId,
+      holderDisplayName: holderName,
+      registryConsent: consent,
+    }),
+    onSuccess: (issued) => {
+      setError(null);
+      setCredentialId(issued.credentialId);
+      setNotice(`Certifikat ${issued.certificateNumber} je izdat. Status: ${issued.status}. Odluka sama nije izdala certifikat.`);
+    },
+    onError: () => {
+      setNotice(null);
+      setError("Izdavanje nije uspjelo. Potrebna je odluka GRANT, a izdavalac ne smije biti kandidat ni trener.");
+    },
+  });
+
+  const statusM = useMutation({
+    mutationFn: () => changePersonnelCertificateStatus(credentialId, { toStatus, reason }),
+    onSuccess: (changed) => {
+      setError(null);
+      setNotice(`Status je promijenjen. Javni status: ${changed.publicStatus}.`);
+    },
+    onError: () => {
+      setNotice(null);
+      setError("Status nije promijenjen. Promjenu može izvršiti samo ovlaštena osoba, uz razlog.");
+    },
+  });
+
+  const amfM = useMutation({
+    mutationFn: () => proposePersonnelAmfSuspension(credentialId, amfReason),
+    onSuccess: (proposal) => {
+      setError(null);
+      setNotice(proposal.suspended
+        ? "Prijedlog je zabilježen."
+        : "Prijedlog suspenzije zbog AMF-a je zabilježen. Certifikat nije suspendovan.");
+    },
+    onError: () => {
+      setNotice(null);
+      setError("Prijedlog AMF suspenzije nije zabilježen.");
+    },
+  });
+
+  return (
+    <section className="mt-10 space-y-8" aria-labelledby="issuance-heading" data-testid="certificate-issuance-panel">
+      <div>
+        <h2 id="issuance-heading" className="text-lg font-semibold">Izdavanje certifikata osoblja</h2>
+        <p className="mt-2 text-sm text-text-secondary">
+          Ovlaštena osoba izdaje certifikat tek nakon odluke GRANT. Valjanost je tri godine. Pristanak određuje da li se ime pojavljuje u pretrazi registra.
+        </p>
+      </div>
+      <form
+        className="space-y-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          issueM.mutate();
+        }}
+      >
+        <label className="block text-sm" htmlFor="issue-decision-id">Identifikator odluke
+          <input id="issue-decision-id" className="mt-1 w-full rounded border border-border px-3 py-2 font-mono" value={decisionId} onChange={(event) => setDecisionId(event.target.value)} required data-testid="issue-decision-id" />
+        </label>
+        <label className="block text-sm" htmlFor="issue-holder-name">Ime na certifikatu
+          <input id="issue-holder-name" className="mt-1 w-full rounded border border-border px-3 py-2" value={holderName} onChange={(event) => setHolderName(event.target.value)} required data-testid="issue-holder-name" />
+        </label>
+        <label className="flex items-start gap-2 text-sm" htmlFor="issue-registry-consent">
+          <input id="issue-registry-consent" type="checkbox" className="mt-1" checked={consent} onChange={(event) => setConsent(event.target.checked)} data-testid="issue-registry-consent" />
+          <span>Pristanak za javni registar: ime, šema, status i datumi.</span>
+        </label>
+        <Button type="submit" disabled={issueM.isPending}>Izdaj certifikat</Button>
+      </form>
+      <form
+        className="space-y-3"
+        aria-labelledby="status-change-heading"
+        onSubmit={(event) => {
+          event.preventDefault();
+          statusM.mutate();
+        }}
+      >
+        <h3 id="status-change-heading" className="text-base font-semibold">Promjena statusa</h3>
+        <p className="text-sm text-text-secondary">Samo ovlaštena osoba, uz razlog. Istek se ne postavlja ručno.</p>
+        <label className="block text-sm" htmlFor="status-credential-id">Identifikator certifikata
+          <input id="status-credential-id" className="mt-1 w-full rounded border border-border px-3 py-2 font-mono" value={credentialId} onChange={(event) => setCredentialId(event.target.value)} required />
+        </label>
+        <label className="block text-sm" htmlFor="status-target">Novi status
+          <select id="status-target" className="mt-1 w-full rounded border border-border px-3 py-2" value={toStatus} onChange={(event) => setToStatus(event.target.value as "ACTIVE" | "SUSPENDED" | "WITHDRAWN")}>
+            <option value="SUSPENDED">Suspendovan</option>
+            <option value="ACTIVE">Važeći</option>
+            <option value="WITHDRAWN">Povučen</option>
+          </select>
+        </label>
+        <label className="block text-sm" htmlFor="status-reason">Razlog
+          <textarea id="status-reason" className="mt-1 w-full rounded border border-border px-3 py-2" value={reason} onChange={(event) => setReason(event.target.value)} required rows={3} />
+        </label>
+        <Button type="submit" disabled={statusM.isPending}>Promijeni status</Button>
+      </form>
+      <form
+        className="space-y-3"
+        aria-labelledby="amf-heading"
+        onSubmit={(event) => {
+          event.preventDefault();
+          amfM.mutate();
+        }}
+      >
+        <h3 id="amf-heading" className="text-base font-semibold">Prijedlog suspenzije zbog AMF-a</h3>
+        <p className="text-sm text-text-secondary">Neplaćena članarina samo predlaže suspenziju. Ne mijenja status certifikata.</p>
+        <label className="block text-sm" htmlFor="amf-reason">Razlog prijedloga
+          <textarea id="amf-reason" className="mt-1 w-full rounded border border-border px-3 py-2" value={amfReason} onChange={(event) => setAmfReason(event.target.value)} required rows={3} />
+        </label>
+        <Button type="submit" disabled={amfM.isPending || !credentialId}>Predloži suspenziju</Button>
+      </form>
+      {notice ? <p role="status" className="text-sm" data-testid="issuance-notice">{notice}</p> : null}
+      {error ? <p role="alert" className="text-sm">{error}</p> : null}
+    </section>
   );
 }

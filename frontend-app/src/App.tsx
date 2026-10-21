@@ -29,6 +29,7 @@ import MyRecertificationsPage from "@/pages/learner/MyRecertificationsPage";
 import SupportPage from "@/pages/learner/SupportPage";
 import ComplaintsIsoPage from "@/pages/iso/ComplaintsIsoPage";
 import { IsoReportsPage } from "@/pages/iso/IsoStaticPages";
+import PublicRegistryPage from "@/pages/public/PublicRegistryPage";
 import VerifyLookupPage from "@/pages/public/VerifyLookupPage";
 
 const AdminEducationPage = lazy(() => import("@/pages/admin/AdminEducationPage"));
@@ -63,6 +64,7 @@ export default function App(): JSX.Element {
               <Route path="/login" element={<Login />} />
               <Route path="/verify" element={<VerifyLookupPage />} />
               <Route path="/verify/:verificationHash" element={<VerifyCertificate />} />
+              <Route path="/registry" element={<PublicRegistryPage />} />
               <Route path="/courses" element={<CoursesCatalogPage />} />
               <Route path="/courses/:courseId" element={<CourseDetailPage />} />
               <Route path="/dashboard" element={<DashboardLayoutRoute />}>

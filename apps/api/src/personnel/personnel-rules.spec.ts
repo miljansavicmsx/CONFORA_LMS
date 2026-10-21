@@ -1,0 +1,79 @@
+import { inflateSync } from 'node:zlib';
+
+import { encodedStatusList, statusListBits } from './personnel-status-list';
+import {
+  addYears,
+  assertIssuer,
+  assertPublicRateLimit,
+  assertStatusTransition,
+  PERSONNEL_VALIDITY_YEARS,
+  publicCertificateStatus,
+  resetPublicRateLimit,
+} from './personnel-rules';
+import { signPersonnelCredential, verifyPersonnelCredential } from './personnel-vc';
+
+describe('personnel certificate rules', () => {
+  it('keeps a certificate valid for three years and maps ACTIVE to VALID', () => {
+    const issued = new Date('2026-10-20T00:00:00.000Z');
+    const expires = addYears(issued, PERSONNEL_VALIDITY_YEARS);
+    expect(expires.toISOString()).toBe('2029-10-20T00:00:00.000Z');
+    expect(publicCertificateStatus('ACTIVE', expires, issued)).toBe('VALID');
+    expect(publicCertificateStatus('ACTIVE', expires, expires)).toBe('EXPIRED');
+    expect(publicCertificateStatus('SUSPENDED', expires, issued)).toBe('SUSPENDED');
+    expect(publicCertificateStatus('WITHDRAWN', expires, issued)).toBe('WITHDRAWN');
+  });
+
+  it('allows only human status transitions and keeps system administrators out', () => {
+    expect(() => {
+      assertStatusTransition('ACTIVE', 'SUSPENDED');
+    }).not.toThrow();
+    expect(() => {
+      assertStatusTransition('WITHDRAWN', 'ACTIVE');
+    }).toThrow('STATUS_TRANSITION');
+    expect(() => {
+      assertIssuer({
+        roles: ['STAFF_SYSADM'],
+        issuerUserId: 'admin',
+        holderUserId: 'candidate',
+        trainerOfCandidate: false,
+      });
+    }).toThrow('ROLE_SEPARATION');
+    expect(() => {
+      assertIssuer({
+        roles: ['COM_CERT'],
+        issuerUserId: 'trainer',
+        holderUserId: 'candidate',
+        trainerOfCandidate: true,
+      });
+    }).toThrow('TRAINER_CANNOT_ISSUE');
+  });
+
+  it('signs an Open Badge and sets a revocation bit', () => {
+    const signed = signPersonnelCredential({
+      certificateNumber: 'CON-2026-0001',
+      holderName: 'Demo Kandidat',
+      scheme: 'Digitalna kompetencija',
+      schemeVersion: '1',
+      issuedAt: '2026-10-20T00:00:00.000Z',
+      expiresAt: '2029-10-20T00:00:00.000Z',
+      statusListIndex: 3,
+      statusListUrl: 'http://127.0.0.1:4000/v1/public/certificates/status-list',
+    });
+    const body = verifyPersonnelCredential(signed.jwt);
+    expect(body['sub']).toBe('CON-2026-0001');
+    const bits = inflateSync(Buffer.from(encodedStatusList([3]), 'base64url'));
+    expect(statusListBits([3]).equals(bits)).toBe(true);
+    expect((bits[0] ?? 0) & (1 << 3)).toBeGreaterThan(0);
+  });
+
+  it('rate limits public lookups in this process only', () => {
+    resetPublicRateLimit();
+    expect(() => {
+      assertPublicRateLimit('127.0.0.1', 1_000, 2, 60_000);
+      assertPublicRateLimit('127.0.0.1', 1_100, 2, 60_000);
+    }).not.toThrow();
+    expect(() => {
+      assertPublicRateLimit('127.0.0.1', 1_200, 2, 60_000);
+    }).toThrow('RATE_LIMIT');
+  });
+});

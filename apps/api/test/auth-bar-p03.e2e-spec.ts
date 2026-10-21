@@ -272,6 +272,6 @@ describe('BAR-P03 auth e2e', () => {
     // Equality stays strict; a missing or extra route fails.
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(42);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(56);
   });
 });

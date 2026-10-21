@@ -7,6 +7,7 @@ const APPROVED_ROUTE_PATHS = [
   "/login",
   "/verify",
   "/verify/:verificationHash",
+  "/registry",
   "/courses",
   "/courses/:courseId",
   "/dashboard",
@@ -74,7 +75,7 @@ describe("owner-approved R0-7D minimum bridge contract", () => {
   });
 
   it("contains no excluded route or shell surface", () => {
-    expect(routePaths(app)).toHaveLength(32);
+    expect(routePaths(app)).toHaveLength(33);
     expect(app).not.toContain("FeedbackWidget");
     expect(app).not.toContain("AppShellFallback");
     expect(app).not.toContain("admin/users");
