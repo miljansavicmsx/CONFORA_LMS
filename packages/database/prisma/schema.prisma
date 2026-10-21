@@ -124,6 +124,7 @@ model Tenant {
   committeeAssessments            CommitteeAssessment[]
   issuanceAuthorizations          IssuanceAuthorization[]
   aiCaseSuggestions               AiCaseSuggestion[]
+  publicDocumentAccessLogs        PublicDocumentAccessLog[]
 }
 
 model User {
@@ -2637,7 +2638,9 @@ model EducationCompletionDocument {
   tenantId               String   @db.Uuid
   enrolmentId            String   @db.Uuid
   holderUserId           String   @db.Uuid
-  publicUid              String   @unique @db.VarChar(32)
+  publicUid              String    @unique @db.VarChar(32)
+  verificationId         String    @unique @db.VarChar(64)
+  nameConsentAt          DateTime? @db.Timestamptz(3)
   courseTitle            String   @db.VarChar(256)
   participationSeconds   Int
   statement              String   @db.Text
@@ -2657,8 +2660,10 @@ model ExamPassAttestation {
   tenantId        String           @db.Uuid
   resultId        String           @db.Uuid
   holderUserId    String           @db.Uuid
-  publicUid       String           @unique @db.VarChar(32)
-  state           AttestationState
+  publicUid        String           @unique @db.VarChar(32)
+  verificationId   String           @unique @db.VarChar(64)
+  nameConsentAt    DateTime?        @db.Timestamptz(3)
+  state            AttestationState
   examTitle       String           @db.VarChar(256)
   passed          Boolean
   autoIssued      Boolean
@@ -2673,6 +2678,19 @@ model ExamPassAttestation {
 
   @@unique([tenantId, id])
   @@unique([tenantId, resultId])
+}
+
+model PublicDocumentAccessLog {
+  id                  String   @id @default(uuid()) @db.Uuid
+  tenantId            String?  @db.Uuid
+  verificationKeyHash String   @db.Char(64)
+  sourceIp            String   @db.VarChar(64)
+  outcome             String   @db.VarChar(16)
+  recordedAt          DateTime @db.Timestamptz(3)
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId, recordedAt])
 }
 
 model CaseEvidenceItem {

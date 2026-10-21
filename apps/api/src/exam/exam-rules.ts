@@ -375,11 +375,17 @@ export function assertStartAcknowledgements(input: {
   }
 }
 
+/**
+ * ISO/IEC 17024 certification decision only.
+ * Scoring or grading the exam the person ran is a different act and does not use this gate.
+ * The decision maker must not have trained the candidate and must not have examined them.
+ */
 export function assertCertificationDecision(input: {
   makerUserId: string;
   candidateUserId: string;
   roles: readonly string[];
   trainerOfCandidate: boolean;
+  examinedCandidate: boolean;
 }): { independentOfTraining: true; trainerOfCandidate: false } {
   assertStaffAction(input.roles, 'DECIDE');
   if (input.makerUserId === input.candidateUserId) {
@@ -387,6 +393,9 @@ export function assertCertificationDecision(input: {
   }
   if (input.trainerOfCandidate) {
     throw new ExamRuleError('TRAINER_CANNOT_DECIDE');
+  }
+  if (input.examinedCandidate) {
+    throw new ExamRuleError('EXAMINER_CANNOT_DECIDE');
   }
   return { independentOfTraining: true, trainerOfCandidate: false };
 }

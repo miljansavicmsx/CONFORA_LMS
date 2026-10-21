@@ -267,7 +267,7 @@ describe('BAR-P08 reports module e2e', () => {
       .flat();
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(78);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(79);
   });
 
   it('P08_TEST_009 unauthenticated -> 401', async () => {

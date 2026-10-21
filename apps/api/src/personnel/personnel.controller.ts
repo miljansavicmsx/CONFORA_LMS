@@ -136,11 +136,11 @@ export class CandidateCertificateController {
   }
 }
 
-@Public()
 @Controller('public/certificates')
 export class PublicCertificateController {
   constructor(private readonly personnel: PersonnelCertificateService) {}
 
+  @Public()
   @Get('status-list')
   statusList(@Req() req: Request) {
     limit(req);
@@ -158,6 +158,7 @@ export class PublicCertificateController {
     });
   }
 
+  @Public()
   @Get(':publicUid/pdf')
   async pdf(
     @Param('publicUid') publicUid: string,
@@ -172,6 +173,7 @@ export class PublicCertificateController {
     });
   }
 
+  @Public()
   @Get(':publicUid')
   one(@Param('publicUid') publicUid: string, @Req() req: Request) {
     limit(req);

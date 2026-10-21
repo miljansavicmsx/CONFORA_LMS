@@ -78,6 +78,10 @@ export function assertIssuer(input: {
   }
 }
 
+/**
+ * Process-local window only. Another instance does not see these hits.
+ * Distributed rate limiting is still a production gap for public lookup.
+ */
 const hits = new Map<string, number[]>();
 
 export function resetPublicRateLimit(): void {

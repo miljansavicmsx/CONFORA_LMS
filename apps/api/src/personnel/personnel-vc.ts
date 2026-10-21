@@ -3,6 +3,8 @@ import {
   createHmac,
   createPrivateKey,
   createPublicKey,
+  generateKeyPairSync,
+  randomBytes,
   sign,
   timingSafeEqual,
   verify,
@@ -10,13 +12,24 @@ import {
 } from 'node:crypto';
 
 /**
- * Development Ed25519 key. It is not an accredited trust anchor.
- * Set PERSONNEL_VC_ED25519_PKCS8_PEM before any production signature.
+ * The Ed25519 private key that used to live in this file is compromised.
+ * Only its public SPKI fingerprint is retained, so a configuration that
+ * presents that key is refused. See docs/security/INCIDENT-2026-10-21-VC-KEY.md.
  */
-const DEVELOPMENT_PKCS8_PEM = `-----BEGIN PRIVATE KEY-----
-MC4CAQAwBQYDK2VwBCIEIDoZYGpPrYBceE7laSBxBFzPYsXMhqXJNRQd/oMCUefH
------END PRIVATE KEY-----
-`;
+export const BURNED_VC_SPKI_SHA256 =
+  'd2670e69c07fdf187aed6ebefc513bb4ca582cd1a5d2fcc50ff1f441c50b3b76';
+
+const BURNED_VC_PUBLIC_SPKI = Buffer.from(
+  'MCowBQYDK2VwAyEA2LHAnDEy09zHGh3/YmfgWgJK7BqPM3tzz29XPFuGOfQ=',
+  'base64',
+);
+
+/** SHA-256 of the burned private PEM and of its raw PKCS8 body. The secret bytes are not stored. */
+const BURNED_SECRET_SHA256 = new Set([
+  '2a4eaf859abddd4661d35638db9d76c10886fb9a9491551fb07694c187ca1156',
+  'fbc68ca291c2b57d1a67327b22afba6bcf107e014e58d46358c95f92e9bfb9ff',
+  'cdbb9295635ec5ca2e0827b3a83631df04671b8fdf6d0fe67b5f4a3195582d9a',
+]);
 
 export const VC_KEY_ID = 'confora-personnel-ed25519';
 
@@ -31,13 +44,56 @@ export type PersonnelVcClaims = {
   statusListUrl: string;
 };
 
-function privateKey(): KeyObject {
-  const pem = process.env['PERSONNEL_VC_ED25519_PKCS8_PEM'] ?? DEVELOPMENT_PKCS8_PEM;
-  return createPrivateKey(pem);
+function spkiSha256(key: KeyObject): string {
+  const publicKey = key.type === 'public' ? key : createPublicKey(key);
+  const der = publicKey.export({ type: 'spki', format: 'der' });
+  return createHash('sha256').update(der).digest('hex');
 }
 
-export function signingTrust(): 'CONFIGURED' | 'DEVELOPMENT' {
-  return process.env['PERSONNEL_VC_ED25519_PKCS8_PEM'] ? 'CONFIGURED' : 'DEVELOPMENT';
+export function assertSigningKeyAllowed(key: KeyObject): void {
+  if (spkiSha256(key) === BURNED_VC_SPKI_SHA256) {
+    throw new Error('VC_KEY_DENIED');
+  }
+}
+
+function secretIsBurned(value: string): boolean {
+  const digest = createHash('sha256').update(value).digest('hex');
+  return BURNED_SECRET_SHA256.has(digest);
+}
+
+let ephemeralTestKey: KeyObject | undefined;
+let ephemeralTicketSecret: string | undefined;
+
+function testRuntime(): boolean {
+  return process.env['NODE_ENV'] === 'test';
+}
+
+function privateKey(): KeyObject {
+  const pem = process.env['PERSONNEL_VC_ED25519_PKCS8_PEM']?.trim() ?? '';
+  if (pem.length === 0) {
+    if (!testRuntime()) {
+      throw new Error('VC_KEY_UNCONFIGURED');
+    }
+    ephemeralTestKey ??= generateKeyPairSync('ed25519').privateKey;
+    return ephemeralTestKey;
+  }
+  if (secretIsBurned(pem) || secretIsBurned(`${pem}\n`)) {
+    throw new Error('VC_KEY_DENIED');
+  }
+  const key = createPrivateKey(pem);
+  assertSigningKeyAllowed(key);
+  return key;
+}
+
+export function signingTrust(): 'CONFIGURED' | 'TEST' {
+  const pem = process.env['PERSONNEL_VC_ED25519_PKCS8_PEM']?.trim() ?? '';
+  if (pem.length > 0) {
+    return 'CONFIGURED';
+  }
+  if (!testRuntime()) {
+    throw new Error('VC_KEY_UNCONFIGURED');
+  }
+  return 'TEST';
 }
 
 export function publicJwk(): Record<string, unknown> {
@@ -131,8 +187,38 @@ export function verifyPersonnelCredential(jwt: string): Record<string, unknown> 
   return JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')) as Record<string, unknown>;
 }
 
+export function wasSignedWithBurnedKey(jwt: string): boolean {
+  const parts = jwt.split('.');
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
+    return false;
+  }
+  const signingInput = Buffer.from(`${parts[0]}.${parts[1]}`);
+  const signature = Buffer.from(parts[2], 'base64url');
+  try {
+    return verify(
+      null,
+      signingInput,
+      createPublicKey({ key: BURNED_VC_PUBLIC_SPKI, format: 'der', type: 'spki' }),
+      signature,
+    );
+  } catch {
+    return false;
+  }
+}
+
 function ticketSecret(): string {
-  return process.env['PERSONNEL_VC_ED25519_PKCS8_PEM'] ?? DEVELOPMENT_PKCS8_PEM;
+  const secret = process.env['PERSONNEL_PDF_TICKET_SECRET']?.trim() ?? '';
+  if (secret.length === 0) {
+    if (!testRuntime()) {
+      throw new Error('PDF_TICKET_SECRET_UNCONFIGURED');
+    }
+    ephemeralTicketSecret ??= randomBytes(32).toString('base64url');
+    return ephemeralTicketSecret;
+  }
+  if (secretIsBurned(secret) || secretIsBurned(`${secret}\n`)) {
+    throw new Error('PDF_TICKET_SECRET_DENIED');
+  }
+  return secret;
 }
 
 export function issueDownloadTicket(publicUid: string, now: Date): string {

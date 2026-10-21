@@ -75,7 +75,7 @@ describe('personnel certificate rules', () => {
     expect((bits[0] ?? 0) & (1 << 3)).toBeGreaterThan(0);
   });
 
-  it('rate limits public lookups', () => {
+  it('rate limits public lookups in this process only', () => {
     resetPublicRateLimit();
     expect(() => {
       assertPublicRateLimit('127.0.0.1', 1_000, 2, 60_000);

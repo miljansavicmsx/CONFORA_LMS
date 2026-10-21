@@ -371,6 +371,11 @@ async function seedIssuedPersonnelCertificate(): Promise<void> {
     },
     update: { outcome: 'GRANT' },
   });
+  if (!process.env['PERSONNEL_VC_ED25519_PKCS8_PEM']?.trim()) {
+    throw new Error(
+      'PERSONNEL_VC_ED25519_PKCS8_PEM is required. The committed development key is burned.',
+    );
+  }
   const signed = signPersonnelCredential({
     certificateNumber: publicUid,
     holderName: 'Demo Kandidat',

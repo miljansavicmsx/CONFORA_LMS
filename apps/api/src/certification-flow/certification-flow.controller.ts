@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Req,
   StreamableFile,
   UseGuards,
@@ -34,6 +35,7 @@ import {
   EvidenceDto,
   LevelDto,
   LinkExamDto,
+  NameConsentDto,
   OpenCaseDto,
   ProposeDto,
   RefereeAssessmentDto,
@@ -50,9 +52,13 @@ function actor(req: RequestWithPrincipal): AuthenticatedActor {
   return principal;
 }
 
+function sourceIp(req: Request): string {
+  return req.ip || req.socket.remoteAddress || 'unknown';
+}
+
+/** Process-local window. Distributed rate limiting remains a production gap. */
 function limit(req: Request): void {
-  const ip = req.ip || req.socket.remoteAddress || 'unknown';
-  assertPublicRateLimit(ip, Date.now());
+  assertPublicRateLimit(sourceIp(req), Date.now());
 }
 
 @Controller('staff/schemes/:schemeVersionId')
@@ -168,6 +174,15 @@ export class LearnerDocumentController {
   examPasses(@Req() req: RequestWithPrincipal) {
     return this.flow.examPasses(actor(req));
   }
+
+  @Put(':verificationId/name-consent')
+  nameConsent(
+    @Param('verificationId') verificationId: string,
+    @Body() body: NameConsentDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.flow.setNameConsent(actor(req), verificationId, body.granted);
+  }
 }
 
 @Controller('committee/cases')
@@ -254,20 +269,20 @@ export class CommitteeExamPassController {
 export class PublicDocumentController {
   constructor(private readonly flow: CertificationFlowService) {}
 
-  @Get(':publicUid/pdf')
-  async pdf(@Param('publicUid') publicUid: string, @Req() req: Request) {
+  @Get(':verificationId/pdf')
+  async pdf(@Param('verificationId') verificationId: string, @Req() req: Request) {
     limit(req);
-    const file = await this.flow.publicPdf(publicUid);
+    const file = await this.flow.publicPdf(verificationId, sourceIp(req));
     return new StreamableFile(Buffer.from(file.bytes), {
       type: 'application/pdf',
       disposition: `attachment; filename="${file.filename}"`,
     });
   }
 
-  @Get(':publicUid')
-  one(@Param('publicUid') publicUid: string, @Req() req: Request) {
+  @Get(':verificationId')
+  one(@Param('verificationId') verificationId: string, @Req() req: Request) {
     limit(req);
-    return this.flow.publicDocument(publicUid);
+    return this.flow.publicDocument(verificationId, sourceIp(req));
   }
 }
 

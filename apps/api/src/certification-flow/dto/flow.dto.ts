@@ -120,6 +120,8 @@ export class AssistDto extends createZodDto(
     .strict(),
 ) {}
 
+export class NameConsentDto extends createZodDto(z.object({ granted: z.boolean() }).strict()) {}
+
 export class AuthorizeIssuanceDto extends createZodDto(
   z
     .object({

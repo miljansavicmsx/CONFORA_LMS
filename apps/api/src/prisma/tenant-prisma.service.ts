@@ -50,6 +50,7 @@ import {
   publicDocument,
   publicDocumentPdf,
   readApplicantCase,
+  setDocumentNameConsent,
   readCommitteeCase,
   recordVote,
   releaseExamPass,
@@ -492,7 +493,11 @@ export class TenantPrismaService {
     publicPdf: (publicUid: string, ticket: string, now: Date) =>
       publicPdf(this.prisma, { publicUid, ticket, now }),
     search: (input: { number?: string; name?: string }, now: Date) =>
-      searchPublicRegistry(this.prisma, { ...input, now }),
+      searchPublicRegistry(this.prisma, {
+        ...input,
+        tenantId: this.requiredTenantId(),
+        now,
+      }),
     statusList: () => revocationStatusList(this.prisma),
   };
 
@@ -536,8 +541,12 @@ export class TenantPrismaService {
       releaseExamPass(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     education: (userId: string) => listEducation(this.prisma, this.requiredTenantId(), userId),
     examPasses: (userId: string) => listExamPasses(this.prisma, this.requiredTenantId(), userId),
-    publicDocument: (publicUid: string) => publicDocument(this.prisma, publicUid),
-    publicPdf: (publicUid: string) => publicDocumentPdf(this.prisma, publicUid),
+    publicDocument: (input: { verificationId: string; sourceIp: string; now: Date }) =>
+      publicDocument(this.prisma, input),
+    publicPdf: (input: { verificationId: string; sourceIp: string; now: Date }) =>
+      publicDocumentPdf(this.prisma, input),
+    setNameConsent: (input: Omit<Parameters<typeof setDocumentNameConsent>[1], 'tenantId'>) =>
+      setDocumentNameConsent(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     noteEducation: (enrolmentId: string) =>
       maybeIssueEducation(this.prisma, {
         tenantId: this.requiredTenantId(),
