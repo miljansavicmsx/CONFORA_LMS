@@ -88,7 +88,7 @@ export class CaseRuleDto extends createZodDto(
 ) {}
 
 export class ProposeDto extends createZodDto(
-  z.object({ declaredConflictUserIds: z.array(uuid).max(30).default([]) }).strict(),
+  z.object({ reason: z.string().trim().min(3).max(4000) }).strict(),
 ) {}
 
 export class ConfirmSlotDto extends createZodDto(z.object({ memberUserId: uuid }).strict()) {}

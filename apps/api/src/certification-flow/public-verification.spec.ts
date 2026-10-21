@@ -53,12 +53,20 @@ describe('public verification and referee delivery wiring', () => {
     expect(vote).toContain('examinationActorsForApplication');
     expect(vote).toContain('candidateWasExaminedBy');
     const proposal = store.slice(
-      store.indexOf('async function writeCommitteeProposals'),
+      store.indexOf('async function desiredCommitteeSlots'),
       store.indexOf('export async function confirmProposal'),
     );
     expect(proposal).toContain('examinationActorsForApplication');
     expect(proposal).toContain('proctorReviewerUserIds');
-    expect(proposal).toContain('writeCommitteeProposals');
+    expect(proposal).toContain('recordedConflictUserIds');
+    expect(proposal).toContain('decideCompositionAuthority');
+    expect(proposal).not.toContain('declaredConflictUserIds');
+    expect(proposal).not.toContain('committeeProposal.deleteMany');
+    const recordedConflicts = store.slice(
+      store.indexOf('async function recordedConflictUserIds'),
+      store.indexOf('async function desiredCommitteeSlots'),
+    );
+    expect(recordedConflicts).toContain('committeeConflictDeclaration');
     const pdf = store.slice(
       store.indexOf('export async function publicDocumentPdf'),
       store.indexOf('export async function setDocumentNameConsent'),

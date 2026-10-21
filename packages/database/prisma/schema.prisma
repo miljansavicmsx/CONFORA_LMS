@@ -2791,6 +2791,8 @@ model CommitteeAssessment {
   memberUserId String           @db.Uuid
   ballot       CommitteeBallot
   reasoning    String           @db.Text
+  voidedAt     DateTime?        @db.Timestamptz(3)
+  voidReason   String?          @db.VarChar(64)
   createdAt    DateTime         @default(now()) @db.Timestamptz(3)
 
   tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
@@ -2798,7 +2800,7 @@ model CommitteeAssessment {
   member User             @relation(fields: [tenantId, memberUserId], references: [tenantId, id], onDelete: Restrict)
 
   @@unique([tenantId, id])
-  @@unique([tenantId, caseId, memberUserId])
+  @@index([tenantId, caseId, memberUserId])
 }
 
 model IssuanceAuthorization {

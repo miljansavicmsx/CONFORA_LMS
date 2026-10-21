@@ -22,6 +22,9 @@ const DENIED = new Set([
   'CONFLICT_DECLARED',
   'CONFLICT_CLEARANCE_REQUIRED',
   'NOT_ASSIGNED',
+  'COMPOSITION_FORBIDDEN',
+  'ACTOR_IS_SUBJECT',
+  'COMPOSITION_CLOSED',
   'EXAMINER_CANNOT_DECIDE',
   'TRAINER_CANNOT_DECIDE',
   'CANDIDATE_CANNOT_DECIDE',
@@ -209,20 +212,27 @@ export class CertificationFlowService {
       .catch(fail);
   }
 
-  propose(actor: AuthenticatedActor, caseId: string, declaredConflictUserIds: readonly string[]) {
+  propose(actor: AuthenticatedActor, caseId: string, reason: string) {
     const now = new Date();
     return this.tenantPrisma.flow
-      .propose({ actor: this.actor(actor), caseId, declaredConflictUserIds, now })
+      .propose({ actor: this.actor(actor), caseId, reason, now })
       .then(async (result) => {
-        await this.audit.append(actor, {
-          idempotencyKey: randomUUID(),
-          eventType: 'COMMITTEE_PROPOSED',
-          outcome: 'SUCCESS',
-          occurredAt: now,
-          resourceType: 'CommitteeProposal',
-          resourceId: caseId,
-          metadata: { caseId, reason: String(result.slots.length) },
-        });
+        if (result.changed) {
+          await this.audit.append(actor, {
+            idempotencyKey: randomUUID(),
+            eventType: 'COMMITTEE_COMPOSITION_CHANGED',
+            outcome: 'SUCCESS',
+            occurredAt: now,
+            resourceType: 'CommitteeProposal',
+            resourceId: caseId,
+            metadata: {
+              caseId,
+              reason,
+              purpose: result.purpose,
+              phase: result.phase,
+            },
+          });
+        }
         return result;
       })
       .catch(fail);

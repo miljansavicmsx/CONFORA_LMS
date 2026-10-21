@@ -4,6 +4,11 @@ import type { Prisma } from '@confora/database';
 
 import type { CaseSuggestionPurpose } from '../certification-flow/case-suggestions';
 import {
+  decideCompositionAuthority,
+  planComposition,
+  type CommitteeSlotView,
+} from '../certification-flow/committee-composition-policy';
+import {
   decideConflictDeclaration,
   isDesignatedConflictClearer,
 } from '../certification-flow/conflict-declaration-policy';
@@ -756,15 +761,27 @@ export async function assessReferee(
   return { refereeId: referee.id, requirementsSatisfied: requirementsSatisfiedByReferee() };
 }
 
-async function writeCommitteeProposals(
+async function recordedConflictUserIds(
   client: FlowClient,
-  input: {
-    tenantId: string;
-    row: LoadedCase;
-    declaredConflictUserIds: readonly string[];
-    now: Date;
-  },
-) {
+  tenantId: string,
+  caseId: string,
+): Promise<string[]> {
+  const rows = await client.committeeConflictDeclaration.findMany({
+    where: { tenantId, caseId },
+    orderBy: [{ signedAt: 'asc' }, { createdAt: 'asc' }],
+    select: { userId: true, hasConflict: true },
+  });
+  const latest = new Map<string, boolean>();
+  for (const row of rows) {
+    latest.set(row.userId, row.hasConflict);
+  }
+  return [...latest.entries()].filter((entry) => entry[1]).map((entry) => entry[0]);
+}
+
+async function desiredCommitteeSlots(
+  client: FlowClient,
+  input: { tenantId: string; row: LoadedCase; now: Date },
+): Promise<CommitteeSlotView[]> {
   const makers = await client.schemeDecisionMaker.findMany({
     where: { tenantId: input.tenantId, schemeVersionId: input.row.schemeVersionId },
   });
@@ -786,8 +803,8 @@ async function writeCommitteeProposals(
       examinerIds.push(...actors.invigilatorUserIds, ...actors.proctorReviewerUserIds);
     }
   }
-  const slots = [];
-  for (const maker of makers) {
+  const conflictUserIds = await recordedConflictUserIds(client, input.tenantId, input.row.id);
+  return makers.map((maker) => {
     const authorised =
       maker.authorisedFrom.getTime() <= input.now.getTime() &&
       maker.authorisedUntil.getTime() >= input.now.getTime();
@@ -796,24 +813,35 @@ async function writeCommitteeProposals(
       candidateUserId: input.row.applicantUserId,
       trainerUserIds: trainers.map((trainer) => trainer.trainerUserId),
       examinerUserIds: examinerIds,
-      conflictUserIds: input.declaredConflictUserIds,
+      conflictUserIds,
       authorised,
     });
+    return {
+      userId: maker.userId,
+      state: reason ? ('EXCLUDED' as const) : ('PROPOSED' as const),
+      exclusionReason: reason,
+    };
+  });
+}
+
+async function writeCommitteeProposals(
+  client: FlowClient,
+  input: { tenantId: string; row: LoadedCase; now: Date },
+) {
+  const desired = await desiredCommitteeSlots(client, input);
+  const slots = [];
+  for (const slot of desired) {
     await client.committeeProposal.create({
       data: {
         id: randomUUID(),
         tenantId: input.tenantId,
         caseId: input.row.id,
-        userId: maker.userId,
-        state: reason ? 'EXCLUDED' : 'PROPOSED',
-        exclusionReason: reason,
+        userId: slot.userId,
+        state: slot.state,
+        exclusionReason: slot.exclusionReason,
       },
     });
-    slots.push({
-      userId: maker.userId,
-      state: reason ? ('EXCLUDED' as const) : ('PROPOSED' as const),
-      exclusionReason: reason,
-    });
+    slots.push(slot);
   }
   return slots;
 }
@@ -831,12 +859,15 @@ async function ensureCommitteeAssignments(
   if (existing > 0) {
     return;
   }
-  await writeCommitteeProposals(client, {
-    tenantId,
-    row,
-    declaredConflictUserIds: [],
-    now,
-  });
+  await writeCommitteeProposals(client, { tenantId, row, now });
+}
+
+function slotView(row: LoadedCase): CommitteeSlotView[] {
+  return row.proposals.map((proposal) => ({
+    userId: proposal.userId,
+    state: proposal.state,
+    exclusionReason: proposal.exclusionReason,
+  }));
 }
 
 export async function proposeCommittee(
@@ -845,27 +876,111 @@ export async function proposeCommittee(
     tenantId: string;
     actor: Actor;
     caseId: string;
-    declaredConflictUserIds: readonly string[];
+    reason: string;
     now: Date;
   },
 ) {
   assertRole(input.actor.roles, 'COM_CERT');
-  await assertAssigned(client, input.tenantId, input.caseId, input.actor.userId);
-  await assertConflictCleared(client, input.tenantId, input.caseId, input.actor.userId);
   const row = await loadCase(client, input.tenantId, input.caseId);
   if (row.phase !== 'COMMITTEE' && row.phase !== 'APPROVED_FOR_ISSUANCE') {
     throw new FlowRuleError('NOT_IN_COMMITTEE');
   }
-  await client.committeeProposal.deleteMany({
-    where: { tenantId: input.tenantId, caseId: row.id },
-  });
-  const slots = await writeCommitteeProposals(client, {
+  if (row.authorization) {
+    throw new FlowRuleError('COMPOSITION_CLOSED');
+  }
+  const actorDeclaration = await latestConflictDeclaration(
+    client,
+    input.tenantId,
+    input.caseId,
+    input.actor.userId,
+  );
+  const desired = await desiredCommitteeSlots(client, {
     tenantId: input.tenantId,
     row,
-    declaredConflictUserIds: input.declaredConflictUserIds,
     now: input.now,
   });
-  return { caseId: row.id, slots };
+  const liveVotes = row.assessments.filter((assessment) => assessment.voidedAt === null);
+  const plan = planComposition({
+    existing: slotView(row),
+    desired,
+    votingStarted: liveVotes.length > 0,
+  });
+  const decision = decideCompositionAuthority({
+    actorRoles: input.actor.roles,
+    actorSigned: actorDeclaration !== null,
+    actorHasConflict: actorDeclaration?.hasConflict === true,
+    actorUserId: input.actor.userId,
+    reason: input.reason,
+    updates: plan.updates,
+  });
+  if (decision.action === 'deny') {
+    throw new FlowRuleError(decision.code);
+  }
+  if (plan.updates.length === 0) {
+    return {
+      caseId: row.id,
+      slots: slotView(row),
+      changed: false as const,
+      votesInvalidated: 0,
+      reconfirmationRequired: false,
+      phase: row.phase,
+      purpose: 'UNCHANGED',
+    };
+  }
+  await client.$transaction(async (tx) => {
+    if (plan.invalidateVotes) {
+      await tx.committeeAssessment.updateMany({
+        where: { tenantId: input.tenantId, caseId: row.id, voidedAt: null },
+        data: { voidedAt: input.now, voidReason: 'COMPOSITION_CHANGED' },
+      });
+      if (row.phase === 'APPROVED_FOR_ISSUANCE') {
+        await tx.professionalCase.update({
+          where: { tenantId_id: { tenantId: input.tenantId, id: row.id } },
+          data: { phase: 'COMMITTEE', computedLevelCode: null },
+        });
+      }
+    }
+    for (const update of plan.updates) {
+      if (update.create) {
+        await tx.committeeProposal.create({
+          data: {
+            id: randomUUID(),
+            tenantId: input.tenantId,
+            caseId: row.id,
+            userId: update.userId,
+            state: update.toState,
+            exclusionReason: update.exclusionReason,
+          },
+        });
+        continue;
+      }
+      const current = row.proposals.find((proposal) => proposal.userId === update.userId);
+      if (!current) {
+        continue;
+      }
+      await tx.committeeProposal.update({
+        where: { tenantId_id: { tenantId: input.tenantId, id: current.id } },
+        data: {
+          state: update.toState,
+          exclusionReason: update.exclusionReason,
+          ...(update.clearConfirmation ? { confirmedByUserId: null } : {}),
+        },
+      });
+    }
+  });
+  const refreshed = await loadCase(client, input.tenantId, input.caseId);
+  const purpose = plan.updates
+    .map((update) => `${update.userId}:${update.fromState}>${update.toState}`)
+    .join(';');
+  return {
+    caseId: row.id,
+    slots: slotView(refreshed),
+    changed: true as const,
+    votesInvalidated: plan.invalidateVotes ? liveVotes.length : 0,
+    reconfirmationRequired: plan.reconfirmationRequired,
+    phase: refreshed.phase,
+    purpose: plan.invalidateVotes ? `${purpose};votes=${String(liveVotes.length)}` : purpose,
+  };
 }
 
 export async function confirmProposal(
@@ -987,13 +1102,12 @@ export async function recordVote(
   if (!slot || slot.state !== 'CONFIRMED') {
     throw new FlowRuleError('NOT_MEMBER');
   }
-  const existing = row.assessments.find(
-    (assessment) => assessment.memberUserId === input.actor.userId,
-  );
+  const liveVotes = row.assessments.filter((assessment) => assessment.voidedAt === null);
+  const existing = liveVotes.find((assessment) => assessment.memberUserId === input.actor.userId);
   if (existing) {
     throw new FlowRuleError('ALREADY_VOTED');
   }
-  const pendingBallots = [...row.assessments.map((assessment) => assessment.ballot), input.ballot];
+  const pendingBallots = [...liveVotes.map((assessment) => assessment.ballot), input.ballot];
   const pendingOutcome = voteResult({
     grants: pendingBallots.filter((ballot) => ballot === 'GRANT').length,
     denies: pendingBallots.filter((ballot) => ballot === 'DENY').length,
@@ -1030,7 +1144,7 @@ export async function recordVote(
       reasoning: input.reasoning,
     },
   });
-  const ballots = [...row.assessments.map((assessment) => assessment.ballot), input.ballot];
+  const ballots = [...liveVotes.map((assessment) => assessment.ballot), input.ballot];
   const outcome = voteResult({
     grants: ballots.filter((ballot) => ballot === 'GRANT').length,
     denies: ballots.filter((ballot) => ballot === 'DENY').length,

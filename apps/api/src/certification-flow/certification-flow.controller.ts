@@ -207,7 +207,7 @@ export class CommitteeCaseController {
     @Body() body: ProposeDto,
     @Req() req: RequestWithPrincipal,
   ) {
-    return this.flow.propose(actor(req), caseId, body.declaredConflictUserIds);
+    return this.flow.propose(actor(req), caseId, body.reason);
   }
 
   @Post(':caseId/confirm')
