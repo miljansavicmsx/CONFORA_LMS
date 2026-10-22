@@ -351,6 +351,91 @@ export async function getPublishedCourse(
   return toCourse(row);
 }
 
+export type PublicProgramView = {
+  courseId: string;
+  code: string;
+  title: string;
+  description: string;
+  areaCode: string;
+  language: string;
+  typicalLearningTimeMinutes: number | null;
+  learningObjectives: string | null;
+  educationalLevel: string | null;
+  targetAudience: string | null;
+};
+
+const publicProgramSelect = {
+  id: true,
+  code: true,
+  title: true,
+  description: true,
+  areaCode: true,
+  language: true,
+  typicalLearningTimeMinutes: true,
+  learningObjectives: true,
+  educationalLevel: true,
+  targetAudience: true,
+} as const;
+
+function toPublicProgram(row: {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  areaCode: string;
+  language: string;
+  typicalLearningTimeMinutes: number | null;
+  learningObjectives: string | null;
+  educationalLevel: string | null;
+  targetAudience: string | null;
+}): PublicProgramView {
+  return {
+    courseId: row.id,
+    code: row.code,
+    title: row.title,
+    description: row.description,
+    areaCode: row.areaCode,
+    language: row.language,
+    typicalLearningTimeMinutes: row.typicalLearningTimeMinutes,
+    learningObjectives: row.learningObjectives,
+    educationalLevel: row.educationalLevel,
+    targetAudience: row.targetAudience,
+  };
+}
+
+/**
+ * Published programme metadata only. No tenant argument: the caller cannot
+ * select an organisation. People, enrolments, prices and storage keys are omitted.
+ */
+export async function listPublicPublishedPrograms(
+  db: LearningClient,
+  areaCode?: string,
+): Promise<{ courses: readonly PublicProgramView[] }> {
+  const courses = await db.course.findMany({
+    where: {
+      lifecycle: 'PUBLISHED',
+      ...(areaCode ? { areaCode } : {}),
+    },
+    select: publicProgramSelect,
+    orderBy: [{ areaCode: 'asc' }, { title: 'asc' }],
+  });
+  return { courses: courses.map(toPublicProgram) };
+}
+
+export async function getPublicPublishedProgram(
+  db: LearningClient,
+  courseId: string,
+): Promise<PublicProgramView> {
+  const row = await db.course.findFirst({
+    where: { id: courseId, lifecycle: 'PUBLISHED' },
+    select: publicProgramSelect,
+  });
+  if (!row) {
+    throw new LearningNotFoundError();
+  }
+  return toPublicProgram(row);
+}
+
 async function enrolmentView(
   tx: Tx,
   tenantId: string,
@@ -458,28 +543,23 @@ export async function listMyEnrolments(
     where: { tenantId, userId },
     orderBy: { enrolledAt: 'desc' },
     include: {
-      course: { select: { id: true, title: true, areaCode: true } },
+      course: { select: { id: true, title: true, areaCode: true, priceCurrency: true } },
       paymentIntent: true,
     },
   });
-  return rows.flatMap((row) => {
-    if (!row.paymentIntent) return [];
-    return [
-      {
-        enrolmentId: row.id,
-        courseId: row.course.id,
-        courseTitle: row.course.title,
-        areaCode: row.course.areaCode,
-        enrolledAt: row.enrolledAt.toISOString(),
-        progressPercent: row.progressPercent,
-        completedAt: row.completedAt?.toISOString() ?? null,
-        paymentState: row.paymentIntent.state,
-        amount: money(row.paymentIntent.amount),
-        currency: row.paymentIntent.currency,
-        alreadyEnrolled: true,
-      },
-    ];
-  });
+  return rows.map((row) => ({
+    enrolmentId: row.id,
+    courseId: row.course.id,
+    courseTitle: row.course.title,
+    areaCode: row.course.areaCode,
+    enrolledAt: row.enrolledAt.toISOString(),
+    progressPercent: row.progressPercent,
+    completedAt: row.completedAt?.toISOString() ?? null,
+    paymentState: row.paymentIntent?.state ?? 'NOT_REQUIRED',
+    amount: row.paymentIntent ? money(row.paymentIntent.amount) : '0.00',
+    currency: row.paymentIntent?.currency ?? row.course.priceCurrency,
+    alreadyEnrolled: true,
+  }));
 }
 
 type PlayerRow = {

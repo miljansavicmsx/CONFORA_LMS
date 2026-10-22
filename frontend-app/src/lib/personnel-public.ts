@@ -2,24 +2,15 @@ import { api } from "@/lib/api";
 import { getConforaApiConfig, joinBaseUrlAndPath } from "@/lib/api/api-config";
 
 export type PublicPersonnelRecord = {
-  readonly certificateNumber: string;
-  readonly holderName: string | null;
-  readonly scheme: string;
-  readonly schemeVersion: string;
   readonly status: string;
-  readonly issuedAt: string;
-  readonly expiresAt: string | null;
-  readonly listed: boolean;
+  readonly documentType: string | null;
+  readonly issuedAt: string | null;
+  readonly holderName: string | null;
 };
 
 export type PublicPersonnelResult =
   | { readonly kind: "ok"; readonly data: PublicPersonnelRecord }
   | { readonly kind: "not_found" }
-  | { readonly kind: "rate_limited" }
-  | { readonly kind: "error" };
-
-export type PublicSearchResult =
-  | { readonly kind: "ok"; readonly data: readonly PublicPersonnelRecord[] }
   | { readonly kind: "rate_limited" }
   | { readonly kind: "error" };
 
@@ -61,9 +52,6 @@ async function publicGet(path: string): Promise<Response> {
 
 export async function fetchPublicPersonnelCertificate(number: string): Promise<PublicPersonnelResult> {
   const response = await publicGet(`/v1/public/certificates/${encodeURIComponent(number.trim())}`);
-  if (response.status === 404) {
-    return { kind: "not_found" };
-  }
   if (response.status === 429) {
     return { kind: "rate_limited" };
   }
@@ -71,28 +59,9 @@ export async function fetchPublicPersonnelCertificate(number: string): Promise<P
     return { kind: "error" };
   }
   const data = (await response.json()) as PublicPersonnelRecord;
-  return { kind: "ok", data };
-}
-
-export async function searchPublicPersonnelRegistry(query: {
-  readonly name?: string;
-  readonly number?: string;
-}): Promise<PublicSearchResult> {
-  const params = new URLSearchParams();
-  if (query.number?.trim()) {
-    params.set("number", query.number.trim());
-  }
-  if (query.name?.trim()) {
-    params.set("name", query.name.trim());
-  }
-  const response = await publicGet(`/v1/public/certificates?${params.toString()}`);
-  if (response.status === 429) {
-    return { kind: "rate_limited" };
-  }
-  if (!response.ok) {
+  if (typeof data?.status !== "string") {
     return { kind: "error" };
   }
-  const data = (await response.json()) as PublicPersonnelRecord[];
   return { kind: "ok", data };
 }
 
@@ -128,6 +97,19 @@ export async function proposePersonnelAmfSuspension(
     { reason },
   );
   return data;
+}
+
+export async function downloadHolderCertificatePdf(credentialId: string, filename: string): Promise<void> {
+  const response = await api.get<ArrayBuffer>(`/v1/me/certificates/${encodeURIComponent(credentialId)}/pdf`, {
+    responseType: "arraybuffer",
+  });
+  const blob = new Blob([response.data], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 export async function downloadPersonnelCredential(credentialId: string, filename: string): Promise<void> {

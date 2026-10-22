@@ -6,7 +6,9 @@ import {
   assertIssuer,
   assertPublicRateLimit,
   assertStatusTransition,
+  HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
+  presentPersonnelPublicVerification,
   publicCertificateStatus,
   resetPublicRateLimit,
 } from './personnel-rules';
@@ -84,5 +86,37 @@ describe('personnel certificate rules', () => {
     expect(() => {
       assertPublicRateLimit('127.0.0.1', 1_200, 2, 60_000);
     }).toThrow('RATE_LIMIT');
+  });
+
+  it('shows the holder name only while registry consent is active', () => {
+    const issuedAt = new Date('2026-10-21T12:00:00.000Z');
+    const shown = presentPersonnelPublicVerification({
+      status: 'VALID',
+      issuedAt,
+      registryListed: true,
+      registryConsentAt: issuedAt,
+      holderName: 'Demo Kandidat',
+    });
+    expect(shown).toEqual({
+      status: 'VALID',
+      documentType: 'PERSONNEL_CERTIFICATE',
+      issuedAt: '2026-10-21',
+      holderName: 'Demo Kandidat',
+    });
+    const hidden = presentPersonnelPublicVerification({
+      status: 'VALID',
+      issuedAt,
+      registryListed: false,
+      registryConsentAt: null,
+      holderName: 'Demo Kandidat',
+    });
+    expect(hidden.holderName).toBeNull();
+    expect(hidden.status).toBe('VALID');
+    expect(HIDDEN_PERSONNEL_VERIFICATION).toEqual({
+      status: 'INVALID',
+      documentType: null,
+      issuedAt: null,
+      holderName: null,
+    });
   });
 });

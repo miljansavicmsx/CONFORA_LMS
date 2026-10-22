@@ -50,7 +50,7 @@ test.describe("ADMIN-GOV-UX-POLISH-1 governance/admin UX", () => {
     await loginManager(page);
     await page.goto("/dashboard/admin/education");
     await expect(page.getByTestId("admin-education-heading")).toHaveText("Upravljanje edukacijama");
-    await expect(page.getByTestId("admin-education-synthetic-banner")).toBeVisible();
+    await expect(page.getByTestId("admin-education-not-implemented")).toBeVisible();
     await assertNoRawEnums(page);
   });
 

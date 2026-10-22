@@ -191,7 +191,7 @@ export class PersonnelCertificateService {
     return { keys: [jwk] };
   }
 
-  publicPdf(publicUid: string, ticket: string) {
-    return this.tenantPrisma.personnel.publicPdf(publicUid, ticket, new Date()).catch(fail);
+  publicPdf(publicUid: string, sourceIp: string) {
+    return this.tenantPrisma.personnel.publicPdf(publicUid, sourceIp, new Date()).catch(fail);
   }
 }

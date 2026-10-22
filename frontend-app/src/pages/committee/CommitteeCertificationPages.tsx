@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { type FormEvent, type JSX, useState } from "react";
+import { Link, useSearchParams } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,15 +15,20 @@ export function CommitteeAssignedPage(): JSX.Element {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10" data-testid="committee-assigned" aria-labelledby="assigned-heading">
       <h1 id="assigned-heading" className="text-2xl font-semibold">Komitet za certifikaciju</h1>
+      <p className="mt-2 text-sm" data-testid="chair-actions-not-implemented">Radnje predsjedavajućeg nisu provedene. Članstvo u komitetu nije imenovanje predsjedavajućeg.</p>
       <h2 className="mt-6 text-lg font-semibold">Dodijeljeni predmeti</h2>
       {(assigned.data ?? []).length === 0 ? (
         <p>Nema predmeta za prikaz.</p>
       ) : (
-        <ul>
+        <ul className="space-y-3">
           {(assigned.data ?? []).map((row) => (
             <li key={row.caseId} data-testid="assigned-case">
-              {row.caseId} — {row.phase}
-              {row.assigned ? " (dodijeljeno)" : ""}
+              <p>{row.caseId} — {row.phase}{row.assigned ? " (dodijeljeno)" : ""}</p>
+              <p className="mt-1 flex flex-wrap gap-3 text-sm">
+                <Link className="underline" to={`/dashboard/committee/review?case=${encodeURIComponent(row.caseId)}`}>Dosije</Link>
+                <Link className="underline" to={`/dashboard/committee/conflict?case=${encodeURIComponent(row.caseId)}`}>Sukob interesa</Link>
+                <Link className="underline" to={`/dashboard/committee/decision?case=${encodeURIComponent(row.caseId)}`}>Glas</Link>
+              </p>
             </li>
           ))}
         </ul>
@@ -32,7 +38,8 @@ export function CommitteeAssignedPage(): JSX.Element {
 }
 
 export function CommitteeReviewPage(): JSX.Element {
-  const [caseId, setCaseId] = useState("");
+  const [params] = useSearchParams();
+  const [caseId, setCaseId] = useState(() => params.get("case") ?? "");
   const [notice, setNotice] = useState<string | null>(null);
   const review = useMutation({
     mutationFn: () => fetchCommitteeCase(caseId),
@@ -68,7 +75,8 @@ export function CommitteeReviewPage(): JSX.Element {
 }
 
 export function CommitteeConflictPage(): JSX.Element {
-  const [caseId, setCaseId] = useState("");
+  const [params] = useSearchParams();
+  const [caseId, setCaseId] = useState(() => params.get("case") ?? "");
   const [statement, setStatement] = useState("");
   const [hasConflict, setHasConflict] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -102,7 +110,7 @@ export function CommitteeConflictPage(): JSX.Element {
           Izjava
           <textarea id="conflict-statement" className="mt-1 w-full border px-2 py-1" value={statement} onChange={(event) => setStatement(event.target.value)} required minLength={3} />
         </label>
-        <Button type="submit">Potpiši izjavu</Button>
+        <Button type="submit" data-testid="committee-conflict-submit">Potpiši izjavu</Button>
       </form>
       {notice ? <p role="status">{notice}</p> : null}
     </main>
@@ -110,7 +118,8 @@ export function CommitteeConflictPage(): JSX.Element {
 }
 
 export function CommitteeDecisionPage(): JSX.Element {
-  const [caseId, setCaseId] = useState("");
+  const [params] = useSearchParams();
+  const [caseId, setCaseId] = useState(() => params.get("case") ?? "");
   const [reasoning, setReasoning] = useState("");
   const [ballot, setBallot] = useState<"GRANT" | "DENY">("GRANT");
   const [notice, setNotice] = useState<string | null>(null);
@@ -146,7 +155,8 @@ export function CommitteeDecisionPage(): JSX.Element {
           Obrazloženje
           <textarea id="decision-reasoning" className="mt-1 w-full border px-2 py-1" value={reasoning} onChange={(event) => setReasoning(event.target.value)} required minLength={3} />
         </label>
-        <Button type="submit">Zapiši odluku</Button>
+        <Button type="submit" data-testid="committee-vote-submit">Zapiši odluku</Button>
+        <p className="text-sm" data-testid="chair-actions-not-implemented">Potvrda sastava i ovlasti predsjedavajućeg nisu provedene. Glas člana nije radnja predsjedavajućeg.</p>
       </form>
       {notice ? <p role="status">{notice}</p> : null}
     </main>

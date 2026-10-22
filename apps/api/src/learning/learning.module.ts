@@ -5,10 +5,11 @@ import { LearnerRolesGuard } from '../auth/learner-roles.guard';
 import { TenantModule } from '../tenant/tenant.module';
 import { LearningController } from './learning.controller';
 import { LearningService } from './learning.service';
+import { PublicCatalogController } from './public-catalog.controller';
 
 @Module({
   imports: [TenantModule, AuditModule],
-  controllers: [LearningController],
+  controllers: [LearningController, PublicCatalogController],
   providers: [LearningService, LearnerRolesGuard],
 })
 export class LearningModule {}

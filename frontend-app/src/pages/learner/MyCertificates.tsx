@@ -25,7 +25,7 @@ import {
   type MyCertificateItem,
   fetchMyCertificates,
 } from "@/lib/api-certificates";
-import { addPersonnelCpdRecord, downloadPersonnelCredential } from "@/lib/personnel-public";
+import { addPersonnelCpdRecord, downloadHolderCertificatePdf, downloadPersonnelCredential } from "@/lib/personnel-public";
 import {
   canDownloadPdf,
   issuedIsDistinctFromActive,
@@ -164,8 +164,12 @@ export default function MyCertificates(): JSX.Element {
       }
       setPdfBusyId(c.certificateId);
       try {
-        const url = c.pdfUrl?.trim() ? c.pdfUrl : await fetchMyCertificatePdfUrl(c.certificateId);
-        window.open(url, "_blank", "noopener,noreferrer");
+        if (c.certificateKind === "PERSONNEL") {
+          await downloadHolderCertificatePdf(c.certificateId, `${c.certificateNumber}.pdf`);
+        } else {
+          const url = c.pdfUrl?.trim() ? c.pdfUrl : await fetchMyCertificatePdfUrl(c.certificateId);
+          window.open(url, "_blank", "noopener,noreferrer");
+        }
       } catch {
         showToast("Preuzimanje PDF-a nije uspjelo — provjerite je li dokument generiran.");
       } finally {

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -22,7 +23,7 @@ import {
   type RequestWithPrincipal,
 } from '../auth/request-principal';
 import { ExamCommitteeRolesGuard, ExamStaffRolesGuard } from '../exam/exam-roles.guard';
-import { assertPublicRateLimit } from '../personnel/personnel-rules';
+import { assertPublicRateLimit, PersonnelRuleError } from '../personnel/personnel-rules';
 import { AccessDeniedError } from '../tenant/tenant-errors';
 import { CertificationFlowService } from './certification-flow.service';
 import {
@@ -59,7 +60,14 @@ function sourceIp(req: Request): string {
 
 /** Process-local window. Distributed rate limiting remains a production gap. */
 function limit(req: Request): void {
-  assertPublicRateLimit(sourceIp(req), Date.now());
+  try {
+    assertPublicRateLimit(sourceIp(req), Date.now());
+  } catch (error) {
+    if (error instanceof PersonnelRuleError && error.code === 'RATE_LIMIT') {
+      throw new HttpException({ message: 'RATE_LIMIT' }, 429);
+    }
+    throw error;
+  }
 }
 
 @Controller('staff/schemes/:schemeVersionId')

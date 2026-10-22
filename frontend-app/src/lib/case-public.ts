@@ -1,16 +1,11 @@
 import { api } from "@/lib/api";
 import { getConforaApiConfig, joinBaseUrlAndPath } from "@/lib/api/api-config";
 
-export type PublicCaseDocument = {
-  readonly kind: "EDUCATION" | "EXAM_PASS";
-  readonly number: string;
+export type PublicVerificationView = {
+  readonly status: string;
+  readonly documentType: string | null;
+  readonly issuedAt: string | null;
   readonly holderName: string | null;
-  readonly title: string;
-  readonly issuedAt: string;
-  readonly statement: string;
-  readonly professionalCertificate: false;
-  readonly participationSeconds?: number;
-  readonly passed?: boolean;
 };
 
 export type CommitteeCaseView = {
@@ -46,17 +41,17 @@ async function publicGet(path: string): Promise<Response> {
   });
 }
 
-export async function fetchPublicCaseDocument(number: string): Promise<
-  | { readonly kind: "ok"; readonly data: PublicCaseDocument }
-  | { readonly kind: "not_found" }
+export async function fetchPublicCaseDocument(verificationId: string): Promise<
+  | { readonly kind: "ok"; readonly data: PublicVerificationView }
   | { readonly kind: "rate_limited" }
   | { readonly kind: "error" }
 > {
-  const response = await publicGet(`/v1/public/documents/${encodeURIComponent(number.trim())}`);
-  if (response.status === 404) return { kind: "not_found" };
+  const response = await publicGet(`/v1/public/documents/${encodeURIComponent(verificationId.trim())}`);
   if (response.status === 429) return { kind: "rate_limited" };
   if (!response.ok) return { kind: "error" };
-  return { kind: "ok", data: (await response.json()) as PublicCaseDocument };
+  const data = (await response.json()) as PublicVerificationView;
+  if (typeof data?.status !== "string") return { kind: "error" };
+  return { kind: "ok", data };
 }
 
 export async function fetchMyCases(): Promise<readonly { caseId: string; path: string; phase: string; trainingGates: false }[]> {
@@ -89,14 +84,20 @@ export type MyCaseStatus = {
 export type EducationDocumentRow = {
   readonly documentId: string;
   readonly number: string;
+  readonly verificationId: string;
+  readonly nameConsent: boolean;
   readonly courseTitle: string;
+  readonly issuedAt: string;
 };
 
 export type ExamPassRow = {
   readonly attestationId: string;
   readonly number: string;
+  readonly verificationId: string;
+  readonly nameConsent: boolean;
   readonly examTitle: string;
   readonly state: string;
+  readonly passed: boolean;
 };
 
 export type AssignedCaseRow = {
@@ -113,6 +114,10 @@ export async function fetchEducationDocuments(): Promise<readonly EducationDocum
 export async function fetchExamPassDocuments(): Promise<readonly ExamPassRow[]> {
   const { data } = await api.get<ExamPassRow[]>("/v1/me/documents/exam-passes");
   return data;
+}
+
+export async function setDocumentNameConsent(verificationId: string, granted: boolean): Promise<void> {
+  await api.put(`/v1/me/documents/${encodeURIComponent(verificationId)}/name-consent`, { granted });
 }
 
 export async function fetchAssignedCases(): Promise<readonly AssignedCaseRow[]> {

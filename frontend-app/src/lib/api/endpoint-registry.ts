@@ -595,6 +595,8 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
     normalized.startsWith("/v1/committee/exam-passes/") ||
     normalized === "/v1/public/documents" ||
     normalized.startsWith("/v1/public/documents/") ||
+    normalized === "/v1/public/catalog" ||
+    normalized.startsWith("/v1/public/catalog/") ||
     normalized === "/v1/public/referees" ||
     normalized.startsWith("/v1/public/referees/") ||
     normalized.startsWith("/v1/staff/schemes/") ||

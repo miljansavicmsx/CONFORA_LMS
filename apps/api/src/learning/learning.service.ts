@@ -32,6 +32,14 @@ export class LearningService {
     return this.tenantPrisma.learning.getPublishedCourse(courseId).catch(mapLearningError);
   }
 
+  listPublicCatalog(areaCode?: string) {
+    return this.tenantPrisma.learning.listPublicPrograms(areaCode).catch(mapLearningError);
+  }
+
+  getPublicCatalogCourse(courseId: string) {
+    return this.tenantPrisma.learning.getPublicProgram(courseId).catch(mapLearningError);
+  }
+
   listEnrolments(actor: AuthenticatedActor) {
     return this.tenantPrisma.learning.listMyEnrolments(actor.userId).catch(mapLearningError);
   }
