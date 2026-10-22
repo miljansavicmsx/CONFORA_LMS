@@ -1,9 +1,42 @@
 /**
  * Exact production route inventory.
  * Equality is the check: a new route must be added here in Express registration order.
+ * The five browser routes below are the only additions to the previous 92.
+ * Each one names the job it does. A further route still fails until it has its own entry.
  */
+export const OIDC_BROWSER_ROUTES = [
+  {
+    route: 'GET /v1/auth/oidc/login',
+    reason:
+      'Starts Authorization Code + PKCE and keeps the verifier in the sealed transaction cookie.',
+  },
+  {
+    route: 'GET /v1/auth/oidc/callback',
+    reason:
+      'Exchanges the code and checks state, nonce, organization, and membership before setting the session cookie.',
+  },
+  {
+    route: 'POST /v1/auth/oidc/refresh',
+    reason:
+      'Rotates the server-held tokens for this cookie session and requires that session CSRF token.',
+  },
+  {
+    route: 'POST /v1/auth/oidc/logout',
+    reason:
+      'Revokes the refresh token and returns the end-session URL. It requires that session CSRF token.',
+  },
+  {
+    route: 'GET /v1/auth/session',
+    reason:
+      'Returns the signed-in person and the session CSRF token. It does not return access or refresh tokens.',
+  },
+] as const;
+
+export const PRIOR_PRODUCTION_ROUTE_COUNT = 92;
+
 export const PRODUCTION_ROUTE_INVENTORY = [
   'GET /v1/health',
+  ...OIDC_BROWSER_ROUTES.map((entry) => entry.route),
   'GET /v1/me/certification/applications',
   'GET /v1/me/certification/applications/:id',
   'GET /v1/me/learning/courses',
@@ -98,3 +131,25 @@ export const PRODUCTION_ROUTE_INVENTORY = [
 ] as const;
 
 export const PRODUCTION_ROUTE_COUNT = PRODUCTION_ROUTE_INVENTORY.length;
+
+export function justifiedProductionRouteCount(): number {
+  const reasons = new Set<string>();
+  const inventory = new Set<string>(PRODUCTION_ROUTE_INVENTORY);
+  for (const entry of OIDC_BROWSER_ROUTES) {
+    if (
+      entry.reason.trim().length < 40 ||
+      reasons.has(entry.reason) ||
+      !inventory.has(entry.route)
+    ) {
+      throw new Error(`browser route ${entry.route} needs its own reason in the inventory`);
+    }
+    reasons.add(entry.reason);
+  }
+  const expected = PRIOR_PRODUCTION_ROUTE_COUNT + OIDC_BROWSER_ROUTES.length;
+  if (PRODUCTION_ROUTE_INVENTORY.length !== expected) {
+    throw new Error(
+      `inventory length ${String(PRODUCTION_ROUTE_INVENTORY.length)} is not ${String(PRIOR_PRODUCTION_ROUTE_COUNT)} plus the ${String(OIDC_BROWSER_ROUTES.length)} justified browser routes`,
+    );
+  }
+  return expected;
+}

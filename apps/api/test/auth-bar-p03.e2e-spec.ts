@@ -11,7 +11,11 @@ import { AppModule } from '../src/app.module';
 import { AppController } from '../src/app.controller';
 import type { AuthenticatedActor } from '../src/auth/request-principal';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
-import { PRODUCTION_ROUTE_COUNT, PRODUCTION_ROUTE_INVENTORY } from './production-route-inventory';
+import {
+  justifiedProductionRouteCount,
+  PRODUCTION_ROUTE_COUNT,
+  PRODUCTION_ROUTE_INVENTORY,
+} from './production-route-inventory';
 
 const IMAGE =
   'pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b';
@@ -272,6 +276,6 @@ describe('BAR-P03 auth e2e', () => {
     // Equality stays strict; a missing or extra route fails.
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(92);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(justifiedProductionRouteCount());
   });
 });
