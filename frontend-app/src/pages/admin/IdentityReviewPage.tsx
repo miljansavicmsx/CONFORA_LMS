@@ -27,7 +27,6 @@ import {
   canPerformStaffIdentityReview,
   shouldLoadStaffIdentityQueue,
 } from "@/lib/staff-identity-review-access";
-import { extractRealmRolesFromToken } from "@/lib/jwt-payload";
 import type { DashboardOutletContext } from "@/pages/dashboard/dashboard-outlet-context";
 import { useAuthStore } from "@/stores/authStore";
 import { cn } from "@/lib/utils";
@@ -84,10 +83,10 @@ function queueItemToUserRow(item: StaffIdentityQueueItem, notes: string): UserRe
 
 export default function IdentityReviewPage(): JSX.Element {
   const { user } = useOutletContext<DashboardOutletContext>();
-  const accessToken = useAuthStore((s) => s.accessToken);
+  const roles = useAuthStore((s) => s.roles);
   const qc = useQueryClient();
 
-  const jwtRoles = useMemo(() => extractRealmRolesFromToken(accessToken), [accessToken]);
+  const jwtRoles = useMemo(() => [...roles], [roles]);
 
   const canPerformReview = useMemo(
     () =>

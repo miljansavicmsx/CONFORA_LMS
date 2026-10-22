@@ -6,9 +6,11 @@ import { createRoot } from "react-dom/client";
 import App from "@/App";
 import "@confora/ui/styles.css";
 import "@/index.css";
+import { purgePersistedAuthSecrets } from "@/lib/api/auth-token-provider";
 import { resolveInitialUiLocale } from "@/lib/locale-preference";
 import { warnNestAuthPilotMisconfiguration } from "@/lib/nest-auth-pilot";
 
+purgePersistedAuthSecrets();
 warnNestAuthPilotMisconfiguration();
 
 const appLocale = resolveInitialUiLocale();

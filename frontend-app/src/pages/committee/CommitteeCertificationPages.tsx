@@ -20,7 +20,7 @@ export function CommitteeAssignedPage(): JSX.Element {
       ) : (
         <ul>
           {(assigned.data ?? []).map((row) => (
-            <li key={row.caseId}>
+            <li key={row.caseId} data-testid="assigned-case">
               {row.caseId} — {row.phase}
               {row.assigned ? " (dodijeljeno)" : ""}
             </li>

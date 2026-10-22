@@ -49,7 +49,31 @@ function norm(ctx: IsoNavContext): string {
 
 function isLearnerPortalRole(ctx: IsoNavContext): boolean {
   const role = norm(ctx);
-  return role === "learner" || role === "candidate";
+  const groups = (ctx.cognitoGroups ?? []).map((value) => String(value).trim().toLowerCase());
+  const all = new Set([role, ...groups].filter(Boolean));
+  const learner = ["learner", "candidate", "usr_cand", "usr_cert"];
+  const staff = [
+    "com_cert",
+    "com_tech",
+    "com_imp",
+    "com_app",
+    "staff_sysadm",
+    "staff_dir",
+    "staff_trainadm",
+    "staff_aud",
+    "staff_roleadm",
+    "sme",
+    "examiner",
+    "invigilator",
+    "quality_manager",
+    "ai_security_manager",
+    "issuance_officer",
+    "lifecycle_officer",
+    "complaint_handler",
+  ];
+  const hasLearner = learner.some((value) => all.has(value));
+  const hasStaff = staff.some((value) => all.has(value));
+  return hasLearner && !hasStaff;
 }
 
 function showTechnicalCommitteeSidebar(ctx: IsoNavContext): boolean {

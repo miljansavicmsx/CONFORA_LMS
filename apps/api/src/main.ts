@@ -20,18 +20,31 @@ function resolvePort(value: string | undefined): number {
   return port;
 }
 
-async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('v1');
-  app.enableCors({
-    origin: [
+function corsOrigins(): string[] {
+  const configured = (process.env['OIDC_WEB_ORIGINS'] ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0);
+  return [
+    ...new Set([
       'http://localhost:3001',
       'http://127.0.0.1:3001',
       'http://localhost:4173',
       'http://127.0.0.1:4173',
-    ],
+      ...configured,
+    ]),
+  ];
+}
+
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('v1');
+  app.enableCors({
+    origin: corsOrigins(),
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
+    exposedHeaders: ['X-Confora-Session'],
   });
   app.useGlobalPipes(new ZodValidationPipe());
   app.enableShutdownHooks();

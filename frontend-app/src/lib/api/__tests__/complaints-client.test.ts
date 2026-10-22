@@ -418,7 +418,7 @@ describe("authenticated complaint request boundary (028D-2aS5E)", () => {
     httpClient.resetHttpClientForTests();
   });
 
-  it("sends Bearer Authorization on authenticated complaint submission", async () => {
+  it("does not attach a stored bearer token on complaint submission", async () => {
     const requests = installRecordingAdapter({
       complaint: {
         id: "uuid-auth-submit",
@@ -441,14 +441,16 @@ describe("authenticated complaint request boundary (028D-2aS5E)", () => {
     const request = requests[0]!;
     expect(request.url).toBe(CANONICAL_LEARNER_COMPLAINTS_PATH);
     expect(request.baseURL).toBe("http://nest.example.test");
-    expect(request.headers.get("Authorization")).toBe(`Bearer ${syntheticAccessToken}`);
+    expect(request.headers.get("Authorization")).toBeUndefined();
+    expect(request.withCredentials).toBe(true);
+    expect(localStorage.getItem(PERSISTED_AUTH_STORAGE_KEY)).toBeNull();
     const payload = JSON.parse(String(request.data)) as Record<string, unknown>;
     for (const field of browserIdentityFields) {
       expect(payload).not.toHaveProperty(field);
     }
   });
 
-  it("sends Bearer Authorization on authenticated learner complaint listing", async () => {
+  it("does not attach a stored bearer token on learner complaint listing", async () => {
     const requests = installRecordingAdapter({ items: [] });
 
     await listLearnerComplaints();
@@ -458,7 +460,8 @@ describe("authenticated complaint request boundary (028D-2aS5E)", () => {
     expect(request.method).toBe("get");
     expect(request.url).toBe(CANONICAL_LEARNER_COMPLAINTS_PATH);
     expect(request.baseURL).toBe("http://nest.example.test");
-    expect(request.headers.get("Authorization")).toBe(`Bearer ${syntheticAccessToken}`);
+    expect(request.headers.get("Authorization")).toBeUndefined();
+    expect(request.withCredentials).toBe(true);
     expect(request.data).toBeUndefined();
   });
 });

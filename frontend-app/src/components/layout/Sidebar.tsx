@@ -19,7 +19,6 @@ import { localizeSidebarSections } from "@/components/layout/localize-sidebar-se
 import type { SidebarNavItem, SidebarUser } from "@/components/layout/sidebar-nav-types";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import type { MePermissionsPayload } from "@/lib/permissions";
-import { extractRealmRolesFromToken } from "@/lib/jwt-payload";
 import { buildRoleAwarePilotSidebarSections, isNestAuthPilotActive } from "@/lib/nest-auth-pilot";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
@@ -179,7 +178,7 @@ export function Sidebar({
   const narrow = collapsed;
   const profileUser = useAuthStore((s) => s.user);
   const cognitoGroups = useAuthStore((s) => s.cognitoGroups);
-  const accessToken = useAuthStore((s) => s.accessToken);
+  const roles = useAuthStore((s) => s.roles);
 
   const isoCtx = useMemo(
     () => ({
@@ -192,7 +191,7 @@ export function Sidebar({
 
   const { workspace } = useWorkspaceContext();
 
-  const jwtRoles = useMemo(() => extractRealmRolesFromToken(accessToken), [accessToken]);
+  const jwtRoles = useMemo(() => [...roles], [roles]);
 
   const { t: tNav } = useTranslation("navigation");
 

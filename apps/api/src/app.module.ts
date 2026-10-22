@@ -13,6 +13,7 @@ import { PersonnelCertificateModule } from './personnel/personnel.module';
 import { LearningModule } from './learning/learning.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { MfaAssuranceGuard } from './auth/mfa-assurance.guard';
+import { OidcSessionMiddleware } from './auth/oidc-session.middleware';
 import { PrismaModule } from './prisma/prisma.module';
 import { ReportQueryModule } from './report-query/report-query.module';
 import { ReportsModule } from './reports/reports.module';
@@ -65,6 +66,6 @@ import { TenantModule } from './tenant/tenant.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(ClientTenantRejectionMiddleware).forRoutes('*');
+    consumer.apply(OidcSessionMiddleware, ClientTenantRejectionMiddleware).forRoutes('*');
   }
 }

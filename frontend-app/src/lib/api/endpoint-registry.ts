@@ -45,7 +45,7 @@ export const ENDPOINT_DEFINITIONS: readonly EndpointDefinition[] = [
     nestPath: "/auth/login",
     hybridOwner: "legacy",
     risk: "critical",
-    todo: "P0-B Keycloak cutover before switching hybridOwner to nest",
+    todo: "Retired password login. Browser sign-in is GET /v1/auth/oidc/login.",
   },
   {
     id: "auth.refresh",
@@ -573,6 +573,12 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
     return "nest";
   }
   if (normalized === "/v1/me/learning" || normalized.startsWith("/v1/me/learning/")) {
+    return "nest";
+  }
+  if (normalized === "/v1/auth" || normalized.startsWith("/v1/auth/")) {
+    return "nest";
+  }
+  if (normalized === "/v1/me/certification" || normalized.startsWith("/v1/me/certification/")) {
     return "nest";
   }
   if (

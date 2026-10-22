@@ -18,6 +18,8 @@ import { IdentityReviewGuard } from "@/pages/dashboard/IdentityReviewGuard";
 import { IsoRouteGuard } from "@/pages/dashboard/IsoRouteGuard";
 import { StaffAppealsComplaintsGuard } from "@/pages/dashboard/StaffAppealsComplaintsGuard";
 import Login from "@/pages/Login";
+import UnauthorizedPage from "@/pages/UnauthorizedPage";
+import SessionProfilePage from "@/pages/dashboard/SessionProfilePage";
 import AppealsComplaintsPage from "@/pages/learner/AppealsComplaintsPage";
 import CertificationApplicationsPage from "@/pages/learner/CertificationApplicationsPage";
 import ExamRegistrationPage from "@/pages/learner/ExamRegistrationPage";
@@ -75,6 +77,7 @@ export default function App(): JSX.Element {
           <Suspense fallback={null}>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
               <Route path="/verify" element={<VerifyLookupPage />} />
               <Route path="/verify/:verificationHash" element={<VerifyCertificate />} />
               <Route path="/registry" element={<PublicRegistryPage />} />
@@ -83,6 +86,7 @@ export default function App(): JSX.Element {
               <Route path="/courses/:courseId" element={<CourseDetailPage />} />
               <Route path="/dashboard" element={<DashboardLayoutRoute />}>
                 <Route index element={<DashboardHome />} />
+                <Route path="profil" element={<SessionProfilePage />} />
                 <Route path="learner/education" element={<LearnerEducationPage />} />
                 <Route path="learner/courses/:enrolmentId" element={<CoursePlayerPage />} />
                 <Route path="learner/statistics" element={<LearnerStatisticsPage />} />
