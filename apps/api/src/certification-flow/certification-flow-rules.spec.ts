@@ -8,6 +8,7 @@ import {
   EXAM_PASS_STATEMENT,
   INVALID_PUBLIC_VERIFICATION,
   levelChosenByCommittee,
+  liveBallotCounts,
   presentPublicVerification,
   publicVerificationPdfLines,
   requirementsSatisfiedByReferee,
@@ -141,6 +142,19 @@ describe('case workflow rules', () => {
     expect(voteResult({ grants: 2, denies: 1, quorum: 2 })).toBe('GRANT');
     expect(voteResult({ grants: 1, denies: 1, quorum: 2 })).toBe('PENDING');
     expect(voteResult({ grants: 0, denies: 2, quorum: 2 })).toBe('DENY');
+  });
+
+  it('never counts a voided vote or a vote from another composition', () => {
+    const counts = liveBallotCounts(
+      [
+        { ballot: 'DENY', voidedAt: new Date('2026-10-21T00:00:00.000Z'), compositionVersion: 2 },
+        { ballot: 'DENY', voidedAt: null, compositionVersion: 1 },
+        { ballot: 'GRANT', voidedAt: null, compositionVersion: 2 },
+      ],
+      2,
+    );
+    expect(counts).toEqual({ grants: 1, denies: 0 });
+    expect(voteResult({ ...counts, quorum: 1 })).toBe('GRANT');
   });
 
   it('shows a public document without a name until consent, and consent does not change validity', () => {

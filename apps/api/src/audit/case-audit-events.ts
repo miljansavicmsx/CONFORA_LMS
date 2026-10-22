@@ -33,6 +33,36 @@ export const CASE_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
     metadataSchema: CASE_METADATA,
   },
   {
+    eventType: 'COMMITTEE_SEAT_CONFIRMED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'COMMITTEE_COMPOSITION_CHANGED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'COMMITTEE_COMPOSITION_PROPOSED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'COMMITTEE_COMPOSITION_REVIEW_OPENED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'COMMITTEE_COMPOSITION_REVIEW_DECIDED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'SCHEME_COMMITTEE_AUTHORITY_GRANTED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
     eventType: 'COMMITTEE_VOTE_RECORDED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: CASE_METADATA,
@@ -44,6 +74,11 @@ export const CASE_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
   },
   {
     eventType: 'AI_SUGGESTION_STORED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: CASE_METADATA,
+  },
+  {
+    eventType: 'CONFLICT_SIGNED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: CASE_METADATA,
   },

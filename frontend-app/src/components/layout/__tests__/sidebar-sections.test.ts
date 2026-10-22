@@ -18,6 +18,9 @@ describe("buildSidebarSections minimum bridge", () => {
       "/dashboard/certification/applications",
       "/dashboard/my-certificates",
       "/dashboard/my-recertifications",
+      "/dashboard/certification/applications",
+      "/dashboard/certification/documents",
+      "/dashboard/certification/case-status",
       "/dashboard/support",
     ]);
   });
@@ -43,6 +46,10 @@ describe("buildSidebarSections minimum bridge", () => {
     expect(certification).toContain("/dashboard/committee/pilot-applications");
     expect(certification).toContain("/dashboard/admin/recertification");
     expect(certification).toContain("/dashboard/committee/exam-queue");
+    expect(certification).toContain("/dashboard/committee/assigned");
+    expect(certification).toContain("/dashboard/committee/review");
+    expect(certification).toContain("/dashboard/committee/conflict");
+    expect(certification).toContain("/dashboard/committee/decision");
     expect(certification).not.toContain("/dashboard/committee/decisions");
     expect(certification).not.toContain("/dashboard/iso/decisions");
   });

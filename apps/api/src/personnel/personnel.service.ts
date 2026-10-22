@@ -50,23 +50,32 @@ export class PersonnelCertificateService {
   ) {
     const now = new Date();
     return this.tenantPrisma.personnel
-      .issue({ ...body, actor: this.actor(actor), now })
-      .then(async (result) => {
-        await this.audit.append(actor, {
-          idempotencyKey: randomUUID(),
-          eventType: 'PERSONNEL_CERTIFICATE_ISSUED',
-          outcome: 'SUCCESS',
-          occurredAt: now,
-          resourceType: 'Credential',
-          resourceId: result.credentialId,
-          metadata: {
-            credentialId: result.credentialId,
-            decisionId: result.decisionId,
-            certificateNumber: result.certificateNumber,
-            registryListed: result.registryListed,
-          },
-        });
-        return result;
+      .issue({
+        ...body,
+        actor: this.actor(actor),
+        now,
+        writeCertificateAudit: async (tx, result) => {
+          await this.audit.executeInTransaction(
+            actor,
+            async (ops) => {
+              await ops.append({
+                idempotencyKey: randomUUID(),
+                eventType: 'PERSONNEL_CERTIFICATE_ISSUED',
+                outcome: 'SUCCESS',
+                occurredAt: now,
+                resourceType: 'Credential',
+                resourceId: result.credentialId,
+                metadata: {
+                  credentialId: result.credentialId,
+                  decisionId: result.decisionId,
+                  certificateNumber: result.certificateNumber,
+                  registryListed: result.registryListed,
+                },
+              });
+            },
+            tx,
+          );
+        },
       })
       .catch(fail);
   }

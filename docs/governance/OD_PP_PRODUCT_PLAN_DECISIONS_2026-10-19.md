@@ -1,7 +1,7 @@
 # Odluke vlasnika — plan proizvoda CONFORA
 
 **Document ID:** CON-GOV-OD-PP-2026-10-19
-**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20; OD-PP-15 … OD-PP-18 accepted 2026-10-20; OD-PP-19 … OD-PP-25 accepted 2026-10-21
+**Status:** Recorded 2026-10-19; OD-PP-12 confirmed 2026-10-20; OD-PP-15 … OD-PP-18 accepted 2026-10-20; OD-PP-19 … OD-PP-25 accepted 2026-10-21; OD-PP-26 … OD-PP-29 accepted 2026-10-21; OD-PP-30 OWNER_APPROVED, FINAL 2026-10-21
 **Owner:** Miljan Savić, Repository Owner
 **Authority level:** Governance Hierarchy Level 1
 **Companion:** [OWNER_DECISION_REGISTER.md](./OWNER_DECISION_REGISTER.md) Part F (OD-PP-01 … OD-PP-30)
@@ -567,4 +567,72 @@ Nadzornik dodijeljen sesiji upisuje vrstu isprave. Zapis ne sadrži broj isprave
 | Residual risk   | Produkcijski provajder nije izabran.                                                                                                                                                                    |
 | Dependencies    | OD-PP-21, OD-PP-22                                                                                                                                                                                      |
 | Exit criteria   | Prijedlog ne mijenja fazu, nivo ni certifikat                                                                                                                                                           |
-| Supersession    | —                                                                                                                                                                                                       |
+| Supersession    | OD-PP-27 određuje prolaz.                                                                                                                                                                               |
+
+---
+
+## OD-PP-26 — Meniji po ulozi
+
+| Field           | Value                                                                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                      |
+| Status          | ACCEPTED                                                                                                                                                        |
+| Approved option | „Moja certifikacija” za kandidata i „Komitet za certifikaciju” za člana komiteta. Izjava o sukobu mora biti potpisana prije uvida i odluke. RBAC je na serveru. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                  |
+| Rationale       | Skriveni meni nije kontrola pristupa.                                                                                                                           |
+| Scope           | Navigacija i čuvari                                                                                                                                             |
+| Residual risk   | Pristanak za javno ime uz EDU/EXM ostaje otvoren.                                                                                                               |
+| Dependencies    | OD-PP-19, OD-PP-22                                                                                                                                              |
+| Exit criteria   | Zabranjena uloga dobija 403                                                                                                                                     |
+| Supersession    | —                                                                                                                                                               |
+
+---
+
+## OD-PP-27 — CONFORA AI Gateway
+
+| Field           | Value                                                                                                                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                                                                                                                         |
+| Status          | ACCEPTED                                                                                                                                                                                                                                                                           |
+| Approved option | OpenAI je primarni provajder iza jednog prolaza. Moduli ne zovu provajdera. Audit bilježi ko, svrhu, model, kategoriju, jedinice i trošak. Allowlist, budžet i ljudska provjera su obavezni. AI ne odlučuje (ISO/IEC 17024:2026, 6.5). Stub je podrazumijevan. Ključ nije povezan. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                                                                     |
+| Rationale       | Jedan prolaz čini upotrebu vidljivom.                                                                                                                                                                                                                                              |
+| Scope           | AI gateway                                                                                                                                                                                                                                                                         |
+| Residual risk   | Ključ i AIIA nisu uključeni.                                                                                                                                                                                                                                                       |
+| Dependencies    | OD-PP-25                                                                                                                                                                                                                                                                           |
+| Exit criteria   | Odbijena upotreba je u auditu i ne zove provajdera                                                                                                                                                                                                                                 |
+| Supersession    | Sužava OD-PP-25 na imenovani prolaz.                                                                                                                                                                                                                                               |
+
+---
+
+## OD-PP-28 — Obavijesti
+
+| Field           | Value                                                                                                                                                                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                                                                              |
+| Status          | ACCEPTED                                                                                                                                                                                                                                |
+| Approved option | SES adapter i obavijest u aplikaciji idu kroz red, s ponavljanjem, zapisom ishoda i kukom za bounce i complaint. Podsjetnici pokrivaju istek, recertifikaciju, ispite i naknade. SPF, DKIM i DMARC su potrebni. Stub je podrazumijevan. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                                                                          |
+| Rationale       | Ishod slanja je dokaz.                                                                                                                                                                                                                  |
+| Scope           | Red obavijesti                                                                                                                                                                                                                          |
+| Residual risk   | DNS i SES identitet nisu uključeni. Prije SES-a potreban je SNS webhook s provjerom potpisa.                                                                                                                                            |
+| Dependencies    | OD-PP-14                                                                                                                                                                                                                                |
+| Exit criteria   | Red bilježi ishod, a podsjetnik ne mijenja status certifikata                                                                                                                                                                           |
+| Supersession    | —                                                                                                                                                                                                                                       |
+
+---
+
+## OD-PP-29 — Godišnja naknada
+
+| Field           | Value                                                                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date            | 2026-10-21                                                                                                                                                                    |
+| Status          | ACCEPTED                                                                                                                                                                      |
+| Approved option | Predloženo je 90 EUR godišnje, podesivo po šemi. Prva godina je u cijeni početne certifikacije. Recertifikacija je zasebna. Neplaćanje ne povlači certifikat; otvara predmet. |
+| Owner           | Miljan Savić, Repository Owner                                                                                                                                                |
+| Rationale       | Naknada nije odluka o certifikaciji.                                                                                                                                          |
+| Scope           | Cjenovnik šeme i predmet naknade                                                                                                                                              |
+| Residual risk   | Platni provajder nije povezan.                                                                                                                                                |
+| Dependencies    | OD-PP-14, OD-PP-23                                                                                                                                                            |
+| Exit criteria   | Životni ciklus certifikata ostaje neizmijenjen kad se otvori predmet neplaćanja                                                                                               |
+| Supersession    | Neplaćanje ne suspenduje i ne povlači certifikat samo od sebe.                                                                                                                |

@@ -137,6 +137,14 @@ export function collectTaggedSidebarSections(ctx: IsoNavContext): TaggedSidebarS
       ],
     });
     addWorkspace(tagged, "learning", {
+      titleKey: "myCertification",
+      items: [
+        { to: "/dashboard/certification/applications", labelKey: "certApplications", icon: ClipboardList, end: false },
+        { to: "/dashboard/certification/documents", labelKey: "myDocuments", icon: FolderKanban, end: false },
+        { to: "/dashboard/certification/case-status", labelKey: "caseStatus", icon: ClipboardCheck, end: false },
+      ],
+    });
+    addWorkspace(tagged, "learning", {
       titleKey: "service",
       items: [{ to: "/dashboard/support", labelKey: "supportContact", icon: LifeBuoy, end: false }],
     });
@@ -197,6 +205,18 @@ export function collectTaggedSidebarSections(ctx: IsoNavContext): TaggedSidebarS
       items.push({ to: "/dashboard/iso/reports", labelKey: "recertificationOverview", icon: ScrollText, end: false });
     }
     addWorkspace(tagged, "governance", { titleKey, items });
+  }
+
+  if (isCertificationCommitteeMember(ctx)) {
+    addWorkspace(tagged, "governance", {
+      titleKey: "certificationCommitteeMenu",
+      items: [
+        { to: "/dashboard/committee/assigned", labelKey: "assignedCases", icon: ClipboardList, end: true },
+        { to: "/dashboard/committee/review", labelKey: "documentReview", icon: FolderKanban, end: false },
+        { to: "/dashboard/committee/conflict", labelKey: "conflictDeclaration", icon: ShieldCheck, end: false },
+        { to: "/dashboard/committee/decision", labelKey: "committeeDecision", icon: ClipboardCheck, end: true },
+      ],
+    });
   }
 
   if (showAppealsCommitteeSidebar(ctx)) {

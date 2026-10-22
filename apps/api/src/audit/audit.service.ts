@@ -31,7 +31,12 @@ import {
 import { AuditHashService } from './audit-hash.service';
 import { buildIdempotencyFingerprint, fingerprintsEqual } from './audit-idempotency';
 import { waitForAuditRetry } from './audit-retry';
-import { AuditPersistenceApi, AuditRepository, type AuditEventRow } from './audit.repository';
+import {
+  AuditPersistenceApi,
+  AuditRepository,
+  type AuditEventRow,
+  type AuditWriteClient,
+} from './audit.repository';
 import { canonicalizeMetadata } from './audit-canonicalizer';
 import {
   enforceResourceTypePolicy,
@@ -129,12 +134,25 @@ export class AuditService {
     return this.executeInTransaction(actor, async (ops) => ops.append(input));
   }
 
+  /**
+   * `joinedTransaction` appends inside a transaction the caller already opened.
+   * A failure propagates so that transaction rolls back. The public method list
+   * stays append and executeInTransaction.
+   */
   async executeInTransaction<T>(
     actor: AuthenticatedActor,
     work: (ops: AuditTransactionOps) => Promise<T>,
+    joinedTransaction?: AuditWriteClient,
   ): Promise<T> {
     this.assertActor(actor);
     this.assertTenantAgreement(actor);
+    if (joinedTransaction) {
+      const ops: AuditTransactionOps = {
+        append: (rawInput) =>
+          this.appendWithin(new AuditPersistenceApi(joinedTransaction), actor, rawInput),
+      };
+      return work(ops);
+    }
 
     return this.withSerializableRetry(async () =>
       this.repository.runSerializableTransaction(async (api) => {

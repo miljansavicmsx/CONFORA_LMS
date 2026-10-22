@@ -41,6 +41,7 @@ import {
   RefereeAssessmentDto,
   RefereeRequestDto,
   RefereeResponseDto,
+  ConflictDeclarationDto,
   VoteDto,
 } from './dto/flow.dto';
 
@@ -81,6 +82,15 @@ export class SchemeCaseStaffController {
     @Body() body: DecisionMakerDto,
     @Req() req: RequestWithPrincipal,
   ) {
+    if (body.kind) {
+      return this.flow.grantSchemeAuthority(actor(req), schemeVersionId, {
+        userId: body.userId,
+        kind: body.kind,
+        documentRef: body.documentRef ?? body.competenceNote,
+        validFrom: body.authorisedFrom,
+        validUntil: body.authorisedUntil,
+      });
+    }
     return this.flow.saveDecisionMaker(actor(req), schemeVersionId, body);
   }
 
@@ -190,6 +200,11 @@ export class LearnerDocumentController {
 export class CommitteeCaseController {
   constructor(private readonly flow: CertificationFlowService) {}
 
+  @Get()
+  list(@Req() req: RequestWithPrincipal) {
+    return this.flow.listCommittee(actor(req));
+  }
+
   @Get(':caseId')
   one(@Param('caseId', ParseUUIDPipe) caseId: string, @Req() req: RequestWithPrincipal) {
     return this.flow.committeeOne(actor(req), caseId);
@@ -201,7 +216,32 @@ export class CommitteeCaseController {
     @Body() body: ProposeDto,
     @Req() req: RequestWithPrincipal,
   ) {
-    return this.flow.propose(actor(req), caseId, body.declaredConflictUserIds);
+    if (
+      body.requestId &&
+      body.grounds &&
+      body.recordedCoiReview &&
+      body.competenceReview &&
+      body.priorVoteImpact
+    ) {
+      return this.flow.approveComposition(actor(req), caseId, {
+        requestId: body.requestId,
+        grounds: body.grounds,
+        recordedCoiReview: body.recordedCoiReview,
+        competenceReview: body.competenceReview,
+        priorVoteImpact: body.priorVoteImpact,
+        ...(body.requestedSide ? { requestedSide: body.requestedSide } : {}),
+      });
+    }
+    if (body.reviewAction === 'OPEN' && body.statement) {
+      return this.flow.openIssuedReview(actor(req), caseId, body.statement);
+    }
+    if (body.reviewAction === 'DECIDE' && body.reviewId && body.outcome && body.rationale) {
+      return this.flow.decideIssuedReview(actor(req), caseId, body.reviewId, {
+        outcome: body.outcome,
+        rationale: body.rationale,
+      });
+    }
+    return this.flow.propose(actor(req), caseId, body.reason ?? '', body.requestedSide);
   }
 
   @Post(':caseId/confirm')
@@ -247,6 +287,15 @@ export class CommitteeCaseController {
     @Req() req: RequestWithPrincipal,
   ) {
     return this.flow.authorize(actor(req), caseId, body);
+  }
+
+  @Post(':caseId/conflict-declaration')
+  conflict(
+    @Param('caseId', ParseUUIDPipe) caseId: string,
+    @Body() body: ConflictDeclarationDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.flow.declareConflict(actor(req), caseId, body);
   }
 }
 

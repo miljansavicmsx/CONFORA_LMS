@@ -124,6 +124,15 @@ model Tenant {
   committeeAssessments            CommitteeAssessment[]
   issuanceAuthorizations          IssuanceAuthorization[]
   aiCaseSuggestions               AiCaseSuggestion[]
+  committeeConflictDeclarations   CommitteeConflictDeclaration[]
+  schemeCommitteeAuthorities      SchemeCommitteeAuthority[]
+  committeeCompositionRequests    CommitteeCompositionRequest[]
+  certificationBodyReviews        CertificationBodyReview[]
+  tenantAiBudgets                 TenantAiBudget[]
+  noticeJobs                      NoticeJob[]
+  inAppNotices                    InAppNotice[]
+  schemeAnnualFees                SchemeAnnualFee[]
+  annualFeeObligations            AnnualFeeObligation[]
   publicDocumentAccessLogs        PublicDocumentAccessLog[]
 }
 
@@ -195,6 +204,17 @@ model User {
   committeeProposalsAsMember         CommitteeProposal[]                @relation("CommitteeProposalMember")
   committeeAssessments               CommitteeAssessment[]
   issuanceAuthorizations             IssuanceAuthorization[]
+  conflictDeclarations               CommitteeConflictDeclaration[] @relation("ConflictDeclarationSubject")
+  recordedConflictDeclarations       CommitteeConflictDeclaration[] @relation("ConflictDeclarationRecorder")
+  schemeCommitteeAuthoritiesHeld     SchemeCommitteeAuthority[]     @relation("SchemeCommitteeAuthorityHolder")
+  schemeCommitteeAuthoritiesGranted  SchemeCommitteeAuthority[]     @relation("SchemeCommitteeAuthorityGrantor")
+  compositionRequestsProposed        CommitteeCompositionRequest[]  @relation("CompositionRequestProposer")
+  compositionRequestsApproved        CommitteeCompositionRequest[]  @relation("CompositionRequestApprover")
+  certificationReviewsOpened         CertificationBodyReview[]      @relation("CertificationReviewOpener")
+  certificationReviewsDecided        CertificationBodyReview[]      @relation("CertificationReviewDecider")
+  noticeJobs                         NoticeJob[]
+  inAppNotices                       InAppNotice[]
+  annualFeeObligations               AnnualFeeObligation[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -1299,6 +1319,7 @@ model CertificationScheme {
   tenant   Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   versions CertificationSchemeVersion[]
   examItems SchemeExamItem[]
+  committeeAuthorities SchemeCommitteeAuthority[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, code])
@@ -1338,6 +1359,8 @@ model CertificationSchemeVersion {
   decisionMakers         SchemeDecisionMaker[]
   caseRule               SchemeCaseRule?
   professionalCases      ProfessionalCase[]
+  annualFee              SchemeAnnualFee?
+  annualFeeObligations   AnnualFeeObligation[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, schemeId, versionLabel])
@@ -1496,6 +1519,7 @@ model Credential {
   verificationLogs     VerificationLog[]
   recertificationCases RecertificationCase[]
   successorOutcomes    RecertificationOutcome[]   @relation("SuccessorCredential")
+  annualFeeObligations AnnualFeeObligation[]
 
   @@unique([tenantId, id])
   @@index([tenantId, holderUserId, lifecycle])
@@ -2327,7 +2351,7 @@ model CertificationExamResult {
 
   tenant   Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   session  CertificationExamSession   @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Restrict)
-  decision ExamCertificationDecision?
+  decisions ExamCertificationDecision[]
   examPass ExamPassAttestation?
 
   @@unique([tenantId, id])
@@ -2344,6 +2368,8 @@ model ExamCertificationDecision {
   trainerOfCandidate     Boolean
   independentOfTraining  Boolean
   decidedAt              DateTime                         @db.Timestamptz(3)
+  supersededAt           DateTime?                        @db.Timestamptz(3)
+  supersedeReason        String?                          @db.VarChar(64)
   createdAt              DateTime                         @default(now()) @db.Timestamptz(3)
 
   tenant  Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
@@ -2351,8 +2377,10 @@ model ExamCertificationDecision {
   decider User                    @relation(fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
   personnelIssue ExamPersonnelCredentialLink?
 
+  /// Protected partial unique index ExamCertificationDecision_live_result_key
+  /// WHERE "supersededAt" IS NULL. A later migration must not DROP INDEX it.
   @@unique([tenantId, id])
-  @@unique([tenantId, resultId])
+  @@index([tenantId, resultId])
   @@index([tenantId, decidedByUserId])
 }
 
@@ -2616,6 +2644,9 @@ model ProfessionalCase {
   experienceMonths           Int                      @default(0)
   computedLevelCode          String?                  @db.VarChar(32)
   examResultId               String?                  @db.Uuid
+  compositionVersion         Int                      @default(1)
+  /// Optimistic case version. Issuance updates it only while the phase and this value still match.
+  caseVersion                Int                      @default(1)
   createdAt                  DateTime                 @default(now()) @db.Timestamptz(3)
   updatedAt                  DateTime                 @updatedAt @db.Timestamptz(3)
 
@@ -2628,6 +2659,9 @@ model ProfessionalCase {
   assessments   CommitteeAssessment[]
   authorization IssuanceAuthorization?
   suggestions   AiCaseSuggestion[]
+  conflictDeclarations CommitteeConflictDeclaration[]
+  compositionRequests CommitteeCompositionRequest[]
+  bodyReviews CertificationBodyReview[]
 
   @@unique([tenantId, id])
   @@index([tenantId, applicantUserId, phase])
@@ -2759,6 +2793,8 @@ model CommitteeProposal {
   state              CommitteeSlotState
   exclusionReason    String?             @db.VarChar(64)
   confirmedByUserId  String?             @db.Uuid
+  /// Composition version this confirmation belongs to. An older confirmation cannot outlive that version.
+  compositionVersion Int                 @default(1)
   createdAt          DateTime            @default(now()) @db.Timestamptz(3)
 
   tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
@@ -2776,14 +2812,21 @@ model CommitteeAssessment {
   memberUserId String           @db.Uuid
   ballot       CommitteeBallot
   reasoning    String           @db.Text
+  compositionVersion Int       @default(1)
+  voidedAt     DateTime?        @db.Timestamptz(3)
+  voidReason   String?          @db.VarChar(64)
   createdAt    DateTime         @default(now()) @db.Timestamptz(3)
 
   tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
   case   ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
   member User             @relation(fields: [tenantId, memberUserId], references: [tenantId, id], onDelete: Restrict)
 
+  /// Protected partial unique indexes. Prisma 6 cannot declare them.
+  /// CommitteeAssessment_one_live_vote_key WHERE "voidedAt" IS NULL
+  /// CommitteeAssessment_live_vote_per_version_key WHERE "voidedAt" IS NULL
+  /// A later migration must not DROP INDEX these names.
   @@unique([tenantId, id])
-  @@unique([tenantId, caseId, memberUserId])
+  @@index([tenantId, caseId, memberUserId])
 }
 
 model IssuanceAuthorization {
@@ -2818,4 +2861,268 @@ model AiCaseSuggestion {
 
   @@unique([tenantId, id])
   @@index([tenantId, caseId])
+}
+
+/// Append-only conflict history. The latest row for a member is the effective declaration.
+model CommitteeConflictDeclaration {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid
+  caseId           String   @db.Uuid
+  userId           String   @db.Uuid
+  recordedByUserId String   @db.Uuid
+  hasConflict      Boolean
+  statement        String   @db.Text
+  signedAt         DateTime @db.Timestamptz(3)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case       ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  member     User             @relation("ConflictDeclarationSubject", fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  recordedBy User             @relation("ConflictDeclarationRecorder", fields: [tenantId, recordedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId, userId, signedAt])
+}
+
+enum SchemeCommitteeAuthorityKind {
+  COMMITTEE_CHAIR
+  SCHEME_COMMITTEE_OVERSIGHT
+  CERTIFICATION_BODY_DEPUTY
+}
+
+enum CommitteeOfficeSide {
+  CHAIR
+  OVERSIGHT
+}
+
+enum CompositionRequestStatus {
+  PENDING
+  APPLIED
+}
+
+enum CertificationReviewStatus {
+  OPEN
+  DECIDED
+}
+
+/// Documented scheme authority. The QUALITY_MANAGER role alone does not grant oversight.
+model SchemeCommitteeAuthority {
+  id              String                       @id @default(uuid()) @db.Uuid
+  tenantId        String                       @db.Uuid
+  schemeId        String                       @db.Uuid
+  userId          String                       @db.Uuid
+  kind            SchemeCommitteeAuthorityKind
+  documentRef     String                       @db.Text
+  validFrom       DateTime                     @db.Timestamptz(3)
+  validUntil      DateTime                     @db.Timestamptz(3)
+  grantedByUserId String                       @db.Uuid
+  createdAt       DateTime                     @default(now()) @db.Timestamptz(3)
+
+  tenant    Tenant               @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  scheme    CertificationScheme  @relation(fields: [tenantId, schemeId], references: [tenantId, id], onDelete: Restrict)
+  holder    User                 @relation("SchemeCommitteeAuthorityHolder", fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  grantor   User                 @relation("SchemeCommitteeAuthorityGrantor", fields: [tenantId, grantedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, schemeId, kind])
+}
+
+/// A composition change has no effect until a different authorized person approves it.
+model CommitteeCompositionRequest {
+  id                 String                   @id @default(uuid()) @db.Uuid
+  tenantId           String                   @db.Uuid
+  caseId             String                   @db.Uuid
+  proposedByUserId   String                   @db.Uuid
+  proposerSide       CommitteeOfficeSide
+  reason             String                   @db.Text
+  desiredKey         String                   @db.Text
+  status             CompositionRequestStatus @default(PENDING)
+  grounds            String?                  @db.Text
+  recordedCoiReview  String?                  @db.Text
+  competenceReview   String?                  @db.Text
+  priorVoteImpact    String?                  @db.Text
+  approvedByUserId   String?                  @db.Uuid
+  approverSide       CommitteeOfficeSide?
+  proposedAt         DateTime                 @db.Timestamptz(3)
+  approvedAt         DateTime?                @db.Timestamptz(3)
+  createdAt          DateTime                 @default(now()) @db.Timestamptz(3)
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case     ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  proposer User             @relation("CompositionRequestProposer", fields: [tenantId, proposedByUserId], references: [tenantId, id], onDelete: Restrict)
+  approver User?            @relation("CompositionRequestApprover", fields: [tenantId, approvedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId, status])
+}
+
+/// Required when a certificate is already issued. It does not withdraw or delete the decision.
+model CertificationBodyReview {
+  id               String                     @id @default(uuid()) @db.Uuid
+  tenantId         String                     @db.Uuid
+  caseId           String                     @db.Uuid
+  credentialId     String?                    @db.Uuid
+  status           CertificationReviewStatus  @default(OPEN)
+  statement        String                     @db.Text
+  outcome          String?                    @db.VarChar(64)
+  rationale        String?                    @db.Text
+  openedByUserId   String                     @db.Uuid
+  /// Side that opened the review. A decision requires the other side.
+  openedSide       CommitteeOfficeSide?
+  decidedByUserId  String?                    @db.Uuid
+  openedAt         DateTime                   @db.Timestamptz(3)
+  decidedAt        DateTime?                  @db.Timestamptz(3)
+  createdAt        DateTime                   @default(now()) @db.Timestamptz(3)
+
+  tenant  Tenant           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  case    ProfessionalCase @relation(fields: [tenantId, caseId], references: [tenantId, id], onDelete: Restrict)
+  opener  User             @relation("CertificationReviewOpener", fields: [tenantId, openedByUserId], references: [tenantId, id], onDelete: Restrict)
+  decider User?            @relation("CertificationReviewDecider", fields: [tenantId, decidedByUserId], references: [tenantId, id], onDelete: Restrict)
+
+  /// Protected partial unique index CertificationBodyReview_one_open_key
+  /// WHERE "status" = 'OPEN'. A later migration must not DROP INDEX it.
+  @@unique([tenantId, id])
+  @@index([tenantId, caseId, status])
+}
+
+model TenantAiBudget {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid
+  periodKey      String   @db.VarChar(7)
+  unitLimit      Int
+  unitsUsed      Int      @default(0)
+  costLimitMinor Int
+  costUsedMinor  Int      @default(0)
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, periodKey])
+}
+
+enum NoticeChannel {
+  EMAIL
+  IN_APP
+}
+
+enum NoticeJobStatus {
+  QUEUED
+  SENDING
+  SENT
+  FAILED
+  BOUNCED
+  COMPLAINT
+}
+
+enum NoticeKind {
+  CERTIFICATE_EXPIRY
+  RECERTIFICATION
+  EXAM
+  FEE
+  GENERAL
+}
+
+model NoticeJob {
+  id              String          @id @default(uuid()) @db.Uuid
+  tenantId        String          @db.Uuid
+  recipientUserId String          @db.Uuid
+  channel         NoticeChannel
+  kind            NoticeKind
+  referenceId     String          @db.VarChar(64)
+  toAddress       String          @db.VarChar(256)
+  subject         String          @db.VarChar(256)
+  body            String          @db.Text
+  status          NoticeJobStatus @default(QUEUED)
+  attempts        Int             @default(0)
+  maxAttempts     Int             @default(3)
+  nextAttemptAt   DateTime        @db.Timestamptz(3)
+  lastError       String?         @db.VarChar(512)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+
+  tenant    Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  recipient User         @relation(fields: [tenantId, recipientUserId], references: [tenantId, id], onDelete: Restrict)
+  inApp     InAppNotice?
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, kind, referenceId, channel])
+  @@index([tenantId, status, nextAttemptAt])
+}
+
+model InAppNotice {
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
+  userId    String    @db.Uuid
+  jobId     String    @db.Uuid
+  title     String    @db.VarChar(256)
+  body      String    @db.Text
+  readAt    DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  tenant Tenant    @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  user   User      @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Restrict)
+  job    NoticeJob @relation(fields: [tenantId, jobId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, jobId])
+  @@index([tenantId, userId, createdAt])
+}
+
+model SchemeAnnualFee {
+  id                      String   @id @default(uuid()) @db.Uuid
+  tenantId                String   @db.Uuid
+  schemeVersionId         String   @db.Uuid
+  annualAmountMinor       Int
+  currency                String   @db.VarChar(3)
+  firstYearIncluded       Boolean  @default(true)
+  recertificationSeparate Boolean  @default(true)
+  createdAt               DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt               DateTime @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, schemeVersionId])
+}
+
+enum AnnualFeeKind {
+  FIRST_YEAR
+  ANNUAL
+  RECERTIFICATION
+}
+
+enum AnnualFeeStatus {
+  INCLUDED
+  DUE
+  OPEN_CASE
+  SETTLED
+}
+
+model AnnualFeeObligation {
+  id              String          @id @default(uuid()) @db.Uuid
+  tenantId        String          @db.Uuid
+  schemeVersionId String          @db.Uuid
+  credentialId    String          @db.Uuid
+  holderUserId    String          @db.Uuid
+  year            Int
+  kind            AnnualFeeKind
+  amountMinor     Int
+  currency        String          @db.VarChar(3)
+  status          AnnualFeeStatus
+  reason          String?         @db.Text
+  openedAt        DateTime?       @db.Timestamptz(3)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+
+  tenant        Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  schemeVersion CertificationSchemeVersion @relation(fields: [tenantId, schemeVersionId], references: [tenantId, id], onDelete: Restrict)
+  credential    Credential                 @relation(fields: [tenantId, credentialId], references: [tenantId, id], onDelete: Restrict)
+  holder        User                       @relation(fields: [tenantId, holderUserId], references: [tenantId, id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, credentialId, year, kind])
+  @@index([tenantId, holderUserId, status])
 }

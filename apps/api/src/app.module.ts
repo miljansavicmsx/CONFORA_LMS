@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { CertificationApplicationsModule } from './certification-applications/certification-applications.module';
 import { ExamModule } from './exam/exam.module';
 import { CertificationFlowModule } from './certification-flow/certification-flow.module';
+import { OperationsModule } from './operations/operations.module';
 import { PersonnelCertificateModule } from './personnel/personnel.module';
 import { LearningModule } from './learning/learning.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -35,6 +36,7 @@ import { TenantModule } from './tenant/tenant.module';
     ExamModule,
     PersonnelCertificateModule,
     CertificationFlowModule,
+    OperationsModule,
     ReportQueryModule,
     ReportsModule,
     RoleAdministrationModule,

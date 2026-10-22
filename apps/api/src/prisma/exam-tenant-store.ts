@@ -820,7 +820,10 @@ async function requireReadyIdentity(
 export async function listCandidateSessions(client: ExamClient, tenantId: string, userId: string) {
   const sessions = await client.certificationExamSession.findMany({
     where: { tenantId, candidateUserId: userId },
-    include: { form: { include: { blueprint: true } }, result: { include: { decision: true } } },
+    include: {
+      form: { include: { blueprint: true } },
+      result: { include: { decisions: { where: { supersededAt: null }, take: 1 } } },
+    },
     orderBy: { scheduledStartAt: 'asc' },
   });
   return sessions.map((session) => ({
@@ -830,7 +833,7 @@ export async function listCandidateSessions(client: ExamClient, tenantId: string
     scheduledStartAt: session.scheduledStartAt.toISOString(),
     provisional: session.result?.provisional ?? null,
     passed: session.result?.passed ?? null,
-    decided: Boolean(session.result?.decision),
+    decided: (session.result?.decisions.length ?? 0) > 0,
   }));
 }
 
@@ -1302,7 +1305,7 @@ export async function formPsychometrics(
 export async function decisionQueue(client: ExamClient, tenantId: string, actor: Actor) {
   assertAction(actor, 'DECIDE');
   const results = await client.certificationExamResult.findMany({
-    where: { tenantId, decision: null },
+    where: { tenantId, decisions: { none: { supersededAt: null } } },
     include: {
       session: {
         include: {
@@ -1363,12 +1366,12 @@ export async function recordDecision(
   return client.$transaction(async (tx) => {
     const result = await tx.certificationExamResult.findFirst({
       where: { tenantId: input.tenantId, id: input.resultId },
-      include: { decision: true, session: true },
+      include: { decisions: { where: { supersededAt: null }, take: 1 }, session: true },
     });
     if (!result) {
       throw new ExamNotFoundError();
     }
-    if (result.decision) {
+    if (result.decisions.length > 0) {
       throw new ExamRuleError('DECISION_EXISTS');
     }
     const trainer = await tx.enrolmentTrainer.findFirst({

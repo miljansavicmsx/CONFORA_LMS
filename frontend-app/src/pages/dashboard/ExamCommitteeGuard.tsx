@@ -19,7 +19,7 @@ export function ExamCommitteeGuard({ children }: { readonly children: ReactNode 
       return true;
     }
     const profile = String(user.role ?? "").trim().toLowerCase();
-    return profile === "com_cert" || profile === "certification_committee";
+    return profile === "com_cert" || profile === "certification_committee" || profile === "cert_committee";
   }, [accessToken, user.role]);
 
   if (!allowed) {
