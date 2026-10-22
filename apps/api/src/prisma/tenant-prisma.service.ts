@@ -108,6 +108,7 @@ import {
   getPublicPublishedProgram,
   listMyEnrolments,
   listPublicPublishedPrograms,
+  publicCatalogTenantIds,
   listPublishedCourses,
   recordLessonProgress,
   setAnalyticsConsent,
@@ -435,8 +436,10 @@ export class TenantPrismaService {
       getAnalyticsConsent(this.learningClient(), this.requiredTenantId(), userId),
     setAnalyticsConsent: (input: { userId: string; granted: boolean; now: Date }) =>
       setAnalyticsConsent(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
-    listPublicPrograms: (areaCode?: string) => listPublicPublishedPrograms(this.prisma, areaCode),
-    getPublicProgram: (courseId: string) => getPublicPublishedProgram(this.prisma, courseId),
+    listPublicPrograms: (areaCode?: string) =>
+      listPublicPublishedPrograms(this.prisma, publicCatalogTenantIds(), areaCode),
+    getPublicProgram: (courseId: string) =>
+      getPublicPublishedProgram(this.prisma, publicCatalogTenantIds(), courseId),
   };
 
   /**

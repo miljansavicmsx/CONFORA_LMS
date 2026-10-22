@@ -403,17 +403,48 @@ function toPublicProgram(row: {
   };
 }
 
+const PUBLIC_CATALOG_TENANT_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 /**
- * Published programme metadata only. No tenant argument: the caller cannot
- * select an organisation. People, enrolments, prices and storage keys are omitted.
+ * Organizations whose published programmes may appear to anonymous readers.
+ * Unset, blank, `*`, and non-UUID tokens produce an empty list. That list
+ * fails closed: the catalogue is empty and a course id is not found.
+ * The request cannot supply this list.
+ */
+export function publicCatalogTenantIds(
+  raw: string | undefined = process.env['PUBLIC_CATALOG_TENANT_IDS'],
+): readonly string[] {
+  if (!raw?.trim()) {
+    return [];
+  }
+  const ids: string[] = [];
+  for (const part of raw.split(',')) {
+    const token = part.trim().toLowerCase();
+    if (PUBLIC_CATALOG_TENANT_ID.test(token) && !ids.includes(token)) {
+      ids.push(token);
+    }
+  }
+  return ids;
+}
+
+/**
+ * Published programme metadata for the server allowlist only.
+ * An empty allowlist returns no rows. The caller cannot select an organisation.
+ * People, enrolments, prices and storage keys are omitted.
  */
 export async function listPublicPublishedPrograms(
   db: LearningClient,
+  tenantIds: readonly string[],
   areaCode?: string,
 ): Promise<{ courses: readonly PublicProgramView[] }> {
+  if (tenantIds.length === 0) {
+    return { courses: [] };
+  }
   const courses = await db.course.findMany({
     where: {
       lifecycle: 'PUBLISHED',
+      tenantId: { in: [...tenantIds] },
       ...(areaCode ? { areaCode } : {}),
     },
     select: publicProgramSelect,
@@ -424,10 +455,18 @@ export async function listPublicPublishedPrograms(
 
 export async function getPublicPublishedProgram(
   db: LearningClient,
+  tenantIds: readonly string[],
   courseId: string,
 ): Promise<PublicProgramView> {
+  if (tenantIds.length === 0) {
+    throw new LearningNotFoundError();
+  }
   const row = await db.course.findFirst({
-    where: { id: courseId, lifecycle: 'PUBLISHED' },
+    where: {
+      id: courseId,
+      lifecycle: 'PUBLISHED',
+      tenantId: { in: [...tenantIds] },
+    },
     select: publicProgramSelect,
   });
   if (!row) {

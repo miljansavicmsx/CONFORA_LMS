@@ -2582,35 +2582,59 @@ describe('certification exam foundation e2e', () => {
     if (!program) {
       throw new Error('Course was not stored.');
     }
-    const hiddenCatalog = await request(httpServer(app))
-      .get('/v1/public/catalog/courses')
-      .expect(200);
-    expect(JSON.stringify(hiddenCatalog.body)).not.toContain(program.id);
-    await requirePrisma().course.update({
-      where: { tenantId_id: { tenantId, id: program.id } },
-      data: { lifecycle: 'PUBLISHED' },
-    });
-    const published = await request(httpServer(app)).get('/v1/public/catalog/courses').expect(200);
-    const publishedBody = JSON.stringify(published.body);
-    expect(publishedBody).toContain('Obuka');
-    expect(publishedBody).toContain(program.id);
-    expect(publishedBody).not.toContain(tenantId);
-    expect(publishedBody).not.toContain('authorUserId');
-    expect(publishedBody).not.toContain('priceAmount');
-    expect(publishedBody).not.toContain('enrolment');
-    const detail = await request(httpServer(app))
-      .get(`/v1/public/catalog/courses/${program.id}`)
-      .expect(200);
-    expect(detail.body).toEqual(expect.objectContaining({ courseId: program.id, title: 'Obuka' }));
-    await requirePrisma().course.update({
-      where: { tenantId_id: { tenantId, id: program.id } },
-      data: { lifecycle: 'DRAFT' },
-    });
-    await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
-    await request(httpServer(app))
-      .get('/v1/public/catalog/courses')
-      .query({ tenantId })
-      .expect(400);
+    const previousCatalogTenants = process.env['PUBLIC_CATALOG_TENANT_IDS'];
+    const otherOrganization = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    try {
+      process.env['PUBLIC_CATALOG_TENANT_IDS'] = tenantId;
+      const hiddenCatalog = await request(httpServer(app))
+        .get('/v1/public/catalog/courses')
+        .expect(200);
+      expect(JSON.stringify(hiddenCatalog.body)).not.toContain(program.id);
+      await requirePrisma().course.update({
+        where: { tenantId_id: { tenantId, id: program.id } },
+        data: { lifecycle: 'PUBLISHED' },
+      });
+      delete process.env['PUBLIC_CATALOG_TENANT_IDS'];
+      const closed = await request(httpServer(app)).get('/v1/public/catalog/courses').expect(200);
+      expect(closed.body).toEqual({ courses: [] });
+      await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
+      process.env['PUBLIC_CATALOG_TENANT_IDS'] = otherOrganization;
+      const foreign = await request(httpServer(app)).get('/v1/public/catalog/courses').expect(200);
+      expect(JSON.stringify(foreign.body)).not.toContain(program.id);
+      await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
+      process.env['PUBLIC_CATALOG_TENANT_IDS'] = tenantId;
+      const published = await request(httpServer(app))
+        .get('/v1/public/catalog/courses')
+        .expect(200);
+      const publishedBody = JSON.stringify(published.body);
+      expect(publishedBody).toContain('Obuka');
+      expect(publishedBody).toContain(program.id);
+      expect(publishedBody).not.toContain(tenantId);
+      expect(publishedBody).not.toContain('authorUserId');
+      expect(publishedBody).not.toContain('priceAmount');
+      expect(publishedBody).not.toContain('enrolment');
+      const detail = await request(httpServer(app))
+        .get(`/v1/public/catalog/courses/${program.id}`)
+        .expect(200);
+      expect(detail.body).toEqual(
+        expect.objectContaining({ courseId: program.id, title: 'Obuka' }),
+      );
+      await requirePrisma().course.update({
+        where: { tenantId_id: { tenantId, id: program.id } },
+        data: { lifecycle: 'DRAFT' },
+      });
+      await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
+      await request(httpServer(app))
+        .get('/v1/public/catalog/courses')
+        .query({ tenantId })
+        .expect(400);
+    } finally {
+      if (previousCatalogTenants === undefined) {
+        delete process.env['PUBLIC_CATALOG_TENANT_IDS'];
+      } else {
+        process.env['PUBLIC_CATALOG_TENANT_IDS'] = previousCatalogTenants;
+      }
+    }
     const wallet = await request(httpServer(app))
       .get('/v1/me/certificates')
       .set(auth(candidateSubject, ['USR_CAND']))

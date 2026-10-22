@@ -124,6 +124,10 @@ function initSecrets() {
   }
   mkdirSync(secretsDir, { mode: 0o700 });
   const users = catalog().users.filter((user) => user.otp === true);
+  const publicCatalogTenant = catalog().tenantId;
+  if (typeof publicCatalogTenant !== 'string' || publicCatalogTenant.trim() === '') {
+    throw new Error('synthetic-users.json is missing tenantId');
+  }
   const postgresPassword = randomBytes(24).toString('base64url');
   const adminPassword = randomBytes(24).toString('base64url');
   const demoPassword = randomBytes(24).toString('base64url');
@@ -150,6 +154,9 @@ function initSecrets() {
     'SESSION_COOKIE_SECURE=true',
     'KEYCLOAK_BASE_URL=http://localhost:18080',
     'EXAM_DEMO_OIDC_ISSUER=http://localhost:18080/realms/confora',
+    'PUBLIC_APP_ORIGIN=http://localhost:3001',
+    'API_PUBLIC_ORIGIN=http://localhost:4000',
+    `PUBLIC_CATALOG_TENANT_IDS=${publicCatalogTenant}`,
   ];
   for (const user of users) {
     lines.push(

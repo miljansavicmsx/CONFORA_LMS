@@ -9,10 +9,6 @@ import {
   fetchNestRegistryConfig,
   resolveNestEffectiveRegistryMode,
 } from "@/lib/api-staff-cert-registry";
-import {
-  verifyPublicCertificateByHash,
-  type PublicCertificateVerifyResponse,
-} from "@/lib/api/public-verification-client";
 
 /** Canonical Nest learner wallet (P1-B2). */
 const NEST_WALLET_PATH = "/v1/me/certificates";
@@ -83,27 +79,6 @@ export type MyCertificateItem = {
   readonly reminders?: readonly { readonly kind: string; readonly dueAt: string }[];
 };
 
-export type VerifiedCertificatePublic = {
-  readonly certificateId: string;
-  readonly fullName: string;
-  readonly courseName: string | null;
-  readonly issueDate: string | null;
-  readonly expiryDate: string | null;
-  /** Preferiraj ako postoji (usklađeno s backend `effectiveStatus`). */
-  readonly effectiveStatus?: string;
-  readonly status: string;
-  readonly verificationResult?: string;
-  /** I backend `certificateKind` (PERSON_CERTIFICATION | EXAM_PASS_…). */
-  readonly certificateKind?: string;
-  /** Ljudski čitljiva oznaka tipa (backend `credentialTypeLabel`). */
-  readonly credentialTypeLabel?: string | null;
-};
-
-export type VerifyCertificateResult =
-  | { readonly kind: "ok"; readonly data: VerifiedCertificatePublic }
-  | { readonly kind: "not_found" }
-  | { readonly kind: "error"; readonly message: string };
-
 export async function fetchMyCertificates(): Promise<MyCertificateItem[]> {
   const path = resolveWalletApiPath();
   const { data } = await api.get<
@@ -167,49 +142,4 @@ export async function fetchMyCertificatePdfUrl(certificateId: string): Promise<s
     throw new Error("PDF URL nije dostupan.");
   }
   return url;
-}
-
-/** Javni odgovor (GET /api/public/verify/{hash}) — legacy alias on Nest. */
-type PublicCertificateVerifyResponseLegacy = PublicCertificateVerifyResponse;
-
-/**
- * Kanonska javna provjera po verification hash-u (64 hex). Bez JWT-a.
- * Isti URL format kao `frontend-public`: /verify/{hash} → ovaj API.
- */
-export async function verifyCertificate(verificationHash: string): Promise<VerifyCertificateResult> {
-  const h = verificationHash.trim();
-  if (!h) {
-    return { kind: "error", message: "Nedostaje verifikacijski hash u URL-u." };
-  }
-  const result = await verifyPublicCertificateByHash(h);
-  if (result.kind === "not_found") {
-    return { kind: "not_found" };
-  }
-  if (result.kind === "error") {
-    return { kind: "error", message: result.normalized.message };
-  }
-  const d = result.data as PublicCertificateVerifyResponseLegacy;
-  const st = String(d.effectiveStatus ?? d.verificationResult ?? "UNKNOWN");
-  const base: VerifiedCertificatePublic = {
-    certificateId: String(d.certId ?? "").trim() || `${h.slice(0, 16)}…`,
-    fullName: String(d.fullName ?? "").trim() || "—",
-    courseName: d.courseTitle ?? null,
-    issueDate: d.issuedAt ?? null,
-    expiryDate: d.expiryDate ?? null,
-    status: st,
-  };
-  const mapped: VerifiedCertificatePublic = {
-    ...base,
-    ...(d.effectiveStatus !== undefined && d.effectiveStatus !== null
-      ? { effectiveStatus: d.effectiveStatus }
-      : {}),
-    ...(d.verificationResult !== undefined && d.verificationResult !== null
-      ? { verificationResult: d.verificationResult }
-      : {}),
-    ...(d.certificateKind !== undefined && d.certificateKind !== null ? { certificateKind: d.certificateKind } : {}),
-    ...(d.credentialTypeLabel !== undefined && d.credentialTypeLabel !== null
-      ? { credentialTypeLabel: d.credentialTypeLabel }
-      : {}),
-  };
-  return { kind: "ok", data: mapped };
 }

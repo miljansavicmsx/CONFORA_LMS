@@ -36,12 +36,12 @@ export const PUBLIC_CATALOG_ROUTES = [
   {
     route: 'GET /v1/public/catalog/courses',
     reason:
-      'Lists published education programmes for anonymous readers, with no people, enrolments, prices, or storage keys, and with a rate limit.',
+      'Lists published programmes only for PUBLIC_CATALOG_TENANT_IDS. An unset or empty allowlist returns an empty list. No people, enrolments, prices, or storage keys, and the caller cannot choose an organization.',
   },
   {
     route: 'GET /v1/public/catalog/courses/:courseId',
     reason:
-      'Returns one published programme by its id. A draft or unknown id is not found, and the caller cannot choose a tenant.',
+      'Returns one published programme whose organization is on the server allowlist. A draft, an unknown id, or any other organization is not found.',
   },
 ] as const;
 

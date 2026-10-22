@@ -278,15 +278,6 @@ export const ENDPOINT_DEFINITIONS: readonly EndpointDefinition[] = [
     todo: "P1-B4-b hybrid submit on Nest; rollback via VITE_API_PROVIDER=legacy",
   },
   {
-    id: "verification.publicHash",
-    group: "verification",
-    legacyPath: "/api/public/verify",
-    nestPath: "/api/public/verify",
-    hybridOwner: "nest",
-    risk: "low",
-    todo: "P1-B1-5 legacy FastAPI read-only fallback; decommission when monitoring shows zero legacy traffic",
-  },
-  {
     id: "verification.publicHashCertificatesPath",
     group: "verification",
     legacyPath: "/api/public/certificates/verify",
@@ -491,7 +482,6 @@ const HYBRID_NEST_EXACT_PATHS: readonly string[] = ["/api/courses"];
 const HYBRID_NEST_PREFIXES: readonly string[] = [
   "/v1/",
   "/public/api/schemes",
-  "/api/public/verify",
   "/api/public/certificates/verify",
   "/api/courses/lookup/",
   "/verify/",

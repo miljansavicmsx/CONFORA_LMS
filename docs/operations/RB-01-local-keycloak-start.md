@@ -50,6 +50,10 @@ bash scripts/local/start.sh
 
 `setup.sh` creates `.secrets/local.env` (mode 600), the database role, the frontend env, and the migrated synthetic data. `start.sh` starts Keycloak on port 18080, imports the realm, provisions users, then starts the API on port 4000 and the frontend on port 3001.
 
+`init-secrets` writes `PUBLIC_CATALOG_TENANT_IDS` as the synthetic organization from `infra/keycloak/synthetic-users.json`. `start.sh` and `start.ps1` set that same value when the variable is empty, so this preview's anonymous catalogue shows that organization's published programmes. Any other host with the variable unset gets an empty catalogue, and a course id returns 404. OD-CAT-01 records this limit as PROPOSED. It is not an accepted decision that a published programme is public on the internet.
+
+The same scripts set `PUBLIC_APP_ORIGIN` to `http://localhost:3001` and `API_PUBLIC_ORIGIN` to `http://localhost:4000` when those variables are empty. Holder certificate links use them. Without an origin the wallet request fails closed.
+
 Stop with `bash scripts/local/stop.sh`.
 
 To watch idle expiry on this same code path, start the API with a shorter idle value. Do not change the default in the secrets file:

@@ -8,6 +8,16 @@ Get-Content '.secrets/local.env' | ForEach-Object {
   if ($eq -lt 1) { return }
   Set-Item -Path "Env:$($line.Substring(0, $eq))" -Value $line.Substring($eq + 1)
 }
+if ([string]::IsNullOrWhiteSpace($env:PUBLIC_APP_ORIGIN)) {
+  $env:PUBLIC_APP_ORIGIN = 'http://localhost:3001'
+}
+if ([string]::IsNullOrWhiteSpace($env:API_PUBLIC_ORIGIN)) {
+  $env:API_PUBLIC_ORIGIN = 'http://localhost:4000'
+}
+if ([string]::IsNullOrWhiteSpace($env:PUBLIC_CATALOG_TENANT_IDS)) {
+  $synthetic = Get-Content -Raw 'infra/keycloak/synthetic-users.json' | ConvertFrom-Json
+  $env:PUBLIC_CATALOG_TENANT_IDS = [string]$synthetic.tenantId
+}
 New-Item -ItemType Directory -Force -Path logs | Out-Null
 docker compose --env-file .secrets/local.env -f infra/docker/docker-compose.local.yml up -d
 $ready = $false

@@ -71,10 +71,18 @@ function unsafe(url: string): boolean {
   );
 }
 
-async function shoot(page: Page, name: string): Promise<void> {
+async function shoot(
+  page: Page,
+  name: string,
+  mask: ReadonlyArray<ReturnType<Page["locator"]>> = [],
+): Promise<void> {
   if (unsafe(page.url())) throw new Error(`refusing screenshot ${name}`);
   mkdirSync(shots, { recursive: true });
-  await page.screenshot({ path: path.join(shots, `${name}.png`) });
+  await page.screenshot({
+    path: path.join(shots, `${name}.png`),
+    mask: [...mask],
+    maskColor: "#ffffff",
+  });
 }
 
 async function signIn(page: Page, username: string, otp: string | null, env: Record<string, string>): Promise<void> {
@@ -165,11 +173,17 @@ test("candidate and committee journeys use the live API", async ({ page }) => {
   await expect(page.getByTestId("my-certification-documents")).toBeVisible();
   await expect(page.getByText("EDU-2026-0001")).toBeVisible();
   await expect(page.getByText("EXM-2026-0001")).toBeVisible();
-  await shoot(page, "candidate-documents");
+  await shoot(page, "candidate-documents", [page.locator('a[href*="/verify/"]')]);
 
   await page.goto("/dashboard/my-certificates");
   await expect(page.getByTestId("learner-certificates-page")).toBeVisible();
-  await shoot(page, "candidate-certificates");
+  await expect(page.getByTestId("learner-professional-cert-section-notice")).toBeVisible({
+    timeout: 30_000,
+  });
+  await shoot(page, "candidate-certificates", [
+    page.locator("p", { hasText: "Hash za javnu provjeru" }),
+    page.locator('a[href*="/verify/"]'),
+  ]);
 
   await page.goto("/dashboard/committee/assigned");
   await expect(page.getByTestId("access-denied")).toBeVisible();

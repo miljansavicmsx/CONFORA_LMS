@@ -343,7 +343,7 @@ describe("nest-only complaint routing (028D-2aS5)", () => {
     const routes = [
       { path: "/auth/login", legacy: "legacy", nest: "nest", hybrid: "legacy" },
       { path: "/v1/courses", legacy: "legacy", nest: "nest", hybrid: "nest" },
-      { path: "/api/public/verify/certificate-1", legacy: "legacy", nest: "nest", hybrid: "nest" },
+      { path: "/api/courses", legacy: "legacy", nest: "nest", hybrid: "nest" },
     ] as const;
 
     for (const route of routes) {

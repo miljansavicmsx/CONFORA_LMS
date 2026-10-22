@@ -21,7 +21,10 @@ function limit(req: Request): void {
   }
 }
 
-/** Anonymous catalogue of published programmes. Personal rows are not queried. */
+/**
+ * Anonymous catalogue of published programmes on the server organization allowlist.
+ * Personal rows are not queried, and the caller cannot name an organization.
+ */
 @Public()
 @Controller('public/catalog')
 export class PublicCatalogController {
