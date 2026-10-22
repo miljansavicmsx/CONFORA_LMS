@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/authStore";
 export default function UnauthorizedPage(): JSX.Element {
   const email = useAuthStore((state) => state.user?.email ?? "");
   return (
-    <main className="mx-auto max-w-xl px-4 py-16" data-testid="access-denied">
+    <div className="mx-auto max-w-xl px-4 py-16" data-testid="access-denied">
       <h1 className="text-2xl font-semibold text-text-primary">Pristup nije dozvoljen</h1>
       {email ? (
         <p className="mt-3 text-sm text-text-secondary" data-testid="denied-account">
@@ -23,6 +23,6 @@ export default function UnauthorizedPage(): JSX.Element {
       <Link className="mt-6 inline-block text-sm underline" to="/dashboard">
         Nazad na početnu
       </Link>
-    </main>
+    </div>
   );
 }

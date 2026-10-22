@@ -433,12 +433,7 @@ describe('PKG-04 complaint case policy', () => {
     expect(source).toContain('useClass: JwtAuthGuard');
     expect(source).toContain('useClass: ActiveAssuranceGuard');
     expect(source).toContain('useClass: MfaAssuranceGuard');
-    // The session middleware is in front of tenant rejection. The tenant middleware
-    // still runs for every route; the wildcard is unchanged.
-    expect(source).toContain(
-      "consumer.apply(OidcSessionMiddleware, ClientTenantRejectionMiddleware).forRoutes('*')",
-    );
-    expect(source).not.toContain("forRoutes('auth')");
+    expect(source).toContain("consumer.apply(ClientTenantRejectionMiddleware).forRoutes('*')");
     expect(source).not.toContain('ComplaintCasePolicy');
     expect(source).not.toContain('AppealCasePolicy');
     expect(source).not.toContain('@Controller');

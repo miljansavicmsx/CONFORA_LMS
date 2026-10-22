@@ -1,5 +1,7 @@
 import { generateKeyPairSync } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
+import { join } from 'node:path';
 import type { NextFunction, Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
@@ -133,6 +135,15 @@ function parseRecord(text: string): Record<string, unknown> {
   }
   return parsed as Record<string, unknown>;
 }
+
+describe('global middleware registration', () => {
+  it('keeps the browser session and tenant rejection on every route', () => {
+    const source = readFileSync(join(__dirname, '../app.module.ts'), 'utf8');
+    expect(source).toContain("consumer.apply(OidcSessionMiddleware).forRoutes('*')");
+    expect(source).toContain("consumer.apply(ClientTenantRejectionMiddleware).forRoutes('*')");
+    expect(source).not.toContain("forRoutes('auth')");
+  });
+});
 
 describe('OIDC browser session', () => {
   let app: INestApplication;

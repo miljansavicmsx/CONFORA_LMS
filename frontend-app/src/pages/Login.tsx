@@ -30,7 +30,7 @@ export default function Login(): JSX.Element {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface-primary px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-surface-primary px-4 py-10">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4">
           <div className="flex items-center justify-between gap-3">
@@ -54,6 +54,6 @@ export default function Login(): JSX.Element {
           <p className="text-sm text-text-muted">{t("login.keycloakHint")}</p>
         </CardContent>
       </Card>
-    </main>
+    </div>
   );
 }

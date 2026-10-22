@@ -66,6 +66,8 @@ import { TenantModule } from './tenant/tenant.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(OidcSessionMiddleware, ClientTenantRejectionMiddleware).forRoutes('*');
+    // The browser session is attached first. Tenant rejection still covers every route.
+    consumer.apply(OidcSessionMiddleware).forRoutes('*');
+    consumer.apply(ClientTenantRejectionMiddleware).forRoutes('*');
   }
 }
