@@ -43,7 +43,7 @@ async function bootstrap(): Promise<void> {
     origin: corsOrigins(),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
+    allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'X-CSRF-Token'],
     exposedHeaders: ['X-Confora-Session'],
   });
   app.useGlobalPipes(new ZodValidationPipe());

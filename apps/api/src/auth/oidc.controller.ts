@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Header,
-  Headers,
   Post,
   Query,
   Req,
@@ -38,7 +37,13 @@ import {
   signSessionId,
   verifySessionId,
 } from './oidc-crypto';
-import { OIDC_DISPLAY_NAME_KEY } from './oidc-session.middleware';
+import {
+  OIDC_CSRF_KEY,
+  OIDC_DISPLAY_NAME_KEY,
+  originAccepted,
+  presentedCsrfToken,
+  sessionCsrfMatches,
+} from './oidc-session.middleware';
 import { OidcSessionStore } from './oidc-session-store';
 import {
   authorizeUrl,
@@ -83,10 +88,6 @@ function appendCookie(
 function clearBrowserCookies(res: Response, config: OidcBrowserConfig): void {
   appendCookie(res, SESSION_COOKIE_NAME, '', config, 0);
   appendCookie(res, TRANSACTION_COOKIE_NAME, '', config, 0);
-}
-
-function originAllowed(origin: string | undefined, config: OidcBrowserConfig): boolean {
-  return typeof origin === 'string' && config.webOrigins.includes(origin);
 }
 
 function readTransaction(value: unknown): OidcTransaction | null {
@@ -272,18 +273,13 @@ export class OidcController {
   @Public()
   @Post('oidc/refresh')
   @Header('Cache-Control', 'no-store')
-  async refresh(
-    @Headers('origin') origin: string | undefined,
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     const config = tryLoadOidcBrowserConfig();
     if (!config) {
       res.status(503).json({ error: 'oidc.unavailable' });
       return;
     }
-    if (!originAllowed(origin, config)) {
-      res.status(403).json({ error: 'oidc.origin.rejected' });
+    if (this.rejectCookieMutation(config, req, res)) {
       return;
     }
     const ended = await this.endSession(config, req, res, false);
@@ -329,18 +325,13 @@ export class OidcController {
   @Public()
   @Post('oidc/logout')
   @Header('Cache-Control', 'no-store')
-  async logout(
-    @Headers('origin') origin: string | undefined,
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
+  async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     const config = tryLoadOidcBrowserConfig();
     if (!config) {
       res.status(503).json({ error: 'oidc.unavailable' });
       return;
     }
-    if (!originAllowed(origin, config)) {
-      res.status(403).json({ error: 'oidc.origin.rejected' });
+    if (this.rejectCookieMutation(config, req, res)) {
       return;
     }
     const ended = await this.endSession(config, req, res, true);
@@ -360,12 +351,14 @@ export class OidcController {
     displayName: string;
     roles: readonly string[];
     mfaVerified: boolean;
+    csrfToken: string | null;
   } {
     const actor = getRequestPrincipal(req);
     if (!actor) {
       throw new UnauthorizedException();
     }
     const named = (req as Request & { [OIDC_DISPLAY_NAME_KEY]?: string })[OIDC_DISPLAY_NAME_KEY];
+    const csrf = (req as Request & { [OIDC_CSRF_KEY]?: string })[OIDC_CSRF_KEY];
     return {
       userId: actor.userId,
       email: actor.email,
@@ -373,7 +366,27 @@ export class OidcController {
         typeof named === 'string' && named.trim().length > 0 ? named.trim() : actor.email,
       roles: actor.roles,
       mfaVerified: actor.mfaVerified,
+      csrfToken: typeof csrf === 'string' ? csrf : null,
     };
+  }
+
+  /**
+   * Origin or Referer must be an allowed web origin, and a live session record
+   * must present its own synchronizer token. A failure does not delete the session.
+   */
+  private rejectCookieMutation(config: OidcBrowserConfig, req: Request, res: Response): boolean {
+    if (!originAccepted(req, config)) {
+      res.status(403).json({ error: 'oidc.origin.rejected' });
+      return true;
+    }
+    const cookie = readCookie(req.headers.cookie, SESSION_COOKIE_NAME);
+    const sessionId = cookie ? verifySessionId(config.sessionSecret, cookie) : null;
+    const record = sessionId ? this.sessions.read(sessionId) : null;
+    if (record && !sessionCsrfMatches(record.csrfToken, presentedCsrfToken(req))) {
+      res.status(403).json({ error: 'oidc.csrf.rejected' });
+      return true;
+    }
+    return false;
   }
 
   private async discardPriorSession(

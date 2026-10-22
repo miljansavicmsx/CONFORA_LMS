@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from "axios";
 
-import { noteSessionLost, refreshOidcSession, type SessionLostReason } from "@/lib/oidc-browser-session";
+import { browserCsrfToken, noteSessionLost, refreshOidcSession, type SessionLostReason } from "@/lib/oidc-browser-session";
 
 import { resolveApiBaseUrl } from "./api-provider";
 import { purgePersistedAuthSecrets } from "./auth-token-provider";
@@ -61,6 +61,10 @@ function stripAuthorization(config: InternalAxiosRequestConfig): void {
   if ("Authorization" in config.headers) {
     delete config.headers.Authorization;
   }
+  const method = String(config.method ?? "get").toLowerCase();
+  if (method === "get" || method === "head" || method === "options") return;
+  const token = browserCsrfToken();
+  if (token) config.headers["X-CSRF-Token"] = token;
 }
 
 function applyDynamicBaseUrl(config: InternalAxiosRequestConfig): void {

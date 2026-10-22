@@ -306,7 +306,7 @@
       "attributes": {
         "tenant_id": ["0a0a0a0a-0a0a-4a0a-8a0a-0a0a0a0a0a0a"]
       },
-      "realmRoles": ["COM_CERT"]
+      "realmRoles": []
     },
     {
       "id": "27272727-2727-4272-8272-272727272727",
@@ -358,7 +358,7 @@
       "attributes": {
         "tenant_id": ["0a0a0a0a-0a0a-4a0a-8a0a-0a0a0a0a0a0a"]
       },
-      "realmRoles": ["COM_TECH"]
+      "realmRoles": []
     },
     {
       "id": "66666666-6666-4666-8666-666666666666",

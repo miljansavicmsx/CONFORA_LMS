@@ -12,6 +12,7 @@ The browser uses Authorization Code + PKCE (S256) against realm `confora`, clien
 - A missing `OIDC_SESSION_SECRET` disables this browser flow. It does not accept a password grant or a fake token.
 - Idle lifetime defaults to 1800 seconds and absolute lifetime to 28800 seconds. An expired session is deleted, its refresh token is revoked, and the next request is rejected. The login page then asks Keycloak for `prompt=login`, so an existing Keycloak SSO cookie cannot silently recreate the CONFORA session.
 - Logout revokes the refresh token and returns Keycloak's end-session URL. That URL contains `id_token_hint` because the OIDC logout specification requires it. Do not log it and do not capture it in a screenshot.
+- `GET /v1/auth/session` returns a synchronizer `csrfToken` for that session only. The browser keeps it in page memory and sends it as `X-CSRF-Token` on cookie-authenticated `POST`, `PUT`, `PATCH`, and `DELETE`, including refresh and logout. The request must also carry an `Origin` or `Referer` in `OIDC_WEB_ORIGINS`. A missing, wrong, or other-session token is rejected and does not delete the session. CORS is not this control. `confora_sid` stays `HttpOnly`, `Secure`, and `SameSite=Lax`. The token is not an access token and must not appear in a screenshot.
 - Restarting the API drops in-memory sessions. The person signs in again. This is a single-process local store.
 
 `SESSION_COOKIE_SECURE=true` is the default. Chromium treats `http://localhost` as a secure context, so use `localhost` for the API, Keycloak, and the frontend. Do not mix `localhost` and `127.0.0.1`.
@@ -20,7 +21,9 @@ The browser uses Authorization Code + PKCE (S256) against realm `confora`, clien
 
 Keycloak realm roles use the existing 19 CONFORA role identifiers. The API still resolves `tenant_id` plus issuer plus `sub` through `ExternalIdentityLink`. There is no just-in-time user creation. A missing, non-UUID, or unmatched organization claim is denied.
 
-The RBAC enum has no separate chair identifier. `exam-committee-chair` is a second `COM_CERT` user and is not assigned to the demo case. `exam-approver` is `COM_TECH`. The issuer is `ISSUANCE_OFFICER` and `LIFECYCLE_OFFICER` only. Learner document reads already require MFA, so the synthetic candidate has a TOTP credential. Privileged users also have TOTP. The AMR claim comes from the Keycloak authenticator reference (`otp` / `pwd`). `mfa_verified=true` is not hardcoded.
+OD-AUTH-31: `exam-approver` has no realm role. It is not mapped to `COM_TECH`. Confirming one exam's result is not demonstrable in this preview, and that future authority would not decide certification. OD-AUTH-32: `exam-committee-chair` has no realm role. `COM_CERT` is not chair authority, and this preview does not create an appointment. The signed-in denial page says chair actions are not implemented and does not open them. The issuer is `ISSUANCE_OFFICER` and `LIFECYCLE_OFFICER` only. Learner document reads already require MFA, so the synthetic candidate has a TOTP credential. Privileged users also have TOTP. The two accounts above have no privileged role, so they have no TOTP. The AMR claim comes from the Keycloak authenticator reference (`otp` / `pwd`). `mfa_verified=true` is not hardcoded.
+
+`/unauthorized` is the page a signed-in guard already refused. `profil`, under the dashboard, is the P0 view of that person's courses, applications, and EDU/EXM documents. Each exists for that reason. The route contract does not grow so a count assertion can pass.
 
 Realm export `infra/keycloak/realm/confora-realm-v1.json` has no passwords. `sslRequired=none` and brute-force protection disabled apply only to this local realm.
 

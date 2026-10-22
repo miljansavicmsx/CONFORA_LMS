@@ -4,6 +4,7 @@ import { createOpaqueId, sessionExpiryReason, type SessionExpiry } from './oidc-
 
 export type OidcSessionRecord = {
   id: string;
+  csrfToken: string;
   accessToken: string;
   refreshToken: string;
   idToken: string;
@@ -18,10 +19,13 @@ export class OidcSessionStore {
   private readonly sessions = new Map<string, OidcSessionRecord>();
 
   create(
-    input: Omit<OidcSessionRecord, 'id' | 'createdAt' | 'lastSeenAt'> & { readonly now: number },
+    input: Omit<OidcSessionRecord, 'id' | 'csrfToken' | 'createdAt' | 'lastSeenAt'> & {
+      readonly now: number;
+    },
   ): OidcSessionRecord {
     const record: OidcSessionRecord = {
       id: createOpaqueId(),
+      csrfToken: createOpaqueId(),
       accessToken: input.accessToken,
       refreshToken: input.refreshToken,
       idToken: input.idToken,

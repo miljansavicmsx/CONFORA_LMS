@@ -4,8 +4,8 @@
   "notes": [
     "Local synthetic identities only. Passwords and OTP secrets are not in this file.",
     "Subjects in ExternalIdentityLink are the Keycloak user ids, which Keycloak puts in the sub claim.",
-    "The canonical RBAC enum has no separate committee-chair identifier. exam-committee-chair is a second COM_CERT user and is not assigned to the demo case.",
-    "exam-approver is mapped to COM_TECH, the technical-committee role that may open exam-staff functions. The author keeps SME, STAFF_TRAINADM and EXAMINER.",
+    "OD-AUTH-32: exam-committee-chair has no realm role. The name is not an appointment and COM_CERT is not chair authority. Chair actions are not implemented in this preview.",
+    "OD-AUTH-31: exam-approver has no realm role. It is not COM_TECH. Approving a specific exam result is not demonstrable; a future EXAM_RESULT_APPROVER would not decide certification. The author keeps SME, STAFF_TRAINADM and EXAMINER.",
     "exam-outsider and exam-bad-tenant are negative fixtures. They have no organization membership link.",
     "Learner education and exam documents already require MFA. The synthetic candidate therefore has a TOTP credential. That is the existing assurance check, not a bypass."
   ],
@@ -39,8 +39,8 @@
       "email": "exam-committee-chair@demo.confora.test",
       "givenName": "Demo",
       "familyName": "Predsjedavajuci",
-      "roles": ["COM_CERT"],
-      "otp": true,
+      "roles": [],
+      "otp": false,
       "linked": true
     },
     {
@@ -83,8 +83,8 @@
       "email": "exam-approver@demo.confora.test",
       "givenName": "Demo",
       "familyName": "Odobravatelj",
-      "roles": ["COM_TECH"],
-      "otp": true,
+      "roles": [],
+      "otp": false,
       "linked": true
     },
     {

@@ -51,6 +51,13 @@ export function sameString(left: string, right: string): boolean {
   return timingSafeEqual(a, b);
 }
 
+/** Length-independent compare for a session-bound secret such as the CSRF token. */
+export function sameSecret(left: string, right: string): boolean {
+  const a = createHash('sha256').update(left).digest();
+  const b = createHash('sha256').update(right).digest();
+  return timingSafeEqual(a, b);
+}
+
 /** Relative in-app path only. Rejects scheme, host and protocol-relative values. */
 export function safeReturnPath(value: unknown): string {
   if (typeof value !== 'string') {

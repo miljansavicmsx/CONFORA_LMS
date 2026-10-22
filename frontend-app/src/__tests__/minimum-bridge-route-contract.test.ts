@@ -3,11 +3,8 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-const APPROVED_ROUTE_PATHS = [
+const OWNER_APPROVED_BRIDGE_ROUTES = [
   "/login",
-  // Access-denied page for a signed-in person who lacks the role. The guards already
-  // refused the route; this is the stable destination, not a new product surface.
-  "/unauthorized",
   "/verify",
   "/verify/:verificationHash",
   "/registry",
@@ -15,9 +12,6 @@ const APPROVED_ROUTE_PATHS = [
   "/courses",
   "/courses/:courseId",
   "/dashboard",
-  // P0 session profile. It shows the signed-in person's courses, applications, and
-  // EDU/EXM documents from the existing learner APIs.
-  "profil",
   "learner/education",
   "learner/courses/:enrolmentId",
   "learner/statistics",
@@ -54,6 +48,33 @@ const APPROVED_ROUTE_PATHS = [
   "committee/decision",
 ] as const;
 
+const JUSTIFIED_ROUTE_ADDITIONS = [
+  {
+    path: "/unauthorized",
+    after: "/login",
+    reason:
+      "Stable destination after a signed-in guard has already refused the route. It grants no role and calls no API.",
+  },
+  {
+    path: "profil",
+    after: "/dashboard",
+    reason:
+      "P0 session profile for the signed-in person's courses, applications, and EDU/EXM documents. No earlier bridge route rendered that session.",
+  },
+] as const;
+
+function routesWithJustifiedAdditions(): readonly string[] {
+  const routes: string[] = [...OWNER_APPROVED_BRIDGE_ROUTES];
+  for (const addition of JUSTIFIED_ROUTE_ADDITIONS) {
+    const index = routes.indexOf(addition.after);
+    if (index < 0) throw new Error(`missing anchor ${addition.after}`);
+    routes.splice(index + 1, 0, addition.path);
+  }
+  return routes;
+}
+
+const APPROVED_ROUTE_PATHS = routesWithJustifiedAdditions();
+
 const APPROVED_NAVIGATION_PATHS = new Set([
   "/courses",
   "/dashboard",
@@ -89,9 +110,27 @@ describe("owner-approved R0-7D minimum bridge contract", () => {
     expect(source("vite.config.ts")).toContain('./vite-csp-preview.mjs');
   });
 
+  it("keeps the 42 owner-approved routes and admits only a route with its own reason", () => {
+    expect(OWNER_APPROVED_BRIDGE_ROUTES).toHaveLength(42);
+    expect(new Set(JUSTIFIED_ROUTE_ADDITIONS.map((addition) => addition.path)).size).toBe(
+      JUSTIFIED_ROUTE_ADDITIONS.length,
+    );
+    for (const addition of JUSTIFIED_ROUTE_ADDITIONS) {
+      expect(addition.reason.length).toBeGreaterThan(40);
+      expect(OWNER_APPROVED_BRIDGE_ROUTES).not.toContain(addition.path);
+    }
+    const present = routePaths(app);
+    const approvedBridge = new Set<string>(OWNER_APPROVED_BRIDGE_ROUTES);
+    const unexplained = present.filter(
+      (path) =>
+        !approvedBridge.has(path) &&
+        !JUSTIFIED_ROUTE_ADDITIONS.some((addition) => addition.path === path),
+    );
+    expect(unexplained).toEqual([]);
+    expect(present).toEqual(APPROVED_ROUTE_PATHS);
+  });
+
   it("contains no excluded route or shell surface", () => {
-    // 42 owner-approved bridge routes, plus /unauthorized and profil documented above.
-    expect(routePaths(app)).toHaveLength(44);
     expect(app).not.toContain("FeedbackWidget");
     expect(app).not.toContain("AppShellFallback");
     expect(app).not.toContain("admin/users");

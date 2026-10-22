@@ -13,6 +13,27 @@ const envPath = path.join(secretsDir, 'local.env');
 const pemPath = path.join(secretsDir, 'vc_ed25519.pem');
 const catalogPath = path.join(root, 'infra/keycloak/synthetic-users.json');
 const realmPath = path.join(root, 'infra/keycloak/realm/confora-realm-v1.json');
+const RBAC_ROLES = new Set([
+  'USR_CAND',
+  'USR_CERT',
+  'STAFF_DIR',
+  'STAFF_SYSADM',
+  'STAFF_TRAINADM',
+  'ISSUANCE_OFFICER',
+  'LIFECYCLE_OFFICER',
+  'COM_TECH',
+  'COM_CERT',
+  'COM_IMP',
+  'COM_APP',
+  'STAFF_AUD',
+  'SME',
+  'EXAMINER',
+  'INVIGILATOR',
+  'QUALITY_MANAGER',
+  'AI_SECURITY_MANAGER',
+  'COMPLAINT_HANDLER',
+  'STAFF_ROLEADM',
+]);
 
 function base32(buffer) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -313,6 +334,53 @@ async function provisionUsers() {
       );
       if (mapped.status !== 204) {
         throw new Error(`Role map ${user.username}/${roleName} status ${mapped.status}.`);
+      }
+    }
+    const assigned = await kc(
+      env,
+      token,
+      'GET',
+      `/admin/realms/confora/users/${user.keycloakId}/role-mappings/realm`,
+    );
+    if (assigned.status !== 200) {
+      throw new Error(`Role lookup ${user.username} status ${assigned.status}.`);
+    }
+    const stale = JSON.parse(assigned.text).filter(
+      (role) => RBAC_ROLES.has(role.name) && !user.roles.includes(role.name),
+    );
+    if (stale.length > 0) {
+      const removed = await kc(
+        env,
+        token,
+        'DELETE',
+        `/admin/realms/confora/users/${user.keycloakId}/role-mappings/realm`,
+        stale,
+      );
+      if (removed.status !== 204) {
+        throw new Error(`Role removal ${user.username} status ${removed.status}.`);
+      }
+    }
+    if (!user.otp) {
+      const credentials = await kc(
+        env,
+        token,
+        'GET',
+        `/admin/realms/confora/users/${user.keycloakId}/credentials`,
+      );
+      if (credentials.status !== 200) {
+        throw new Error(`Credential lookup ${user.username} status ${credentials.status}.`);
+      }
+      for (const credential of JSON.parse(credentials.text)) {
+        if (credential.type !== 'otp' || !credential.id) continue;
+        const dropped = await kc(
+          env,
+          token,
+          'DELETE',
+          `/admin/realms/confora/users/${user.keycloakId}/credentials/${credential.id}`,
+        );
+        if (dropped.status !== 204) {
+          throw new Error(`OTP removal ${user.username} status ${dropped.status}.`);
+        }
       }
     }
     process.stdout.write(`provisioned ${user.username}\n`);

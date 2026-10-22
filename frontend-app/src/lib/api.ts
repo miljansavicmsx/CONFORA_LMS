@@ -3,7 +3,7 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import { purgePersistedAuthSecrets } from "@/lib/api/auth-token-provider";
 import { isNormalizedApiError, normalizeApiError } from "@/lib/api/api-error";
 import { resolveApiBaseUrl } from "@/lib/api/api-provider";
-import { noteSessionLost, refreshOidcSession } from "@/lib/oidc-browser-session";
+import { browserCsrfToken, noteSessionLost, refreshOidcSession } from "@/lib/oidc-browser-session";
 
 export { isNormalizedApiError };
 
@@ -18,6 +18,11 @@ api.interceptors.request.use((config) => {
   config.baseURL = resolveApiBaseUrl(path);
   config.withCredentials = true;
   config.headers.delete("Authorization");
+  const method = String(config.method ?? "get").toLowerCase();
+  const token = browserCsrfToken();
+  if (token && method !== "get" && method !== "head" && method !== "options") {
+    config.headers.set("X-CSRF-Token", token);
+  }
   return config;
 });
 

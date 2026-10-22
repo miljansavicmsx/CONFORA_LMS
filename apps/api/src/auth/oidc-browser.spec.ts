@@ -305,6 +305,15 @@ describe('OIDC browser session', () => {
     return sid;
   }
 
+  async function sessionCsrf(sid: string): Promise<string> {
+    const response = await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid));
+    const token = parseRecord(JSON.stringify(response.body))['csrfToken'];
+    if (typeof token !== 'string' || token.length < 20) {
+      throw new Error('missing csrf token');
+    }
+    return token;
+  }
+
   it('sends S256 PKCE and stores the verifier only in the sealed cookie', async () => {
     const started = await start();
     expect(started.response.status).toBe(302);
@@ -507,6 +516,7 @@ describe('OIDC browser session', () => {
     const logout = await request(http())
       .post('/v1/auth/oidc/logout')
       .set('Origin', ORIGIN)
+      .set('X-CSRF-Token', await sessionCsrf(sid))
       .set('Cookie', sidCookie(sid));
     expect(logout.status).toBe(200);
     const logoutBody = parseRecord(JSON.stringify(logout.body));
@@ -569,28 +579,95 @@ describe('OIDC browser session', () => {
 
   it('rejects a form post from a foreign same-site origin and a post with no origin', async () => {
     const sid = await candidateSession();
+    const csrf = await sessionCsrf(sid);
     const foreign = await request(http())
       .post('/v1/probe/mutate')
       .set('Cookie', sidCookie(sid))
       .set('Origin', 'http://localhost:3999')
+      .set('X-CSRF-Token', csrf)
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .send('a=1');
     expect(foreign.status).toBe(403);
     expect(headerText(parseRecord(JSON.stringify(foreign.body))['error'])).toBe(
       'oidc.origin.rejected',
     );
-    const missing = await request(http()).post('/v1/probe/mutate').set('Cookie', sidCookie(sid));
+    const missing = await request(http())
+      .post('/v1/probe/mutate')
+      .set('Cookie', sidCookie(sid))
+      .set('X-CSRF-Token', csrf);
     expect(missing.status).toBe(403);
+    expect(headerText(parseRecord(JSON.stringify(missing.body))['error'])).toBe(
+      'oidc.origin.rejected',
+    );
+    expect(
+      (await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid))).status,
+    ).toBe(200);
     const allowed = await request(http())
       .post('/v1/probe/mutate')
       .set('Cookie', sidCookie(sid))
-      .set('Origin', ORIGIN);
+      .set('Origin', ORIGIN)
+      .set('X-CSRF-Token', csrf);
     expect(allowed.status).toBe(201);
     const referer = await request(http())
       .post('/v1/probe/mutate')
       .set('Cookie', sidCookie(sid))
-      .set('Referer', `${ORIGIN}/dashboard/profil`);
+      .set('Referer', `${ORIGIN}/dashboard/profil`)
+      .set('X-CSRF-Token', csrf);
     expect(referer.status).toBe(201);
+  });
+
+  it('rejects a missing, wrong, or other-session csrf token without dropping the session', async () => {
+    process.env['OIDC_SESSION_IDLE_SECONDS'] = '30';
+    try {
+      const sid = await candidateSession();
+      const csrf = await sessionCsrf(sid);
+      const missing = await request(http())
+        .post('/v1/probe/mutate')
+        .set('Cookie', sidCookie(sid))
+        .set('Origin', ORIGIN);
+      expect(missing.status).toBe(403);
+      expect(headerText(parseRecord(JSON.stringify(missing.body))['error'])).toBe(
+        'oidc.csrf.rejected',
+      );
+      const wrong = await request(http())
+        .post('/v1/probe/mutate')
+        .set('Cookie', sidCookie(sid))
+        .set('Origin', ORIGIN)
+        .set('X-CSRF-Token', 'not-the-session-token');
+      expect(wrong.status).toBe(403);
+      expect(headerText(parseRecord(JSON.stringify(wrong.body))['error'])).toBe(
+        'oidc.csrf.rejected',
+      );
+      const other = app.get(OidcSessionStore).create({
+        accessToken: 'other-access',
+        refreshToken: 'other-refresh',
+        idToken: 'other-id',
+        accessExpiresAt: Date.now() + 60_000,
+        displayName: 'Other',
+        now: Date.now(),
+      });
+      const crossed = await request(http())
+        .post('/v1/probe/mutate')
+        .set('Cookie', sidCookie(sid))
+        .set('Origin', ORIGIN)
+        .set('X-CSRF-Token', other.csrfToken);
+      expect(crossed.status).toBe(403);
+      expect(headerText(parseRecord(JSON.stringify(crossed.body))['error'])).toBe(
+        'oidc.csrf.rejected',
+      );
+      const logout = await request(http())
+        .post('/v1/auth/oidc/logout')
+        .set('Origin', ORIGIN)
+        .set('X-CSRF-Token', other.csrfToken)
+        .set('Cookie', sidCookie(sid));
+      expect(logout.status).toBe(403);
+      const still = await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid));
+      expect(still.status).toBe(200);
+      expect(parseRecord(JSON.stringify(still.body))['csrfToken']).toBe(csrf);
+      expect(JSON.stringify(still.body)).not.toContain('accessToken');
+    } finally {
+      process.env['OIDC_SESSION_IDLE_SECONDS'] = '1';
+    }
   });
 
   it('does not start the browser flow when the session secret is missing', async () => {

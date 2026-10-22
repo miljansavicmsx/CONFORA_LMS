@@ -6,11 +6,12 @@ import {
   tryLoadOidcBrowserConfig,
   type OidcBrowserConfig,
 } from './oidc-config';
-import { readCookie, serializeCookie, verifySessionId } from './oidc-crypto';
+import { readCookie, sameSecret, serializeCookie, verifySessionId } from './oidc-crypto';
 import { OidcSessionStore, type OidcSessionRecord } from './oidc-session-store';
 import { refreshTokens, revokeRefreshToken, verifyOidcToken } from './oidc-token';
 
 export const OIDC_DISPLAY_NAME_KEY = 'conforaDisplayName';
+export const OIDC_CSRF_KEY = 'conforaCsrfToken';
 
 const SKIP_SUFFIXES = [
   '/v1/auth/oidc/login',
@@ -43,7 +44,7 @@ function singleHeader(value: string | string[] | undefined): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-function browserOrigin(req: Request): string | null {
+export function browserOrigin(req: Request): string | null {
   const origin = singleHeader(req.headers.origin);
   if (origin) {
     return origin;
@@ -59,12 +60,31 @@ function browserOrigin(req: Request): string | null {
   }
 }
 
+export function originAccepted(req: Request, config: OidcBrowserConfig): boolean {
+  const origin = browserOrigin(req);
+  return origin !== null && config.webOrigins.includes(origin);
+}
+
+export function presentedCsrfToken(req: Request): string | null {
+  const raw = singleHeader(req.headers['x-csrf-token']);
+  if (!raw || raw.length > 128 || /[^A-Za-z0-9_-]/.test(raw)) {
+    return null;
+  }
+  return raw;
+}
+
+export function sessionCsrfMatches(expected: string, presented: string | null): boolean {
+  if (!presented) {
+    return false;
+  }
+  return sameSecret(expected, presented);
+}
+
 function mutatingOriginAllowed(req: Request, config: OidcBrowserConfig): boolean {
   if (!MUTATING_METHODS.has(req.method.toUpperCase())) {
     return true;
   }
-  const origin = browserOrigin(req);
-  return origin !== null && config.webOrigins.includes(origin);
+  return originAccepted(req, config);
 }
 
 @Injectable()
@@ -115,6 +135,13 @@ export class OidcSessionMiddleware implements NestMiddleware {
       res.status(403).json({ error: 'oidc.origin.rejected' });
       return;
     }
+    if (
+      MUTATING_METHODS.has(req.method.toUpperCase()) &&
+      !sessionCsrfMatches(record.csrfToken, presentedCsrfToken(req))
+    ) {
+      res.status(403).json({ error: 'oidc.csrf.rejected' });
+      return;
+    }
     if (record.accessExpiresAt <= now + 20_000) {
       const refreshed = await this.refresh(config, record, now);
       if (!refreshed) {
@@ -125,8 +152,12 @@ export class OidcSessionMiddleware implements NestMiddleware {
       record = refreshed;
     }
     this.sessions.touch(sessionId, now);
-    const requestWithName = req as Request & { [OIDC_DISPLAY_NAME_KEY]?: string };
+    const requestWithName = req as Request & {
+      [OIDC_DISPLAY_NAME_KEY]?: string;
+      [OIDC_CSRF_KEY]?: string;
+    };
     requestWithName[OIDC_DISPLAY_NAME_KEY] = record.displayName;
+    requestWithName[OIDC_CSRF_KEY] = record.csrfToken;
     if (!req.headers.authorization) {
       req.headers.authorization = `Bearer ${record.accessToken}`;
     }

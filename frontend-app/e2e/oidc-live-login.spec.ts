@@ -122,15 +122,26 @@ test("live Keycloak sessions, role limits, logout, and idle expiry", async ({ pa
   const rows = (await listed.json()) as { caseId: string }[];
   expect(rows.some((row) => row.caseId === caseId)).toBe(true);
 
-  await signIn(page, "exam-committee-chair", env.OTP_SECRET_EXAM_COMMITTEE_CHAIR ?? null, env);
+  await signIn(page, "exam-approver", null, env);
+  await page.waitForURL(/localhost:3001\/dashboard/, { timeout: 20_000 });
+  await page.goto("/dashboard/admin/item-bank");
+  await expect(page.getByTestId("access-denied")).toBeVisible();
+  await expect(page.getByTestId("denied-account")).toContainText("exam-approver@demo.confora.test");
+  await shoot(page, "exam-approver-denied");
+  const approverItems = await page.request.get("http://localhost:4000/v1/staff/exams/items");
+  expect(approverItems.status()).toBe(403);
+
+  await signIn(page, "exam-committee-chair", null, env);
   await page.waitForURL(/localhost:3001\/dashboard/, { timeout: 20_000 });
   await page.goto("/dashboard/committee/assigned");
-  await expect(page.getByTestId("committee-assigned")).toBeVisible();
-  await expect(page.getByTestId("assigned-case")).toHaveCount(0);
-  await shoot(page, "committee-chair-unassigned");
+  await expect(page.getByTestId("access-denied")).toBeVisible();
+  await expect(page.getByTestId("denied-account")).toContainText("exam-committee-chair@demo.confora.test");
+  await expect(page.getByTestId("chair-not-implemented")).toBeVisible();
+  await shoot(page, "committee-chair-not-implemented");
   const chairCase = await page.request.get(`http://localhost:4000/v1/committee/cases/${caseId}`);
   expect(chairCase.status()).toBe(403);
 
+  await page.goto("/dashboard");
   await page.locator("header button").last().click();
   await page.getByText("Sign out").click();
   await page.waitForURL(/localhost:3001\/login/, { timeout: 20_000 });
