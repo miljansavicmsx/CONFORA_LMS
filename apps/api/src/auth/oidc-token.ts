@@ -1,7 +1,10 @@
+import { Logger } from '@nestjs/common';
 import { decode, verify, type JwtPayload } from 'jsonwebtoken';
 import jwksRsa from 'jwks-rsa';
 
 import type { OidcBrowserConfig } from './oidc-config';
+
+const revokeLogger = new Logger('OidcTokenRevocation');
 
 const jwksClients = new Map<string, ReturnType<typeof jwksRsa>>();
 
@@ -189,14 +192,18 @@ export async function revokeRefreshToken(
     client_id: config.clientId,
   });
   try {
-    await fetch(`${config.issuerUrl}/protocol/openid-connect/revoke`, {
+    const response = await fetch(`${config.issuerUrl}/protocol/openid-connect/revoke`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body,
       signal: AbortSignal.timeout(10_000),
     });
-  } catch {
-    /* Local session deletion still proceeds. A failed revoke must not keep the browser session. */
+    if (!response.ok) {
+      revokeLogger.warn(`Refresh-token revocation was rejected (HTTP ${String(response.status)}).`);
+    }
+  } catch (error: unknown) {
+    const name = error instanceof Error ? error.name : 'Error';
+    revokeLogger.warn(`Refresh-token revocation failed (${name}).`);
   }
 }
 

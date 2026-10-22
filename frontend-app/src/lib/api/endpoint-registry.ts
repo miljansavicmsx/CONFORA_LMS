@@ -39,15 +39,6 @@ export type EndpointDefinition = {
  */
 export const ENDPOINT_DEFINITIONS: readonly EndpointDefinition[] = [
   {
-    id: "auth.login",
-    group: "auth",
-    legacyPath: "/auth/login",
-    nestPath: "/auth/login",
-    hybridOwner: "legacy",
-    risk: "critical",
-    todo: "Retired password login. Browser sign-in is GET /v1/auth/oidc/login.",
-  },
-  {
     id: "auth.refresh",
     group: "auth",
     legacyPath: "/auth/refresh",

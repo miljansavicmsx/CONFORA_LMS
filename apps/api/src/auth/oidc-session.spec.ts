@@ -1,5 +1,7 @@
 import { createHmac } from 'node:crypto';
 
+import { Logger } from '@nestjs/common';
+
 import {
   createPkce,
   openJson,
@@ -11,6 +13,8 @@ import {
   verifySessionId,
   s256,
 } from './oidc-crypto';
+import type { OidcBrowserConfig } from './oidc-config';
+import { revokeRefreshToken } from './oidc-token';
 
 describe('OIDC session primitives', () => {
   const secret = '0123456789abcdef0123456789abcdef';
@@ -48,6 +52,36 @@ describe('OIDC session primitives', () => {
     expect(
       sessionExpiryReason({ createdAt, lastSeenAt: createdAt + 9_000 }, createdAt + 10_000, 30, 10),
     ).toBe('absolute');
+  });
+
+  it('logs a rejected refresh-token revocation without the token', async () => {
+    const warn = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const previous = globalThis.fetch;
+    const config: OidcBrowserConfig = {
+      issuerUrl: 'http://issuer.test/realms/confora',
+      clientId: 'confora-web',
+      jwksUri: 'http://issuer.test/realms/confora/protocol/openid-connect/certs',
+      redirectUri: 'http://localhost:4000/v1/auth/oidc/callback',
+      postLogoutRedirectUri: 'http://localhost:3001/login',
+      webOrigins: ['http://localhost:3001'],
+      sessionSecret: secret,
+      cookieSecure: false,
+      idleSeconds: 1800,
+      absoluteSeconds: 28800,
+    };
+    const secretToken = 'super-secret-refresh-token';
+    globalThis.fetch = () => Promise.resolve(new Response('nope', { status: 503 }));
+    await revokeRefreshToken(config, secretToken);
+    globalThis.fetch = () => Promise.reject(new Error('socket hang up'));
+    await revokeRefreshToken(config, secretToken);
+    const logged = warn.mock.calls
+      .map((call) => call.map((part) => String(part)).join(' '))
+      .join('\n');
+    expect(logged).toContain('HTTP 503');
+    expect(logged).toContain('Error');
+    expect(logged).not.toContain(secretToken);
+    warn.mockRestore();
+    globalThis.fetch = previous;
   });
 
   it('keeps only a relative return path', () => {

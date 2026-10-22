@@ -17,10 +17,9 @@ import {
 } from '@confora/shared-types';
 import type { Request, Response } from 'express';
 
-import { PrismaService } from '../prisma/prisma.service';
 import { Public } from './public.decorator';
 import { getRequestPrincipal, type RequestWithPrincipal } from './request-principal';
-import { resolveCanonicalUser } from './resolve-db-user';
+import { CanonicalUserResolver } from './resolve-db-user';
 import {
   SESSION_COOKIE_NAME,
   TRANSACTION_COOKIE_NAME,
@@ -135,21 +134,23 @@ function claimsOf(payload: Record<string, unknown>): ConforaJwtPayload {
 export class OidcController {
   constructor(
     private readonly sessions: OidcSessionStore,
-    private readonly prisma: PrismaService,
+    private readonly identities: CanonicalUserResolver,
   ) {}
 
   @Public()
   @Get('oidc/login')
-  login(
+  async login(
     @Query('return_to') returnTo: unknown,
     @Query('prompt') prompt: unknown,
+    @Req() req: Request,
     @Res() res: Response,
-  ): void {
+  ): Promise<void> {
     const config = tryLoadOidcBrowserConfig();
     if (!config) {
       res.status(503).json({ error: 'oidc.unavailable' });
       return;
     }
+    await this.discardPriorSession(config, req, res, true);
     const pkce = createPkce();
     const state = createOpaqueId();
     const nonce = createOpaqueId();
@@ -232,7 +233,7 @@ export class OidcController {
         fail('denied');
         return;
       }
-      const user = await resolveCanonicalUser(this.prisma, {
+      const user = await this.identities.resolve({
         tenantId: tenantRaw,
         issuer: config.issuerUrl,
         subject: access.sub,
@@ -243,6 +244,7 @@ export class OidcController {
         fail('denied');
         return;
       }
+      await this.discardPriorSession(config, req, res, false);
       const now = Date.now();
       const record = this.sessions.create({
         accessToken: tokens.accessToken,
@@ -372,6 +374,32 @@ export class OidcController {
       roles: actor.roles,
       mfaVerified: actor.mfaVerified,
     };
+  }
+
+  private async discardPriorSession(
+    config: OidcBrowserConfig,
+    req: Request,
+    res: Response,
+    clearCookie: boolean,
+  ): Promise<void> {
+    const cookie = readCookie(req.headers.cookie, SESSION_COOKIE_NAME);
+    if (clearCookie) {
+      appendCookie(res, SESSION_COOKIE_NAME, '', config, 0);
+    }
+    if (!cookie) {
+      return;
+    }
+    const sessionId = verifySessionId(config.sessionSecret, cookie);
+    if (!sessionId) {
+      return;
+    }
+    const record = this.sessions.read(sessionId);
+    if (!record) {
+      return;
+    }
+    const refreshToken = record.refreshToken;
+    this.sessions.delete(sessionId);
+    await revokeRefreshToken(config, refreshToken);
   }
 
   private async endSession(

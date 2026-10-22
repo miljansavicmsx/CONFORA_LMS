@@ -2,7 +2,7 @@ import { generateKeyPairSync } from 'node:crypto';
 import type { Server } from 'node:http';
 import type { NextFunction, Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { Test } from '@nestjs/testing';
@@ -15,6 +15,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { MfaAssuranceGuard } from './mfa-assurance.guard';
 import { OidcController } from './oidc.controller';
+import { CanonicalUserResolver } from './resolve-db-user';
 import { openJson, s256 } from './oidc-crypto';
 import { OidcSessionMiddleware } from './oidc-session.middleware';
 import { OidcSessionStore } from './oidc-session-store';
@@ -55,6 +56,11 @@ class ProbeController {
   @Get('committee')
   @UseGuards(ExamCommitteeRolesGuard)
   committee() {
+    return { ok: true };
+  }
+
+  @Post('mutate')
+  mutate() {
     return { ok: true };
   }
 }
@@ -132,6 +138,7 @@ describe('OIDC browser session', () => {
   let app: INestApplication;
   let privatePem: string;
   let tokenBodies: string[] = [];
+  let revokeBodies: string[] = [];
   const originalFetch = globalThis.fetch;
   const previousEnv = { ...process.env };
 
@@ -199,6 +206,7 @@ describe('OIDC browser session', () => {
       controllers: [OidcController, ProbeController],
       providers: [
         JwtStrategy,
+        CanonicalUserResolver,
         OidcSessionStore,
         OidcSessionMiddleware,
         ExamCommitteeRolesGuard,
@@ -226,6 +234,7 @@ describe('OIDC browser session', () => {
 
   beforeEach(() => {
     tokenBodies = [];
+    revokeBodies = [];
     links.clear();
     links.set(`${TENANT}|${ISSUER}|${SUBJECT}`, {
       userId: '1c1c1c1c-1c1c-4c1c-8c1c-1c1c1c1c1c1c',
@@ -250,6 +259,7 @@ describe('OIDC browser session', () => {
         );
       }
       if (href.endsWith('/protocol/openid-connect/revoke')) {
+        revokeBodies.push(body);
         return Promise.resolve(new Response('', { status: 200 }));
       }
       return Promise.resolve(new Response('{}', { status: 500 }));
@@ -279,6 +289,20 @@ describe('OIDC browser session', () => {
       .get(`/v1/auth/oidc/callback?code=synthetic-code&state=${encodeURIComponent(state)}`)
       .set('Cookie', `confora_oidc_tx=${encodeURIComponent(txCookie)}`)
       .redirects(0);
+  }
+
+  async function candidateSession(): Promise<string> {
+    const started = await start();
+    pendingTokens = tokenSet(
+      { tenant_id: TENANT, realm_access: { roles: ['USR_CAND'] } },
+      started.transaction?.nonce ?? '',
+    );
+    const callback = await finish(started.transaction?.state ?? '', started.sealed ?? '');
+    const sid = setCookie(callback.headers, 'confora_sid');
+    if (sid === null || sid.length < 20) {
+      throw new Error('missing session cookie');
+    }
+    return sid;
   }
 
   it('sends S256 PKCE and stores the verifier only in the sealed cookie', async () => {
@@ -497,6 +521,76 @@ describe('OIDC browser session', () => {
     expect(
       (await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid))).status,
     ).toBe(401);
+  });
+
+  it('revokes the previous session when sign-in starts', async () => {
+    const sid = await candidateSession();
+    revokeBodies = [];
+    const again = await request(http())
+      .get('/v1/auth/oidc/login?return_to=/dashboard/profil')
+      .set('Cookie', sidCookie(sid))
+      .redirects(0);
+    expect(again.status).toBe(302);
+    expect(revokeBodies).toHaveLength(1);
+    expect(revokeBodies[0] ?? '').toContain('token_type_hint=refresh_token');
+    expect(revokeBodies[0] ?? '').not.toContain('access_token=');
+    expect(
+      (await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid))).status,
+    ).toBe(401);
+  });
+
+  it('revokes a session cookie still presented to the callback', async () => {
+    const sid = await candidateSession();
+    const started = await start();
+    pendingTokens = tokenSet(
+      { tenant_id: TENANT, realm_access: { roles: ['USR_CAND'] } },
+      started.transaction?.nonce ?? '',
+    );
+    revokeBodies = [];
+    const callback = await request(http())
+      .get(
+        `/v1/auth/oidc/callback?code=synthetic-code&state=${encodeURIComponent(started.transaction?.state ?? '')}`,
+      )
+      .set(
+        'Cookie',
+        `confora_oidc_tx=${encodeURIComponent(started.sealed ?? '')}; ${sidCookie(sid)}`,
+      )
+      .redirects(0);
+    expect(callback.status).toBe(302);
+    expect(revokeBodies).toHaveLength(1);
+    expect(
+      (await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid))).status,
+    ).toBe(401);
+    const nextSid = setCookie(callback.headers, 'confora_sid');
+    expect(
+      (await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(nextSid))).status,
+    ).toBe(200);
+  });
+
+  it('rejects a form post from a foreign same-site origin and a post with no origin', async () => {
+    const sid = await candidateSession();
+    const foreign = await request(http())
+      .post('/v1/probe/mutate')
+      .set('Cookie', sidCookie(sid))
+      .set('Origin', 'http://localhost:3999')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send('a=1');
+    expect(foreign.status).toBe(403);
+    expect(headerText(parseRecord(JSON.stringify(foreign.body))['error'])).toBe(
+      'oidc.origin.rejected',
+    );
+    const missing = await request(http()).post('/v1/probe/mutate').set('Cookie', sidCookie(sid));
+    expect(missing.status).toBe(403);
+    const allowed = await request(http())
+      .post('/v1/probe/mutate')
+      .set('Cookie', sidCookie(sid))
+      .set('Origin', ORIGIN);
+    expect(allowed.status).toBe(201);
+    const referer = await request(http())
+      .post('/v1/probe/mutate')
+      .set('Cookie', sidCookie(sid))
+      .set('Referer', `${ORIGIN}/dashboard/profil`);
+    expect(referer.status).toBe(201);
   });
 
   it('does not start the browser flow when the session secret is missing', async () => {

@@ -24,6 +24,16 @@ The RBAC enum has no separate chair identifier. `exam-committee-chair` is a seco
 
 Realm export `infra/keycloak/realm/confora-realm-v1.json` has no passwords. `sslRequired=none` and brute-force protection disabled apply only to this local realm.
 
+## Synthetic credentials and authenticator
+
+`node scripts/local/oidc-local.mjs init-secrets` writes `.secrets/local.env` (mode 600). `setup.sh` and `setup.ps1` call that command. The file is gitignored. Do not print it, commit it, or put it in a screenshot.
+
+- `DEMO_USER_PASSWORD` is the password for every synthetic user. Usernames are in `infra/keycloak/synthetic-users.json`.
+- `OTP_SECRET_<USERNAME>` is the base32 TOTP seed. The candidate key is `OTP_SECRET_EXAM_CANDIDATE`. Hyphens in the username become underscores, and the name is upper case.
+- `KEYCLOAK_ADMIN_PASSWORD` is only for local realm provisioning.
+
+Keycloak already stores the same TOTP seed when users are provisioned. There is no QR enrolment screen. In an authenticator app, add the account by hand: TOTP, SHA1, 6 digits, 30-second period, and the base32 seed from `.secrets/local.env`. The Keycloak page then asks for the current code. The candidate and every privileged synthetic user need that code.
+
 ## Linux
 
 From the repository root, with Node 22, pnpm, and PostgreSQL 16:
@@ -49,17 +59,21 @@ bash scripts/local/start.sh
 
 ## Windows 11 PowerShell
 
-Docker Desktop is the Windows path. From the repository root:
+Prerequisites, installed before the scripts:
+
+- Docker Desktop, running, so it can start PostgreSQL 16 and Keycloak 26.0.7
+- Node.js 22
+- pnpm 9.14.2 or newer
+
+From the repository root, install dependencies and build the packages the API imports. `start.ps1` does not repeat this build. It does start compose, migrate and seed, import the realm, provision users, and start the API and Vite, so do not run those commands again.
 
 ```powershell
+pnpm install
+pnpm exec turbo build --filter=@confora/api^...
 powershell -ExecutionPolicy Bypass -File scripts/local/setup.ps1
-docker compose --env-file .secrets/local.env -f infra/docker/docker-compose.local.yml up -d
-node scripts/local/oidc-local.mjs migrate-seed
 powershell -ExecutionPolicy Bypass -File scripts/local/start.ps1
 ```
 
-`start.ps1` waits for Keycloak, imports the realm, provisions users, and starts the API and Vite. The published Postgres port follows `POSTGRES_PORT` (5432 in the generated file, 15432 if you change it before compose starts). Stop with `scripts/local/stop.ps1`.
+The published Postgres port follows `POSTGRES_PORT` (5432 in the generated file). Change it in `.secrets/local.env` before `start.ps1` if 5432 is already taken. Stop with `scripts/local/stop.ps1`.
 
-Open `http://localhost:3001/login`. The button goes to Keycloak. After sign-in the profile is `http://localhost:3001/dashboard/profil`.
-
-Passwords and OTP secrets are only in `.secrets/`. Do not print that file, do not commit it, and do not include tokens, passwords, or the Keycloak logout URL in screenshots.
+Open `http://localhost:3001/login`. The button goes to Keycloak. After sign-in the profile is `http://localhost:3001/dashboard/profil`. Sign in with a username from `infra/keycloak/synthetic-users.json`, `DEMO_USER_PASSWORD`, and the current TOTP from the seed described above. Do not include tokens, passwords, or the Keycloak logout URL in screenshots.

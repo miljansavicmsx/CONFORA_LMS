@@ -5,6 +5,9 @@ import { describe, expect, it } from "vitest";
 
 const APPROVED_ROUTE_PATHS = [
   "/login",
+  // Access-denied page for a signed-in person who lacks the role. The guards already
+  // refused the route; this is the stable destination, not a new product surface.
+  "/unauthorized",
   "/verify",
   "/verify/:verificationHash",
   "/registry",
@@ -12,6 +15,9 @@ const APPROVED_ROUTE_PATHS = [
   "/courses",
   "/courses/:courseId",
   "/dashboard",
+  // P0 session profile. It shows the signed-in person's courses, applications, and
+  // EDU/EXM documents from the existing learner APIs.
+  "profil",
   "learner/education",
   "learner/courses/:enrolmentId",
   "learner/statistics",
@@ -84,7 +90,8 @@ describe("owner-approved R0-7D minimum bridge contract", () => {
   });
 
   it("contains no excluded route or shell surface", () => {
-    expect(routePaths(app)).toHaveLength(42);
+    // 42 owner-approved bridge routes, plus /unauthorized and profil documented above.
+    expect(routePaths(app)).toHaveLength(44);
     expect(app).not.toContain("FeedbackWidget");
     expect(app).not.toContain("AppShellFallback");
     expect(app).not.toContain("admin/users");

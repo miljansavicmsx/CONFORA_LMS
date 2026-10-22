@@ -1,6 +1,6 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
-import type { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 export type CanonicalIdentityKey = Readonly<{
   tenantId: string;
@@ -67,4 +67,19 @@ export async function resolveCanonicalUser(
     tenantId: user.tenantId,
     email: user.email,
   };
+}
+
+/**
+ * Browser sign-in resolves the person before a request principal exists.
+ * TenantPrismaService can read the tenant only from that principal, so it
+ * cannot run this lookup. The raw client stays in this allowlisted module,
+ * the same place JwtStrategy already uses for the same tenantId+issuer+subject key.
+ */
+@Injectable()
+export class CanonicalUserResolver {
+  constructor(private readonly prisma: PrismaService) {}
+
+  resolve(key: CanonicalIdentityKey): Promise<CanonicalUserResolution> {
+    return resolveCanonicalUser(this.prisma, key);
+  }
 }

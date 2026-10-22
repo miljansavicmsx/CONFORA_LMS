@@ -25,11 +25,46 @@ function requestPath(req: Request): string {
   return query === -1 ? raw : raw.slice(0, query);
 }
 
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
 function clearSessionCookie(res: Response, config: OidcBrowserConfig): void {
   res.append(
     'Set-Cookie',
     serializeCookie(SESSION_COOKIE_NAME, '', { maxAge: 0, secure: config.cookieSecure }),
   );
+}
+
+function singleHeader(value: string | string[] | undefined): string | null {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (typeof raw !== 'string') {
+    return null;
+  }
+  const trimmed = raw.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function browserOrigin(req: Request): string | null {
+  const origin = singleHeader(req.headers.origin);
+  if (origin) {
+    return origin;
+  }
+  const referer = singleHeader(req.headers.referer);
+  if (!referer) {
+    return null;
+  }
+  try {
+    return new URL(referer).origin;
+  } catch {
+    return null;
+  }
+}
+
+function mutatingOriginAllowed(req: Request, config: OidcBrowserConfig): boolean {
+  if (!MUTATING_METHODS.has(req.method.toUpperCase())) {
+    return true;
+  }
+  const origin = browserOrigin(req);
+  return origin !== null && config.webOrigins.includes(origin);
 }
 
 @Injectable()
@@ -74,6 +109,10 @@ export class OidcSessionMiddleware implements NestMiddleware {
       }
       clearSessionCookie(res, config);
       next();
+      return;
+    }
+    if (!mutatingOriginAllowed(req, config)) {
+      res.status(403).json({ error: 'oidc.origin.rejected' });
       return;
     }
     if (record.accessExpiresAt <= now + 20_000) {
