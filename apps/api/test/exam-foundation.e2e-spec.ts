@@ -9,6 +9,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
 import { liveBallotCounts, voteResult } from '../src/certification-flow/certification-flow-rules';
+import { resetPublicRateLimit } from '../src/personnel/personnel-rules';
 import { openDelivery } from '../src/certification-flow/referee-delivery';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
 
@@ -2546,6 +2547,37 @@ describe('certification exam foundation e2e', () => {
       issuedAt: null,
       holderName: null,
     };
+    const byOtherCandidate = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ number: issuedBody.certificateNumber })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(byOtherCandidate.body).toEqual(hiddenCertificate);
+    expect(JSON.stringify(byOtherCandidate.body)).not.toContain('Demo Kandidat');
+    expect(JSON.stringify(byOtherCandidate.body)).not.toContain('Digitalna kompetencija');
+    expect(JSON.stringify(byOtherCandidate.body)).not.toContain(issuedBody.certificateNumber);
+    const unknownNumber = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ number: 'CON-1999-9999' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(unknownNumber.body).toEqual(byOtherCandidate.body);
+    const numberAndName = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ number: issuedBody.certificateNumber, name: 'Demo' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(numberAndName.body).toEqual(hiddenCertificate);
+    const foreignNumber = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ number: issuedBody.certificateNumber })
+      .set(outsider(['USR_CAND']))
+      .expect(200);
+    expect(foreignNumber.body).toEqual(hiddenCertificate);
+    await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ number: issuedBody.certificateNumber })
+      .expect(401);
     const bySequential = await request(httpServer(app))
       .get(`/v1/public/certificates/${issuedBody.certificateNumber}`)
       .expect(200);
@@ -2576,6 +2608,62 @@ describe('certification exam foundation e2e', () => {
       .get('/v1/public/certificates/not-a-real-token')
       .expect(200);
     expect(unknownToken.body).toEqual(hiddenCertificate);
+    const consentRevoked = await requirePrisma().examPersonnelCredentialLink.updateMany({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+      data: { registryListed: false, registryConsentAt: null },
+    });
+    expect(consentRevoked.count).toBe(1);
+    const withoutConsent = await request(httpServer(app))
+      .get(`/v1/public/certificates/${storedCertificate.qrVerifyToken}`)
+      .expect(200);
+    expect(withoutConsent.body).toEqual({
+      status: 'VALID',
+      documentType: 'PERSONNEL_CERTIFICATE',
+      issuedAt: (byToken.body as { issuedAt: string }).issuedAt,
+      holderName: null,
+    });
+    expect(JSON.stringify(withoutConsent.body)).not.toContain('Demo Kandidat');
+    expect(JSON.stringify(withoutConsent.body)).not.toContain(issuedBody.certificateNumber);
+    const numberWithoutConsent = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ number: issuedBody.certificateNumber })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(numberWithoutConsent.body).toEqual(hiddenCertificate);
+    await requirePrisma().examPersonnelCredentialLink.updateMany({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+      data: { registryListed: true, registryConsentAt: new Date('2026-10-22T00:00:00.000Z') },
+    });
+    const consentRestored = await request(httpServer(app))
+      .get(`/v1/public/certificates/${storedCertificate.qrVerifyToken}`)
+      .expect(200);
+    expect(consentRestored.body).toEqual(
+      expect.objectContaining({
+        status: 'VALID',
+        documentType: 'PERSONNEL_CERTIFICATE',
+        holderName: 'Demo Kandidat',
+      }),
+    );
+    resetPublicRateLimit();
+    try {
+      for (let attempt = 0; attempt < 30; attempt += 1) {
+        const allowed = await request(httpServer(app))
+          .get('/v1/public/certificates')
+          .query({ number: 'CON-1999-0001' })
+          .set(auth(otherSubject, ['USR_CAND']))
+          .expect(200);
+        expect(allowed.body).toEqual(hiddenCertificate);
+      }
+      const limited = await request(httpServer(app))
+        .get('/v1/public/certificates')
+        .query({ number: issuedBody.certificateNumber })
+        .set(auth(otherSubject, ['USR_CAND']))
+        .expect(429);
+      expect(JSON.stringify(limited.body)).not.toContain('Demo Kandidat');
+      expect(JSON.stringify(limited.body)).not.toContain(issuedBody.certificateNumber);
+    } finally {
+      resetPublicRateLimit();
+    }
     const program = await requirePrisma().course.findFirst({
       where: { tenantId, title: 'Obuka' },
     });

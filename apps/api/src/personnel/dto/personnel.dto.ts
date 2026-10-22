@@ -36,6 +36,7 @@ export class CpdRecordDto extends createZodDto(
     .strict(),
 ) {}
 
+/** `number` is accepted so a sequential record number can be refused. It does not select a certificate. */
 export class PublicSearchDto extends createZodDto(
   z
     .object({

@@ -177,7 +177,11 @@ export class PersonnelCertificateService {
     return this.tenantPrisma.personnel.publicOne(publicUid, new Date(), sourceIp).catch(fail);
   }
 
-  search(input: { number?: string; name?: string }) {
+  refuseNumber(number: string, sourceIp: string) {
+    return this.tenantPrisma.personnel.refuseNumber(number, sourceIp, new Date()).catch(fail);
+  }
+
+  search(input: { name?: string }) {
     return this.tenantPrisma.personnel.search(input, new Date()).catch(fail);
   }
 

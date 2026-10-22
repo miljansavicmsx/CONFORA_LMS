@@ -130,6 +130,8 @@ describe('personnel credential signing key', () => {
     );
     expect(search).toContain('tenantId: input.tenantId');
     expect(search).toContain('name.length < 3');
+    expect(search).not.toContain('input.number');
+    expect(search).not.toContain('publicUid: input.number');
     expect(source).toContain('identityVerificationState');
     expect(source).not.toContain('holderName: input.holderDisplayName');
     expect(source).toContain('publishStatusList(statusListCredential');
