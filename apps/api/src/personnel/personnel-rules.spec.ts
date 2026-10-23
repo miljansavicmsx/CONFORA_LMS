@@ -6,6 +6,7 @@ import {
   assertIssuer,
   assertPublicRateLimit,
   assertStatusTransition,
+  directoryConsentActive,
   HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
   presentPersonnelPublicVerification,
@@ -90,11 +91,16 @@ describe('personnel certificate rules', () => {
 
   it('shows the holder name only while registry consent is active', () => {
     const issuedAt = new Date('2026-10-21T12:00:00.000Z');
+    const active = {
+      registryListed: true,
+      registryConsentAt: issuedAt,
+      registryConsentRevokedAt: null,
+    };
+    expect(directoryConsentActive(active)).toBe(true);
     const shown = presentPersonnelPublicVerification({
       status: 'VALID',
       issuedAt,
-      registryListed: true,
-      registryConsentAt: issuedAt,
+      ...active,
       holderName: 'Demo Kandidat',
     });
     expect(shown).toEqual({
@@ -103,11 +109,32 @@ describe('personnel certificate rules', () => {
       issuedAt: '2026-10-21',
       holderName: 'Demo Kandidat',
     });
+    const withdrawn = {
+      registryListed: true,
+      registryConsentAt: issuedAt,
+      registryConsentRevokedAt: new Date('2026-10-23T00:00:00.000Z'),
+    };
+    expect(directoryConsentActive(withdrawn)).toBe(false);
+    expect(
+      presentPersonnelPublicVerification({
+        status: 'VALID',
+        issuedAt,
+        ...withdrawn,
+        holderName: 'Demo Kandidat',
+      }).holderName,
+    ).toBeNull();
+    const missing = {
+      registryListed: true,
+      registryConsentAt: null,
+      registryConsentRevokedAt: null,
+    };
+    expect(directoryConsentActive(missing)).toBe(false);
     const hidden = presentPersonnelPublicVerification({
       status: 'VALID',
       issuedAt,
       registryListed: false,
       registryConsentAt: null,
+      registryConsentRevokedAt: null,
       holderName: 'Demo Kandidat',
     });
     expect(hidden.holderName).toBeNull();

@@ -2541,6 +2541,77 @@ describe('certification exam foundation e2e', () => {
     expect(JSON.stringify(directory.body)).toContain('Demo Kandidat');
     expect(JSON.stringify(directory.body)).not.toContain('Krivo Ime');
     expect(JSON.stringify(directory.body)).not.toContain('email');
+    const storedDirectory = await requirePrisma().credential.findFirst({
+      where: { id: issuedBody.credentialId },
+      select: { expiresAt: true, publicUid: true },
+    });
+    if (!storedDirectory?.expiresAt) {
+      throw new Error('Certificate expiry was not stored.');
+    }
+    const directoryBody = JSON.stringify(directory.body);
+    expect(directoryBody).not.toContain(issuedBody.certificateNumber);
+    expect(directoryBody).not.toContain(storedDirectory.expiresAt.toISOString());
+    expect(Array.isArray(directory.body)).toBe(true);
+    for (const row of directory.body as Array<Record<string, unknown>>) {
+      expect(row).not.toHaveProperty('certificateNumber');
+      expect(row).not.toHaveProperty('expiresAt');
+      expect(row).not.toHaveProperty('expiryDate');
+      expect(row).not.toHaveProperty('publicUid');
+    }
+    const consentedPeer = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(JSON.stringify(consentedPeer.body)).toContain('Demo Kandidat');
+    expect(JSON.stringify(consentedPeer.body)).not.toContain(issuedBody.certificateNumber);
+    const foreignDirectory = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .set(outsider(['USR_CAND']))
+      .expect(200);
+    expect(foreignDirectory.body).toEqual([]);
+    expect(JSON.stringify(foreignDirectory.body)).not.toContain('Demo Kandidat');
+    const withdrawnConsent = await requirePrisma().examPersonnelCredentialLink.updateMany({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+      data: { registryConsentRevokedAt: new Date('2026-10-23T00:00:00.000Z') },
+    });
+    expect(withdrawnConsent.count).toBe(1);
+    const historicalListing = await requirePrisma().examPersonnelCredentialLink.findFirst({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+    });
+    expect(historicalListing?.registryListed).toBe(true);
+    expect(historicalListing?.registryConsentAt).not.toBeNull();
+    expect(historicalListing?.registryConsentRevokedAt).not.toBeNull();
+    const withdrawnSearch = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(JSON.stringify(withdrawnSearch.body)).not.toContain('Demo Kandidat');
+    await requirePrisma().examPersonnelCredentialLink.updateMany({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+      data: { registryListed: true, registryConsentAt: null, registryConsentRevokedAt: null },
+    });
+    const missingConsent = await requirePrisma().examPersonnelCredentialLink.findFirst({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+    });
+    expect(missingConsent?.registryListed).toBe(true);
+    expect(missingConsent?.registryConsentAt).toBeNull();
+    const missingSearch = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(JSON.stringify(missingSearch.body)).not.toContain('Demo Kandidat');
+    await requirePrisma().examPersonnelCredentialLink.updateMany({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+      data: {
+        registryListed: true,
+        registryConsentAt: new Date('2026-10-22T00:00:00.000Z'),
+        registryConsentRevokedAt: null,
+      },
+    });
     const hiddenCertificate = {
       status: 'INVALID',
       documentType: null,
@@ -2610,7 +2681,7 @@ describe('certification exam foundation e2e', () => {
     expect(unknownToken.body).toEqual(hiddenCertificate);
     const consentRevoked = await requirePrisma().examPersonnelCredentialLink.updateMany({
       where: { tenantId, credentialId: issuedBody.credentialId },
-      data: { registryListed: false, registryConsentAt: null },
+      data: { registryListed: false, registryConsentAt: null, registryConsentRevokedAt: null },
     });
     expect(consentRevoked.count).toBe(1);
     const withoutConsent = await request(httpServer(app))
@@ -2632,7 +2703,11 @@ describe('certification exam foundation e2e', () => {
     expect(numberWithoutConsent.body).toEqual(hiddenCertificate);
     await requirePrisma().examPersonnelCredentialLink.updateMany({
       where: { tenantId, credentialId: issuedBody.credentialId },
-      data: { registryListed: true, registryConsentAt: new Date('2026-10-22T00:00:00.000Z') },
+      data: {
+        registryListed: true,
+        registryConsentAt: new Date('2026-10-22T00:00:00.000Z'),
+        registryConsentRevokedAt: null,
+      },
     });
     const consentRestored = await request(httpServer(app))
       .get(`/v1/public/certificates/${storedCertificate.qrVerifyToken}`)

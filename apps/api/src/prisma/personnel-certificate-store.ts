@@ -7,6 +7,7 @@ import {
   addYears,
   assertIssuer,
   assertStatusTransition,
+  directoryConsentActive,
   HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
   PersonnelRuleError,
@@ -847,6 +848,7 @@ export async function publicCertificate(
     issuedAt: row.issuedAt,
     registryListed: row.examPersonnelLink.registryListed,
     registryConsentAt: row.examPersonnelLink.registryConsentAt,
+    registryConsentRevokedAt: row.examPersonnelLink.registryConsentRevokedAt,
     holderName: row.examPersonnelLink.holderDisplayName,
   });
   await client.verificationLog.create({
@@ -894,6 +896,8 @@ export async function searchPublicRegistry(
     where: {
       tenantId: input.tenantId,
       registryListed: true,
+      registryConsentAt: { not: null },
+      registryConsentRevokedAt: null,
       holderDisplayName: { contains: name, mode: 'insensitive' },
     },
     include: {
@@ -902,22 +906,31 @@ export async function searchPublicRegistry(
     },
     take: 20,
   });
-  return rows.map((link) => {
+  return rows.flatMap((link) => {
+    if (
+      !directoryConsentActive({
+        registryListed: link.registryListed,
+        registryConsentAt: link.registryConsentAt,
+        registryConsentRevokedAt: link.registryConsentRevokedAt,
+      })
+    ) {
+      return [];
+    }
     const status = publicCertificateStatus(
       asLifecycle(link.credential.lifecycle),
       link.credential.expiresAt,
       input.now,
     );
-    return {
-      certificateNumber: link.credential.publicUid,
-      holderName: link.holderDisplayName,
-      scheme: link.schemeVersion.scheme.title,
-      schemeVersion: link.schemeVersion.versionLabel,
-      status,
-      issuedAt: link.credential.issuedAt.toISOString(),
-      expiresAt: link.credential.expiresAt?.toISOString() ?? null,
-      listed: true,
-    };
+    return [
+      {
+        holderName: link.holderDisplayName,
+        scheme: link.schemeVersion.scheme.title,
+        schemeVersion: link.schemeVersion.versionLabel,
+        status,
+        issuedAt: link.credential.issuedAt.toISOString(),
+        listed: true as const,
+      },
+    ];
   });
 }
 
