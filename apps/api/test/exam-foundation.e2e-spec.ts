@@ -2789,12 +2789,37 @@ describe('certification exam foundation e2e', () => {
       holderName: null,
     });
     expect(JSON.stringify(hiddenPublic.body)).not.toContain('Demo Kandidat');
+    const earliestWithdrawal = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId,
+        eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+        resourceId: issuedBody.credentialId,
+        actorUserId: sysadminId,
+      },
+      orderBy: { sequence: 'asc' },
+    });
+    const earliestMetadata =
+      earliestWithdrawal?.metadata &&
+      typeof earliestWithdrawal.metadata === 'object' &&
+      !Array.isArray(earliestWithdrawal.metadata)
+        ? earliestWithdrawal.metadata
+        : null;
+    expect(earliestWithdrawal?.outcome).toBe('DENIED');
+    expect(earliestMetadata).toEqual(
+      expect.objectContaining({
+        result: 'NOT_VERIFIED',
+        procedure: 'RB-02',
+        procedureSection: 'Execution',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
+      }),
+    );
     const firstAudit = await requirePrisma().auditEvent.findFirst({
       where: {
         tenantId,
         eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
         resourceId: issuedBody.credentialId,
         actorUserId: sysadminId,
+        outcome: 'SUCCESS',
       },
       orderBy: { sequence: 'asc' },
     });
