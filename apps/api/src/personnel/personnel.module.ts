@@ -5,9 +5,15 @@ import { LearnerRolesGuard } from '../auth/learner-roles.guard';
 import { ExamCommitteeRolesGuard } from '../exam/exam-roles.guard';
 import { TenantModule } from '../tenant/tenant.module';
 import {
+  DirectoryConsentAdministratorGuard,
+  DirectoryConsentVerifierGuard,
+} from './directory-consent.guard';
+import {
   CandidateCertificateController,
   CommitteeCertificateController,
   PublicCertificateController,
+  StaffDirectoryConsentController,
+  StaffDirectoryConsentVerificationController,
 } from './personnel.controller';
 import { PersonnelCertificateService } from './personnel.service';
 
@@ -17,7 +23,15 @@ import { PersonnelCertificateService } from './personnel.service';
     CommitteeCertificateController,
     CandidateCertificateController,
     PublicCertificateController,
+    StaffDirectoryConsentController,
+    StaffDirectoryConsentVerificationController,
   ],
-  providers: [PersonnelCertificateService, ExamCommitteeRolesGuard, LearnerRolesGuard],
+  providers: [
+    PersonnelCertificateService,
+    ExamCommitteeRolesGuard,
+    LearnerRolesGuard,
+    DirectoryConsentAdministratorGuard,
+    DirectoryConsentVerifierGuard,
+  ],
 })
 export class PersonnelCertificateModule {}

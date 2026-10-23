@@ -3,14 +3,21 @@ import { inflateSync } from 'node:zlib';
 import { encodedStatusList, statusListBits } from './personnel-status-list';
 import {
   addYears,
+  assertConsentRequestReceivedAt,
+  assertDirectoryConsentAdministrator,
+  assertDirectoryConsentFourEyes,
+  assertDirectoryConsentVerifier,
   assertIssuer,
   assertPublicRateLimit,
   assertStatusTransition,
+  claimDirectoryConsentRefusalWrite,
   directoryConsentActive,
   HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
   presentPersonnelPublicVerification,
   publicCertificateStatus,
+  releaseDirectoryConsentRefusalWrite,
+  resetDirectoryConsentRefusalDedup,
   resetPublicRateLimit,
 } from './personnel-rules';
 import { signPersonnelCredential, verifyPersonnelCredential } from './personnel-vc';
@@ -145,5 +152,98 @@ describe('personnel certificate rules', () => {
       issuedAt: null,
       holderName: null,
     });
+  });
+
+  it('lets only the existing system administrator execute a directory withdrawal', () => {
+    expect(() => {
+      assertDirectoryConsentAdministrator(['STAFF_SYSADM']);
+    }).not.toThrow();
+    for (const role of [
+      'STAFF_DIR',
+      'STAFF_ROLEADM',
+      'COM_CERT',
+      'QUALITY_MANAGER',
+      'LIFECYCLE_OFFICER',
+      'ISSUANCE_OFFICER',
+      'USR_CAND',
+      'USR_CERT',
+    ]) {
+      expect(() => {
+        assertDirectoryConsentAdministrator([role]);
+      }).toThrow('ROLE_SEPARATION');
+    }
+    const now = new Date('2026-10-23T12:00:00.000Z');
+    expect(() => {
+      assertConsentRequestReceivedAt(new Date('2026-10-23T11:00:00.000Z'), now);
+    }).not.toThrow();
+    expect(() => {
+      assertConsentRequestReceivedAt(new Date('2026-10-23T12:30:00.000Z'), now);
+    }).toThrow('RECEIVED_AT');
+  });
+
+  it('requires a different staff verifier from the holder and the executor', () => {
+    expect(
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'director',
+        holderUserId: 'holder',
+        roles: ['STAFF_DIR'],
+      }),
+    ).toBe('STAFF_DIR');
+    expect(() => {
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'holder',
+        holderUserId: 'holder',
+        roles: ['STAFF_SYSADM'],
+      });
+    }).toThrow('VERIFIER_IS_HOLDER');
+    expect(() => {
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'candidate',
+        holderUserId: 'holder',
+        roles: ['USR_CAND'],
+      });
+    }).toThrow('VERIFIER_NOT_STAFF');
+    expect(
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'role-admin',
+        holderUserId: 'holder',
+        roles: ['STAFF_ROLEADM'],
+      }),
+    ).toBe('STAFF_ROLEADM');
+    expect(
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'sysadmin-a',
+        holderUserId: 'holder',
+        roles: ['STAFF_SYSADM'],
+      }),
+    ).toBe('STAFF_SYSADM');
+    for (const role of ['STAFF_TRAINADM', 'STAFF_AUD', 'USR_CAND', 'USR_CERT', 'QUALITY_MANAGER']) {
+      expect(() => {
+        assertDirectoryConsentVerifier({
+          verifierUserId: 'caller',
+          holderUserId: 'holder',
+          roles: [role],
+        });
+      }).toThrow('VERIFIER_NOT_STAFF');
+    }
+    expect(() => {
+      assertDirectoryConsentFourEyes('admin', 'admin');
+    }).toThrow('FOUR_EYES');
+    expect(() => {
+      assertDirectoryConsentFourEyes('admin', 'director');
+    }).not.toThrow();
+    expect(() => {
+      assertDirectoryConsentFourEyes('sysadmin-a', 'sysadmin-b');
+    }).not.toThrow();
+  });
+
+  it('deduplicates a repeated directory-consent refusal write', () => {
+    resetDirectoryConsentRefusalDedup();
+    const key = 'tenant:user:credential:DIRECTORY_CONSENT_VERIFY:VERIFIER_NOT_STAFF';
+    expect(claimDirectoryConsentRefusalWrite(key, 1_000)).toBe(true);
+    expect(claimDirectoryConsentRefusalWrite(key, 1_500)).toBe(false);
+    releaseDirectoryConsentRefusalWrite(key);
+    expect(claimDirectoryConsentRefusalWrite(key, 1_600)).toBe(true);
+    resetDirectoryConsentRefusalDedup();
   });
 });

@@ -9,7 +9,10 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
 import { liveBallotCounts, voteResult } from '../src/certification-flow/certification-flow-rules';
-import { resetPublicRateLimit } from '../src/personnel/personnel-rules';
+import {
+  DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT,
+  resetPublicRateLimit,
+} from '../src/personnel/personnel-rules';
 import { openDelivery } from '../src/certification-flow/referee-delivery';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
 
@@ -2572,6 +2575,503 @@ describe('certification exam foundation e2e', () => {
       .expect(200);
     expect(foreignDirectory.body).toEqual([]);
     expect(JSON.stringify(foreignDirectory.body)).not.toContain('Demo Kandidat');
+    const receivedAt = new Date(Date.now() - 60_000).toISOString();
+    const requestBody = {
+      holderUserId: candidateId,
+      channel: 'EMAIL',
+      receivedAt,
+    };
+    const verificationBody = {
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+      evidenceRef: 'RB02-EVIDENCE-001',
+    };
+    const beforeWithdrawal = await requirePrisma().credential.findFirst({
+      where: { tenantId, id: issuedBody.credentialId },
+      include: { examPersonnelLink: true },
+    });
+    if (!beforeWithdrawal?.examPersonnelLink || !beforeWithdrawal.signature) {
+      throw new Error('Certificate was not stored before withdrawal.');
+    }
+    const countsBefore = {
+      credentials: await requirePrisma().credential.count(),
+      links: await requirePrisma().examPersonnelCredentialLink.count(),
+      achievements: await requirePrisma().achievementRecord.count(),
+      lifecycleEvents: await requirePrisma().credentialLifecycleEvent.count(),
+    };
+    const requestPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-requests`;
+    const verificationPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-verifications`;
+    const withdrawalPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-withdrawal`;
+    for (const unauthorized of [
+      auth(issuerSubject, ['COM_CERT']),
+      auth(candidateSubject, ['USR_CAND']),
+      auth(sysadminSubject, ['STAFF_DIR']),
+      auth(sysadminSubject, ['STAFF_ROLEADM']),
+      auth(qualitySubject, ['QUALITY_MANAGER']),
+      auth(issuerSubject, ['LIFECYCLE_OFFICER']),
+      auth(issuerSubject, ['ISSUANCE_OFFICER']),
+    ]) {
+      expect(
+        (await request(httpServer(app)).post(withdrawalPath).set(unauthorized).send({})).status,
+      ).toBe(403);
+      expect(
+        (await request(httpServer(app)).post(requestPath).set(unauthorized).send(requestBody))
+          .status,
+      ).toBe(403);
+    }
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set({
+            Authorization: `Bearer ${fixture.signAccessToken({
+              sub: sysadminSubject,
+              realm_access: { roles: ['STAFF_SYSADM'] },
+              mfa_verified: true,
+            })}`,
+          })
+          .send({})
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(outsider(['STAFF_SYSADM']))
+          .send({})
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(verificationPath)
+          .set(outsider(['STAFF_DIR']))
+          .send(verificationBody)
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(requestPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({ ...requestBody, holderUserId: otherCandidateId })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(requestPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({ ...requestBody, receivedAt: new Date(Date.now() + 600_000).toISOString() })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(requestPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({ ...requestBody, tenantId })
+      ).status,
+    ).toBe(400);
+    const notRequested = await request(httpServer(app))
+      .post(verificationPath)
+      .set(auth(qualitySubject, ['STAFF_DIR']))
+      .send({ ...verificationBody, evidenceRef: 'RB02-STAFF-NOT-REQUESTED' });
+    expect(notRequested.status).toBe(400);
+    const opened = await request(httpServer(app))
+      .post(requestPath)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send(requestBody)
+      .expect(200);
+    expect(opened.body).toEqual(
+      expect.objectContaining({
+        result: 'REQUESTED',
+        holderUserId: candidateId,
+        procedure: 'RB-02',
+        procedureSection: 'Request',
+      }),
+    );
+    expect(opened.body).not.toHaveProperty('verifierUserId');
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({})
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(verificationPath)
+          .set(auth(candidateSubject, ['STAFF_SYSADM']))
+          .send(verificationBody)
+      ).status,
+    ).toBe(400);
+    const nonStaffEvidence = {
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT' as const,
+      evidenceRef: 'RB02-NONSTAFF-PROBE',
+    };
+    const missingVerificationPath =
+      '/v1/staff/certificates/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/directory-consent-verifications';
+    const candidateAuth = auth(candidateSubject, ['USR_CAND']);
+    const deniedOnExisting = await request(httpServer(app))
+      .post(verificationPath)
+      .set(candidateAuth)
+      .send(nonStaffEvidence);
+    const deniedOnMissing = await request(httpServer(app))
+      .post(missingVerificationPath)
+      .set(candidateAuth)
+      .send(nonStaffEvidence);
+    expect(deniedOnExisting.status).toBe(403);
+    expect(deniedOnMissing.status).toBe(403);
+    expect(deniedOnExisting.body).toEqual(deniedOnMissing.body);
+    for (let attempt = 2; attempt < DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT; attempt += 1) {
+      const withinLimit = await request(httpServer(app))
+        .post(verificationPath)
+        .set(candidateAuth)
+        .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
+      expect(withinLimit.status).toBe(403);
+      expect(withinLimit.body).toEqual(deniedOnExisting.body);
+    }
+    const rateLimitedExisting = await request(httpServer(app))
+      .post(verificationPath)
+      .set(candidateAuth)
+      .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
+    const rateLimitedMissing = await request(httpServer(app))
+      .post(missingVerificationPath)
+      .set(candidateAuth)
+      .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
+    expect(rateLimitedExisting.status).toBe(429);
+    expect(rateLimitedMissing.status).toBe(429);
+    expect(rateLimitedExisting.body).toEqual(rateLimitedMissing.body);
+    const candidateRefusals = (
+      await requirePrisma().auditEvent.findMany({
+        where: {
+          tenantId,
+          actorUserId: candidateId,
+          eventType: 'DIRECTORY_CONSENT_VERIFIED',
+          outcome: 'DENIED',
+        },
+      })
+    ).filter((row) => {
+      const metadata = row.metadata;
+      if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) {
+        return false;
+      }
+      const result = (metadata as { result?: string }).result;
+      return result === 'VERIFIER_NOT_STAFF';
+    });
+    expect(candidateRefusals).toHaveLength(2);
+    const candidateRefusalText = JSON.stringify(candidateRefusals.map((row) => row.metadata));
+    expect(candidateRefusalText).not.toContain('evidenceRef');
+    expect(candidateRefusalText).not.toContain('RB02-NONSTAFF-PROBE');
+    expect(candidateRefusalText).not.toContain('RB02-NONSTAFF-REPEAT');
+    expect(candidateRefusalText).toContain('DIRECTORY_CONSENT_VERIFY');
+    expect(candidateRefusalText).toContain('VERIFIER_NOT_STAFF');
+    for (const row of candidateRefusals) {
+      expect(row.actorUserId).toBe(candidateId);
+      expect(row.occurredAt).toBeInstanceOf(Date);
+    }
+    for (const disallowed of [
+      auth(otherSubject, ['USR_CERT']),
+      auth(trainerSubject, ['STAFF_TRAINADM']),
+      auth(issuerSubject, ['STAFF_AUD']),
+      auth(qualitySubject, ['QUALITY_MANAGER']),
+      auth(deciderSubject, ['COM_CERT']),
+    ]) {
+      const onExisting = await request(httpServer(app))
+        .post(verificationPath)
+        .set(disallowed)
+        .send(nonStaffEvidence);
+      const onMissing = await request(httpServer(app))
+        .post(missingVerificationPath)
+        .set(disallowed)
+        .send(nonStaffEvidence);
+      expect(onExisting.status).toBe(403);
+      expect(onMissing.status).toBe(403);
+      expect(onExisting.body).toEqual(onMissing.body);
+      expect(onExisting.body).toEqual(deniedOnExisting.body);
+    }
+    expect(
+      (
+        await request(httpServer(app))
+          .post(verificationPath)
+          .set(auth(qualitySubject, ['STAFF_DIR']))
+          .send({ ...verificationBody, verifierUserId: qualityId })
+      ).status,
+    ).toBe(400);
+    const verified = await request(httpServer(app))
+      .post(verificationPath)
+      .set(auth(qualitySubject, ['STAFF_DIR']))
+      .send(verificationBody)
+      .expect(200);
+    expect(verified.body).toEqual(
+      expect.objectContaining({
+        result: 'VERIFIED',
+        verifierUserId: qualityId,
+        verifierRole: 'STAFF_DIR',
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        procedure: 'RB-02',
+        procedureSection: 'Identity check',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#identity-check',
+      }),
+    );
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(auth(qualitySubject, ['STAFF_SYSADM']))
+          .send({})
+      ).status,
+    ).toBe(403);
+    const fourEyesRefusal = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId,
+        eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+        resourceId: issuedBody.credentialId,
+        actorUserId: qualityId,
+        outcome: 'DENIED',
+      },
+    });
+    const fourEyesMetadata =
+      fourEyesRefusal?.metadata &&
+      typeof fourEyesRefusal.metadata === 'object' &&
+      !Array.isArray(fourEyesRefusal.metadata)
+        ? fourEyesRefusal.metadata
+        : null;
+    expect(fourEyesRefusal?.outcome).toBe('DENIED');
+    expect(fourEyesMetadata).toEqual(
+      expect.objectContaining({
+        result: 'FOUR_EYES',
+        action: 'DIRECTORY_CONSENT_WITHDRAW',
+      }),
+    );
+    expect(fourEyesMetadata).not.toHaveProperty('evidenceRef');
+    expect(JSON.stringify(fourEyesMetadata)).not.toContain('RB02-EVIDENCE-001');
+    const untouched = await requirePrisma().examPersonnelCredentialLink.findFirst({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+    });
+    expect(untouched?.registryConsentRevokedAt).toBeNull();
+    const withdrawn = await request(httpServer(app))
+      .post(withdrawalPath)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send({})
+      .expect(200);
+    const withdrawnBody = withdrawn.body as {
+      executedAt: string;
+      registryConsentRevokedAt: string;
+    };
+    expect(withdrawn.body).toEqual(
+      expect.objectContaining({
+        credentialId: issuedBody.credentialId,
+        holderUserId: candidateId,
+        channel: 'EMAIL',
+        receivedAt,
+        verifierUserId: qualityId,
+        verifierRole: 'STAFF_DIR',
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        procedure: 'RB-02',
+        procedureSection: 'Execution',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
+        executorUserId: sysadminId,
+        result: 'WITHDRAWN',
+        lifecycle: 'ACTIVE',
+        status: 'VALID',
+      }),
+    );
+    const hiddenSearch = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(JSON.stringify(hiddenSearch.body)).not.toContain('Demo Kandidat');
+    expect(hiddenSearch.body).toEqual([]);
+    const hiddenPublic = await request(httpServer(app))
+      .get(`/v1/public/certificates/${beforeWithdrawal.qrVerifyToken}`)
+      .expect(200);
+    expect(hiddenPublic.body).toEqual({
+      status: 'VALID',
+      documentType: 'PERSONNEL_CERTIFICATE',
+      issuedAt: beforeWithdrawal.issuedAt.toISOString().slice(0, 10),
+      holderName: null,
+    });
+    expect(JSON.stringify(hiddenPublic.body)).not.toContain('Demo Kandidat');
+    const earliestWithdrawal = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId,
+        eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+        resourceId: issuedBody.credentialId,
+        actorUserId: sysadminId,
+      },
+      orderBy: { sequence: 'asc' },
+    });
+    const earliestMetadata =
+      earliestWithdrawal?.metadata &&
+      typeof earliestWithdrawal.metadata === 'object' &&
+      !Array.isArray(earliestWithdrawal.metadata)
+        ? earliestWithdrawal.metadata
+        : null;
+    expect(earliestWithdrawal?.outcome).toBe('DENIED');
+    expect(earliestMetadata).toEqual(
+      expect.objectContaining({
+        result: 'NOT_VERIFIED',
+        action: 'DIRECTORY_CONSENT_WITHDRAW',
+        procedure: 'RB-02',
+        procedureSection: 'Execution',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
+      }),
+    );
+    expect(earliestMetadata).not.toHaveProperty('evidenceRef');
+    const successAudits = await requirePrisma().auditEvent.findMany({
+      where: {
+        tenantId,
+        eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+        resourceId: issuedBody.credentialId,
+        outcome: 'SUCCESS',
+      },
+    });
+    const firstAudit = successAudits.find((row) => {
+      const metadata = row.metadata;
+      if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) {
+        return false;
+      }
+      const linked = metadata as {
+        result?: string;
+        credentialId?: string;
+        holderUserId?: string;
+        receivedAt?: string;
+        verifierUserId?: string;
+        evidenceRef?: string;
+        executorUserId?: string;
+      };
+      return (
+        linked.result === 'WITHDRAWN' &&
+        linked.credentialId === issuedBody.credentialId &&
+        linked.holderUserId === candidateId &&
+        linked.receivedAt === receivedAt &&
+        linked.verifierUserId === qualityId &&
+        linked.evidenceRef === 'RB02-EVIDENCE-001' &&
+        linked.executorUserId === sysadminId
+      );
+    });
+    expect(firstAudit).toBeDefined();
+    expect(earliestWithdrawal).toBeDefined();
+    expect((firstAudit?.sequence ?? 0n) > (earliestWithdrawal?.sequence ?? 0n)).toBe(true);
+    const firstMetadata =
+      firstAudit?.metadata &&
+      typeof firstAudit.metadata === 'object' &&
+      !Array.isArray(firstAudit.metadata)
+        ? firstAudit.metadata
+        : null;
+    expect(firstAudit?.outcome).toBe('SUCCESS');
+    expect(firstAudit?.occurredAt.toISOString()).toBe(withdrawnBody.executedAt);
+    expect(firstMetadata).toEqual(
+      expect.objectContaining({
+        credentialId: issuedBody.credentialId,
+        holderUserId: candidateId,
+        channel: 'EMAIL',
+        receivedAt,
+        verifierUserId: qualityId,
+        verifierRole: 'STAFF_DIR',
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        executorUserId: sysadminId,
+        result: 'WITHDRAWN',
+        procedure: 'RB-02',
+        procedureSection: 'Execution',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
+      }),
+    );
+    expect(JSON.stringify(firstMetadata)).not.toContain('Demo Kandidat');
+    const repeated = await request(httpServer(app))
+      .post(withdrawalPath)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send({})
+      .expect(200);
+    expect(repeated.body).toEqual(
+      expect.objectContaining({
+        result: 'ALREADY_WITHDRAWN',
+        lifecycle: 'ACTIVE',
+        status: 'VALID',
+        registryConsentRevokedAt: withdrawnBody.registryConsentRevokedAt,
+      }),
+    );
+    const afterWithdrawal = await requirePrisma().credential.findFirst({
+      where: { tenantId, id: issuedBody.credentialId },
+      include: { examPersonnelLink: true },
+    });
+    expect(afterWithdrawal?.lifecycle).toBe(beforeWithdrawal.lifecycle);
+    expect(afterWithdrawal?.payloadHash).toBe(beforeWithdrawal.payloadHash);
+    expect(afterWithdrawal?.signature).toBe(beforeWithdrawal.signature);
+    expect(afterWithdrawal?.publicUid).toBe(beforeWithdrawal.publicUid);
+    expect(afterWithdrawal?.expiresAt?.toISOString()).toBe(
+      beforeWithdrawal.expiresAt?.toISOString(),
+    );
+    expect(afterWithdrawal?.examPersonnelLink?.registryListed).toBe(true);
+    expect(afterWithdrawal?.examPersonnelLink?.holderDisplayName).toBe(
+      beforeWithdrawal.examPersonnelLink.holderDisplayName,
+    );
+    expect(afterWithdrawal?.examPersonnelLink?.registryConsentAt?.toISOString()).toBe(
+      beforeWithdrawal.examPersonnelLink.registryConsentAt?.toISOString(),
+    );
+    expect(afterWithdrawal?.examPersonnelLink?.registryConsentRevokedAt?.toISOString()).toBe(
+      withdrawnBody.registryConsentRevokedAt,
+    );
+    expect(await requirePrisma().credential.count()).toBe(countsBefore.credentials);
+    expect(await requirePrisma().examPersonnelCredentialLink.count()).toBe(countsBefore.links);
+    expect(await requirePrisma().achievementRecord.count()).toBe(countsBefore.achievements);
+    expect(await requirePrisma().credentialLifecycleEvent.count()).toBe(
+      countsBefore.lifecycleEvents,
+    );
+    expect(
+      await requirePrisma().auditEvent.count({
+        where: {
+          tenantId,
+          eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+          outcome: 'SUCCESS',
+        },
+      }),
+    ).toBe(2);
+    const refusalRows = await requirePrisma().auditEvent.findMany({
+      where: {
+        tenantId,
+        outcome: 'DENIED',
+        resourceId: issuedBody.credentialId,
+      },
+    });
+    const refusalText = JSON.stringify(refusalRows.map((row) => row.metadata));
+    for (const refused of [
+      'NOT_REQUESTED',
+      'NOT_VERIFIED',
+      'VERIFIER_IS_HOLDER',
+      'VERIFIER_NOT_STAFF',
+      'FOUR_EYES',
+      'HOLDER_MISMATCH',
+      'RECEIVED_AT',
+    ]) {
+      expect(refusalText).toContain(refused);
+    }
+    expect(refusalText).not.toContain('Demo Kandidat');
+    expect(refusalText).not.toContain('holderDisplayName');
+    expect(refusalText).not.toContain('evidenceRef');
+    expect(refusalText).not.toContain('RB02-EVIDENCE-001');
+    expect(refusalText).not.toContain('RB02-NONSTAFF');
+    expect(refusalText).not.toContain('RB02-STAFF-NOT-REQUESTED');
+    const hiddenFromOtherOrg = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId: outsiderTenantId,
+        outcome: 'DENIED',
+        eventType: 'DIRECTORY_CONSENT_VERIFIED',
+        resourceId: issuedBody.credentialId,
+      },
+    });
+    expect(hiddenFromOtherOrg).not.toBeNull();
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).toContain('NOT_FOUND');
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('Demo Kandidat');
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('evidenceRef');
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('RB02-EVIDENCE-001');
     const withdrawnConsent = await requirePrisma().examPersonnelCredentialLink.updateMany({
       where: { tenantId, credentialId: issuedBody.credentialId },
       data: { registryConsentRevokedAt: new Date('2026-10-23T00:00:00.000Z') },

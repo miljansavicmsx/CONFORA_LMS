@@ -88,6 +88,37 @@ export function resetPublicRateLimit(): void {
   hits.clear();
 }
 
+/**
+ * Process-local deduplication of identical directory-consent refusal writes.
+ * Another instance does not see these keys. A failed write releases its key.
+ */
+const refusalWrites = new Map<string, number>();
+const REFUSAL_DEDUP_WINDOW_MS = 60 * 60 * 1000;
+
+export function resetDirectoryConsentRefusalDedup(): void {
+  refusalWrites.clear();
+}
+
+export function claimDirectoryConsentRefusalWrite(key: string, nowMs: number): boolean {
+  const previous = refusalWrites.get(key);
+  if (previous !== undefined && nowMs - previous < REFUSAL_DEDUP_WINDOW_MS) {
+    return false;
+  }
+  if (refusalWrites.size > 1024) {
+    for (const [stored, stamp] of refusalWrites) {
+      if (nowMs - stamp >= REFUSAL_DEDUP_WINDOW_MS) {
+        refusalWrites.delete(stored);
+      }
+    }
+  }
+  refusalWrites.set(key, nowMs);
+  return true;
+}
+
+export function releaseDirectoryConsentRefusalWrite(key: string): void {
+  refusalWrites.delete(key);
+}
+
 export function assertPublicRateLimit(
   key: string,
   nowMs: number,
@@ -150,4 +181,118 @@ export function presentPersonnelPublicVerification(input: {
     issuedAt: input.issuedAt.toISOString().slice(0, 10),
     holderName: directoryConsentActive(input) ? input.holderName : null,
   };
+}
+
+/**
+ * Existing system-administrator role (Baseline §6, OD-PP-06).
+ * This is not a new role and it is not a certification decision.
+ * Baseline §7.5 and OD-PP-18 still keep STAFF_SYSADM out of certification
+ * outcomes and the item bank. STAFF_DIR monitors (Baseline §7.4) and does
+ * not execute this operational step. STAFF_ROLEADM remains role administration.
+ */
+export const DIRECTORY_CONSENT_EXECUTOR_ROLE = 'STAFF_SYSADM' as const;
+
+export const DIRECTORY_CONSENT_CHANNELS = ['EMAIL', 'POST', 'IN_PERSON', 'TELEPHONE'] as const;
+export type DirectoryConsentChannel = (typeof DIRECTORY_CONSENT_CHANNELS)[number];
+
+/** How identity was checked. The value is the method only: no document copy, number, or secret. */
+export const DIRECTORY_CONSENT_VERIFICATION_METHODS = [
+  'IN_PERSON_DOCUMENT_SIGHT',
+  'VIDEO_DOCUMENT_SIGHT',
+  'KNOWN_ACCOUNT_CONFIRMATION',
+] as const;
+export type DirectoryConsentVerificationMethod =
+  (typeof DIRECTORY_CONSENT_VERIFICATION_METHODS)[number];
+
+export function assertDirectoryConsentAdministrator(roles: readonly string[]): void {
+  if (!roles.includes(DIRECTORY_CONSENT_EXECUTOR_ROLE)) {
+    throw new PersonnelRuleError('ROLE_SEPARATION');
+  }
+}
+
+/**
+ * OD-DIR-34. Existing roles only. STAFF_DIR may verify and must not execute.
+ * A STAFF_SYSADM may verify a request that a different STAFF_SYSADM executes.
+ * STAFF_TRAINADM and STAFF_AUD are not verifiers.
+ */
+export const DIRECTORY_CONSENT_VERIFIER_ROLES = [
+  'STAFF_DIR',
+  'STAFF_SYSADM',
+  'STAFF_ROLEADM',
+] as const;
+
+/** Process-local cap on repeated unauthorized verification attempts. */
+export const DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT = 4;
+export const DIRECTORY_CONSENT_UNAUTHORIZED_WINDOW_MS = 60_000;
+
+/** Actions recorded on every refusal. Not an evidence reference. */
+export const DIRECTORY_CONSENT_REQUEST_ACTION = 'DIRECTORY_CONSENT_REQUEST' as const;
+export const DIRECTORY_CONSENT_VERIFY_ACTION = 'DIRECTORY_CONSENT_VERIFY' as const;
+export const DIRECTORY_CONSENT_WITHDRAW_ACTION = 'DIRECTORY_CONSENT_WITHDRAW' as const;
+
+/** Documented procedure. Audit rows cite this runbook and one of its sections. */
+export const DIRECTORY_CONSENT_PROCEDURE = 'RB-02' as const;
+export const DIRECTORY_CONSENT_PROCEDURE_REF =
+  'docs/operations/RB-02-consent-withdrawal.md' as const;
+export const DIRECTORY_CONSENT_SECTIONS = {
+  request: 'Request',
+  identity: 'Identity check',
+  execution: 'Execution',
+} as const;
+
+/** Internal evidence reference. Not a document number, name, or image. */
+export const DIRECTORY_CONSENT_EVIDENCE_REF = /^[A-Za-z0-9][A-Za-z0-9._:-]{2,63}$/;
+
+export function directoryConsentVerifierRole(roles: readonly string[]): string | null {
+  for (const role of DIRECTORY_CONSENT_VERIFIER_ROLES) {
+    if (roles.includes(role)) {
+      return role;
+    }
+  }
+  return null;
+}
+
+/**
+ * The verifier is the authenticated user. The role is the one they hold now.
+ * Issuance already rejects a person acting on their own prior act (FOUR_EYES).
+ * Execution applies that same rule: the executor cannot be this verifier.
+ */
+export function assertDirectoryConsentVerifier(input: {
+  verifierUserId: string;
+  holderUserId: string;
+  roles: readonly string[];
+}): string {
+  if (input.verifierUserId === input.holderUserId) {
+    throw new PersonnelRuleError('VERIFIER_IS_HOLDER');
+  }
+  const role = directoryConsentVerifierRole(input.roles);
+  if (!role) {
+    throw new PersonnelRuleError('VERIFIER_NOT_STAFF');
+  }
+  return role;
+}
+
+export function assertDirectoryConsentFourEyes(
+  executorUserId: string,
+  verifierUserId: string,
+): void {
+  if (executorUserId === verifierUserId) {
+    throw new PersonnelRuleError('FOUR_EYES');
+  }
+}
+
+export function assertDirectoryConsentEvidenceRef(value: string): void {
+  if (!DIRECTORY_CONSENT_EVIDENCE_REF.test(value)) {
+    throw new PersonnelRuleError('EVIDENCE_REF');
+  }
+}
+
+/** Received time is the time the organization got the request, not a future stamp. */
+export function assertConsentRequestReceivedAt(receivedAt: Date, now: Date): void {
+  if (!(receivedAt instanceof Date) || Number.isNaN(receivedAt.getTime())) {
+    throw new PersonnelRuleError('RECEIVED_AT');
+  }
+  if (receivedAt.getTime() > now.getTime() + 120_000) {
+    throw new PersonnelRuleError('RECEIVED_AT');
+  }
 }
