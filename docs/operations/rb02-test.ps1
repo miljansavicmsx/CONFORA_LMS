@@ -102,7 +102,7 @@ function Invoke-Rb02Http {
     $request.Headers.Add('X-CSRF-Token', $CsrfToken)
     $request.Headers.Add('Origin', 'http://localhost:3001')
   }
-  if ($null -ne $Body) {
+  if (-not [string]::IsNullOrEmpty($Body)) {
     $utf8 = New-Object System.Text.UTF8Encoding $false
     $bytes = $utf8.GetBytes($Body)
     $request.ContentType = 'application/json'
