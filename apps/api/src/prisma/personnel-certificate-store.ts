@@ -7,6 +7,7 @@ import {
   addYears,
   assertIssuer,
   assertStatusTransition,
+  directoryConsentActive,
   HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
   PersonnelRuleError,
@@ -131,24 +132,6 @@ export type IssuedCertificate = {
 };
 
 export type CertificateAudit = (tx: Tx, result: IssuedCertificate) => Promise<void>;
-
-function presentPublic(row: IssuedCredential, now: Date, includeName: boolean) {
-  const link = row.examPersonnelLink;
-  if (!link) {
-    throw new PersonnelNotFoundError();
-  }
-  const status = publicCertificateStatus(asLifecycle(row.lifecycle), row.expiresAt, now);
-  return {
-    certificateNumber: row.publicUid,
-    holderName: includeName ? link.holderDisplayName : null,
-    scheme: link.schemeVersion.scheme.title,
-    schemeVersion: link.schemeVersion.versionLabel,
-    status,
-    issuedAt: row.issuedAt.toISOString(),
-    expiresAt: row.expiresAt?.toISOString() ?? null,
-    listed: link.registryListed,
-  };
-}
 
 export async function issuePersonnelCertificate(
   client: PersonnelClient,
@@ -805,6 +788,28 @@ async function logPublicCertificateLookup(
 }
 
 /**
+ * OD-PP-30. A sequential record number does not open a public record.
+ * Every number receives the same invalid body. The credential row is not read.
+ * The random qrVerifyToken route is the public view. The holder name is on that
+ * view only while registry consent is active. Full holder data stays on the
+ * holder wallet and the role-guarded committee actions.
+ */
+export async function refusePublicNumberQuery(
+  client: AccessLogClient,
+  input: { number: string; sourceIp: string; now: Date },
+): Promise<PersonnelPublicVerification> {
+  const key = input.number.trim();
+  await logPublicCertificateLookup(client, {
+    tenantId: null,
+    verificationKey: key.length > 0 ? key : 'empty',
+    sourceIp: input.sourceIp,
+    outcome: 'INVALID',
+    now: input.now,
+  });
+  return HIDDEN_PERSONNEL_VERIFICATION;
+}
+
+/**
  * Public personnel verification. The sequential record number does not open the
  * record. The random qrVerifyToken does. Unknown and sequential keys share one body.
  */
@@ -843,6 +848,7 @@ export async function publicCertificate(
     issuedAt: row.issuedAt,
     registryListed: row.examPersonnelLink.registryListed,
     registryConsentAt: row.examPersonnelLink.registryConsentAt,
+    registryConsentRevokedAt: row.examPersonnelLink.registryConsentRevokedAt,
     holderName: row.examPersonnelLink.holderDisplayName,
   });
   await client.verificationLog.create({
@@ -877,20 +883,10 @@ function verificationResult(
 
 export async function searchPublicRegistry(
   client: PersonnelClient,
-  input: { tenantId: string; number?: string; name?: string; now: Date },
+  input: { tenantId: string; name?: string; now: Date },
 ) {
   if (input.tenantId.trim().length === 0) {
     throw new PersonnelRuleError('TENANT_REQUIRED');
-  }
-  if (input.number) {
-    const row = await client.credential.findFirst({
-      where: { tenantId: input.tenantId, publicUid: input.number, credentialType: 'PERSONNEL' },
-      include: includeIssued,
-    });
-    if (!row?.examPersonnelLink) {
-      return [];
-    }
-    return [presentPublic(row, input.now, true)];
   }
   const name = input.name?.trim() ?? '';
   if (name.length < 3) {
@@ -900,6 +896,8 @@ export async function searchPublicRegistry(
     where: {
       tenantId: input.tenantId,
       registryListed: true,
+      registryConsentAt: { not: null },
+      registryConsentRevokedAt: null,
       holderDisplayName: { contains: name, mode: 'insensitive' },
     },
     include: {
@@ -908,22 +906,31 @@ export async function searchPublicRegistry(
     },
     take: 20,
   });
-  return rows.map((link) => {
+  return rows.flatMap((link) => {
+    if (
+      !directoryConsentActive({
+        registryListed: link.registryListed,
+        registryConsentAt: link.registryConsentAt,
+        registryConsentRevokedAt: link.registryConsentRevokedAt,
+      })
+    ) {
+      return [];
+    }
     const status = publicCertificateStatus(
       asLifecycle(link.credential.lifecycle),
       link.credential.expiresAt,
       input.now,
     );
-    return {
-      certificateNumber: link.credential.publicUid,
-      holderName: link.holderDisplayName,
-      scheme: link.schemeVersion.scheme.title,
-      schemeVersion: link.schemeVersion.versionLabel,
-      status,
-      issuedAt: link.credential.issuedAt.toISOString(),
-      expiresAt: link.credential.expiresAt?.toISOString() ?? null,
-      listed: true,
-    };
+    return [
+      {
+        holderName: link.holderDisplayName,
+        scheme: link.schemeVersion.scheme.title,
+        schemeVersion: link.schemeVersion.versionLabel,
+        status,
+        issuedAt: link.credential.issuedAt.toISOString(),
+        listed: true as const,
+      },
+    ];
   });
 }
 

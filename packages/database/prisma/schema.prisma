@@ -2398,8 +2398,9 @@ model ExamPersonnelCredentialLink {
   examDecisionId     String    @db.Uuid
   schemeVersionId    String    @db.Uuid
   holderDisplayName  String    @db.VarChar(256)
-  registryListed     Boolean   @default(false)
-  registryConsentAt  DateTime? @db.Timestamptz(3)
+  registryListed           Boolean   @default(false)
+  registryConsentAt        DateTime? @db.Timestamptz(3)
+  registryConsentRevokedAt DateTime? @db.Timestamptz(3)
   statusListIndex    Int
   createdAt          DateTime  @default(now()) @db.Timestamptz(3)
 

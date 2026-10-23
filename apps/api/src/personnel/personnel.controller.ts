@@ -165,10 +165,12 @@ export class PublicCertificateController {
   @Get()
   search(@Query() query: PublicSearchDto, @Req() req: Request) {
     limit(req);
-    const number = query.number;
+    // OD-PP-30: the sequential record number is not a verification key.
+    if (query.number !== undefined) {
+      return this.personnel.refuseNumber(query.number, sourceIp(req));
+    }
     const name = query.name;
     return this.personnel.search({
-      ...(number !== undefined ? { number } : {}),
       ...(name !== undefined ? { name } : {}),
     });
   }

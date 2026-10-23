@@ -117,18 +117,37 @@ export const HIDDEN_PERSONNEL_VERIFICATION: PersonnelPublicVerification = {
   holderName: null,
 };
 
+/**
+ * OD-DIR-33. A public-directory consent record is active only when the entry is
+ * listed, the consent timestamp is present, and that consent has not been withdrawn.
+ * A missing timestamp or a revocation fails closed.
+ */
+export function directoryConsentActive(input: {
+  registryListed: boolean;
+  registryConsentAt: Date | null;
+  registryConsentRevokedAt: Date | null;
+}): boolean {
+  return (
+    input.registryListed &&
+    input.registryConsentAt instanceof Date &&
+    !Number.isNaN(input.registryConsentAt.getTime()) &&
+    input.registryConsentRevokedAt === null
+  );
+}
+
 /** OD-PP-30: status, type, and issue date. The name is present only while registry consent lasts. */
 export function presentPersonnelPublicVerification(input: {
   status: PublicCertificateStatus;
   issuedAt: Date;
   registryListed: boolean;
   registryConsentAt: Date | null;
+  registryConsentRevokedAt: Date | null;
   holderName: string;
 }): PersonnelPublicVerification {
   return {
     status: input.status,
     documentType: 'PERSONNEL_CERTIFICATE',
     issuedAt: input.issuedAt.toISOString().slice(0, 10),
-    holderName: input.registryListed && input.registryConsentAt ? input.holderName : null,
+    holderName: directoryConsentActive(input) ? input.holderName : null,
   };
 }

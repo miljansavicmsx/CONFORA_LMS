@@ -130,6 +130,13 @@ describe('personnel credential signing key', () => {
     );
     expect(search).toContain('tenantId: input.tenantId');
     expect(search).toContain('name.length < 3');
+    expect(search).toContain('registryListed: true');
+    expect(search).toContain('registryConsentAt: { not: null }');
+    expect(search).toContain('registryConsentRevokedAt: null');
+    expect(search).not.toContain('input.number');
+    expect(search).not.toContain('publicUid: input.number');
+    expect(search).not.toContain('certificateNumber:');
+    expect(search).not.toContain('expiresAt:');
     expect(source).toContain('identityVerificationState');
     expect(source).not.toContain('holderName: input.holderDisplayName');
     expect(source).toContain('publishStatusList(statusListCredential');

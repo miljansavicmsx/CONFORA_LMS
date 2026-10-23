@@ -111,5 +111,7 @@ test('exam migration is additive and leaves frozen tables untouched', () => {
     assert.match(block, /onDelete:\s*Restrict/, name);
   }
   assert.match(modelBlock(schema, 'ExamPersonnelCredentialLink'), /registryListed/);
+  assert.match(modelBlock(schema, 'ExamPersonnelCredentialLink'), /registryConsentAt/);
+  assert.match(modelBlock(schema, 'ExamPersonnelCredentialLink'), /registryConsentRevokedAt/);
   assert.match(schema, /@@unique\(\[statusListIndex\]\)/);
 });

@@ -96,6 +96,7 @@ import {
   proposeAmfSuspension,
   publicCertificate,
   publicPdf,
+  refusePublicNumberQuery,
   revocationStatusList,
   searchPublicRegistry,
 } from './personnel-certificate-store';
@@ -524,7 +525,9 @@ export class TenantPrismaService {
       publicCertificate(this.prisma, { publicUid, now, sourceIp }),
     publicPdf: (publicUid: string, sourceIp: string, now: Date) =>
       publicPdf(this.prisma, { publicUid, sourceIp, now }),
-    search: (input: { number?: string; name?: string }, now: Date) =>
+    refuseNumber: (number: string, sourceIp: string, now: Date) =>
+      refusePublicNumberQuery(this.prisma, { number, sourceIp, now }),
+    search: (input: { name?: string }, now: Date) =>
       searchPublicRegistry(this.prisma, {
         ...input,
         tenantId: this.requiredTenantId(),
