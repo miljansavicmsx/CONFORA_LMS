@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -30,7 +31,7 @@ import {
   IssueCertificateDto,
   PublicSearchDto,
 } from './dto/personnel.dto';
-import { assertPublicRateLimit } from './personnel-rules';
+import { assertPublicRateLimit, PersonnelRuleError } from './personnel-rules';
 import { PersonnelCertificateService } from './personnel.service';
 
 function actor(req: RequestWithPrincipal): AuthenticatedActor {
@@ -46,7 +47,14 @@ function sourceIp(req: Request): string {
 }
 
 function limit(req: Request): void {
-  assertPublicRateLimit(sourceIp(req), Date.now());
+  try {
+    assertPublicRateLimit(sourceIp(req), Date.now());
+  } catch (error) {
+    if (error instanceof PersonnelRuleError && error.code === 'RATE_LIMIT') {
+      throw new HttpException({ message: 'RATE_LIMIT' }, 429);
+    }
+    throw error;
+  }
 }
 
 @Controller('committee/certificates')
@@ -167,13 +175,9 @@ export class PublicCertificateController {
 
   @Public()
   @Get(':publicUid/pdf')
-  async pdf(
-    @Param('publicUid') publicUid: string,
-    @Query('ticket') ticket: string | undefined,
-    @Req() req: Request,
-  ) {
+  async pdf(@Param('publicUid') publicUid: string, @Req() req: Request) {
     limit(req);
-    const file = await this.personnel.publicPdf(publicUid, ticket ?? '');
+    const file = await this.personnel.publicPdf(publicUid, sourceIp(req));
     return new StreamableFile(Buffer.from(file.bytes), {
       type: 'application/pdf',
       disposition: `attachment; filename="${file.filename}"`,

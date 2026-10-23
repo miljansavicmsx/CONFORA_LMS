@@ -31,12 +31,14 @@ test.describe("S17 public verification browser sign-off", () => {
 
     await page.goto(`/verify/${verifyHash}`);
     await expect(
-      page.getByTestId("verify-result-panel").or(page.getByTestId("verify-not-found-state")),
+      page
+        .getByTestId("public-verify-result")
+        .or(page.getByTestId("verify-unconfirmed"))
+        .or(page.getByTestId("verify-not-found-state")),
     ).toBeVisible({ timeout: 90_000 });
 
-    if (await page.getByTestId("verify-result-panel").isVisible()) {
-      await expect(page.getByTestId("verify-status-label")).toBeVisible();
-      const panel = page.getByTestId("verify-result-panel");
+    if (await page.getByTestId("public-verify-result").isVisible()) {
+      const panel = page.getByTestId("public-verify-result");
       await expect(
         panel.getByText(/reviewer notes|committee deliberation|audit payload|identity document|jmbg|date of birth|@/i),
       ).toHaveCount(0);
@@ -53,7 +55,7 @@ test.describe("S17 public verification browser sign-off", () => {
     test.setTimeout(60_000);
     await page.goto(`/verify/${invalidHash}`);
     await expect(
-      page.getByTestId("verify-not-found-state").or(page.getByTestId("verify-invalid-link")),
+      page.getByTestId("verify-unconfirmed").or(page.getByTestId("verify-not-found-state")),
     ).toBeVisible({ timeout: 60_000 });
     await expect(page.getByText(/stack trace|internal server|prisma|tenantId|userId/i)).toHaveCount(0);
     if (evidenceRoot) {

@@ -105,7 +105,10 @@ import {
   getLearningStatistics,
   getPlayer,
   getPublishedCourse,
+  getPublicPublishedProgram,
   listMyEnrolments,
+  listPublicPublishedPrograms,
+  publicCatalogTenantIds,
   listPublishedCourses,
   recordLessonProgress,
   setAnalyticsConsent,
@@ -433,6 +436,10 @@ export class TenantPrismaService {
       getAnalyticsConsent(this.learningClient(), this.requiredTenantId(), userId),
     setAnalyticsConsent: (input: { userId: string; granted: boolean; now: Date }) =>
       setAnalyticsConsent(this.learningClient(), { ...input, tenantId: this.requiredTenantId() }),
+    listPublicPrograms: (areaCode?: string) =>
+      listPublicPublishedPrograms(this.prisma, publicCatalogTenantIds(), areaCode),
+    getPublicProgram: (courseId: string) =>
+      getPublicPublishedProgram(this.prisma, publicCatalogTenantIds(), courseId),
   };
 
   /**
@@ -515,8 +522,8 @@ export class TenantPrismaService {
       listReminders(this.prisma, { tenantId: this.requiredTenantId(), userId, credentialId }),
     publicOne: (publicUid: string, now: Date, sourceIp: string) =>
       publicCertificate(this.prisma, { publicUid, now, sourceIp }),
-    publicPdf: (publicUid: string, ticket: string, now: Date) =>
-      publicPdf(this.prisma, { publicUid, ticket, now }),
+    publicPdf: (publicUid: string, sourceIp: string, now: Date) =>
+      publicPdf(this.prisma, { publicUid, sourceIp, now }),
     search: (input: { number?: string; name?: string }, now: Date) =>
       searchPublicRegistry(this.prisma, {
         ...input,

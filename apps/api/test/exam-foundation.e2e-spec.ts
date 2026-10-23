@@ -2540,12 +2540,101 @@ describe('certification exam foundation e2e', () => {
     expect(JSON.stringify(directory.body)).toContain('Demo Kandidat');
     expect(JSON.stringify(directory.body)).not.toContain('Krivo Ime');
     expect(JSON.stringify(directory.body)).not.toContain('email');
-    const lookedUp = await request(httpServer(app))
+    const hiddenCertificate = {
+      status: 'INVALID',
+      documentType: null,
+      issuedAt: null,
+      holderName: null,
+    };
+    const bySequential = await request(httpServer(app))
       .get(`/v1/public/certificates/${issuedBody.certificateNumber}`)
       .expect(200);
-    expect((lookedUp.body as { status: string; scheme: string }).status).toBe('VALID');
-    expect(JSON.stringify(lookedUp.body)).toContain('Demo Kandidat');
-    expect(JSON.stringify(lookedUp.body)).not.toContain('Krivo Ime');
+    expect(bySequential.body).toEqual(hiddenCertificate);
+    expect(JSON.stringify(bySequential.body)).not.toContain('Demo Kandidat');
+    const storedCertificate = await requirePrisma().credential.findFirst({
+      where: { id: issuedBody.credentialId },
+      select: { qrVerifyToken: true },
+    });
+    if (!storedCertificate?.qrVerifyToken) {
+      throw new Error('Verification token was not stored.');
+    }
+    expect(storedCertificate.qrVerifyToken).not.toBe(issuedBody.certificateNumber);
+    const byToken = await request(httpServer(app))
+      .get(`/v1/public/certificates/${storedCertificate.qrVerifyToken}`)
+      .expect(200);
+    expect(byToken.body).toEqual(
+      expect.objectContaining({
+        status: 'VALID',
+        documentType: 'PERSONNEL_CERTIFICATE',
+        holderName: 'Demo Kandidat',
+      }),
+    );
+    expect(JSON.stringify(byToken.body)).not.toContain(issuedBody.certificateNumber);
+    expect(JSON.stringify(byToken.body)).not.toContain('email');
+    expect(JSON.stringify(byToken.body)).not.toContain('Krivo Ime');
+    const unknownToken = await request(httpServer(app))
+      .get('/v1/public/certificates/not-a-real-token')
+      .expect(200);
+    expect(unknownToken.body).toEqual(hiddenCertificate);
+    const program = await requirePrisma().course.findFirst({
+      where: { tenantId, title: 'Obuka' },
+    });
+    if (!program) {
+      throw new Error('Course was not stored.');
+    }
+    const previousCatalogTenants = process.env['PUBLIC_CATALOG_TENANT_IDS'];
+    const otherOrganization = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    try {
+      process.env['PUBLIC_CATALOG_TENANT_IDS'] = tenantId;
+      const hiddenCatalog = await request(httpServer(app))
+        .get('/v1/public/catalog/courses')
+        .expect(200);
+      expect(JSON.stringify(hiddenCatalog.body)).not.toContain(program.id);
+      await requirePrisma().course.update({
+        where: { tenantId_id: { tenantId, id: program.id } },
+        data: { lifecycle: 'PUBLISHED' },
+      });
+      delete process.env['PUBLIC_CATALOG_TENANT_IDS'];
+      const closed = await request(httpServer(app)).get('/v1/public/catalog/courses').expect(200);
+      expect(closed.body).toEqual({ courses: [] });
+      await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
+      process.env['PUBLIC_CATALOG_TENANT_IDS'] = otherOrganization;
+      const foreign = await request(httpServer(app)).get('/v1/public/catalog/courses').expect(200);
+      expect(JSON.stringify(foreign.body)).not.toContain(program.id);
+      await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
+      process.env['PUBLIC_CATALOG_TENANT_IDS'] = tenantId;
+      const published = await request(httpServer(app))
+        .get('/v1/public/catalog/courses')
+        .expect(200);
+      const publishedBody = JSON.stringify(published.body);
+      expect(publishedBody).toContain('Obuka');
+      expect(publishedBody).toContain(program.id);
+      expect(publishedBody).not.toContain(tenantId);
+      expect(publishedBody).not.toContain('authorUserId');
+      expect(publishedBody).not.toContain('priceAmount');
+      expect(publishedBody).not.toContain('enrolment');
+      const detail = await request(httpServer(app))
+        .get(`/v1/public/catalog/courses/${program.id}`)
+        .expect(200);
+      expect(detail.body).toEqual(
+        expect.objectContaining({ courseId: program.id, title: 'Obuka' }),
+      );
+      await requirePrisma().course.update({
+        where: { tenantId_id: { tenantId, id: program.id } },
+        data: { lifecycle: 'DRAFT' },
+      });
+      await request(httpServer(app)).get(`/v1/public/catalog/courses/${program.id}`).expect(404);
+      await request(httpServer(app))
+        .get('/v1/public/catalog/courses')
+        .query({ tenantId })
+        .expect(400);
+    } finally {
+      if (previousCatalogTenants === undefined) {
+        delete process.env['PUBLIC_CATALOG_TENANT_IDS'];
+      } else {
+        process.env['PUBLIC_CATALOG_TENANT_IDS'] = previousCatalogTenants;
+      }
+    }
     const wallet = await request(httpServer(app))
       .get('/v1/me/certificates')
       .set(auth(candidateSubject, ['USR_CAND']))

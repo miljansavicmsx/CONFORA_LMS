@@ -101,3 +101,34 @@ export function assertPublicRateLimit(
   recent.push(nowMs);
   hits.set(key, recent);
 }
+
+export type PersonnelPublicVerification = {
+  status: PublicCertificateStatus | 'INVALID';
+  documentType: 'PERSONNEL_CERTIFICATE' | null;
+  issuedAt: string | null;
+  holderName: string | null;
+};
+
+/** Same body for an unknown token and for a sequential record number. */
+export const HIDDEN_PERSONNEL_VERIFICATION: PersonnelPublicVerification = {
+  status: 'INVALID',
+  documentType: null,
+  issuedAt: null,
+  holderName: null,
+};
+
+/** OD-PP-30: status, type, and issue date. The name is present only while registry consent lasts. */
+export function presentPersonnelPublicVerification(input: {
+  status: PublicCertificateStatus;
+  issuedAt: Date;
+  registryListed: boolean;
+  registryConsentAt: Date | null;
+  holderName: string;
+}): PersonnelPublicVerification {
+  return {
+    status: input.status,
+    documentType: 'PERSONNEL_CERTIFICATE',
+    issuedAt: input.issuedAt.toISOString().slice(0, 10),
+    holderName: input.registryListed && input.registryConsentAt ? input.holderName : null,
+  };
+}

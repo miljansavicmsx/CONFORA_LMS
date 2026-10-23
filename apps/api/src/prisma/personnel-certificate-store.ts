@@ -1,25 +1,26 @@
-import { randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { Prisma } from '@confora/database';
 
 import { liveBallotCounts, voteResult } from '../certification-flow/certification-flow-rules';
-import { buildCertificatePdf } from '../personnel/personnel-pdf';
+import { buildCertificatePdf, buildPersonnelVerificationPdf } from '../personnel/personnel-pdf';
 import {
   addYears,
   assertIssuer,
   assertStatusTransition,
+  HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
   PersonnelRuleError,
+  presentPersonnelPublicVerification,
   publicCertificateStatus,
+  type PersonnelPublicVerification,
   type PublicCertificateStatus,
   type StoredLifecycle,
 } from '../personnel/personnel-rules';
 import { includeFirstYear } from '../annual-fee/annual-fee-store';
 import { encodedStatusList, statusListCredential } from '../personnel/personnel-status-list';
 import {
-  issueDownloadTicket,
   publishStatusList,
   signPersonnelCredential,
-  verifyDownloadTicket,
   type PersonnelVcClaims,
 } from '../personnel/personnel-vc';
 
@@ -613,8 +614,7 @@ function walletItem(row: IssuedCredential, now: Date) {
     throw new PersonnelNotFoundError();
   }
   const status = publicCertificateStatus(asLifecycle(row.lifecycle), row.expiresAt, now);
-  const verifyPath = `/verify/${row.publicUid}`;
-  const ticket = issueDownloadTicket(row.publicUid, now);
+  const verifyPath = `/verify/${row.qrVerifyToken}`;
   return {
     certificateId: row.id,
     certificateKind: 'PERSONNEL',
@@ -627,13 +627,13 @@ function walletItem(row: IssuedCredential, now: Date) {
     issueDate: row.issuedAt.toISOString(),
     expiryDate: row.expiresAt?.toISOString() ?? null,
     lifecycleStatus: status,
-    qrHash: row.publicUid,
-    pdfUrl: `${apiOrigin()}/v1/public/certificates/${row.publicUid}/pdf?ticket=${ticket}`,
+    qrHash: row.qrVerifyToken,
+    pdfUrl: `${apiOrigin()}/v1/public/certificates/${row.qrVerifyToken}/pdf`,
     pdfDownloadAvailable: true,
     learnerVerifyPath: verifyPath,
     publicVerificationUrl: `${appOrigin()}${verifyPath}`,
     publicVerifyUrl: `${appOrigin()}${verifyPath}`,
-    verifyHash: row.publicUid,
+    verifyHash: row.qrVerifyToken,
     supersededByCertificateId: null,
     schemeTitle: link.schemeVersion.scheme.title,
     issuedAt: row.issuedAt.toISOString(),
@@ -667,20 +667,16 @@ export async function holderPdf(
 }
 
 export async function publicPdf(
-  client: PersonnelClient,
-  input: { publicUid: string; ticket: string; now: Date },
+  client: PersonnelClient & AccessLogClient,
+  input: { publicUid: string; now: Date; sourceIp: string },
 ): Promise<{ filename: string; bytes: Uint8Array }> {
-  if (!verifyDownloadTicket(input.publicUid, input.ticket, input.now)) {
-    throw new PersonnelRuleError('TICKET_INVALID');
-  }
-  const row = await client.credential.findFirst({
-    where: { publicUid: input.publicUid, credentialType: 'PERSONNEL' },
-    include: includeIssued,
-  });
-  if (!row?.examPersonnelLink || !row.expiresAt) {
-    throw new PersonnelNotFoundError();
-  }
-  return renderPdf(row, input.now);
+  const view = await publicCertificate(client, input);
+  const verifyUrl =
+    view.documentType === null
+      ? `${appOrigin()}/verify`
+      : `${appOrigin()}/verify/${input.publicUid.trim()}`;
+  const bytes = await buildPersonnelVerificationPdf(view, verifyUrl);
+  return { filename: 'verification.pdf', bytes };
 }
 
 async function renderPdf(row: IssuedCredential, now: Date) {
@@ -697,7 +693,7 @@ async function renderPdf(row: IssuedCredential, now: Date) {
     issuedAt: row.issuedAt.toISOString(),
     expiresAt: row.expiresAt.toISOString(),
     status,
-    verifyUrl: `${appOrigin()}/verify/${row.publicUid}`,
+    verifyUrl: `${appOrigin()}/verify/${row.qrVerifyToken}`,
   });
   return { filename: `${row.publicUid}.pdf`, bytes };
 }
@@ -769,18 +765,86 @@ export async function listReminders(
   }));
 }
 
+const SEQUENTIAL_CERTIFICATE_NUMBER = /^CON-\d{4}-\d{4}$/i;
+
+type AccessLogClient = {
+  publicDocumentAccessLog: {
+    create(args: {
+      data: {
+        id: string;
+        tenantId: string | null;
+        verificationKeyHash: string;
+        sourceIp: string;
+        outcome: string;
+        recordedAt: Date;
+      };
+    }): Promise<unknown>;
+  };
+};
+
+async function logPublicCertificateLookup(
+  client: AccessLogClient,
+  input: {
+    tenantId: string | null;
+    verificationKey: string;
+    sourceIp: string;
+    outcome: string;
+    now: Date;
+  },
+): Promise<void> {
+  await client.publicDocumentAccessLog.create({
+    data: {
+      id: randomUUID(),
+      tenantId: input.tenantId,
+      verificationKeyHash: createHash('sha256').update(input.verificationKey).digest('hex'),
+      sourceIp: input.sourceIp.slice(0, 64) || 'unknown',
+      outcome: input.outcome.slice(0, 16),
+      recordedAt: input.now,
+    },
+  });
+}
+
+/**
+ * Public personnel verification. The sequential record number does not open the
+ * record. The random qrVerifyToken does. Unknown and sequential keys share one body.
+ */
 export async function publicCertificate(
-  client: PersonnelClient,
+  client: PersonnelClient & AccessLogClient,
   input: { publicUid: string; now: Date; sourceIp: string },
-) {
+): Promise<PersonnelPublicVerification> {
+  const key = input.publicUid.trim();
+  if (key.length === 0 || SEQUENTIAL_CERTIFICATE_NUMBER.test(key)) {
+    await logPublicCertificateLookup(client, {
+      tenantId: null,
+      verificationKey: key || 'empty',
+      sourceIp: input.sourceIp,
+      outcome: 'INVALID',
+      now: input.now,
+    });
+    return HIDDEN_PERSONNEL_VERIFICATION;
+  }
   const row = await client.credential.findFirst({
-    where: { publicUid: input.publicUid, credentialType: 'PERSONNEL' },
+    where: { qrVerifyToken: key, credentialType: 'PERSONNEL' },
     include: includeIssued,
   });
   if (!row?.examPersonnelLink) {
-    throw new PersonnelNotFoundError();
+    await logPublicCertificateLookup(client, {
+      tenantId: null,
+      verificationKey: key,
+      sourceIp: input.sourceIp,
+      outcome: 'INVALID',
+      now: input.now,
+    });
+    return HIDDEN_PERSONNEL_VERIFICATION;
   }
   const status = publicCertificateStatus(asLifecycle(row.lifecycle), row.expiresAt, input.now);
+  const view = presentPersonnelPublicVerification({
+    status,
+    issuedAt: row.issuedAt,
+    registryListed: row.examPersonnelLink.registryListed,
+    registryConsentAt: row.examPersonnelLink.registryConsentAt,
+    holderName: row.examPersonnelLink.holderDisplayName,
+  });
   await client.verificationLog.create({
     data: {
       id: randomUUID(),
@@ -792,7 +856,14 @@ export async function publicCertificate(
       result: verificationResult(status),
     },
   });
-  return presentPublic(row, input.now, true);
+  await logPublicCertificateLookup(client, {
+    tenantId: row.tenantId,
+    verificationKey: key,
+    sourceIp: input.sourceIp,
+    outcome: view.status,
+    now: input.now,
+  });
+  return view;
 }
 
 function verificationResult(

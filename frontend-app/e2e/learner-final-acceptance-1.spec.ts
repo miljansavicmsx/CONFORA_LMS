@@ -176,7 +176,10 @@ test.describe("LEARNER-FINAL-ACCEPTANCE-1 learner portal acceptance", () => {
     if (verifyHash) {
       await page.goto(`/verify/${verifyHash}`);
       await expect(
-        page.getByTestId("verify-result-panel").or(page.getByTestId("verify-not-found-state")),
+        page
+          .getByTestId("public-verify-result")
+          .or(page.getByTestId("verify-unconfirmed"))
+          .or(page.getByTestId("verify-not-found-state")),
       ).toBeVisible({ timeout: 60_000 });
     }
     await page.goto("/verify");

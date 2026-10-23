@@ -34,18 +34,6 @@ import { cn } from "@/lib/utils";
 const QUEUE_KEY = ["staff", "identity-review", "queue"] as const;
 const SYSADMIN_QUEUE_KEY = ["sysadmin", "identity-review", "queue"] as const;
 
-const DEMO_SYNTHETIC_USER: UserRegistryRow = {
-  userId: "b2000000-0000-4000-8000-000000000001",
-  email: "pilot.learner@confora.test",
-  fullName: "Pilot Learner (synthetic demo)",
-  role: "learner",
-  nationalId: "0000000000000",
-  identityVerificationStatus: "pending",
-  identityNotes: "F5-UI-4 synthetic fallback — queue empty or RBAC blocked",
-  identityDocumentIdKey: "uploads/demo/synthetic-id-scan.pdf",
-  identityDocumentDiplomaKey: null,
-};
-
 function mapNestStatusToRegistry(status: NestIdentityQueueStatus): IdentityVerificationStatus {
   switch (status) {
     case "VERIFIED":
@@ -133,7 +121,6 @@ export default function IdentityReviewPage(): JSX.Element {
   const sysadminItems = sysadminQueueQ.data ?? [];
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [notesById, setNotesById] = useState<Record<string, string>>({});
-  const [demoUser, setDemoUser] = useState<UserRegistryRow>(DEMO_SYNTHETIC_USER);
 
   const selected = useMemo(
     () => items.find((i) => i.verificationId === selectedId) ?? items[0] ?? null,
@@ -153,11 +140,10 @@ export default function IdentityReviewPage(): JSX.Element {
   });
 
   const useNestQueue = canLoadQueue && !queueQ.isError && items.length > 0;
-  const showDemoFallback = !useNestQueue;
 
   const panelUser = useNestQueue && selected
     ? queueItemToUserRow(selected, notesById[selected.verificationId] ?? "")
-    : demoUser;
+    : null;
 
   const panelDisabled = !canPerformReview || !useNestQueue || patchM.isPending;
 
@@ -187,9 +173,7 @@ export default function IdentityReviewPage(): JSX.Element {
         </header>
 
         <p className="mb-4 text-sm text-text-muted" data-testid="identity-review-route-note">
-          Izvor: <code className="text-xs">GET /v1/staff/identity-review/queue</code> (čitanje:{" "}
-          STAFF_ID_VERIFIER, STAFF_DIR nadzor). Izmjene:{" "}
-          <code className="text-xs">PATCH …/queue/:id</code> (samo STAFF_ID_VERIFIER).
+          Red čekanja identiteta nije registriran na Nest API-ju. Stranica ne prikazuje izmišljene osobe.
         </p>
 
         {!canPerformReview ? (
@@ -278,59 +262,47 @@ export default function IdentityReviewPage(): JSX.Element {
           </section>
         ) : null}
 
-        {showDemoFallback ? (
-          <p
-            className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100"
-            data-testid="identity-queue-demo-fallback"
-          >
-            {queueQ.isError
-              ? "Nest identity queue nije dostupan — prikazujemo označeni sintetički demo."
-              : items.length === 0
-                ? "Red čekanja je prazan — prikazujemo označeni sintetički demo."
-                : "RBAC ne dozvoljava queue — sintetički demo."}
+        {!useNestQueue ? (
+          <p className="rounded-lg border border-border/50 px-3 py-3 text-sm text-text-secondary" data-testid="identity-review-not-implemented">
+            Pregled identiteta još nije proveden. API za red čekanja ne postoji, pa se ovdje ne prikazuju osobe.
           </p>
+        ) : panelUser ? (
+          <>
+            <div className="mb-6 grid gap-3 sm:grid-cols-2">
+              <ControlledDocumentAccessPanel
+                title="Dokument identiteta (storage ključ)"
+                storageKey={panelUser.identityDocumentIdKey}
+                statusLabel={panelUser.identityVerificationStatus}
+                testIdPrefix="identity-doc-id"
+                documentKind="identity_evidence"
+                verificationId={selected ? selected.verificationId : undefined}
+                previewEnabled={Boolean(selected)}
+              />
+              <ControlledDocumentAccessPanel
+                title="Dodatni credential ključ"
+                storageKey={panelUser.identityDocumentDiplomaKey}
+                testIdPrefix="identity-doc-diploma"
+              />
+            </div>
+            <ManualIdentityReviewPanel
+              user={panelUser}
+              disabled={panelDisabled}
+              onStatusChange={(status) => {
+                if (!selected) return;
+                const notes = notesById[selected.verificationId] ?? "";
+                void patchM.mutateAsync({
+                  verificationId: selected.verificationId,
+                  status,
+                  notes,
+                });
+              }}
+              onNotesChange={(notes) => {
+                if (!selected) return;
+                setNotesById((prev) => ({ ...prev, [selected.verificationId]: notes }));
+              }}
+            />
+          </>
         ) : null}
-
-        <div className="mb-6 grid gap-3 sm:grid-cols-2">
-          <ControlledDocumentAccessPanel
-            title="Dokument identiteta (storage ključ)"
-            storageKey={panelUser.identityDocumentIdKey}
-            statusLabel={panelUser.identityVerificationStatus}
-            testIdPrefix="identity-doc-id"
-            documentKind="identity_evidence"
-            verificationId={useNestQueue && selected ? selected.verificationId : undefined}
-            previewEnabled={Boolean(useNestQueue && selected)}
-          />
-          <ControlledDocumentAccessPanel
-            title="Dodatni credential ključ"
-            storageKey={panelUser.identityDocumentDiplomaKey}
-            testIdPrefix="identity-doc-diploma"
-          />
-        </div>
-
-        <ManualIdentityReviewPanel
-          user={panelUser}
-          disabled={panelDisabled}
-          onStatusChange={(status) => {
-            if (useNestQueue && selected) {
-              const notes = notesById[selected.verificationId] ?? "";
-              void patchM.mutateAsync({
-                verificationId: selected.verificationId,
-                status,
-                notes,
-              });
-            } else {
-              setDemoUser({ ...demoUser, identityVerificationStatus: status });
-            }
-          }}
-          onNotesChange={(notes) => {
-            if (useNestQueue && selected) {
-              setNotesById((prev) => ({ ...prev, [selected.verificationId]: notes }));
-            } else {
-              setDemoUser({ ...demoUser, identityNotes: notes });
-            }
-          }}
-        />
       </div>
     </div>
   );

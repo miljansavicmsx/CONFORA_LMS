@@ -351,6 +351,130 @@ export async function getPublishedCourse(
   return toCourse(row);
 }
 
+export type PublicProgramView = {
+  courseId: string;
+  code: string;
+  title: string;
+  description: string;
+  areaCode: string;
+  language: string;
+  typicalLearningTimeMinutes: number | null;
+  learningObjectives: string | null;
+  educationalLevel: string | null;
+  targetAudience: string | null;
+};
+
+const publicProgramSelect = {
+  id: true,
+  code: true,
+  title: true,
+  description: true,
+  areaCode: true,
+  language: true,
+  typicalLearningTimeMinutes: true,
+  learningObjectives: true,
+  educationalLevel: true,
+  targetAudience: true,
+} as const;
+
+function toPublicProgram(row: {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  areaCode: string;
+  language: string;
+  typicalLearningTimeMinutes: number | null;
+  learningObjectives: string | null;
+  educationalLevel: string | null;
+  targetAudience: string | null;
+}): PublicProgramView {
+  return {
+    courseId: row.id,
+    code: row.code,
+    title: row.title,
+    description: row.description,
+    areaCode: row.areaCode,
+    language: row.language,
+    typicalLearningTimeMinutes: row.typicalLearningTimeMinutes,
+    learningObjectives: row.learningObjectives,
+    educationalLevel: row.educationalLevel,
+    targetAudience: row.targetAudience,
+  };
+}
+
+const PUBLIC_CATALOG_TENANT_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * Organizations whose published programmes may appear to anonymous readers.
+ * Unset, blank, `*`, and non-UUID tokens produce an empty list. That list
+ * fails closed: the catalogue is empty and a course id is not found.
+ * The request cannot supply this list.
+ */
+export function publicCatalogTenantIds(
+  raw: string | undefined = process.env['PUBLIC_CATALOG_TENANT_IDS'],
+): readonly string[] {
+  if (!raw?.trim()) {
+    return [];
+  }
+  const ids: string[] = [];
+  for (const part of raw.split(',')) {
+    const token = part.trim().toLowerCase();
+    if (PUBLIC_CATALOG_TENANT_ID.test(token) && !ids.includes(token)) {
+      ids.push(token);
+    }
+  }
+  return ids;
+}
+
+/**
+ * Published programme metadata for the server allowlist only.
+ * An empty allowlist returns no rows. The caller cannot select an organisation.
+ * People, enrolments, prices and storage keys are omitted.
+ */
+export async function listPublicPublishedPrograms(
+  db: LearningClient,
+  tenantIds: readonly string[],
+  areaCode?: string,
+): Promise<{ courses: readonly PublicProgramView[] }> {
+  if (tenantIds.length === 0) {
+    return { courses: [] };
+  }
+  const courses = await db.course.findMany({
+    where: {
+      lifecycle: 'PUBLISHED',
+      tenantId: { in: [...tenantIds] },
+      ...(areaCode ? { areaCode } : {}),
+    },
+    select: publicProgramSelect,
+    orderBy: [{ areaCode: 'asc' }, { title: 'asc' }],
+  });
+  return { courses: courses.map(toPublicProgram) };
+}
+
+export async function getPublicPublishedProgram(
+  db: LearningClient,
+  tenantIds: readonly string[],
+  courseId: string,
+): Promise<PublicProgramView> {
+  if (tenantIds.length === 0) {
+    throw new LearningNotFoundError();
+  }
+  const row = await db.course.findFirst({
+    where: {
+      id: courseId,
+      lifecycle: 'PUBLISHED',
+      tenantId: { in: [...tenantIds] },
+    },
+    select: publicProgramSelect,
+  });
+  if (!row) {
+    throw new LearningNotFoundError();
+  }
+  return toPublicProgram(row);
+}
+
 async function enrolmentView(
   tx: Tx,
   tenantId: string,
@@ -458,28 +582,23 @@ export async function listMyEnrolments(
     where: { tenantId, userId },
     orderBy: { enrolledAt: 'desc' },
     include: {
-      course: { select: { id: true, title: true, areaCode: true } },
+      course: { select: { id: true, title: true, areaCode: true, priceCurrency: true } },
       paymentIntent: true,
     },
   });
-  return rows.flatMap((row) => {
-    if (!row.paymentIntent) return [];
-    return [
-      {
-        enrolmentId: row.id,
-        courseId: row.course.id,
-        courseTitle: row.course.title,
-        areaCode: row.course.areaCode,
-        enrolledAt: row.enrolledAt.toISOString(),
-        progressPercent: row.progressPercent,
-        completedAt: row.completedAt?.toISOString() ?? null,
-        paymentState: row.paymentIntent.state,
-        amount: money(row.paymentIntent.amount),
-        currency: row.paymentIntent.currency,
-        alreadyEnrolled: true,
-      },
-    ];
-  });
+  return rows.map((row) => ({
+    enrolmentId: row.id,
+    courseId: row.course.id,
+    courseTitle: row.course.title,
+    areaCode: row.course.areaCode,
+    enrolledAt: row.enrolledAt.toISOString(),
+    progressPercent: row.progressPercent,
+    completedAt: row.completedAt?.toISOString() ?? null,
+    paymentState: row.paymentIntent?.state ?? 'NOT_REQUIRED',
+    amount: row.paymentIntent ? money(row.paymentIntent.amount) : '0.00',
+    currency: row.paymentIntent?.currency ?? row.course.priceCurrency,
+    alreadyEnrolled: true,
+  }));
 }
 
 type PlayerRow = {

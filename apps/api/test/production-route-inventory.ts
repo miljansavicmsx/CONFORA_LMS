@@ -1,8 +1,8 @@
 /**
  * Exact production route inventory.
  * Equality is the check: a new route must be added here in Express registration order.
- * The five browser routes below are the only additions to the previous 92.
- * Each one names the job it does. A further route still fails until it has its own entry.
+ * Browser routes and the public catalogue each name the job they do.
+ * A further route still fails until it has its own entry.
  */
 export const OIDC_BROWSER_ROUTES = [
   {
@@ -32,6 +32,19 @@ export const OIDC_BROWSER_ROUTES = [
   },
 ] as const;
 
+export const PUBLIC_CATALOG_ROUTES = [
+  {
+    route: 'GET /v1/public/catalog/courses',
+    reason:
+      'Lists published programmes only for PUBLIC_CATALOG_TENANT_IDS. An unset or empty allowlist returns an empty list. No people, enrolments, prices, or storage keys, and the caller cannot choose an organization.',
+  },
+  {
+    route: 'GET /v1/public/catalog/courses/:courseId',
+    reason:
+      'Returns one published programme whose organization is on the server allowlist. A draft, an unknown id, or any other organization is not found.',
+  },
+] as const;
+
 export const PRIOR_PRODUCTION_ROUTE_COUNT = 92;
 
 export const PRODUCTION_ROUTE_INVENTORY = [
@@ -49,6 +62,7 @@ export const PRODUCTION_ROUTE_INVENTORY = [
   'GET /v1/me/learning/statistics',
   'GET /v1/me/learning/analytics-consent',
   'PUT /v1/me/learning/analytics-consent',
+  ...PUBLIC_CATALOG_ROUTES.map((entry) => entry.route),
   'POST /v1/staff/exams/items',
   'GET /v1/staff/exams/items',
   'POST /v1/staff/exams/items/:itemId/draft',
@@ -135,20 +149,21 @@ export const PRODUCTION_ROUTE_COUNT = PRODUCTION_ROUTE_INVENTORY.length;
 export function justifiedProductionRouteCount(): number {
   const reasons = new Set<string>();
   const inventory = new Set<string>(PRODUCTION_ROUTE_INVENTORY);
-  for (const entry of OIDC_BROWSER_ROUTES) {
+  for (const entry of [...OIDC_BROWSER_ROUTES, ...PUBLIC_CATALOG_ROUTES]) {
     if (
       entry.reason.trim().length < 40 ||
       reasons.has(entry.reason) ||
       !inventory.has(entry.route)
     ) {
-      throw new Error(`browser route ${entry.route} needs its own reason in the inventory`);
+      throw new Error(`route ${entry.route} needs its own reason in the inventory`);
     }
     reasons.add(entry.reason);
   }
-  const expected = PRIOR_PRODUCTION_ROUTE_COUNT + OIDC_BROWSER_ROUTES.length;
+  const expected =
+    PRIOR_PRODUCTION_ROUTE_COUNT + OIDC_BROWSER_ROUTES.length + PUBLIC_CATALOG_ROUTES.length;
   if (PRODUCTION_ROUTE_INVENTORY.length !== expected) {
     throw new Error(
-      `inventory length ${String(PRODUCTION_ROUTE_INVENTORY.length)} is not ${String(PRIOR_PRODUCTION_ROUTE_COUNT)} plus the ${String(OIDC_BROWSER_ROUTES.length)} justified browser routes`,
+      `inventory length ${String(PRODUCTION_ROUTE_INVENTORY.length)} is not ${String(PRIOR_PRODUCTION_ROUTE_COUNT)} plus ${String(OIDC_BROWSER_ROUTES.length + PUBLIC_CATALOG_ROUTES.length)} justified routes`,
     );
   }
   return expected;

@@ -149,7 +149,7 @@ test.describe("ADMIN-GOV-FINAL-ACCEPTANCE-1 admin/governance portal", () => {
     await loginPilotUser(page, "pilot.manager@confora.test", password);
     await page.goto("/dashboard/admin/education");
     await expect(page.getByTestId("admin-education-heading")).toHaveText("Upravljanje edukacijama");
-    await expect(page.getByTestId("admin-education-synthetic-banner")).toBeVisible();
+    await expect(page.getByTestId("admin-education-not-implemented")).toBeVisible();
     await expect(page.getByTestId("admin-education-readonly-badge")).toBeVisible();
     await expect(page.getByText(/ISO\/IEC 17024/)).toBeVisible();
     await assertNoRawEnums(page);

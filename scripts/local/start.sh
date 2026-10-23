@@ -16,6 +16,19 @@ set +a
 if [[ -n "${preset_idle}" ]]; then
   export OIDC_SESSION_IDLE_SECONDS="${preset_idle}"
 fi
+# Holder certificate links need a public origin. Unset stays fail-closed in the API.
+if [[ -z "${PUBLIC_APP_ORIGIN:-}" ]]; then
+  export PUBLIC_APP_ORIGIN=http://localhost:3001
+fi
+if [[ -z "${API_PUBLIC_ORIGIN:-}" ]]; then
+  export API_PUBLIC_ORIGIN=http://localhost:4000
+fi
+# Preview only. An empty allowlist keeps the anonymous catalogue closed.
+if [[ -z "${PUBLIC_CATALOG_TENANT_IDS:-}" ]]; then
+  export PUBLIC_CATALOG_TENANT_IDS="$(
+    node -e "process.stdout.write(JSON.parse(require('node:fs').readFileSync('infra/keycloak/synthetic-users.json','utf8')).tenantId)"
+  )"
+fi
 export KC_BOOTSTRAP_ADMIN_USERNAME="${KEYCLOAK_ADMIN_USERNAME}"
 export KC_BOOTSTRAP_ADMIN_PASSWORD="${KEYCLOAK_ADMIN_PASSWORD}"
 export KC_HOSTNAME=localhost
