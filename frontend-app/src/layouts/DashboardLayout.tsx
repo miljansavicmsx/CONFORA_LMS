@@ -17,7 +17,6 @@ import { WorkspaceProvider, useWorkspaceContext } from "@/contexts/WorkspaceCont
 import { APP_WORKSPACE_LABELS } from "@/lib/app-workspace";
 import type { MePermissionsPayload } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
-import { extractRealmRolesFromToken } from "@/lib/jwt-payload";
 import { buildRoleAwarePilotMobileNav, isNestAuthPilotActive } from "@/lib/nest-auth-pilot";
 import { useAuthStore } from "@/stores/authStore";
 import { breadcrumbsFromPathname } from "@/pages/dashboard/dashboard-breadcrumbs";
@@ -78,8 +77,7 @@ function useMediaMinLg(): boolean {
 }
 
 function BottomNavBar({ role }: { readonly role?: string }): JSX.Element {
-  const accessToken = useAuthStore((s) => s.accessToken);
-  const jwtRoles = extractRealmRolesFromToken(accessToken);
+  const jwtRoles = useAuthStore((s) => s.roles);
   const navItems = isNestAuthPilotActive()
     ? buildRoleAwarePilotMobileNav({ roleFromProfile: role ?? "learner", jwtRoles })
     : MOBILE_NAV;

@@ -16,7 +16,11 @@ import { ReportQueryService } from '../src/report-query/report-query.service';
 import { MS_PER_DAY } from '../src/report-query/report-query.input';
 import { TenantAccessDeniedError } from '../src/tenant/tenant-errors';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
-import { PRODUCTION_ROUTE_COUNT, PRODUCTION_ROUTE_INVENTORY } from './production-route-inventory';
+import {
+  justifiedProductionRouteCount,
+  PRODUCTION_ROUTE_COUNT,
+  PRODUCTION_ROUTE_INVENTORY,
+} from './production-route-inventory';
 
 const IMAGE =
   'pgvector/pgvector:pg16@sha256:a36250871de0833b8757561c72f2477ef1ddd1101afa4e617fb552e0de514c6b';
@@ -267,7 +271,7 @@ describe('BAR-P08 reports module e2e', () => {
       .flat();
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(92);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(justifiedProductionRouteCount());
   });
 
   it('P08_TEST_009 unauthenticated -> 401', async () => {

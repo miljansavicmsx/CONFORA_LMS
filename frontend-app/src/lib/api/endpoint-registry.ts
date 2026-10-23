@@ -39,15 +39,6 @@ export type EndpointDefinition = {
  */
 export const ENDPOINT_DEFINITIONS: readonly EndpointDefinition[] = [
   {
-    id: "auth.login",
-    group: "auth",
-    legacyPath: "/auth/login",
-    nestPath: "/auth/login",
-    hybridOwner: "legacy",
-    risk: "critical",
-    todo: "P0-B Keycloak cutover before switching hybridOwner to nest",
-  },
-  {
     id: "auth.refresh",
     group: "auth",
     legacyPath: "/auth/refresh",
@@ -573,6 +564,12 @@ export function resolveOwnerForPath(path: string, provider: ApiProviderMode): En
     return "nest";
   }
   if (normalized === "/v1/me/learning" || normalized.startsWith("/v1/me/learning/")) {
+    return "nest";
+  }
+  if (normalized === "/v1/auth" || normalized.startsWith("/v1/auth/")) {
+    return "nest";
+  }
+  if (normalized === "/v1/me/certification" || normalized.startsWith("/v1/me/certification/")) {
     return "nest";
   }
   if (

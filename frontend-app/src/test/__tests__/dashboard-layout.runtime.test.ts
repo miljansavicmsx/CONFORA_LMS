@@ -64,8 +64,8 @@ vi.mock("@/lib/nest-auth-pilot", () => ({
 }));
 
 vi.mock("@/stores/authStore", () => ({
-  useAuthStore: (selector: (s: { accessToken: string | null }) => unknown) =>
-    selector({ accessToken: null }),
+  useAuthStore: (selector: (s: { roles: readonly string[] }) => unknown) =>
+    selector({ roles: [] }),
 }));
 
 import { DashboardLayout } from "@/layouts/DashboardLayout";

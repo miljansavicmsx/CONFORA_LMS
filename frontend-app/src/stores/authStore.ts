@@ -1,37 +1,95 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
-export type AuthUser = { readonly id?: string; readonly userId?: string; readonly email?: string; readonly name?: string; readonly role?: string };
-export type AuthState = {
-  readonly accessToken: string | null;
-  readonly refreshToken: string | null;
-  readonly user: AuthUser | null;
-  readonly cognitoGroups: readonly string[];
-  readonly isAuthenticated: boolean;
-  login: (tokens: { readonly access_token: string; readonly refresh_token: string }, user?: AuthUser, cognitoGroups?: readonly string[]) => void;
-  logout: () => void;
+import { purgePersistedAuthSecrets } from "@/lib/api/auth-token-provider";
+import {
+  fetchBrowserSession,
+  logoutBrowserSession,
+  setSessionLostHandler,
+  type BrowserSession,
+  type SessionLostReason,
+} from "@/lib/oidc-browser-session";
+
+export type AuthUser = {
+  readonly id?: string;
+  readonly userId?: string;
+  readonly email?: string;
+  readonly name?: string;
+  readonly role?: string;
 };
 
-const EMPTY_STATE = { accessToken: null, refreshToken: null, user: null, cognitoGroups: [], isAuthenticated: false } as const;
+type AuthStatus = "unknown" | "authenticated" | "anonymous";
 
-/** Owner-authorized existing `confora-auth` persistence; client state never substitutes server authorization. */
-export const useAuthStore = create<AuthState>()(persist((set) => ({
-  ...EMPTY_STATE,
-  login: (tokens, user, cognitoGroups = []) => {
-    const accessToken = tokens.access_token.trim();
-    const refreshToken = tokens.refresh_token.trim();
-    if (!accessToken || !refreshToken) { set(EMPTY_STATE); return; }
-    set({ accessToken, refreshToken, user: user ?? null, cognitoGroups: [...cognitoGroups], isAuthenticated: true });
+export type AuthState = {
+  readonly status: AuthStatus;
+  readonly user: AuthUser | null;
+  readonly roles: readonly string[];
+  readonly cognitoGroups: readonly string[];
+  readonly isAuthenticated: boolean;
+  readonly lostReason: SessionLostReason | null;
+  restore: () => Promise<void>;
+  logout: () => Promise<void>;
+};
+
+const ANONYMOUS = {
+  status: "anonymous" as const,
+  user: null,
+  roles: [] as readonly string[],
+  cognitoGroups: [] as readonly string[],
+  isAuthenticated: false,
+};
+
+function fromSession(session: BrowserSession): Pick<AuthState, "status" | "user" | "roles" | "cognitoGroups" | "isAuthenticated" | "lostReason"> {
+  return {
+    status: "authenticated",
+    isAuthenticated: true,
+    lostReason: null,
+    roles: session.roles,
+    cognitoGroups: [...session.roles],
+    user: {
+      id: session.userId,
+      userId: session.userId,
+      email: session.email,
+      name: session.displayName,
+      role: session.roles[0]?.toLowerCase() ?? "",
+    },
+  };
+}
+
+purgePersistedAuthSecrets();
+
+export const useAuthStore = create<AuthState>((set) => ({
+  status: "unknown",
+  user: null,
+  roles: [],
+  cognitoGroups: [],
+  isAuthenticated: false,
+  lostReason: null,
+  restore: async () => {
+    const result = await fetchBrowserSession();
+    if (result === "expired") {
+      set({ ...ANONYMOUS, lostReason: "expired" });
+      return;
+    }
+    if (result === "anonymous" || result === "session") {
+      set({ ...ANONYMOUS, lostReason: null });
+      return;
+    }
+    set(fromSession(result));
   },
-  logout: () => set(EMPTY_STATE),
-}), {
-  name: "confora-auth",
-  partialize: (state) => ({ accessToken: state.accessToken, refreshToken: state.refreshToken, user: state.user, cognitoGroups: state.cognitoGroups, isAuthenticated: Boolean(state.accessToken && state.refreshToken) }),
-  merge: (persistedState, currentState) => {
-    const persisted = persistedState as Partial<AuthState> | null;
-    const accessToken = typeof persisted?.accessToken === "string" && persisted.accessToken.trim() ? persisted.accessToken.trim() : null;
-    const refreshToken = typeof persisted?.refreshToken === "string" && persisted.refreshToken.trim() ? persisted.refreshToken.trim() : null;
-    if (!accessToken || !refreshToken) return { ...currentState, ...EMPTY_STATE };
-    return { ...currentState, ...persisted, accessToken, refreshToken, isAuthenticated: true, cognitoGroups: Array.isArray(persisted?.cognitoGroups) ? persisted.cognitoGroups : [] };
+  logout: async () => {
+    const endSessionUrl = await logoutBrowserSession();
+    set({ ...ANONYMOUS, lostReason: "session" });
+    if (endSessionUrl) {
+      window.location.assign(endSessionUrl);
+      return;
+    }
+    window.location.assign("/login?reason=signed-out");
   },
 }));
+
+setSessionLostHandler((reason) => {
+  useAuthStore.setState({ ...ANONYMOUS, lostReason: reason });
+  if (window.location.pathname.startsWith("/dashboard")) {
+    window.location.assign(`/login?reason=${reason}`);
+  }
+});

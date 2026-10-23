@@ -7,7 +7,11 @@ import { PrismaClient } from '@confora/database';
 import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
-import { PRODUCTION_ROUTE_COUNT, PRODUCTION_ROUTE_INVENTORY } from './production-route-inventory';
+import {
+  justifiedProductionRouteCount,
+  PRODUCTION_ROUTE_COUNT,
+  PRODUCTION_ROUTE_INVENTORY,
+} from './production-route-inventory';
 import type { AuthenticatedActor } from '../src/auth/request-principal';
 import { REQUEST_PRINCIPAL_KEY } from '../src/auth/request-principal';
 import { ReportQueryService } from '../src/report-query/report-query.service';
@@ -353,7 +357,7 @@ describe('BAR-P07 report-query e2e', () => {
       .flat();
     expect(productionRoutes).toEqual([...PRODUCTION_ROUTE_INVENTORY]);
     expect(productionRoutes).toHaveLength(PRODUCTION_ROUTE_COUNT);
-    expect(PRODUCTION_ROUTE_COUNT).toBe(92);
+    expect(PRODUCTION_ROUTE_COUNT).toBe(justifiedProductionRouteCount());
   });
 
   it('P07 exact 365 day span works at runtime', async () => {

@@ -42,6 +42,7 @@ apps/api/src/schema.gql
 .env
 backend/.env
 .env.local
+.secrets/
 
 # Local dev signing material for smoke (never commit)
 scripts/ops/.dev/

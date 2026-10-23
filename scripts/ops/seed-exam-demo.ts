@@ -5,6 +5,8 @@
  * A separate historical pass is already decided and issued for the public registry.
  */
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 import { PrismaClient } from '@prisma/client';
 
@@ -617,8 +619,9 @@ async function seedDistinctDocuments(): Promise<void> {
       participationSeconds: 3600,
       statement: educationStatement,
       issuedAt: new Date('2026-10-18T00:00:00.000Z'),
+      verificationId: 'edu-demo-2026-0001',
     },
-    update: { statement: educationStatement },
+    update: { statement: educationStatement, verificationId: 'edu-demo-2026-0001' },
   });
   const examStatement = 'Ovo je potvrda o rezultatu ispita. Ovo NIJE profesionalna certifikacija.';
   await prisma.examPassAttestation.upsert({
@@ -635,8 +638,9 @@ async function seedDistinctDocuments(): Promise<void> {
       autoIssued: true,
       statement: examStatement,
       issuedAt: new Date('2026-10-18T12:00:00.000Z'),
+      verificationId: 'exm-demo-2026-0001',
     },
-    update: { state: 'ISSUED', statement: examStatement },
+    update: { state: 'ISSUED', statement: examStatement, verificationId: 'exm-demo-2026-0001' },
   });
   await prisma.schemeLevelCriterion.upsert({
     where: { tenantId_id: { tenantId, id: levelId } },
@@ -750,23 +754,32 @@ async function seedOidcLinks(): Promise<void> {
   if (!issuer) {
     return;
   }
-  const links = [
-    ['a11a11a1-a11a-411a-811a-a11a11a11a11', candidateId, 'exam-candidate'],
-    ['a22a22a2-a22a-422a-822a-a22a22a22a22', deciderId, 'exam-committee'],
-    ['a33a33a3-a33a-433a-833a-a33a33a33a33', '1f1f1f1f-1f1f-4f1f-8f1f-1f1f1f1f1f1f', 'exam-issuer'],
-  ] as const;
-  for (const [, userId, subject] of links) {
+  const catalogPath = path.resolve(process.cwd(), 'infra/keycloak/synthetic-users.json');
+  const catalog = JSON.parse(readFileSync(catalogPath, 'utf8')) as {
+    users: readonly {
+      email: string;
+      keycloakId: string;
+      dbUserId: string | null;
+      linked: boolean;
+    }[];
+  };
+  for (const entry of catalog.users) {
+    if (!entry.linked || !entry.dbUserId) {
+      continue;
+    }
+    await user(entry.dbUserId, entry.email);
+    const subject = entry.keycloakId;
     const existing = await prisma.externalIdentityLink.findUnique({
       where: { tenantId_issuer_subject: { tenantId, issuer, subject } },
     });
     if (existing) {
       await prisma.externalIdentityLink.update({
         where: { id: existing.id },
-        data: { userId },
+        data: { userId: entry.dbUserId },
       });
     } else {
       await prisma.externalIdentityLink.create({
-        data: { id: randomUUID(), tenantId, userId, issuer, subject },
+        data: { id: randomUUID(), tenantId, userId: entry.dbUserId, issuer, subject },
       });
     }
   }

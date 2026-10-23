@@ -1,7 +1,6 @@
 import { type JSX, type ReactNode, useMemo } from "react";
 import { Navigate, useOutletContext } from "react-router";
 
-import { extractRealmRolesFromToken } from "@/lib/jwt-payload";
 import { useAuthStore } from "@/stores/authStore";
 
 import type { DashboardOutletContext } from "./dashboard-outlet-context";
@@ -9,9 +8,9 @@ import type { DashboardOutletContext } from "./dashboard-outlet-context";
 /** Certification decision queue. Only the certification committee records a decision. */
 export function ExamCommitteeGuard({ children }: { readonly children: ReactNode }): JSX.Element {
   const { user } = useOutletContext<DashboardOutletContext>();
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const sessionRoles = useAuthStore((state) => state.roles);
   const allowed = useMemo(() => {
-    const roles = extractRealmRolesFromToken(accessToken).map((role) => role.toUpperCase());
+    const roles = sessionRoles.map((role) => role.toUpperCase());
     if (roles.includes("STAFF_SYSADM")) {
       return false;
     }
@@ -20,7 +19,7 @@ export function ExamCommitteeGuard({ children }: { readonly children: ReactNode 
     }
     const profile = String(user.role ?? "").trim().toLowerCase();
     return profile === "com_cert" || profile === "certification_committee" || profile === "cert_committee";
-  }, [accessToken, user.role]);
+  }, [sessionRoles, user.role]);
 
   if (!allowed) {
     return <Navigate to="/unauthorized" replace />;

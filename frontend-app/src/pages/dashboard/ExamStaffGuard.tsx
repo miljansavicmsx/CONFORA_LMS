@@ -1,7 +1,6 @@
 import { type JSX, type ReactNode, useMemo } from "react";
 import { Navigate, useOutletContext } from "react-router";
 
-import { extractRealmRolesFromToken } from "@/lib/jwt-payload";
 import { useAuthStore } from "@/stores/authStore";
 
 import type { DashboardOutletContext } from "./dashboard-outlet-context";
@@ -11,9 +10,9 @@ const STAFF = new Set(["COM_TECH", "SME", "EXAMINER"]);
 /** Item bank and blueprint. Sysadmin is not an exam-bank role (OD-PP-07). */
 export function ExamStaffGuard({ children }: { readonly children: ReactNode }): JSX.Element {
   const { user } = useOutletContext<DashboardOutletContext>();
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const sessionRoles = useAuthStore((state) => state.roles);
   const allowed = useMemo(() => {
-    const roles = extractRealmRolesFromToken(accessToken).map((role) => role.toUpperCase());
+    const roles = sessionRoles.map((role) => role.toUpperCase());
     if (roles.includes("STAFF_SYSADM")) {
       return false;
     }
@@ -22,7 +21,7 @@ export function ExamStaffGuard({ children }: { readonly children: ReactNode }): 
     }
     const profile = String(user.role ?? "").trim().toLowerCase();
     return profile === "technical_committee" || profile === "com_tech" || profile === "sme" || profile === "examiner";
-  }, [accessToken, user.role]);
+  }, [sessionRoles, user.role]);
 
   if (!allowed) {
     return <Navigate to="/unauthorized" replace />;

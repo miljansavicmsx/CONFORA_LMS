@@ -1,9 +1,9 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from "axios";
 
-import { refreshAccessToken } from "@/lib/auth-refresh";
+import { browserCsrfToken, noteSessionLost, refreshOidcSession, type SessionLostReason } from "@/lib/oidc-browser-session";
 
-import { resolveApiBaseUrl, resolveApiTarget } from "./api-provider";
-import { authorizationHeaderValue, clearTokens, getRefreshToken, setAccessToken } from "./auth-token-provider";
+import { resolveApiBaseUrl } from "./api-provider";
+import { purgePersistedAuthSecrets } from "./auth-token-provider";
 import { normalizeApiError } from "./api-error";
 import { getDefaultLegacyBaseUrl } from "./api-config";
 
@@ -12,21 +12,16 @@ type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 const FORBIDDEN_TENANT_BODY_KEYS = new Set(["tenant_id", "tenantId"]);
 const FORBIDDEN_TENANT_QUERY_KEYS = new Set(["tenant_id", "tenantId"]);
 
-let refreshAccessPromise: Promise<string> | null = null;
+let refreshAccessPromise: Promise<boolean> | null = null;
 
-async function refreshAccessTokenOnce(): Promise<string> {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    throw new Error("no_refresh_token");
-  }
-  const access = await refreshAccessToken(refreshToken);
-  setAccessToken(access);
-  return access;
+function sessionReason(headers: { [key: string]: unknown } | undefined): SessionLostReason {
+  const value = headers?.["x-confora-session"];
+  return value === "expired" ? "expired" : "session";
 }
 
-function getSharedRefreshPromise(): Promise<string> {
+function getSharedRefreshPromise(): Promise<boolean> {
   if (!refreshAccessPromise) {
-    refreshAccessPromise = refreshAccessTokenOnce().finally(() => {
+    refreshAccessPromise = refreshOidcSession().finally(() => {
       refreshAccessPromise = null;
     });
   }
@@ -59,14 +54,17 @@ function stripTenantFromJsonBody(config: InternalAxiosRequestConfig): void {
   }
 }
 
-function applyAuthHeader(config: InternalAxiosRequestConfig): void {
-  const auth = authorizationHeaderValue();
+function stripAuthorization(config: InternalAxiosRequestConfig): void {
+  purgePersistedAuthSecrets();
+  config.withCredentials = true;
   config.headers = config.headers ?? {};
-  if (auth) {
-    config.headers.Authorization = auth;
-  } else if ("Authorization" in config.headers) {
+  if ("Authorization" in config.headers) {
     delete config.headers.Authorization;
   }
+  const method = String(config.method ?? "get").toLowerCase();
+  if (method === "get" || method === "head" || method === "options") return;
+  const token = browserCsrfToken();
+  if (token) config.headers["X-CSRF-Token"] = token;
 }
 
 function applyDynamicBaseUrl(config: InternalAxiosRequestConfig): void {
@@ -79,16 +77,16 @@ function attachRequestPolicies(config: InternalAxiosRequestConfig): InternalAxio
   applyDynamicBaseUrl(config);
   stripTenantFromQueryParams(config);
   stripTenantFromJsonBody(config);
-  applyAuthHeader(config);
+  stripAuthorization(config);
   return config;
 }
 
 function isAuthPath(url: string): boolean {
   return (
-    url.includes("/auth/login") ||
     url.includes("/auth/register") ||
     url.includes("/auth/refresh") ||
-    url.includes("/auth/mfa")
+    url.includes("/auth/mfa") ||
+    url.includes("/auth/oidc/")
   );
 }
 
@@ -96,6 +94,7 @@ function createConforaHttpClient(): AxiosInstance {
   const client = axios.create({
     baseURL: getDefaultLegacyBaseUrl(),
     headers: { "Content-Type": "application/json" },
+    withCredentials: true,
     maxBodyLength: 12 * 1024 * 1024,
     maxContentLength: 12 * 1024 * 1024,
   });
@@ -117,28 +116,22 @@ function createConforaHttpClient(): AxiosInstance {
         return Promise.reject(normalizeApiError(err));
       }
 
-      if (isAuthPath(url)) {
-        clearTokens();
-        return Promise.reject(normalizeApiError(err));
-      }
-
-      if (original._retry) {
-        clearTokens();
-        return Promise.reject(normalizeApiError(err));
-      }
-
-      if (!getRefreshToken()) {
-        clearTokens();
+      const reason = sessionReason(err.response?.headers as { [key: string]: unknown } | undefined);
+      if (isAuthPath(url) || original._retry || reason === "expired") {
+        noteSessionLost(reason);
         return Promise.reject(normalizeApiError(err));
       }
 
       try {
-        await getSharedRefreshPromise();
+        const refreshed = await getSharedRefreshPromise();
+        if (!refreshed) {
+          return Promise.reject(normalizeApiError(err));
+        }
         original._retry = true;
-        applyAuthHeader(original);
+        stripAuthorization(original);
         return client(original);
       } catch {
-        clearTokens();
+        noteSessionLost("session");
         return Promise.reject(normalizeApiError(err));
       }
     },
