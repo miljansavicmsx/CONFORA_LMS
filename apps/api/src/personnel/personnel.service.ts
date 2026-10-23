@@ -13,10 +13,13 @@ import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
 import {
+  assertPublicRateLimit,
   claimDirectoryConsentRefusalWrite,
   DIRECTORY_CONSENT_PROCEDURE,
   DIRECTORY_CONSENT_PROCEDURE_REF,
   DIRECTORY_CONSENT_SECTIONS,
+  DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT,
+  DIRECTORY_CONSENT_UNAUTHORIZED_WINDOW_MS,
   DIRECTORY_CONSENT_VERIFY_ACTION,
   directoryConsentVerifierRole,
   PersonnelRuleError,
@@ -509,6 +512,19 @@ export class PersonnelCertificateService {
     occurredAt: Date,
   ): Promise<never> {
     const result = 'VERIFIER_NOT_STAFF';
+    try {
+      assertPublicRateLimit(
+        `directory-consent-verify:${actor.tenantId}:${actor.userId}`,
+        occurredAt.getTime(),
+        DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT,
+        DIRECTORY_CONSENT_UNAUTHORIZED_WINDOW_MS,
+      );
+    } catch (error) {
+      if (error instanceof PersonnelRuleError && error.code === 'RATE_LIMIT') {
+        throw new HttpException('RATE_LIMIT', 429);
+      }
+      throw error;
+    }
     const dedupKey = [
       actor.tenantId,
       actor.userId,

@@ -1,6 +1,6 @@
 # RB-02 — Directory-name consent withdrawal
 
-Interim administrative procedure for OD-DIR-33. A certificate holder can ask the organization to withdraw public-directory consent for their name before a self-service screen exists. This runbook is the controlled path. It is not a production deployment. Production use remains unauthorized until an independent security review records a GO for a specific commit.
+Interim administrative procedure for OD-DIR-33 and OD-DIR-34. A certificate holder can ask the organization to withdraw public-directory consent for their name before a self-service screen exists. This runbook is the controlled path. It is not a production deployment. Production use remains unauthorized until an independent security review records a GO for a specific commit.
 
 The withdrawal hides the holder name from signed-in directory search and from public verification. It does not change the certificate, its signature, its lifecycle, or its validity. The registry row and the original consent time stay. Nothing in this procedure is a direct database edit.
 
@@ -19,7 +19,8 @@ A different staff member signs in with their own session and records the verific
 At that moment the server requires all of the following:
 
 - The caller is the authenticated user. Before the server reads the certificate or the request, it checks the staff role on that session. A caller who does not hold one of the staff roles below receives one 403, whether or not that certificate exists. The refusal audit for that 403 records the caller, the action `DIRECTORY_CONSENT_VERIFY`, the result, and the time. It does not store the evidence reference. Repeating that denial on this server process does not append another row for the same caller and certificate.
-- The caller holds one of the existing staff roles: `STAFF_DIR`, `STAFF_SYSADM`, `STAFF_TRAINADM`, `STAFF_AUD`, or `STAFF_ROLEADM`. A candidate, a certified person, a committee role, or any other non-staff role is rejected with that 403.
+- The caller holds one of the OD-DIR-34 verifier roles: `STAFF_DIR`, `STAFF_SYSADM`, or `STAFF_ROLEADM`. `STAFF_TRAINADM`, `STAFF_AUD`, a candidate, a certified person, the holder, and every other role are rejected with that same 403. Only `STAFF_SYSADM` may execute, and that person must not be the verifier. Two different `STAFF_SYSADM` users may verify and execute.
+- Repeated unauthorized verification attempts from the same caller are rate-limited on this server process. The limit does not read the certificate, and the limited response is the same whether or not the certificate exists.
 - When the caller does hold a staff role, the server then requires that the user is active in the certificate's organization, is not the holder, and that a request for this certificate already exists.
 
 `STAFF_DIR` may verify and still must not execute. The role stored on the verification is the staff role the verifier holds on this session.

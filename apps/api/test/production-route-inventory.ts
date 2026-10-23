@@ -59,7 +59,7 @@ export const DIRECTORY_CONSENT_WITHDRAWAL_ROUTES = [
   {
     route: 'POST /v1/staff/certificates/:credentialId/directory-consent-verifications',
     reason:
-      'Records RB-02 identity verification for a pending directory-consent request. The verifier is the authenticated user, must already hold a staff role in that organization, and cannot be the holder.',
+      'Records RB-02 identity verification for a pending directory-consent request. The verifier is the authenticated user and must hold STAFF_DIR, STAFF_SYSADM, or STAFF_ROLEADM. The holder cannot verify.',
   },
 ] as const;
 

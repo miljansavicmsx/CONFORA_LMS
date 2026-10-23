@@ -13,6 +13,7 @@ const HOLDER = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const ADMIN = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const DIRECTOR = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const CANDIDATE = '99999999-9999-4999-8999-999999999999';
+const SECOND_ADMIN = '12121212-1212-4121-8121-121212121212';
 const NOW = new Date('2026-10-23T12:00:00.000Z');
 const RECEIVED = new Date('2026-10-23T09:00:00.000Z');
 
@@ -36,7 +37,7 @@ function harness(revokedAt: Date | null = null) {
     payloadHash: 'abc',
     signature: 'signed-document',
     deleted: 0,
-    active: new Set([HOLDER, ADMIN, DIRECTOR, CANDIDATE]),
+    active: new Set([HOLDER, ADMIN, DIRECTOR, CANDIDATE, SECOND_ADMIN]),
   };
   const tx = {
     credential: {
@@ -212,6 +213,18 @@ describe('directory consent withdrawal store', () => {
         now: NOW,
       }),
     ).rejects.toThrow('VERIFIER_NOT_STAFF');
+    for (const role of ['STAFF_TRAINADM', 'STAFF_AUD', 'USR_CERT'] as const) {
+      await expect(
+        verifyDirectoryConsent(candidate.client, {
+          tenantId: TENANT,
+          actor: { userId: CANDIDATE, roles: [role] },
+          credentialId: CREDENTIAL,
+          verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+          evidenceRef: 'RB02-EVIDENCE-001',
+          now: NOW,
+        }),
+      ).rejects.toThrow('VERIFIER_NOT_STAFF');
+    }
     expect(candidate.state.deleted).toBe(0);
 
     const foreign = harness();
@@ -346,5 +359,43 @@ describe('directory consent withdrawal store', () => {
     expect(again.result).toBe('ALREADY_WITHDRAWN');
     expect(again.registryConsentRevokedAt.toISOString()).toBe(NOW.toISOString());
     expect(flow.calls.filter((name) => name === 'link.updateMany')).toEqual(writes);
+  });
+
+  it('lets a second STAFF_SYSADM verify for a different STAFF_SYSADM executor', async () => {
+    const flow = harness();
+    await open(flow);
+    const verified = await verifyDirectoryConsent(flow.client, {
+      tenantId: TENANT,
+      actor: { userId: SECOND_ADMIN, roles: ['STAFF_SYSADM'] },
+      credentialId: CREDENTIAL,
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+      evidenceRef: 'RB02-EVIDENCE-003',
+      now: NOW,
+      writeAudit: (_tx, result) => {
+        flow.remember('DIRECTORY_CONSENT_VERIFIED', {
+          verifierUserId: result.verifierUserId,
+          verifierRole: result.verifierRole,
+          verificationMethod: result.verificationMethod,
+          evidenceRef: result.evidenceRef,
+          verifiedAt: result.verifiedAt,
+          procedure: result.procedure,
+        });
+        return Promise.resolve();
+      },
+    });
+    expect(verified.verifierUserId).toBe(SECOND_ADMIN);
+    expect(verified.verifierRole).toBe('STAFF_SYSADM');
+    const withdrawn = await withdrawDirectoryConsent(flow.client, {
+      tenantId: TENANT,
+      actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+      credentialId: CREDENTIAL,
+      now: NOW,
+      writeAudit: () => Promise.resolve(),
+    });
+    expect(withdrawn.result).toBe('WITHDRAWN');
+    expect(withdrawn.executorUserId).toBe(ADMIN);
+    expect(withdrawn.verifierUserId).toBe(SECOND_ADMIN);
+    expect(withdrawn.lifecycle).toBe('ACTIVE');
+    expect(flow.state.deleted).toBe(0);
   });
 });

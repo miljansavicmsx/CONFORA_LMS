@@ -9,7 +9,10 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppModule } from '../src/app.module';
 import { liveBallotCounts, voteResult } from '../src/certification-flow/certification-flow-rules';
-import { resetPublicRateLimit } from '../src/personnel/personnel-rules';
+import {
+  DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT,
+  resetPublicRateLimit,
+} from '../src/personnel/personnel-rules';
 import { openDelivery } from '../src/certification-flow/referee-delivery';
 import { startSyntheticJwksFixture } from './helpers/synthetic-jwks.fixture';
 
@@ -2717,12 +2720,25 @@ describe('certification exam foundation e2e', () => {
     expect(deniedOnExisting.status).toBe(403);
     expect(deniedOnMissing.status).toBe(403);
     expect(deniedOnExisting.body).toEqual(deniedOnMissing.body);
-    const deniedAgain = await request(httpServer(app))
+    for (let attempt = 2; attempt < DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT; attempt += 1) {
+      const withinLimit = await request(httpServer(app))
+        .post(verificationPath)
+        .set(candidateAuth)
+        .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
+      expect(withinLimit.status).toBe(403);
+      expect(withinLimit.body).toEqual(deniedOnExisting.body);
+    }
+    const rateLimitedExisting = await request(httpServer(app))
       .post(verificationPath)
       .set(candidateAuth)
       .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
-    expect(deniedAgain.status).toBe(403);
-    expect(deniedAgain.body).toEqual(deniedOnExisting.body);
+    const rateLimitedMissing = await request(httpServer(app))
+      .post(missingVerificationPath)
+      .set(candidateAuth)
+      .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
+    expect(rateLimitedExisting.status).toBe(429);
+    expect(rateLimitedMissing.status).toBe(429);
+    expect(rateLimitedExisting.body).toEqual(rateLimitedMissing.body);
     const candidateRefusals = (
       await requirePrisma().auditEvent.findMany({
         where: {
@@ -2751,15 +2767,25 @@ describe('certification exam foundation e2e', () => {
       expect(row.actorUserId).toBe(candidateId);
       expect(row.occurredAt).toBeInstanceOf(Date);
     }
-    for (const nonStaff of [
-      auth(otherSubject, ['USR_CAND']),
+    for (const disallowed of [
+      auth(otherSubject, ['USR_CERT']),
+      auth(trainerSubject, ['STAFF_TRAINADM']),
+      auth(issuerSubject, ['STAFF_AUD']),
       auth(qualitySubject, ['QUALITY_MANAGER']),
-      auth(issuerSubject, ['COM_CERT']),
+      auth(deciderSubject, ['COM_CERT']),
     ]) {
-      expect(
-        (await request(httpServer(app)).post(verificationPath).set(nonStaff).send(verificationBody))
-          .status,
-      ).toBe(403);
+      const onExisting = await request(httpServer(app))
+        .post(verificationPath)
+        .set(disallowed)
+        .send(nonStaffEvidence);
+      const onMissing = await request(httpServer(app))
+        .post(missingVerificationPath)
+        .set(disallowed)
+        .send(nonStaffEvidence);
+      expect(onExisting.status).toBe(403);
+      expect(onMissing.status).toBe(403);
+      expect(onExisting.body).toEqual(onMissing.body);
+      expect(onExisting.body).toEqual(deniedOnExisting.body);
     }
     expect(
       (
@@ -2884,16 +2910,41 @@ describe('certification exam foundation e2e', () => {
         procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
       }),
     );
-    const firstAudit = await requirePrisma().auditEvent.findFirst({
+    const successAudits = await requirePrisma().auditEvent.findMany({
       where: {
         tenantId,
         eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
         resourceId: issuedBody.credentialId,
-        actorUserId: sysadminId,
         outcome: 'SUCCESS',
       },
-      orderBy: { sequence: 'asc' },
     });
+    const firstAudit = successAudits.find((row) => {
+      const metadata = row.metadata;
+      if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) {
+        return false;
+      }
+      const linked = metadata as {
+        result?: string;
+        credentialId?: string;
+        holderUserId?: string;
+        receivedAt?: string;
+        verifierUserId?: string;
+        evidenceRef?: string;
+        executorUserId?: string;
+      };
+      return (
+        linked.result === 'WITHDRAWN' &&
+        linked.credentialId === issuedBody.credentialId &&
+        linked.holderUserId === candidateId &&
+        linked.receivedAt === receivedAt &&
+        linked.verifierUserId === qualityId &&
+        linked.evidenceRef === 'RB02-EVIDENCE-001' &&
+        linked.executorUserId === sysadminId
+      );
+    });
+    expect(firstAudit).toBeDefined();
+    expect(earliestWithdrawal).toBeDefined();
+    expect((firstAudit?.sequence ?? 0n) > (earliestWithdrawal?.sequence ?? 0n)).toBe(true);
     const firstMetadata =
       firstAudit?.metadata &&
       typeof firstAudit.metadata === 'object' &&

@@ -203,18 +203,37 @@ describe('personnel certificate rules', () => {
         roles: ['USR_CAND'],
       });
     }).toThrow('VERIFIER_NOT_STAFF');
-    expect(() => {
+    expect(
       assertDirectoryConsentVerifier({
-        verifierUserId: 'quality',
+        verifierUserId: 'role-admin',
         holderUserId: 'holder',
-        roles: ['QUALITY_MANAGER'],
-      });
-    }).toThrow('VERIFIER_NOT_STAFF');
+        roles: ['STAFF_ROLEADM'],
+      }),
+    ).toBe('STAFF_ROLEADM');
+    expect(
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'sysadmin-a',
+        holderUserId: 'holder',
+        roles: ['STAFF_SYSADM'],
+      }),
+    ).toBe('STAFF_SYSADM');
+    for (const role of ['STAFF_TRAINADM', 'STAFF_AUD', 'USR_CAND', 'USR_CERT', 'QUALITY_MANAGER']) {
+      expect(() => {
+        assertDirectoryConsentVerifier({
+          verifierUserId: 'caller',
+          holderUserId: 'holder',
+          roles: [role],
+        });
+      }).toThrow('VERIFIER_NOT_STAFF');
+    }
     expect(() => {
       assertDirectoryConsentFourEyes('admin', 'admin');
     }).toThrow('FOUR_EYES');
     expect(() => {
       assertDirectoryConsentFourEyes('admin', 'director');
+    }).not.toThrow();
+    expect(() => {
+      assertDirectoryConsentFourEyes('sysadmin-a', 'sysadmin-b');
     }).not.toThrow();
   });
 

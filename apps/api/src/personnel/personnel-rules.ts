@@ -211,17 +211,19 @@ export function assertDirectoryConsentAdministrator(roles: readonly string[]): v
 }
 
 /**
- * Existing staff roles (Baseline §6). Not a new role.
- * STAFF_DIR may verify and still must not execute. STAFF_SYSADM may verify
- * a request that a different system administrator executes.
+ * OD-DIR-34. Existing roles only. STAFF_DIR may verify and must not execute.
+ * A STAFF_SYSADM may verify a request that a different STAFF_SYSADM executes.
+ * STAFF_TRAINADM and STAFF_AUD are not verifiers.
  */
 export const DIRECTORY_CONSENT_VERIFIER_ROLES = [
   'STAFF_DIR',
   'STAFF_SYSADM',
-  'STAFF_TRAINADM',
-  'STAFF_AUD',
   'STAFF_ROLEADM',
 ] as const;
+
+/** Process-local cap on repeated unauthorized verification attempts. */
+export const DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT = 4;
+export const DIRECTORY_CONSENT_UNAUTHORIZED_WINDOW_MS = 60_000;
 
 /** Action recorded on a non-staff verification refusal. Not an evidence reference. */
 export const DIRECTORY_CONSENT_VERIFY_ACTION = 'DIRECTORY_CONSENT_VERIFY' as const;

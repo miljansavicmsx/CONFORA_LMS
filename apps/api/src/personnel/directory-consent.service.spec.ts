@@ -1,9 +1,14 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, HttpException, Logger } from '@nestjs/common';
 
 import type { AuthenticatedActor } from '../auth/request-principal';
 import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { AccessDeniedError } from '../tenant/tenant-errors';
-import { PersonnelRuleError, resetDirectoryConsentRefusalDedup } from './personnel-rules';
+import {
+  DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT,
+  PersonnelRuleError,
+  resetDirectoryConsentRefusalDedup,
+  resetPublicRateLimit,
+} from './personnel-rules';
 import { PersonnelCertificateService } from './personnel.service';
 
 const actor: AuthenticatedActor = {
@@ -49,6 +54,7 @@ describe('directory consent refusal audit', () => {
 
   beforeEach(() => {
     resetDirectoryConsentRefusalDedup();
+    resetPublicRateLimit();
   });
 
   it('writes a holder refusal with append after the business call rejects', async () => {
@@ -118,15 +124,20 @@ describe('directory consent refusal audit', () => {
     }
     expect(calls[0]?.[0].userId).toBe(candidate.userId);
     expect(calls[0]?.[1].metadata).not.toEqual(calls[1]?.[1].metadata);
-    await expect(
-      api.verifyDirectoryConsent(candidate, credentialId, {
-        ...verification,
-        evidenceRef: 'RB02-NONSTAFF-REPEAT',
-      }),
-    ).rejects.toBeInstanceOf(AccessDeniedError);
-    await expect(
-      api.verifyDirectoryConsent(candidate, missingId, verification),
-    ).rejects.toBeInstanceOf(AccessDeniedError);
+    for (let attempt = 2; attempt < DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT; attempt += 1) {
+      await expect(
+        api.verifyDirectoryConsent(candidate, credentialId, {
+          ...verification,
+          evidenceRef: 'RB02-NONSTAFF-REPEAT',
+        }),
+      ).rejects.toBeInstanceOf(AccessDeniedError);
+    }
+    const limitedExisting = api.verifyDirectoryConsent(candidate, credentialId, verification);
+    const limitedMissing = api.verifyDirectoryConsent(candidate, missingId, verification);
+    await expect(limitedExisting).rejects.toBeInstanceOf(HttpException);
+    await expect(limitedMissing).rejects.toBeInstanceOf(HttpException);
+    await expect(limitedExisting).rejects.toMatchObject({ status: 429 });
+    await expect(limitedMissing).rejects.toMatchObject({ status: 429 });
     expect(append).toHaveBeenCalledTimes(2);
     expect(verifyDirectoryConsent).not.toHaveBeenCalled();
   });
