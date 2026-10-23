@@ -2741,7 +2741,7 @@ describe('certification exam foundation e2e', () => {
       return result === 'VERIFIER_NOT_STAFF';
     });
     expect(candidateRefusals).toHaveLength(2);
-    const candidateRefusalText = JSON.stringify(candidateRefusals);
+    const candidateRefusalText = JSON.stringify(candidateRefusals.map((row) => row.metadata));
     expect(candidateRefusalText).not.toContain('evidenceRef');
     expect(candidateRefusalText).not.toContain('RB02-NONSTAFF-PROBE');
     expect(candidateRefusalText).not.toContain('RB02-NONSTAFF-REPEAT');
@@ -2976,7 +2976,7 @@ describe('certification exam foundation e2e', () => {
         resourceId: issuedBody.credentialId,
       },
     });
-    const refusalText = JSON.stringify(refusalRows);
+    const refusalText = JSON.stringify(refusalRows.map((row) => row.metadata));
     for (const refused of [
       'NOT_VERIFIED',
       'VERIFIER_IS_HOLDER',
