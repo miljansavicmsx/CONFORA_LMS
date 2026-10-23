@@ -2672,6 +2672,11 @@ describe('certification exam foundation e2e', () => {
           .send({ ...requestBody, tenantId })
       ).status,
     ).toBe(400);
+    const notRequested = await request(httpServer(app))
+      .post(verificationPath)
+      .set(auth(qualitySubject, ['STAFF_DIR']))
+      .send({ ...verificationBody, evidenceRef: 'RB02-STAFF-NOT-REQUESTED' });
+    expect(notRequested.status).toBe(400);
     const opened = await request(httpServer(app))
       .post(requestPath)
       .set(auth(sysadminSubject, ['STAFF_SYSADM']))
@@ -2836,7 +2841,14 @@ describe('certification exam foundation e2e', () => {
         ? fourEyesRefusal.metadata
         : null;
     expect(fourEyesRefusal?.outcome).toBe('DENIED');
-    expect(fourEyesMetadata).toEqual(expect.objectContaining({ result: 'FOUR_EYES' }));
+    expect(fourEyesMetadata).toEqual(
+      expect.objectContaining({
+        result: 'FOUR_EYES',
+        action: 'DIRECTORY_CONSENT_WITHDRAW',
+      }),
+    );
+    expect(fourEyesMetadata).not.toHaveProperty('evidenceRef');
+    expect(JSON.stringify(fourEyesMetadata)).not.toContain('RB02-EVIDENCE-001');
     const untouched = await requirePrisma().examPersonnelCredentialLink.findFirst({
       where: { tenantId, credentialId: issuedBody.credentialId },
     });
@@ -2905,11 +2917,13 @@ describe('certification exam foundation e2e', () => {
     expect(earliestMetadata).toEqual(
       expect.objectContaining({
         result: 'NOT_VERIFIED',
+        action: 'DIRECTORY_CONSENT_WITHDRAW',
         procedure: 'RB-02',
         procedureSection: 'Execution',
         procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
       }),
     );
+    expect(earliestMetadata).not.toHaveProperty('evidenceRef');
     const successAudits = await requirePrisma().auditEvent.findMany({
       where: {
         tenantId,
@@ -3029,6 +3043,7 @@ describe('certification exam foundation e2e', () => {
     });
     const refusalText = JSON.stringify(refusalRows.map((row) => row.metadata));
     for (const refused of [
+      'NOT_REQUESTED',
       'NOT_VERIFIED',
       'VERIFIER_IS_HOLDER',
       'VERIFIER_NOT_STAFF',
@@ -3040,6 +3055,10 @@ describe('certification exam foundation e2e', () => {
     }
     expect(refusalText).not.toContain('Demo Kandidat');
     expect(refusalText).not.toContain('holderDisplayName');
+    expect(refusalText).not.toContain('evidenceRef');
+    expect(refusalText).not.toContain('RB02-EVIDENCE-001');
+    expect(refusalText).not.toContain('RB02-NONSTAFF');
+    expect(refusalText).not.toContain('RB02-STAFF-NOT-REQUESTED');
     const hiddenFromOtherOrg = await requirePrisma().auditEvent.findFirst({
       where: {
         tenantId: outsiderTenantId,
@@ -3051,6 +3070,8 @@ describe('certification exam foundation e2e', () => {
     expect(hiddenFromOtherOrg).not.toBeNull();
     expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).toContain('NOT_FOUND');
     expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('Demo Kandidat');
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('evidenceRef');
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('RB02-EVIDENCE-001');
     const withdrawnConsent = await requirePrisma().examPersonnelCredentialLink.updateMany({
       where: { tenantId, credentialId: issuedBody.credentialId },
       data: { registryConsentRevokedAt: new Date('2026-10-23T00:00:00.000Z') },

@@ -24,6 +24,7 @@ const actor: AuthenticatedActor = {
 type Appended = {
   eventType: string;
   outcome: string;
+  occurredAt: Date;
   metadata: Record<string, string>;
 };
 
@@ -74,8 +75,95 @@ describe('directory consent refusal audit', () => {
     expect(row.metadata['procedureRef']).toBe(
       'docs/operations/RB-02-consent-withdrawal.md#identity-check',
     );
+    expect(row.metadata['action']).toBe('DIRECTORY_CONSENT_VERIFY');
     expect(row.metadata['verifierUserId']).toBe(actor.userId);
-    expect(row.metadata['evidenceRef']).toBe('RB02-EVIDENCE-001');
+    expect(row.occurredAt).toBeInstanceOf(Date);
+    expect(row.metadata).not.toHaveProperty('evidenceRef');
+    expect(JSON.stringify(row.metadata)).not.toContain('RB02-EVIDENCE-001');
+  });
+
+  it('omits the evidence reference when allowed staff verify and no request exists', async () => {
+    const verifyDirectoryConsent = jest
+      .fn()
+      .mockRejectedValue(new PersonnelRuleError('NOT_REQUESTED'));
+    const director: AuthenticatedActor = {
+      ...actor,
+      userId: '18181818-1818-4181-8181-181818181818',
+      roles: ['STAFF_DIR'],
+      email: 'exam-director@demo.confora.test',
+    };
+    const { api, append, executeInTransaction, appended } = service({ verifyDirectoryConsent });
+    await expect(
+      api.verifyDirectoryConsent(director, credentialId, {
+        ...verification,
+        evidenceRef: 'RB02-STAFF-NOT-REQUESTED',
+      }),
+    ).rejects.toThrow('NOT_REQUESTED');
+    expect(executeInTransaction).not.toHaveBeenCalled();
+    expect(append).toHaveBeenCalledTimes(1);
+    const calls = append.mock.calls as unknown as Array<[AuthenticatedActor, Appended]>;
+    expect(calls[0]?.[0].userId).toBe(director.userId);
+    const row = appended();
+    expect(row.eventType).toBe('DIRECTORY_CONSENT_VERIFIED');
+    expect(row.outcome).toBe('DENIED');
+    expect(row.occurredAt).toBeInstanceOf(Date);
+    expect(row.metadata['action']).toBe('DIRECTORY_CONSENT_VERIFY');
+    expect(row.metadata['result']).toBe('NOT_REQUESTED');
+    expect(row.metadata['procedure']).toBe('RB-02');
+    expect(row.metadata['procedureSection']).toBe('Identity check');
+    expect(row.metadata['procedureRef']).toBe(
+      'docs/operations/RB-02-consent-withdrawal.md#identity-check',
+    );
+    expect(row.metadata).not.toHaveProperty('evidenceRef');
+    expect(JSON.stringify(row.metadata)).not.toContain('RB02-STAFF-NOT-REQUESTED');
+  });
+
+  it('omits the evidence reference when a request is refused', async () => {
+    const openDirectoryConsentRequest = jest
+      .fn()
+      .mockRejectedValue(new PersonnelRuleError('HOLDER_MISMATCH'));
+    const { api, executeInTransaction, appended } = service({ openDirectoryConsentRequest });
+    await expect(
+      api.openDirectoryConsentRequest(actor, credentialId, {
+        holderUserId: '1c1c1c1c-1c1c-4c1c-8c1c-1c1c1c1c1c1c',
+        channel: 'EMAIL',
+        receivedAt: '2026-10-23T12:00:00.000Z',
+      }),
+    ).rejects.toThrow('HOLDER_MISMATCH');
+    expect(executeInTransaction).not.toHaveBeenCalled();
+    const row = appended();
+    expect(row.eventType).toBe('DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED');
+    expect(row.outcome).toBe('DENIED');
+    expect(row.occurredAt).toBeInstanceOf(Date);
+    expect(row.metadata['action']).toBe('DIRECTORY_CONSENT_REQUEST');
+    expect(row.metadata['result']).toBe('HOLDER_MISMATCH');
+    expect(row.metadata['procedure']).toBe('RB-02');
+    expect(row.metadata['procedureSection']).toBe('Request');
+    expect(row.metadata).not.toHaveProperty('evidenceRef');
+  });
+
+  it('omits the evidence reference when the executor is the verifier', async () => {
+    const withdrawDirectoryConsent = jest
+      .fn()
+      .mockRejectedValue(new PersonnelRuleError('FOUR_EYES'));
+    const { api, append, executeInTransaction, appended } = service({ withdrawDirectoryConsent });
+    await expect(api.withdrawDirectoryConsent(actor, credentialId)).rejects.toThrow();
+    expect(executeInTransaction).not.toHaveBeenCalled();
+    const calls = append.mock.calls as unknown as Array<[AuthenticatedActor, Appended]>;
+    expect(calls[0]?.[0].userId).toBe(actor.userId);
+    const row = appended();
+    expect(row.eventType).toBe('DIRECTORY_CONSENT_WITHDRAWN');
+    expect(row.outcome).toBe('DENIED');
+    expect(row.occurredAt).toBeInstanceOf(Date);
+    expect(row.metadata['action']).toBe('DIRECTORY_CONSENT_WITHDRAW');
+    expect(row.metadata['result']).toBe('FOUR_EYES');
+    expect(row.metadata['executorUserId']).toBe(actor.userId);
+    expect(row.metadata['procedure']).toBe('RB-02');
+    expect(row.metadata['procedureSection']).toBe('Execution');
+    expect(row.metadata['procedureRef']).toBe(
+      'docs/operations/RB-02-consent-withdrawal.md#execution',
+    );
+    expect(row.metadata).not.toHaveProperty('evidenceRef');
   });
 
   it('writes not-found for another organization without a success audit', async () => {
@@ -89,7 +177,9 @@ describe('directory consent refusal audit', () => {
     expect(row.outcome).toBe('DENIED');
     expect(row.eventType).toBe('DIRECTORY_CONSENT_WITHDRAWN');
     expect(row.metadata['result']).toBe('NOT_FOUND');
+    expect(row.metadata['action']).toBe('DIRECTORY_CONSENT_WITHDRAW');
     expect(row.metadata['procedureSection']).toBe('Execution');
+    expect(row.metadata).not.toHaveProperty('evidenceRef');
     const metadata = row.metadata;
     expect(JSON.stringify(metadata)).not.toContain('Demo');
     expect(metadata).not.toHaveProperty('holderDisplayName');

@@ -17,10 +17,12 @@ import {
   claimDirectoryConsentRefusalWrite,
   DIRECTORY_CONSENT_PROCEDURE,
   DIRECTORY_CONSENT_PROCEDURE_REF,
+  DIRECTORY_CONSENT_REQUEST_ACTION,
   DIRECTORY_CONSENT_SECTIONS,
   DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT,
   DIRECTORY_CONSENT_UNAUTHORIZED_WINDOW_MS,
   DIRECTORY_CONSENT_VERIFY_ACTION,
+  DIRECTORY_CONSENT_WITHDRAW_ACTION,
   directoryConsentVerifierRole,
   PersonnelRuleError,
   publicCertificateStatus,
@@ -343,7 +345,6 @@ export class PersonnelCertificateService {
           fields: {
             verifierUserId: actor.userId,
             verificationMethod: body.verificationMethod,
-            evidenceRef: body.evidenceRef,
           },
         });
         fail(error);
@@ -449,7 +450,8 @@ export class PersonnelCertificateService {
 
   /**
    * Refusal audit is a new append after the business transaction has rolled back.
-   * Metadata is identifiers and procedure codes only.
+   * Every refusal keeps the caller, action, result, time, and RB-02 references.
+   * The user-supplied evidence reference is never stored.
    */
   private async recordRefusal(
     actor: AuthenticatedActor,
@@ -488,10 +490,16 @@ export class PersonnelCertificateService {
       procedureSection: input.section,
     };
     for (const [key, value] of Object.entries(input.fields)) {
-      if (value) {
+      if (value && key !== 'evidenceRef') {
         metadata[key] = value;
       }
     }
+    metadata['action'] =
+      input.eventType === 'DIRECTORY_CONSENT_VERIFIED'
+        ? DIRECTORY_CONSENT_VERIFY_ACTION
+        : input.eventType === 'DIRECTORY_CONSENT_WITHDRAWN'
+          ? DIRECTORY_CONSENT_WITHDRAW_ACTION
+          : DIRECTORY_CONSENT_REQUEST_ACTION;
     await this.appendRefusal(actor, {
       eventType: input.eventType,
       occurredAt: input.occurredAt,
@@ -572,6 +580,8 @@ export class PersonnelCertificateService {
     },
   ): Promise<boolean> {
     try {
+      const metadata = { ...input.metadata };
+      delete metadata['evidenceRef'];
       await this.audit.append(actor, {
         idempotencyKey: randomUUID(),
         eventType: input.eventType,
@@ -579,7 +589,7 @@ export class PersonnelCertificateService {
         occurredAt: input.occurredAt,
         resourceType: 'Credential',
         resourceId: input.credentialId,
-        metadata: input.metadata,
+        metadata,
       });
       return true;
     } catch {

@@ -225,8 +225,10 @@ export const DIRECTORY_CONSENT_VERIFIER_ROLES = [
 export const DIRECTORY_CONSENT_UNAUTHORIZED_LIMIT = 4;
 export const DIRECTORY_CONSENT_UNAUTHORIZED_WINDOW_MS = 60_000;
 
-/** Action recorded on a non-staff verification refusal. Not an evidence reference. */
+/** Actions recorded on every refusal. Not an evidence reference. */
+export const DIRECTORY_CONSENT_REQUEST_ACTION = 'DIRECTORY_CONSENT_REQUEST' as const;
 export const DIRECTORY_CONSENT_VERIFY_ACTION = 'DIRECTORY_CONSENT_VERIFY' as const;
+export const DIRECTORY_CONSENT_WITHDRAW_ACTION = 'DIRECTORY_CONSENT_WITHDRAW' as const;
 
 /** Documented procedure. Audit rows cite this runbook and one of its sections. */
 export const DIRECTORY_CONSENT_PROCEDURE = 'RB-02' as const;
