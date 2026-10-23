@@ -179,6 +179,76 @@ export function assertDirectoryConsentAdministrator(roles: readonly string[]): v
   }
 }
 
+/**
+ * Existing staff roles (Baseline §6). Not a new role.
+ * STAFF_DIR may verify and still must not execute. STAFF_SYSADM may verify
+ * a request that a different system administrator executes.
+ */
+export const DIRECTORY_CONSENT_VERIFIER_ROLES = [
+  'STAFF_DIR',
+  'STAFF_SYSADM',
+  'STAFF_TRAINADM',
+  'STAFF_AUD',
+  'STAFF_ROLEADM',
+] as const;
+
+/** Documented procedure. Audit rows cite this runbook and one of its sections. */
+export const DIRECTORY_CONSENT_PROCEDURE = 'RB-02' as const;
+export const DIRECTORY_CONSENT_PROCEDURE_REF =
+  'docs/operations/RB-02-consent-withdrawal.md' as const;
+export const DIRECTORY_CONSENT_SECTIONS = {
+  request: 'Request',
+  identity: 'Identity check',
+  execution: 'Execution',
+} as const;
+
+/** Internal evidence reference. Not a document number, name, or image. */
+export const DIRECTORY_CONSENT_EVIDENCE_REF = /^[A-Za-z0-9][A-Za-z0-9._:-]{2,63}$/;
+
+export function directoryConsentVerifierRole(roles: readonly string[]): string | null {
+  for (const role of DIRECTORY_CONSENT_VERIFIER_ROLES) {
+    if (roles.includes(role)) {
+      return role;
+    }
+  }
+  return null;
+}
+
+/**
+ * The verifier is the authenticated user. The role is the one they hold now.
+ * Issuance already rejects a person acting on their own prior act (FOUR_EYES).
+ * Execution applies that same rule: the executor cannot be this verifier.
+ */
+export function assertDirectoryConsentVerifier(input: {
+  verifierUserId: string;
+  holderUserId: string;
+  roles: readonly string[];
+}): string {
+  if (input.verifierUserId === input.holderUserId) {
+    throw new PersonnelRuleError('VERIFIER_IS_HOLDER');
+  }
+  const role = directoryConsentVerifierRole(input.roles);
+  if (!role) {
+    throw new PersonnelRuleError('VERIFIER_NOT_STAFF');
+  }
+  return role;
+}
+
+export function assertDirectoryConsentFourEyes(
+  executorUserId: string,
+  verifierUserId: string,
+): void {
+  if (executorUserId === verifierUserId) {
+    throw new PersonnelRuleError('FOUR_EYES');
+  }
+}
+
+export function assertDirectoryConsentEvidenceRef(value: string): void {
+  if (!DIRECTORY_CONSENT_EVIDENCE_REF.test(value)) {
+    throw new PersonnelRuleError('EVIDENCE_REF');
+  }
+}
+
 /** Received time is the time the organization got the request, not a future stamp. */
 export function assertConsentRequestReceivedAt(receivedAt: Date, now: Date): void {
   if (!(receivedAt instanceof Date) || Number.isNaN(receivedAt.getTime())) {

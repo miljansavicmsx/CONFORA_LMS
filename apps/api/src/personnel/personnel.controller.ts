@@ -25,13 +25,18 @@ import {
 } from '../auth/request-principal';
 import { ExamCommitteeRolesGuard } from '../exam/exam-roles.guard';
 import { AccessDeniedError } from '../tenant/tenant-errors';
-import { DirectoryConsentAdministratorGuard } from './directory-consent.guard';
+import {
+  DirectoryConsentAdministratorGuard,
+  DirectoryConsentVerifierGuard,
+} from './directory-consent.guard';
 import {
   AmfProposalDto,
   ChangeCertificateStatusDto,
   CpdRecordDto,
   IssueCertificateDto,
+  OpenDirectoryConsentRequestDto,
   PublicSearchDto,
+  VerifyDirectoryConsentDto,
   WithdrawDirectoryConsentDto,
 } from './dto/personnel.dto';
 import { assertPublicRateLimit, PersonnelRuleError } from './personnel-rules';
@@ -152,14 +157,40 @@ export class CandidateCertificateController {
 export class StaffDirectoryConsentController {
   constructor(private readonly personnel: PersonnelCertificateService) {}
 
+  @Post(':credentialId/directory-consent-requests')
+  @HttpCode(200)
+  open(
+    @Param('credentialId', ParseUUIDPipe) credentialId: string,
+    @Body() body: OpenDirectoryConsentRequestDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.personnel.openDirectoryConsentRequest(actor(req), credentialId, body);
+  }
+
   @Post(':credentialId/directory-consent-withdrawal')
   @HttpCode(200)
   withdraw(
     @Param('credentialId', ParseUUIDPipe) credentialId: string,
-    @Body() body: WithdrawDirectoryConsentDto,
+    @Body() _body: WithdrawDirectoryConsentDto,
     @Req() req: RequestWithPrincipal,
   ) {
-    return this.personnel.withdrawDirectoryConsent(actor(req), credentialId, body);
+    return this.personnel.withdrawDirectoryConsent(actor(req), credentialId);
+  }
+}
+
+@Controller('staff/certificates')
+@UseGuards(DirectoryConsentVerifierGuard)
+export class StaffDirectoryConsentVerificationController {
+  constructor(private readonly personnel: PersonnelCertificateService) {}
+
+  @Post(':credentialId/directory-consent-verifications')
+  @HttpCode(200)
+  verify(
+    @Param('credentialId', ParseUUIDPipe) credentialId: string,
+    @Body() body: VerifyDirectoryConsentDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.personnel.verifyDirectoryConsent(actor(req), credentialId, body);
   }
 }
 

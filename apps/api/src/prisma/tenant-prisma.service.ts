@@ -99,8 +99,12 @@ import {
   refusePublicNumberQuery,
   revocationStatusList,
   searchPublicRegistry,
-  withdrawDirectoryConsent,
 } from './personnel-certificate-store';
+import {
+  openDirectoryConsentRequest,
+  verifyDirectoryConsent,
+  withdrawDirectoryConsent,
+} from './directory-consent-withdrawal';
 import {
   enrolInCourse,
   getAnalyticsConsent,
@@ -512,6 +516,12 @@ export class TenantPrismaService {
       changePersonnelStatus(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     proposeAmf: (input: Omit<Parameters<typeof proposeAmfSuspension>[1], 'tenantId'>) =>
       proposeAmfSuspension(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    openDirectoryConsentRequest: (
+      input: Omit<Parameters<typeof openDirectoryConsentRequest>[1], 'tenantId'>,
+    ) => openDirectoryConsentRequest(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    verifyDirectoryConsent: (
+      input: Omit<Parameters<typeof verifyDirectoryConsent>[1], 'tenantId'>,
+    ) => verifyDirectoryConsent(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     withdrawDirectoryConsent: (
       input: Omit<Parameters<typeof withdrawDirectoryConsent>[1], 'tenantId'>,
     ) => withdrawDirectoryConsent(this.prisma, { ...input, tenantId: this.requiredTenantId() }),

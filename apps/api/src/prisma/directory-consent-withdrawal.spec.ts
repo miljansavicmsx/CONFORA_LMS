@@ -1,77 +1,91 @@
 import { PersonnelRuleError } from '../personnel/personnel-rules';
-import { PersonnelNotFoundError, withdrawDirectoryConsent } from './personnel-certificate-store';
+import {
+  openDirectoryConsentRequest,
+  verifyDirectoryConsent,
+  withdrawDirectoryConsent,
+} from './directory-consent-withdrawal';
+import { PersonnelNotFoundError } from './personnel-certificate-store';
 
 const TENANT = '0a0a0a0a-0a0a-4a0a-8a0a-0a0a0a0a0a0a';
 const OTHER = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const CREDENTIAL = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const HOLDER = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const ADMIN = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
-const VERIFIER = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+const DIRECTOR = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+const CANDIDATE = '99999999-9999-4999-8999-999999999999';
 const NOW = new Date('2026-10-23T12:00:00.000Z');
 const RECEIVED = new Date('2026-10-23T09:00:00.000Z');
 
-type Call = { name: string; data?: unknown };
+type AuditRow = {
+  eventType: string;
+  outcome: 'SUCCESS' | 'DENIED';
+  metadata: Record<string, string>;
+  sequence: bigint;
+};
 
 function harness(revokedAt: Date | null = null) {
-  const calls: Call[] = [];
+  const calls: string[] = [];
+  const audits: AuditRow[] = [];
+  let sequence = 0n;
   const state = {
     lifecycle: 'ACTIVE',
-    payloadHash: 'abc',
-    signature: 'signed-document',
-    publicUid: 'CON-2026-0007',
-    holderDisplayName: 'Demo Kandidat',
     registryListed: true,
     registryConsentAt: new Date('2026-10-21T12:00:00.000Z'),
     registryConsentRevokedAt: revokedAt,
+    holderDisplayName: 'Demo Kandidat',
+    payloadHash: 'abc',
+    signature: 'signed-document',
     deleted: 0,
+    active: new Set([HOLDER, ADMIN, DIRECTOR, CANDIDATE]),
   };
   const tx = {
     credential: {
       findFirst: (args: { where: { tenantId: string; id: string } }) => {
-        calls.push({ name: 'credential.findFirst' });
+        calls.push('credential.findFirst');
         if (args.where.tenantId !== TENANT || args.where.id !== CREDENTIAL) {
           return Promise.resolve(null);
         }
         return Promise.resolve({
           id: CREDENTIAL,
-          tenantId: TENANT,
           holderUserId: HOLDER,
           lifecycle: state.lifecycle,
           expiresAt: new Date('2029-10-21T12:00:00.000Z'),
           payloadHash: state.payloadHash,
           signature: state.signature,
-          publicUid: state.publicUid,
           examPersonnelLink: {
             registryListed: state.registryListed,
             registryConsentAt: state.registryConsentAt,
             registryConsentRevokedAt: state.registryConsentRevokedAt,
             holderDisplayName: state.holderDisplayName,
           },
-          achievement: { id: 'achievement' },
         });
       },
       update: () => {
-        calls.push({ name: 'credential.update' });
+        calls.push('credential.update');
         return Promise.reject(new Error('credential update'));
       },
       delete: () => {
         state.deleted += 1;
-        calls.push({ name: 'credential.delete' });
+        calls.push('credential.delete');
         return Promise.reject(new Error('credential delete'));
       },
     },
     user: {
-      findFirst: (args: { where: { tenantId: string; id: string } }) => {
-        calls.push({ name: 'user.findFirst' });
-        if (args.where.tenantId === TENANT && args.where.id === VERIFIER) {
-          return Promise.resolve({ id: VERIFIER });
+      findFirst: (args: { where: { tenantId: string; id: string; isActive: boolean } }) => {
+        calls.push('user.findFirst');
+        if (
+          args.where.tenantId === TENANT &&
+          args.where.isActive &&
+          state.active.has(args.where.id)
+        ) {
+          return Promise.resolve({ id: args.where.id });
         }
         return Promise.resolve(null);
       },
     },
     examPersonnelCredentialLink: {
       updateMany: (args: { data: { registryConsentRevokedAt: Date } }) => {
-        calls.push({ name: 'link.updateMany', data: args.data });
+        calls.push('link.updateMany');
         if (state.registryConsentRevokedAt) {
           return Promise.resolve({ count: 0 });
         }
@@ -79,116 +93,258 @@ function harness(revokedAt: Date | null = null) {
         return Promise.resolve({ count: 1 });
       },
       findFirst: () => {
-        calls.push({ name: 'link.findFirst' });
+        calls.push('link.findFirst');
         return Promise.resolve({ registryConsentRevokedAt: state.registryConsentRevokedAt });
       },
       delete: () => {
         state.deleted += 1;
-        calls.push({ name: 'link.delete' });
+        calls.push('link.delete');
         return Promise.reject(new Error('link delete'));
       },
     },
+    auditEvent: {
+      findMany: () => {
+        calls.push('audit.findMany');
+        return Promise.resolve(audits.filter((row) => row.outcome === 'SUCCESS'));
+      },
+      update: () => {
+        calls.push('audit.update');
+        return Promise.reject(new Error('audit update'));
+      },
+      delete: () => {
+        calls.push('audit.delete');
+        return Promise.reject(new Error('audit delete'));
+      },
+    },
+  };
+  const remember = (eventType: string, metadata: Record<string, string>) => {
+    sequence += 1n;
+    audits.push({ eventType, outcome: 'SUCCESS', metadata, sequence });
   };
   const client = {
     ...tx,
     $transaction: (fn: (inner: typeof tx) => Promise<unknown>) => {
-      calls.push({ name: 'transaction' });
+      calls.push('transaction');
       return fn(tx);
     },
   };
-  return { client: client as never, calls, state };
+  return { client: client as never, calls, state, audits, remember };
 }
 
-function request(
-  client: never,
-  overrides: Partial<{
-    tenantId: string;
-    roles: string[];
-    holderUserId: string;
-    verifierUserId: string;
-    receivedAt: Date;
-  }> = {},
-) {
-  return withdrawDirectoryConsent(client, {
-    tenantId: overrides.tenantId ?? TENANT,
-    actor: { userId: ADMIN, roles: overrides.roles ?? ['STAFF_SYSADM'] },
+function open(flow: ReturnType<typeof harness>, holderUserId = HOLDER) {
+  return openDirectoryConsentRequest(flow.client, {
+    tenantId: TENANT,
+    actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
     credentialId: CREDENTIAL,
-    holderUserId: overrides.holderUserId ?? HOLDER,
+    holderUserId,
     channel: 'EMAIL',
-    receivedAt: overrides.receivedAt ?? RECEIVED,
-    verifierUserId: overrides.verifierUserId ?? VERIFIER,
-    verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+    receivedAt: RECEIVED,
     now: NOW,
+    writeAudit: (_tx, result) => {
+      flow.remember('DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED', {
+        holderUserId: result.holderUserId,
+        channel: result.channel,
+        receivedAt: result.receivedAt,
+        requesterUserId: result.requesterUserId,
+        procedure: result.procedure,
+      });
+      return Promise.resolve();
+    },
   });
 }
 
 describe('directory consent withdrawal store', () => {
   it('refuses another role or a missing organization before any read', async () => {
     const denied = harness();
-    await expect(request(denied.client, { roles: ['COM_CERT'] })).rejects.toThrow(
-      PersonnelRuleError,
-    );
-    await expect(request(denied.client, { roles: ['STAFF_DIR'] })).rejects.toThrow(
-      'ROLE_SEPARATION',
-    );
-    await expect(request(denied.client, { tenantId: '   ' })).rejects.toThrow('TENANT_REQUIRED');
+    await expect(
+      openDirectoryConsentRequest(denied.client, {
+        tenantId: TENANT,
+        actor: { userId: ADMIN, roles: ['COM_CERT'] },
+        credentialId: CREDENTIAL,
+        holderUserId: HOLDER,
+        channel: 'EMAIL',
+        receivedAt: RECEIVED,
+        now: NOW,
+      }),
+    ).rejects.toThrow(PersonnelRuleError);
+    await expect(
+      openDirectoryConsentRequest(denied.client, {
+        tenantId: '   ',
+        actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+        credentialId: CREDENTIAL,
+        holderUserId: HOLDER,
+        channel: 'EMAIL',
+        receivedAt: RECEIVED,
+        now: NOW,
+      }),
+    ).rejects.toThrow('TENANT_REQUIRED');
     expect(denied.calls).toEqual([]);
-    expect(denied.state.deleted).toBe(0);
     expect(denied.state.registryConsentRevokedAt).toBeNull();
   });
 
-  it('withdraws once, keeps the certificate, and repeats without another write', async () => {
-    const first = harness();
-    const withdrawn = await request(first.client);
-    expect(withdrawn.result).toBe('WITHDRAWN');
-    expect(withdrawn.lifecycle).toBe('ACTIVE');
-    expect(withdrawn.registryListed).toBe(true);
-    expect(withdrawn.registryConsentAt?.toISOString()).toBe('2026-10-21T12:00:00.000Z');
-    expect(withdrawn.registryConsentRevokedAt.toISOString()).toBe(NOW.toISOString());
-    expect(withdrawn.verifierUserId).toBe(VERIFIER);
-    expect(withdrawn.executorUserId).toBe(ADMIN);
-    expect(first.state.lifecycle).toBe('ACTIVE');
-    expect(first.state.payloadHash).toBe('abc');
-    expect(first.state.signature).toBe('signed-document');
-    expect(first.state.holderDisplayName).toBe('Demo Kandidat');
-    expect(first.state.deleted).toBe(0);
-    expect(first.calls.map((call) => call.name)).not.toContain('credential.update');
-    expect(first.calls.map((call) => call.name)).not.toContain('credential.delete');
-    expect(first.calls.map((call) => call.name)).not.toContain('link.delete');
-    const write = first.calls.find((call) => call.name === 'link.updateMany');
-    expect(write?.data).toEqual({ registryConsentRevokedAt: NOW });
+  it('rejects the holder, a non-staff user, and another organization before writing', async () => {
+    const holder = harness();
+    await open(holder);
+    await expect(
+      verifyDirectoryConsent(holder.client, {
+        tenantId: TENANT,
+        actor: { userId: HOLDER, roles: ['STAFF_SYSADM'] },
+        credentialId: CREDENTIAL,
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        now: NOW,
+      }),
+    ).rejects.toThrow('VERIFIER_IS_HOLDER');
+    expect(holder.calls).not.toContain('link.updateMany');
+    expect(holder.audits.filter((row) => row.eventType === 'DIRECTORY_CONSENT_VERIFIED')).toEqual(
+      [],
+    );
 
-    const repeat = harness(NOW);
-    const again = await request(repeat.client);
-    expect(again.result).toBe('ALREADY_WITHDRAWN');
-    expect(again.registryConsentRevokedAt.toISOString()).toBe(NOW.toISOString());
-    expect(again.lifecycle).toBe('ACTIVE');
-    expect(repeat.calls.map((call) => call.name)).not.toContain('link.updateMany');
-    expect(repeat.state.deleted).toBe(0);
-    expect(repeat.state.registryConsentAt.toISOString()).toBe('2026-10-21T12:00:00.000Z');
+    const candidate = harness();
+    await open(candidate);
+    await expect(
+      verifyDirectoryConsent(candidate.client, {
+        tenantId: TENANT,
+        actor: { userId: CANDIDATE, roles: ['USR_CAND'] },
+        credentialId: CREDENTIAL,
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        now: NOW,
+      }),
+    ).rejects.toThrow('VERIFIER_NOT_STAFF');
+    expect(candidate.state.deleted).toBe(0);
+
+    const foreign = harness();
+    await expect(
+      verifyDirectoryConsent(foreign.client, {
+        tenantId: OTHER,
+        actor: { userId: DIRECTOR, roles: ['STAFF_DIR'] },
+        credentialId: CREDENTIAL,
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        now: NOW,
+      }),
+    ).rejects.toBeInstanceOf(PersonnelNotFoundError);
+    await expect(
+      withdrawDirectoryConsent(foreign.client, {
+        tenantId: OTHER,
+        actor: { userId: DIRECTOR, roles: ['STAFF_SYSADM'] },
+        credentialId: CREDENTIAL,
+        now: NOW,
+      }),
+    ).rejects.toBeInstanceOf(PersonnelNotFoundError);
+    expect(foreign.calls).not.toContain('user.findFirst');
+    expect(foreign.state.registryConsentRevokedAt).toBeNull();
   });
 
-  it('hides another organization and a mismatched holder without writing', async () => {
-    const foreign = harness();
-    await expect(request(foreign.client, { tenantId: OTHER })).rejects.toBeInstanceOf(
-      PersonnelNotFoundError,
-    );
-    expect(foreign.calls.map((call) => call.name)).toEqual(['transaction', 'credential.findFirst']);
-    expect(foreign.state.registryConsentRevokedAt).toBeNull();
-
-    const mismatch = harness();
+  it('does not execute without a verification or when the executor verified', async () => {
+    const pending = harness();
+    await open(pending);
     await expect(
-      request(mismatch.client, { holderUserId: '99999999-9999-4999-8999-999999999999' }),
-    ).rejects.toThrow('HOLDER_MISMATCH');
-    expect(mismatch.calls.map((call) => call.name)).not.toContain('link.updateMany');
-
-    const unknownVerifier = harness();
-    await expect(
-      request(unknownVerifier.client, {
-        verifierUserId: '99999999-9999-4999-8999-999999999999',
+      withdrawDirectoryConsent(pending.client, {
+        tenantId: TENANT,
+        actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+        credentialId: CREDENTIAL,
+        now: NOW,
       }),
-    ).rejects.toThrow('VERIFIER_UNKNOWN');
-    expect(unknownVerifier.state.registryConsentRevokedAt).toBeNull();
-    expect(unknownVerifier.state.deleted).toBe(0);
+    ).rejects.toThrow('NOT_VERIFIED');
+    expect(pending.calls).not.toContain('link.updateMany');
+
+    const samePerson = harness();
+    await open(samePerson);
+    await verifyDirectoryConsent(samePerson.client, {
+      tenantId: TENANT,
+      actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+      credentialId: CREDENTIAL,
+      verificationMethod: 'VIDEO_DOCUMENT_SIGHT',
+      evidenceRef: 'RB02-EVIDENCE-002',
+      now: NOW,
+      writeAudit: (_tx, result) => {
+        samePerson.remember('DIRECTORY_CONSENT_VERIFIED', {
+          verifierUserId: result.verifierUserId,
+          verifierRole: result.verifierRole,
+          verificationMethod: result.verificationMethod,
+          evidenceRef: result.evidenceRef,
+          verifiedAt: result.verifiedAt,
+          procedure: result.procedure,
+        });
+        return Promise.resolve();
+      },
+    });
+    await expect(
+      withdrawDirectoryConsent(samePerson.client, {
+        tenantId: TENANT,
+        actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+        credentialId: CREDENTIAL,
+        now: NOW,
+      }),
+    ).rejects.toThrow('FOUR_EYES');
+    expect(samePerson.calls).not.toContain('link.updateMany');
+    expect(samePerson.state.deleted).toBe(0);
+    expect(samePerson.state.registryConsentRevokedAt).toBeNull();
+  });
+
+  it('withdraws once after a different staff user verifies, and repeats without another write', async () => {
+    const flow = harness();
+    const opened = await open(flow);
+    expect(opened.result).toBe('REQUESTED');
+    const verified = await verifyDirectoryConsent(flow.client, {
+      tenantId: TENANT,
+      actor: { userId: DIRECTOR, roles: ['STAFF_DIR'] },
+      credentialId: CREDENTIAL,
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+      evidenceRef: 'RB02-EVIDENCE-001',
+      now: NOW,
+      writeAudit: (_tx, result) => {
+        flow.remember('DIRECTORY_CONSENT_VERIFIED', {
+          verifierUserId: result.verifierUserId,
+          verifierRole: result.verifierRole,
+          verificationMethod: result.verificationMethod,
+          evidenceRef: result.evidenceRef,
+          verifiedAt: result.verifiedAt,
+          procedure: result.procedure,
+        });
+        return Promise.resolve();
+      },
+    });
+    expect(verified.result).toBe('VERIFIED');
+    expect(verified.verifierUserId).toBe(DIRECTOR);
+    expect(verified.verifierRole).toBe('STAFF_DIR');
+    expect(verified.procedure).toBe('RB-02');
+    expect(verified.procedureSection).toBe('Identity check');
+    expect(verified.evidenceRef).toBe('RB02-EVIDENCE-001');
+
+    const withdrawn = await withdrawDirectoryConsent(flow.client, {
+      tenantId: TENANT,
+      actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+      credentialId: CREDENTIAL,
+      now: NOW,
+      writeAudit: () => Promise.resolve(),
+    });
+    expect(withdrawn.result).toBe('WITHDRAWN');
+    expect(withdrawn.lifecycle).toBe('ACTIVE');
+    expect(withdrawn.executorUserId).toBe(ADMIN);
+    expect(withdrawn.verifierUserId).toBe(DIRECTOR);
+    expect(withdrawn.procedureRef).toBe('docs/operations/RB-02-consent-withdrawal.md#execution');
+    expect(flow.state.payloadHash).toBe('abc');
+    expect(flow.state.signature).toBe('signed-document');
+    expect(flow.state.holderDisplayName).toBe('Demo Kandidat');
+    expect(flow.state.deleted).toBe(0);
+    expect(flow.calls).not.toContain('credential.update');
+    expect(flow.calls).not.toContain('credential.delete');
+    expect(flow.calls).not.toContain('link.delete');
+    expect(flow.calls).not.toContain('audit.update');
+    expect(flow.calls).not.toContain('audit.delete');
+
+    const writes = flow.calls.filter((name) => name === 'link.updateMany');
+    const again = await withdrawDirectoryConsent(flow.client, {
+      tenantId: TENANT,
+      actor: { userId: ADMIN, roles: ['STAFF_SYSADM'] },
+      credentialId: CREDENTIAL,
+      now: NOW,
+    });
+    expect(again.result).toBe('ALREADY_WITHDRAWN');
+    expect(again.registryConsentRevokedAt.toISOString()).toBe(NOW.toISOString());
+    expect(flow.calls.filter((name) => name === 'link.updateMany')).toEqual(writes);
   });
 });

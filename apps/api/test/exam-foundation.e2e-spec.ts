@@ -2573,12 +2573,14 @@ describe('certification exam foundation e2e', () => {
     expect(foreignDirectory.body).toEqual([]);
     expect(JSON.stringify(foreignDirectory.body)).not.toContain('Demo Kandidat');
     const receivedAt = new Date(Date.now() - 60_000).toISOString();
-    const withdrawalBody = {
+    const requestBody = {
       holderUserId: candidateId,
       channel: 'EMAIL',
       receivedAt,
-      verifierUserId: qualityId,
+    };
+    const verificationBody = {
       verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+      evidenceRef: 'RB02-EVIDENCE-001',
     };
     const beforeWithdrawal = await requirePrisma().credential.findFirst({
       where: { tenantId, id: issuedBody.credentialId },
@@ -2593,6 +2595,8 @@ describe('certification exam foundation e2e', () => {
       achievements: await requirePrisma().achievementRecord.count(),
       lifecycleEvents: await requirePrisma().credentialLifecycleEvent.count(),
     };
+    const requestPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-requests`;
+    const verificationPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-verifications`;
     const withdrawalPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-withdrawal`;
     for (const unauthorized of [
       auth(issuerSubject, ['COM_CERT']),
@@ -2604,7 +2608,10 @@ describe('certification exam foundation e2e', () => {
       auth(issuerSubject, ['ISSUANCE_OFFICER']),
     ]) {
       expect(
-        (await request(httpServer(app)).post(withdrawalPath).set(unauthorized).send(withdrawalBody))
+        (await request(httpServer(app)).post(withdrawalPath).set(unauthorized).send({})).status,
+      ).toBe(403);
+      expect(
+        (await request(httpServer(app)).post(requestPath).set(unauthorized).send(requestBody))
           .status,
       ).toBe(403);
     }
@@ -2619,7 +2626,7 @@ describe('certification exam foundation e2e', () => {
               mfa_verified: true,
             })}`,
           })
-          .send(withdrawalBody)
+          .send({})
       ).status,
     ).toBe(401);
     expect(
@@ -2627,25 +2634,112 @@ describe('certification exam foundation e2e', () => {
         await request(httpServer(app))
           .post(withdrawalPath)
           .set(outsider(['STAFF_SYSADM']))
-          .send(withdrawalBody)
+          .send({})
       ).status,
     ).toBe(404);
     expect(
       (
         await request(httpServer(app))
-          .post(withdrawalPath)
+          .post(verificationPath)
+          .set(outsider(['STAFF_DIR']))
+          .send(verificationBody)
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(requestPath)
           .set(auth(sysadminSubject, ['STAFF_SYSADM']))
-          .send({ ...withdrawalBody, holderUserId: otherCandidateId })
+          .send({ ...requestBody, holderUserId: otherCandidateId })
       ).status,
     ).toBe(400);
     expect(
       (
         await request(httpServer(app))
-          .post(withdrawalPath)
+          .post(requestPath)
           .set(auth(sysadminSubject, ['STAFF_SYSADM']))
-          .send({ ...withdrawalBody, tenantId })
+          .send({ ...requestBody, receivedAt: new Date(Date.now() + 600_000).toISOString() })
       ).status,
     ).toBe(400);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(requestPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({ ...requestBody, tenantId })
+      ).status,
+    ).toBe(400);
+    const opened = await request(httpServer(app))
+      .post(requestPath)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send(requestBody)
+      .expect(200);
+    expect(opened.body).toEqual(
+      expect.objectContaining({
+        result: 'REQUESTED',
+        holderUserId: candidateId,
+        procedure: 'RB-02',
+        procedureSection: 'Request',
+      }),
+    );
+    expect(opened.body).not.toHaveProperty('verifierUserId');
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({})
+      ).status,
+    ).toBe(400);
+    for (const rejectedVerifier of [
+      auth(candidateSubject, ['STAFF_SYSADM']),
+      auth(candidateSubject, ['USR_CAND']),
+      auth(otherSubject, ['USR_CAND']),
+      auth(qualitySubject, ['QUALITY_MANAGER']),
+      auth(issuerSubject, ['COM_CERT']),
+    ]) {
+      expect(
+        (
+          await request(httpServer(app))
+            .post(verificationPath)
+            .set(rejectedVerifier)
+            .send(verificationBody)
+        ).status,
+      ).toBe(400);
+    }
+    expect(
+      (
+        await request(httpServer(app))
+          .post(verificationPath)
+          .set(auth(qualitySubject, ['STAFF_DIR']))
+          .send({ ...verificationBody, verifierUserId: qualityId })
+      ).status,
+    ).toBe(400);
+    const verified = await request(httpServer(app))
+      .post(verificationPath)
+      .set(auth(qualitySubject, ['STAFF_DIR']))
+      .send(verificationBody)
+      .expect(200);
+    expect(verified.body).toEqual(
+      expect.objectContaining({
+        result: 'VERIFIED',
+        verifierUserId: qualityId,
+        verifierRole: 'STAFF_DIR',
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        procedure: 'RB-02',
+        procedureSection: 'Identity check',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#identity-check',
+      }),
+    );
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(auth(qualitySubject, ['STAFF_SYSADM']))
+          .send({})
+      ).status,
+    ).toBe(403);
     const untouched = await requirePrisma().examPersonnelCredentialLink.findFirst({
       where: { tenantId, credentialId: issuedBody.credentialId },
     });
@@ -2653,7 +2747,7 @@ describe('certification exam foundation e2e', () => {
     const withdrawn = await request(httpServer(app))
       .post(withdrawalPath)
       .set(auth(sysadminSubject, ['STAFF_SYSADM']))
-      .send(withdrawalBody)
+      .send({})
       .expect(200);
     const withdrawnBody = withdrawn.body as {
       executedAt: string;
@@ -2666,7 +2760,12 @@ describe('certification exam foundation e2e', () => {
         channel: 'EMAIL',
         receivedAt,
         verifierUserId: qualityId,
+        verifierRole: 'STAFF_DIR',
         verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        procedure: 'RB-02',
+        procedureSection: 'Execution',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
         executorUserId: sysadminId,
         result: 'WITHDRAWN',
         lifecycle: 'ACTIVE',
@@ -2707,20 +2806,28 @@ describe('certification exam foundation e2e', () => {
         : null;
     expect(firstAudit?.outcome).toBe('SUCCESS');
     expect(firstAudit?.occurredAt.toISOString()).toBe(withdrawnBody.executedAt);
-    expect(firstMetadata).toEqual({
-      credentialId: issuedBody.credentialId,
-      holderUserId: candidateId,
-      channel: 'EMAIL',
-      receivedAt,
-      verifierUserId: qualityId,
-      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
-      executorUserId: sysadminId,
-      result: 'WITHDRAWN',
-    });
+    expect(firstMetadata).toEqual(
+      expect.objectContaining({
+        credentialId: issuedBody.credentialId,
+        holderUserId: candidateId,
+        channel: 'EMAIL',
+        receivedAt,
+        verifierUserId: qualityId,
+        verifierRole: 'STAFF_DIR',
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        evidenceRef: 'RB02-EVIDENCE-001',
+        executorUserId: sysadminId,
+        result: 'WITHDRAWN',
+        procedure: 'RB-02',
+        procedureSection: 'Execution',
+        procedureRef: 'docs/operations/RB-02-consent-withdrawal.md#execution',
+      }),
+    );
+    expect(JSON.stringify(firstMetadata)).not.toContain('Demo Kandidat');
     const repeated = await request(httpServer(app))
       .post(withdrawalPath)
       .set(auth(sysadminSubject, ['STAFF_SYSADM']))
-      .send(withdrawalBody)
+      .send({})
       .expect(200);
     expect(repeated.body).toEqual(
       expect.objectContaining({
@@ -2759,9 +2866,44 @@ describe('certification exam foundation e2e', () => {
     );
     expect(
       await requirePrisma().auditEvent.count({
-        where: { tenantId, eventType: 'DIRECTORY_CONSENT_WITHDRAWN' },
+        where: {
+          tenantId,
+          eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+          outcome: 'SUCCESS',
+        },
       }),
     ).toBe(2);
+    const refusalRows = await requirePrisma().auditEvent.findMany({
+      where: {
+        tenantId,
+        outcome: 'DENIED',
+        resourceId: issuedBody.credentialId,
+      },
+    });
+    const refusalText = JSON.stringify(refusalRows);
+    for (const refused of [
+      'NOT_VERIFIED',
+      'VERIFIER_IS_HOLDER',
+      'VERIFIER_NOT_STAFF',
+      'FOUR_EYES',
+      'HOLDER_MISMATCH',
+      'RECEIVED_AT',
+    ]) {
+      expect(refusalText).toContain(refused);
+    }
+    expect(refusalText).not.toContain('Demo Kandidat');
+    expect(refusalText).not.toContain('holderDisplayName');
+    const hiddenFromOtherOrg = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId: outsiderTenantId,
+        outcome: 'DENIED',
+        eventType: 'DIRECTORY_CONSENT_VERIFIED',
+        resourceId: issuedBody.credentialId,
+      },
+    });
+    expect(hiddenFromOtherOrg).not.toBeNull();
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).toContain('NOT_FOUND');
+    expect(JSON.stringify(hiddenFromOtherOrg?.metadata)).not.toContain('Demo Kandidat');
     const withdrawnConsent = await requirePrisma().examPersonnelCredentialLink.updateMany({
       where: { tenantId, credentialId: issuedBody.credentialId },
       data: { registryConsentRevokedAt: new Date('2026-10-23T00:00:00.000Z') },

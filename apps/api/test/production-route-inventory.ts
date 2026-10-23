@@ -47,9 +47,19 @@ export const PUBLIC_CATALOG_ROUTES = [
 
 export const DIRECTORY_CONSENT_WITHDRAWAL_ROUTES = [
   {
+    route: 'POST /v1/staff/certificates/:credentialId/directory-consent-requests',
+    reason:
+      'Records the OD-DIR-33 directory-consent request for one certificate in the caller organization. Existing STAFF_SYSADM only. The body has the holder, channel, and received time, and it does not name a verifier.',
+  },
+  {
     route: 'POST /v1/staff/certificates/:credentialId/directory-consent-withdrawal',
     reason:
-      'Interim OD-DIR-33 directory-name withdrawal for one certificate in the caller organization. Existing STAFF_SYSADM only, cookie sessions require the CSRF token, the audit row is append-only, and the certificate status is not changed.',
+      'Executes an RB-02 directory-name withdrawal only after a recorded verification by a different staff user. Existing STAFF_SYSADM only. The certificate status is not changed.',
+  },
+  {
+    route: 'POST /v1/staff/certificates/:credentialId/directory-consent-verifications',
+    reason:
+      'Records RB-02 identity verification for a pending directory-consent request. The verifier is the authenticated user, must already hold a staff role in that organization, and cannot be the holder.',
   },
 ] as const;
 

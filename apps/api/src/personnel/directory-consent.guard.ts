@@ -21,3 +21,21 @@ export class DirectoryConsentAdministratorGuard implements CanActivate {
     return true;
   }
 }
+
+/**
+ * Any authenticated member of an organization may reach the verifier step.
+ * The handler then rejects a holder, a non-staff user, and a missing certificate.
+ * The verifier id is the session user, never a field the executor types.
+ */
+@Injectable()
+export class DirectoryConsentVerifierGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest<RequestWithPrincipal>();
+    const actor = getRequestPrincipal(request);
+    const tenantId = typeof actor?.tenantId === 'string' ? actor.tenantId.trim() : '';
+    if (!actor || tenantId.length === 0) {
+      throw new AccessDeniedError();
+    }
+    return true;
+  }
+}

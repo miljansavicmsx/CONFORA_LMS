@@ -19,7 +19,8 @@ const PERSONNEL_METADATA = {
 } as const;
 
 /**
- * Withdrawal audit. Allowlisted fields only: no document image, document number, or secret.
+ * Directory-consent audit. Identifiers, role codes, and RB-02 references only.
+ * No document image, document number, name, or secret.
  * AuditEventRegistry.production() stays the ten role-administration events.
  */
 const DIRECTORY_CONSENT_WITHDRAWAL_METADATA = {
@@ -29,10 +30,17 @@ const DIRECTORY_CONSENT_WITHDRAWAL_METADATA = {
     holderUserId: STRING_VALUE,
     channel: STRING_VALUE,
     receivedAt: STRING_VALUE,
+    requesterUserId: STRING_VALUE,
     verifierUserId: STRING_VALUE,
+    verifierRole: STRING_VALUE,
     verificationMethod: STRING_VALUE,
+    evidenceRef: STRING_VALUE,
+    verifiedAt: STRING_VALUE,
     executorUserId: STRING_VALUE,
     result: STRING_VALUE,
+    procedure: STRING_VALUE,
+    procedureRef: STRING_VALUE,
+    procedureSection: STRING_VALUE,
   },
 } as const;
 
@@ -41,6 +49,16 @@ export const PERSONNEL_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] 
     eventType: 'PERSONNEL_CERTIFICATE_ISSUED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: PERSONNEL_METADATA,
+  },
+  {
+    eventType: 'DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: DIRECTORY_CONSENT_WITHDRAWAL_METADATA,
+  },
+  {
+    eventType: 'DIRECTORY_CONSENT_VERIFIED',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: DIRECTORY_CONSENT_WITHDRAWAL_METADATA,
   },
   {
     eventType: 'DIRECTORY_CONSENT_WITHDRAWN',

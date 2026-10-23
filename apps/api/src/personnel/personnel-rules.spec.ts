@@ -5,6 +5,8 @@ import {
   addYears,
   assertConsentRequestReceivedAt,
   assertDirectoryConsentAdministrator,
+  assertDirectoryConsentFourEyes,
+  assertDirectoryConsentVerifier,
   assertIssuer,
   assertPublicRateLimit,
   assertStatusTransition,
@@ -174,5 +176,42 @@ describe('personnel certificate rules', () => {
     expect(() => {
       assertConsentRequestReceivedAt(new Date('2026-10-23T12:30:00.000Z'), now);
     }).toThrow('RECEIVED_AT');
+  });
+
+  it('requires a different staff verifier from the holder and the executor', () => {
+    expect(
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'director',
+        holderUserId: 'holder',
+        roles: ['STAFF_DIR'],
+      }),
+    ).toBe('STAFF_DIR');
+    expect(() => {
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'holder',
+        holderUserId: 'holder',
+        roles: ['STAFF_SYSADM'],
+      });
+    }).toThrow('VERIFIER_IS_HOLDER');
+    expect(() => {
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'candidate',
+        holderUserId: 'holder',
+        roles: ['USR_CAND'],
+      });
+    }).toThrow('VERIFIER_NOT_STAFF');
+    expect(() => {
+      assertDirectoryConsentVerifier({
+        verifierUserId: 'quality',
+        holderUserId: 'holder',
+        roles: ['QUALITY_MANAGER'],
+      });
+    }).toThrow('VERIFIER_NOT_STAFF');
+    expect(() => {
+      assertDirectoryConsentFourEyes('admin', 'admin');
+    }).toThrow('FOUR_EYES');
+    expect(() => {
+      assertDirectoryConsentFourEyes('admin', 'director');
+    }).not.toThrow();
   });
 });

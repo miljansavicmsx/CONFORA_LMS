@@ -6,7 +6,13 @@ import type { AuthenticatedActor } from '../auth/request-principal';
 import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
-import { PersonnelRuleError, publicCertificateStatus } from './personnel-rules';
+import {
+  DIRECTORY_CONSENT_PROCEDURE,
+  DIRECTORY_CONSENT_PROCEDURE_REF,
+  DIRECTORY_CONSENT_SECTIONS,
+  PersonnelRuleError,
+  publicCertificateStatus,
+} from './personnel-rules';
 import { importVerificationJwk, publicJwk } from './personnel-vc';
 
 const DENIED = new Set([
@@ -18,7 +24,18 @@ const DENIED = new Set([
   'TENANT_REQUIRED',
 ]);
 
-const REJECTED = new Set(['HOLDER_MISMATCH', 'VERIFIER_UNKNOWN', 'RECEIVED_AT']);
+const REJECTED = new Set([
+  'HOLDER_MISMATCH',
+  'VERIFIER_UNKNOWN',
+  'VERIFIER_IS_HOLDER',
+  'VERIFIER_NOT_STAFF',
+  'VERIFIER_NOT_ACTIVE',
+  'RECEIVED_AT',
+  'NOT_VERIFIED',
+  'NOT_REQUESTED',
+  'EVIDENCE_REF',
+  'WITHDRAWAL_FAILED',
+]);
 
 function fail(error: unknown): never {
   if (error instanceof PersonnelNotFoundError) {
@@ -206,60 +223,143 @@ export class PersonnelCertificateService {
   }
 
   /**
-   * Records the withdrawal request and hides the directory name.
+   * Records the withdrawal request. The verifier is not chosen on this call.
    * The certificate lifecycle, signature, and original consent time stay as they are.
    */
-  withdrawDirectoryConsent(
+  openDirectoryConsentRequest(
     actor: AuthenticatedActor,
     credentialId: string,
     body: {
       holderUserId: string;
       channel: 'EMAIL' | 'POST' | 'IN_PERSON' | 'TELEPHONE';
       receivedAt: string;
-      verifierUserId: string;
-      verificationMethod:
-        | 'IN_PERSON_DOCUMENT_SIGHT'
-        | 'VIDEO_DOCUMENT_SIGHT'
-        | 'KNOWN_ACCOUNT_CONFIRMATION';
     },
   ) {
     const now = new Date();
+    const section = DIRECTORY_CONSENT_SECTIONS.request;
     return this.tenantPrisma.personnel
-      .withdrawDirectoryConsent({
+      .openDirectoryConsentRequest({
         actor: this.actor(actor),
         credentialId,
         holderUserId: body.holderUserId,
         channel: body.channel,
         receivedAt: new Date(body.receivedAt),
-        verifierUserId: body.verifierUserId,
-        verificationMethod: body.verificationMethod,
         now,
-        writeWithdrawalAudit: async (tx, result) => {
-          await this.audit.executeInTransaction(
-            actor,
-            async (ops) => {
-              await ops.append({
-                idempotencyKey: randomUUID(),
-                eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
-                outcome: 'SUCCESS',
-                occurredAt: now,
-                resourceType: 'Credential',
-                resourceId: result.credentialId,
-                metadata: {
-                  credentialId: result.credentialId,
-                  holderUserId: result.holderUserId,
-                  channel: result.channel,
-                  receivedAt: result.receivedAt,
-                  verifierUserId: result.verifierUserId,
-                  verificationMethod: result.verificationMethod,
-                  executorUserId: result.executorUserId,
-                  result: result.result,
-                },
-              });
-            },
-            tx,
-          );
-        },
+        writeAudit: (tx, result) =>
+          this.appendConsent(actor, tx, 'DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED', now, {
+            credentialId: result.credentialId,
+            holderUserId: result.holderUserId,
+            channel: result.channel,
+            receivedAt: result.receivedAt,
+            requesterUserId: result.requesterUserId,
+            result: result.result,
+            procedure: result.procedure,
+            procedureRef: result.procedureRef,
+            procedureSection: result.procedureSection,
+          }),
+      })
+      .catch(async (error: unknown) => {
+        await this.recordRefusal(actor, {
+          credentialId,
+          eventType: 'DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED',
+          section,
+          occurredAt: now,
+          error,
+          fields: {
+            holderUserId: body.holderUserId,
+            channel: body.channel,
+            receivedAt: body.receivedAt,
+            requesterUserId: actor.userId,
+          },
+        });
+        fail(error);
+      });
+  }
+
+  /**
+   * The verifier is the authenticated user. Their staff role is the one held now.
+   */
+  verifyDirectoryConsent(
+    actor: AuthenticatedActor,
+    credentialId: string,
+    body: {
+      verificationMethod:
+        | 'IN_PERSON_DOCUMENT_SIGHT'
+        | 'VIDEO_DOCUMENT_SIGHT'
+        | 'KNOWN_ACCOUNT_CONFIRMATION';
+      evidenceRef: string;
+    },
+  ) {
+    const now = new Date();
+    const section = DIRECTORY_CONSENT_SECTIONS.identity;
+    return this.tenantPrisma.personnel
+      .verifyDirectoryConsent({
+        actor: this.actor(actor),
+        credentialId,
+        verificationMethod: body.verificationMethod,
+        evidenceRef: body.evidenceRef,
+        now,
+        writeAudit: (tx, result) =>
+          this.appendConsent(actor, tx, 'DIRECTORY_CONSENT_VERIFIED', now, {
+            credentialId: result.credentialId,
+            holderUserId: result.holderUserId,
+            verifierUserId: result.verifierUserId,
+            verifierRole: result.verifierRole,
+            verificationMethod: result.verificationMethod,
+            evidenceRef: result.evidenceRef,
+            verifiedAt: result.verifiedAt,
+            result: result.result,
+            procedure: result.procedure,
+            procedureRef: result.procedureRef,
+            procedureSection: result.procedureSection,
+          }),
+      })
+      .catch(async (error: unknown) => {
+        await this.recordRefusal(actor, {
+          credentialId,
+          eventType: 'DIRECTORY_CONSENT_VERIFIED',
+          section,
+          occurredAt: now,
+          error,
+          fields: {
+            verifierUserId: actor.userId,
+            verificationMethod: body.verificationMethod,
+            evidenceRef: body.evidenceRef,
+          },
+        });
+        fail(error);
+      });
+  }
+
+  /**
+   * Executes only a request that already has a verification by a different person.
+   * Follows the existing FOUR_EYES rule: the executor cannot be the verifier.
+   */
+  withdrawDirectoryConsent(actor: AuthenticatedActor, credentialId: string) {
+    const now = new Date();
+    const section = DIRECTORY_CONSENT_SECTIONS.execution;
+    return this.tenantPrisma.personnel
+      .withdrawDirectoryConsent({
+        actor: this.actor(actor),
+        credentialId,
+        now,
+        writeAudit: (tx, result) =>
+          this.appendConsent(actor, tx, 'DIRECTORY_CONSENT_WITHDRAWN', now, {
+            credentialId: result.credentialId,
+            holderUserId: result.holderUserId,
+            channel: result.channel,
+            receivedAt: result.receivedAt,
+            verifierUserId: result.verifierUserId,
+            verifierRole: result.verifierRole,
+            verificationMethod: result.verificationMethod,
+            evidenceRef: result.evidenceRef,
+            verifiedAt: result.verifiedAt,
+            executorUserId: result.executorUserId,
+            result: result.result,
+            procedure: result.procedure,
+            procedureRef: result.procedureRef,
+            procedureSection: result.procedureSection,
+          }),
       })
       .then((result) => ({
         credentialId: result.credentialId,
@@ -267,14 +367,120 @@ export class PersonnelCertificateService {
         channel: result.channel,
         receivedAt: result.receivedAt,
         verifierUserId: result.verifierUserId,
+        verifierRole: result.verifierRole,
         verificationMethod: result.verificationMethod,
+        evidenceRef: result.evidenceRef,
+        verifiedAt: result.verifiedAt,
         executorUserId: result.executorUserId,
         executedAt: now.toISOString(),
         result: result.result,
         registryConsentRevokedAt: result.registryConsentRevokedAt.toISOString(),
         lifecycle: result.lifecycle,
         status: publicCertificateStatus(result.lifecycle, result.expiresAt, now),
+        procedure: result.procedure,
+        procedureRef: result.procedureRef,
+        procedureSection: result.procedureSection,
       }))
-      .catch(fail);
+      .catch(async (error: unknown) => {
+        await this.recordRefusal(actor, {
+          credentialId,
+          eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+          section,
+          occurredAt: now,
+          error,
+          fields: {
+            executorUserId: actor.userId,
+            verifierUserId:
+              error instanceof PersonnelRuleError && error.code === 'FOUR_EYES'
+                ? actor.userId
+                : undefined,
+          },
+        });
+        fail(error);
+      });
+  }
+
+  private appendConsent(
+    actor: AuthenticatedActor,
+    tx: unknown,
+    eventType:
+      | 'DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED'
+      | 'DIRECTORY_CONSENT_VERIFIED'
+      | 'DIRECTORY_CONSENT_WITHDRAWN',
+    occurredAt: Date,
+    metadata: Record<string, string>,
+  ) {
+    const resourceId = metadata['credentialId'] ?? '';
+    return this.audit.executeInTransaction(
+      actor,
+      async (ops) => {
+        await ops.append({
+          idempotencyKey: randomUUID(),
+          eventType,
+          outcome: 'SUCCESS',
+          occurredAt,
+          resourceType: 'Credential',
+          resourceId,
+          metadata,
+        });
+      },
+      tx as Parameters<AuditService['executeInTransaction']>[2],
+    );
+  }
+
+  /**
+   * Refusal audit is a new append after the business transaction has rolled back.
+   * Metadata is identifiers and procedure codes only.
+   */
+  private async recordRefusal(
+    actor: AuthenticatedActor,
+    input: {
+      credentialId: string;
+      eventType:
+        | 'DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED'
+        | 'DIRECTORY_CONSENT_VERIFIED'
+        | 'DIRECTORY_CONSENT_WITHDRAWN';
+      section: (typeof DIRECTORY_CONSENT_SECTIONS)[keyof typeof DIRECTORY_CONSENT_SECTIONS];
+      occurredAt: Date;
+      error: unknown;
+      fields: Record<string, string | undefined>;
+    },
+  ): Promise<void> {
+    const code =
+      input.error instanceof PersonnelNotFoundError
+        ? 'NOT_FOUND'
+        : input.error instanceof PersonnelRuleError
+          ? input.error.code
+          : null;
+    if (!code) {
+      return;
+    }
+    const anchor =
+      input.section === DIRECTORY_CONSENT_SECTIONS.identity
+        ? 'identity-check'
+        : input.section === DIRECTORY_CONSENT_SECTIONS.execution
+          ? 'execution'
+          : 'request';
+    const metadata: Record<string, string> = {
+      credentialId: input.credentialId,
+      result: code,
+      procedure: DIRECTORY_CONSENT_PROCEDURE,
+      procedureRef: `${DIRECTORY_CONSENT_PROCEDURE_REF}#${anchor}`,
+      procedureSection: input.section,
+    };
+    for (const [key, value] of Object.entries(input.fields)) {
+      if (value) {
+        metadata[key] = value;
+      }
+    }
+    await this.audit.append(actor, {
+      idempotencyKey: randomUUID(),
+      eventType: input.eventType,
+      outcome: 'DENIED',
+      occurredAt: input.occurredAt,
+      resourceType: 'Credential',
+      resourceId: input.credentialId,
+      metadata,
+    });
   }
 }

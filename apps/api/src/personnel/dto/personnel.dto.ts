@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import {
   DIRECTORY_CONSENT_CHANNELS,
+  DIRECTORY_CONSENT_EVIDENCE_REF,
   DIRECTORY_CONSENT_VERIFICATION_METHODS,
 } from '../personnel-rules';
 
@@ -31,18 +32,29 @@ export class AmfProposalDto extends createZodDto(
   z.object({ reason: z.string().trim().min(3).max(2000) }).strict(),
 ) {}
 
-/** Request record only. No identity-document copy, document number, image, or secret. */
-export class WithdrawDirectoryConsentDto extends createZodDto(
+/** Intake record. The verifier is not named here. */
+export class OpenDirectoryConsentRequestDto extends createZodDto(
   z
     .object({
       holderUserId: uuid,
       channel: z.enum(DIRECTORY_CONSENT_CHANNELS),
       receivedAt: z.string().datetime(),
-      verifierUserId: uuid,
-      verificationMethod: z.enum(DIRECTORY_CONSENT_VERIFICATION_METHODS),
     })
     .strict(),
 ) {}
+
+/** Evidence reference only. The verifier is the authenticated user. */
+export class VerifyDirectoryConsentDto extends createZodDto(
+  z
+    .object({
+      verificationMethod: z.enum(DIRECTORY_CONSENT_VERIFICATION_METHODS),
+      evidenceRef: z.string().regex(DIRECTORY_CONSENT_EVIDENCE_REF),
+    })
+    .strict(),
+) {}
+
+/** Execution reads the recorded request and verification. No verifier field. */
+export class WithdrawDirectoryConsentDto extends createZodDto(z.object({}).strict()) {}
 
 export class CpdRecordDto extends createZodDto(
   z

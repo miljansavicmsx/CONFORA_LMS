@@ -630,7 +630,23 @@ describe('OIDC browser session', () => {
   it('requires the session CSRF token on a cookie-authenticated directory withdrawal', async () => {
     const sid = await candidateSession();
     const credentialId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
-    const path = `/v1/staff/certificates/${credentialId}/directory-consent-withdrawal`;
+    const paths = [
+      `/v1/staff/certificates/${credentialId}/directory-consent-requests`,
+      `/v1/staff/certificates/${credentialId}/directory-consent-verifications`,
+      `/v1/staff/certificates/${credentialId}/directory-consent-withdrawal`,
+    ];
+    const path = paths[2] ?? '';
+    for (const cookiePath of paths) {
+      const blocked = await request(http())
+        .post(cookiePath)
+        .set('Cookie', sidCookie(sid))
+        .set('Origin', ORIGIN)
+        .send({ holderUserId: credentialId });
+      expect(blocked.status).toBe(403);
+      expect(headerText(parseRecord(JSON.stringify(blocked.body))['error'])).toBe(
+        'oidc.csrf.rejected',
+      );
+    }
     const missing = await request(http())
       .post(path)
       .set('Cookie', sidCookie(sid))
