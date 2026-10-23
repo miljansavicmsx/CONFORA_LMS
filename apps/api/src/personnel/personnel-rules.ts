@@ -151,3 +151,40 @@ export function presentPersonnelPublicVerification(input: {
     holderName: directoryConsentActive(input) ? input.holderName : null,
   };
 }
+
+/**
+ * Existing system-administrator role (Baseline §6, OD-PP-06).
+ * This is not a new role and it is not a certification decision.
+ * Baseline §7.5 and OD-PP-18 still keep STAFF_SYSADM out of certification
+ * outcomes and the item bank. STAFF_DIR monitors (Baseline §7.4) and does
+ * not execute this operational step. STAFF_ROLEADM remains role administration.
+ */
+export const DIRECTORY_CONSENT_EXECUTOR_ROLE = 'STAFF_SYSADM' as const;
+
+export const DIRECTORY_CONSENT_CHANNELS = ['EMAIL', 'POST', 'IN_PERSON', 'TELEPHONE'] as const;
+export type DirectoryConsentChannel = (typeof DIRECTORY_CONSENT_CHANNELS)[number];
+
+/** How identity was checked. The value is the method only: no document copy, number, or secret. */
+export const DIRECTORY_CONSENT_VERIFICATION_METHODS = [
+  'IN_PERSON_DOCUMENT_SIGHT',
+  'VIDEO_DOCUMENT_SIGHT',
+  'KNOWN_ACCOUNT_CONFIRMATION',
+] as const;
+export type DirectoryConsentVerificationMethod =
+  (typeof DIRECTORY_CONSENT_VERIFICATION_METHODS)[number];
+
+export function assertDirectoryConsentAdministrator(roles: readonly string[]): void {
+  if (!roles.includes(DIRECTORY_CONSENT_EXECUTOR_ROLE)) {
+    throw new PersonnelRuleError('ROLE_SEPARATION');
+  }
+}
+
+/** Received time is the time the organization got the request, not a future stamp. */
+export function assertConsentRequestReceivedAt(receivedAt: Date, now: Date): void {
+  if (!(receivedAt instanceof Date) || Number.isNaN(receivedAt.getTime())) {
+    throw new PersonnelRuleError('RECEIVED_AT');
+  }
+  if (receivedAt.getTime() > now.getTime() + 120_000) {
+    throw new PersonnelRuleError('RECEIVED_AT');
+  }
+}

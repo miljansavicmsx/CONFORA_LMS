@@ -99,6 +99,7 @@ import {
   refusePublicNumberQuery,
   revocationStatusList,
   searchPublicRegistry,
+  withdrawDirectoryConsent,
 } from './personnel-certificate-store';
 import {
   enrolInCourse,
@@ -511,6 +512,9 @@ export class TenantPrismaService {
       changePersonnelStatus(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     proposeAmf: (input: Omit<Parameters<typeof proposeAmfSuspension>[1], 'tenantId'>) =>
       proposeAmfSuspension(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
+    withdrawDirectoryConsent: (
+      input: Omit<Parameters<typeof withdrawDirectoryConsent>[1], 'tenantId'>,
+    ) => withdrawDirectoryConsent(this.prisma, { ...input, tenantId: this.requiredTenantId() }),
     listMine: (userId: string, now: Date) =>
       listHolderCertificates(this.prisma, { tenantId: this.requiredTenantId(), userId, now }),
     pdf: (userId: string, credentialId: string, now: Date) =>

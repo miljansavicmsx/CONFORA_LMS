@@ -2572,6 +2572,196 @@ describe('certification exam foundation e2e', () => {
       .expect(200);
     expect(foreignDirectory.body).toEqual([]);
     expect(JSON.stringify(foreignDirectory.body)).not.toContain('Demo Kandidat');
+    const receivedAt = new Date(Date.now() - 60_000).toISOString();
+    const withdrawalBody = {
+      holderUserId: candidateId,
+      channel: 'EMAIL',
+      receivedAt,
+      verifierUserId: qualityId,
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+    };
+    const beforeWithdrawal = await requirePrisma().credential.findFirst({
+      where: { tenantId, id: issuedBody.credentialId },
+      include: { examPersonnelLink: true },
+    });
+    if (!beforeWithdrawal?.examPersonnelLink || !beforeWithdrawal.signature) {
+      throw new Error('Certificate was not stored before withdrawal.');
+    }
+    const countsBefore = {
+      credentials: await requirePrisma().credential.count(),
+      links: await requirePrisma().examPersonnelCredentialLink.count(),
+      achievements: await requirePrisma().achievementRecord.count(),
+      lifecycleEvents: await requirePrisma().credentialLifecycleEvent.count(),
+    };
+    const withdrawalPath = `/v1/staff/certificates/${issuedBody.credentialId}/directory-consent-withdrawal`;
+    for (const unauthorized of [
+      auth(issuerSubject, ['COM_CERT']),
+      auth(candidateSubject, ['USR_CAND']),
+      auth(sysadminSubject, ['STAFF_DIR']),
+      auth(sysadminSubject, ['STAFF_ROLEADM']),
+      auth(qualitySubject, ['QUALITY_MANAGER']),
+      auth(issuerSubject, ['LIFECYCLE_OFFICER']),
+      auth(issuerSubject, ['ISSUANCE_OFFICER']),
+    ]) {
+      expect(
+        (await request(httpServer(app)).post(withdrawalPath).set(unauthorized).send(withdrawalBody))
+          .status,
+      ).toBe(403);
+    }
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set({
+            Authorization: `Bearer ${fixture.signAccessToken({
+              sub: sysadminSubject,
+              realm_access: { roles: ['STAFF_SYSADM'] },
+              mfa_verified: true,
+            })}`,
+          })
+          .send(withdrawalBody)
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(outsider(['STAFF_SYSADM']))
+          .send(withdrawalBody)
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({ ...withdrawalBody, holderUserId: otherCandidateId })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await request(httpServer(app))
+          .post(withdrawalPath)
+          .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+          .send({ ...withdrawalBody, tenantId })
+      ).status,
+    ).toBe(400);
+    const untouched = await requirePrisma().examPersonnelCredentialLink.findFirst({
+      where: { tenantId, credentialId: issuedBody.credentialId },
+    });
+    expect(untouched?.registryConsentRevokedAt).toBeNull();
+    const withdrawn = await request(httpServer(app))
+      .post(withdrawalPath)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send(withdrawalBody)
+      .expect(200);
+    const withdrawnBody = withdrawn.body as {
+      executedAt: string;
+      registryConsentRevokedAt: string;
+    };
+    expect(withdrawn.body).toEqual(
+      expect.objectContaining({
+        credentialId: issuedBody.credentialId,
+        holderUserId: candidateId,
+        channel: 'EMAIL',
+        receivedAt,
+        verifierUserId: qualityId,
+        verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+        executorUserId: sysadminId,
+        result: 'WITHDRAWN',
+        lifecycle: 'ACTIVE',
+        status: 'VALID',
+      }),
+    );
+    const hiddenSearch = await request(httpServer(app))
+      .get('/v1/public/certificates')
+      .query({ name: 'Demo' })
+      .set(auth(otherSubject, ['USR_CAND']))
+      .expect(200);
+    expect(JSON.stringify(hiddenSearch.body)).not.toContain('Demo Kandidat');
+    expect(hiddenSearch.body).toEqual([]);
+    const hiddenPublic = await request(httpServer(app))
+      .get(`/v1/public/certificates/${beforeWithdrawal.qrVerifyToken}`)
+      .expect(200);
+    expect(hiddenPublic.body).toEqual({
+      status: 'VALID',
+      documentType: 'PERSONNEL_CERTIFICATE',
+      issuedAt: beforeWithdrawal.issuedAt.toISOString().slice(0, 10),
+      holderName: null,
+    });
+    expect(JSON.stringify(hiddenPublic.body)).not.toContain('Demo Kandidat');
+    const firstAudit = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId,
+        eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+        resourceId: issuedBody.credentialId,
+        actorUserId: sysadminId,
+      },
+      orderBy: { sequence: 'asc' },
+    });
+    const firstMetadata =
+      firstAudit?.metadata &&
+      typeof firstAudit.metadata === 'object' &&
+      !Array.isArray(firstAudit.metadata)
+        ? firstAudit.metadata
+        : null;
+    expect(firstAudit?.outcome).toBe('SUCCESS');
+    expect(firstAudit?.occurredAt.toISOString()).toBe(withdrawnBody.executedAt);
+    expect(firstMetadata).toEqual({
+      credentialId: issuedBody.credentialId,
+      holderUserId: candidateId,
+      channel: 'EMAIL',
+      receivedAt,
+      verifierUserId: qualityId,
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT',
+      executorUserId: sysadminId,
+      result: 'WITHDRAWN',
+    });
+    const repeated = await request(httpServer(app))
+      .post(withdrawalPath)
+      .set(auth(sysadminSubject, ['STAFF_SYSADM']))
+      .send(withdrawalBody)
+      .expect(200);
+    expect(repeated.body).toEqual(
+      expect.objectContaining({
+        result: 'ALREADY_WITHDRAWN',
+        lifecycle: 'ACTIVE',
+        status: 'VALID',
+        registryConsentRevokedAt: withdrawnBody.registryConsentRevokedAt,
+      }),
+    );
+    const afterWithdrawal = await requirePrisma().credential.findFirst({
+      where: { tenantId, id: issuedBody.credentialId },
+      include: { examPersonnelLink: true },
+    });
+    expect(afterWithdrawal?.lifecycle).toBe(beforeWithdrawal.lifecycle);
+    expect(afterWithdrawal?.payloadHash).toBe(beforeWithdrawal.payloadHash);
+    expect(afterWithdrawal?.signature).toBe(beforeWithdrawal.signature);
+    expect(afterWithdrawal?.publicUid).toBe(beforeWithdrawal.publicUid);
+    expect(afterWithdrawal?.expiresAt?.toISOString()).toBe(
+      beforeWithdrawal.expiresAt?.toISOString(),
+    );
+    expect(afterWithdrawal?.examPersonnelLink?.registryListed).toBe(true);
+    expect(afterWithdrawal?.examPersonnelLink?.holderDisplayName).toBe(
+      beforeWithdrawal.examPersonnelLink.holderDisplayName,
+    );
+    expect(afterWithdrawal?.examPersonnelLink?.registryConsentAt?.toISOString()).toBe(
+      beforeWithdrawal.examPersonnelLink.registryConsentAt?.toISOString(),
+    );
+    expect(afterWithdrawal?.examPersonnelLink?.registryConsentRevokedAt?.toISOString()).toBe(
+      withdrawnBody.registryConsentRevokedAt,
+    );
+    expect(await requirePrisma().credential.count()).toBe(countsBefore.credentials);
+    expect(await requirePrisma().examPersonnelCredentialLink.count()).toBe(countsBefore.links);
+    expect(await requirePrisma().achievementRecord.count()).toBe(countsBefore.achievements);
+    expect(await requirePrisma().credentialLifecycleEvent.count()).toBe(
+      countsBefore.lifecycleEvents,
+    );
+    expect(
+      await requirePrisma().auditEvent.count({
+        where: { tenantId, eventType: 'DIRECTORY_CONSENT_WITHDRAWN' },
+      }),
+    ).toBe(2);
     const withdrawnConsent = await requirePrisma().examPersonnelCredentialLink.updateMany({
       where: { tenantId, credentialId: issuedBody.credentialId },
       data: { registryConsentRevokedAt: new Date('2026-10-23T00:00:00.000Z') },

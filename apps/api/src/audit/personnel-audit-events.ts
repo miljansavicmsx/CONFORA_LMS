@@ -18,11 +18,34 @@ const PERSONNEL_METADATA = {
   },
 } as const;
 
+/**
+ * Withdrawal audit. Allowlisted fields only: no document image, document number, or secret.
+ * AuditEventRegistry.production() stays the ten role-administration events.
+ */
+const DIRECTORY_CONSENT_WITHDRAWAL_METADATA = {
+  type: 'object',
+  properties: {
+    credentialId: STRING_VALUE,
+    holderUserId: STRING_VALUE,
+    channel: STRING_VALUE,
+    receivedAt: STRING_VALUE,
+    verifierUserId: STRING_VALUE,
+    verificationMethod: STRING_VALUE,
+    executorUserId: STRING_VALUE,
+    result: STRING_VALUE,
+  },
+} as const;
+
 export const PERSONNEL_AUDIT_EVENT_DEFINITIONS: readonly AuditEventDefinition[] = [
   {
     eventType: 'PERSONNEL_CERTIFICATE_ISSUED',
     resourceTypePolicy: 'REQUIRED',
     metadataSchema: PERSONNEL_METADATA,
+  },
+  {
+    eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+    resourceTypePolicy: 'REQUIRED',
+    metadataSchema: DIRECTORY_CONSENT_WITHDRAWAL_METADATA,
   },
   {
     eventType: 'PERSONNEL_CERTIFICATE_STATUS_CHANGED',

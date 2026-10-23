@@ -1,6 +1,11 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
+import {
+  DIRECTORY_CONSENT_CHANNELS,
+  DIRECTORY_CONSENT_VERIFICATION_METHODS,
+} from '../personnel-rules';
+
 const uuid = z.string().uuid();
 
 export class IssueCertificateDto extends createZodDto(
@@ -24,6 +29,19 @@ export class ChangeCertificateStatusDto extends createZodDto(
 
 export class AmfProposalDto extends createZodDto(
   z.object({ reason: z.string().trim().min(3).max(2000) }).strict(),
+) {}
+
+/** Request record only. No identity-document copy, document number, image, or secret. */
+export class WithdrawDirectoryConsentDto extends createZodDto(
+  z
+    .object({
+      holderUserId: uuid,
+      channel: z.enum(DIRECTORY_CONSENT_CHANNELS),
+      receivedAt: z.string().datetime(),
+      verifierUserId: uuid,
+      verificationMethod: z.enum(DIRECTORY_CONSENT_VERIFICATION_METHODS),
+    })
+    .strict(),
 ) {}
 
 export class CpdRecordDto extends createZodDto(

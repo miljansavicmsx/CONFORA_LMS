@@ -6,7 +6,7 @@ import type { AuthenticatedActor } from '../auth/request-principal';
 import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
-import { PersonnelRuleError } from './personnel-rules';
+import { PersonnelRuleError, publicCertificateStatus } from './personnel-rules';
 import { importVerificationJwk, publicJwk } from './personnel-vc';
 
 const DENIED = new Set([
@@ -15,7 +15,10 @@ const DENIED = new Set([
   'TRAINER_CANNOT_ISSUE',
   'NOT_HOLDER',
   'FOUR_EYES',
+  'TENANT_REQUIRED',
 ]);
+
+const REJECTED = new Set(['HOLDER_MISMATCH', 'VERIFIER_UNKNOWN', 'RECEIVED_AT']);
 
 function fail(error: unknown): never {
   if (error instanceof PersonnelNotFoundError) {
@@ -27,6 +30,9 @@ function fail(error: unknown): never {
     }
     if (DENIED.has(error.code)) {
       throw new AccessDeniedError();
+    }
+    if (REJECTED.has(error.code)) {
+      throw new BadRequestException(error.code);
     }
     throw new BadRequestException(error.code);
   }
@@ -197,5 +203,78 @@ export class PersonnelCertificateService {
 
   publicPdf(publicUid: string, sourceIp: string) {
     return this.tenantPrisma.personnel.publicPdf(publicUid, sourceIp, new Date()).catch(fail);
+  }
+
+  /**
+   * Records the withdrawal request and hides the directory name.
+   * The certificate lifecycle, signature, and original consent time stay as they are.
+   */
+  withdrawDirectoryConsent(
+    actor: AuthenticatedActor,
+    credentialId: string,
+    body: {
+      holderUserId: string;
+      channel: 'EMAIL' | 'POST' | 'IN_PERSON' | 'TELEPHONE';
+      receivedAt: string;
+      verifierUserId: string;
+      verificationMethod:
+        | 'IN_PERSON_DOCUMENT_SIGHT'
+        | 'VIDEO_DOCUMENT_SIGHT'
+        | 'KNOWN_ACCOUNT_CONFIRMATION';
+    },
+  ) {
+    const now = new Date();
+    return this.tenantPrisma.personnel
+      .withdrawDirectoryConsent({
+        actor: this.actor(actor),
+        credentialId,
+        holderUserId: body.holderUserId,
+        channel: body.channel,
+        receivedAt: new Date(body.receivedAt),
+        verifierUserId: body.verifierUserId,
+        verificationMethod: body.verificationMethod,
+        now,
+        writeWithdrawalAudit: async (tx, result) => {
+          await this.audit.executeInTransaction(
+            actor,
+            async (ops) => {
+              await ops.append({
+                idempotencyKey: randomUUID(),
+                eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+                outcome: 'SUCCESS',
+                occurredAt: now,
+                resourceType: 'Credential',
+                resourceId: result.credentialId,
+                metadata: {
+                  credentialId: result.credentialId,
+                  holderUserId: result.holderUserId,
+                  channel: result.channel,
+                  receivedAt: result.receivedAt,
+                  verifierUserId: result.verifierUserId,
+                  verificationMethod: result.verificationMethod,
+                  executorUserId: result.executorUserId,
+                  result: result.result,
+                },
+              });
+            },
+            tx,
+          );
+        },
+      })
+      .then((result) => ({
+        credentialId: result.credentialId,
+        holderUserId: result.holderUserId,
+        channel: result.channel,
+        receivedAt: result.receivedAt,
+        verifierUserId: result.verifierUserId,
+        verificationMethod: result.verificationMethod,
+        executorUserId: result.executorUserId,
+        executedAt: now.toISOString(),
+        result: result.result,
+        registryConsentRevokedAt: result.registryConsentRevokedAt.toISOString(),
+        lifecycle: result.lifecycle,
+        status: publicCertificateStatus(result.lifecycle, result.expiresAt, now),
+      }))
+      .catch(fail);
   }
 }

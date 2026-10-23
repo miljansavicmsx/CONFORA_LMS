@@ -627,6 +627,35 @@ describe('OIDC browser session', () => {
     expect(referer.status).toBe(201);
   });
 
+  it('requires the session CSRF token on a cookie-authenticated directory withdrawal', async () => {
+    const sid = await candidateSession();
+    const credentialId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+    const path = `/v1/staff/certificates/${credentialId}/directory-consent-withdrawal`;
+    const missing = await request(http())
+      .post(path)
+      .set('Cookie', sidCookie(sid))
+      .set('Origin', ORIGIN)
+      .send({ holderUserId: credentialId });
+    expect(missing.status).toBe(403);
+    expect(headerText(parseRecord(JSON.stringify(missing.body))['error'])).toBe(
+      'oidc.csrf.rejected',
+    );
+    const csrf = await sessionCsrf(sid);
+    const presented = await request(http())
+      .post(path)
+      .set('Cookie', sidCookie(sid))
+      .set('Origin', ORIGIN)
+      .set('X-CSRF-Token', csrf)
+      .send({ holderUserId: credentialId });
+    expect(presented.status).not.toBe(403);
+    expect(headerText(parseRecord(JSON.stringify(presented.body))['error'])).not.toBe(
+      'oidc.csrf.rejected',
+    );
+    expect(
+      (await request(http()).get('/v1/auth/session').set('Cookie', sidCookie(sid))).status,
+    ).toBe(200);
+  });
+
   it('rejects a missing, wrong, or other-session csrf token without dropping the session', async () => {
     process.env['OIDC_SESSION_IDLE_SECONDS'] = '30';
     try {

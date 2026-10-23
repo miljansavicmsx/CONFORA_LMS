@@ -5,6 +5,8 @@ import { liveBallotCounts, voteResult } from '../certification-flow/certificatio
 import { buildCertificatePdf, buildPersonnelVerificationPdf } from '../personnel/personnel-pdf';
 import {
   addYears,
+  assertConsentRequestReceivedAt,
+  assertDirectoryConsentAdministrator,
   assertIssuer,
   assertStatusTransition,
   directoryConsentActive,
@@ -13,6 +15,8 @@ import {
   PersonnelRuleError,
   presentPersonnelPublicVerification,
   publicCertificateStatus,
+  type DirectoryConsentChannel,
+  type DirectoryConsentVerificationMethod,
   type PersonnelPublicVerification,
   type PublicCertificateStatus,
   type StoredLifecycle,
@@ -879,6 +883,116 @@ function verificationResult(
     return 'ACTIVE';
   }
   return status;
+}
+
+export type DirectoryConsentWithdrawal = {
+  credentialId: string;
+  holderUserId: string;
+  lifecycle: StoredLifecycle;
+  expiresAt: Date | null;
+  registryListed: boolean;
+  registryConsentAt: Date | null;
+  registryConsentRevokedAt: Date;
+  result: 'WITHDRAWN' | 'ALREADY_WITHDRAWN';
+  channel: DirectoryConsentChannel;
+  receivedAt: string;
+  verifierUserId: string;
+  verificationMethod: DirectoryConsentVerificationMethod;
+  executorUserId: string;
+};
+
+export type DirectoryConsentAudit = (tx: Tx, result: DirectoryConsentWithdrawal) => Promise<void>;
+
+/**
+ * Interim directory-name withdrawal (OD-DIR-33, RB-02).
+ * Sets registryConsentRevokedAt once. Does not delete the registry row, the
+ * credential, or the original consent timestamp, and does not change lifecycle.
+ * A second call keeps the first timestamp. Another tenant's row is not visible.
+ */
+export async function withdrawDirectoryConsent(
+  client: PersonnelClient,
+  input: {
+    tenantId: string;
+    actor: Actor;
+    credentialId: string;
+    holderUserId: string;
+    channel: DirectoryConsentChannel;
+    receivedAt: Date;
+    verifierUserId: string;
+    verificationMethod: DirectoryConsentVerificationMethod;
+    now: Date;
+    writeWithdrawalAudit?: DirectoryConsentAudit | undefined;
+  },
+): Promise<DirectoryConsentWithdrawal> {
+  assertDirectoryConsentAdministrator(input.actor.roles);
+  if (input.tenantId.trim().length === 0) {
+    throw new PersonnelRuleError('TENANT_REQUIRED');
+  }
+  assertConsentRequestReceivedAt(input.receivedAt, input.now);
+  return client.$transaction(async (tx) => {
+    const row = await loadIssued(tx, input.tenantId, input.credentialId);
+    if (row.holderUserId !== input.holderUserId) {
+      throw new PersonnelRuleError('HOLDER_MISMATCH');
+    }
+    const verifier = await tx.user.findFirst({
+      where: { tenantId: input.tenantId, id: input.verifierUserId, isActive: true },
+      select: { id: true },
+    });
+    if (!verifier) {
+      throw new PersonnelRuleError('VERIFIER_UNKNOWN');
+    }
+    const link = row.examPersonnelLink;
+    if (!link) {
+      throw new PersonnelNotFoundError();
+    }
+    let revokedAt = link.registryConsentRevokedAt;
+    let outcome: DirectoryConsentWithdrawal['result'] = revokedAt
+      ? 'ALREADY_WITHDRAWN'
+      : 'WITHDRAWN';
+    if (!revokedAt) {
+      const updated = await tx.examPersonnelCredentialLink.updateMany({
+        where: {
+          tenantId: input.tenantId,
+          credentialId: row.id,
+          registryConsentRevokedAt: null,
+        },
+        data: { registryConsentRevokedAt: input.now },
+      });
+      if (updated.count === 1) {
+        revokedAt = input.now;
+        outcome = 'WITHDRAWN';
+      } else {
+        const again = await tx.examPersonnelCredentialLink.findFirst({
+          where: { tenantId: input.tenantId, credentialId: row.id },
+          select: { registryConsentRevokedAt: true },
+        });
+        if (!again?.registryConsentRevokedAt) {
+          throw new PersonnelRuleError('WITHDRAWAL_FAILED');
+        }
+        revokedAt = again.registryConsentRevokedAt;
+        outcome = 'ALREADY_WITHDRAWN';
+      }
+    }
+    const withdrawal: DirectoryConsentWithdrawal = {
+      credentialId: row.id,
+      holderUserId: row.holderUserId,
+      lifecycle: asLifecycle(row.lifecycle),
+      expiresAt: row.expiresAt,
+      registryListed: link.registryListed,
+      registryConsentAt: link.registryConsentAt,
+      registryConsentRevokedAt: revokedAt,
+      result: outcome,
+      channel: input.channel,
+      receivedAt: input.receivedAt.toISOString(),
+      verifierUserId: verifier.id,
+      verificationMethod: input.verificationMethod,
+      executorUserId: input.actor.userId,
+    };
+    if (input.writeWithdrawalAudit) {
+      await input.writeWithdrawalAudit(tx, withdrawal);
+    }
+    return withdrawal;
+  });
 }
 
 export async function searchPublicRegistry(

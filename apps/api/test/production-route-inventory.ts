@@ -45,6 +45,14 @@ export const PUBLIC_CATALOG_ROUTES = [
   },
 ] as const;
 
+export const DIRECTORY_CONSENT_WITHDRAWAL_ROUTES = [
+  {
+    route: 'POST /v1/staff/certificates/:credentialId/directory-consent-withdrawal',
+    reason:
+      'Interim OD-DIR-33 directory-name withdrawal for one certificate in the caller organization. Existing STAFF_SYSADM only, cookie sessions require the CSRF token, the audit row is append-only, and the certificate status is not changed.',
+  },
+] as const;
+
 export const PRIOR_PRODUCTION_ROUTE_COUNT = 92;
 
 export const PRODUCTION_ROUTE_INVENTORY = [
@@ -103,6 +111,7 @@ export const PRODUCTION_ROUTE_INVENTORY = [
   'GET /v1/public/certificates',
   'GET /v1/public/certificates/:publicUid/pdf',
   'GET /v1/public/certificates/:publicUid',
+  ...DIRECTORY_CONSENT_WITHDRAWAL_ROUTES.map((entry) => entry.route),
   'POST /v1/staff/schemes/:schemeVersionId/levels',
   'POST /v1/staff/schemes/:schemeVersionId/decision-makers',
   'POST /v1/staff/schemes/:schemeVersionId/case-rules',
@@ -149,7 +158,11 @@ export const PRODUCTION_ROUTE_COUNT = PRODUCTION_ROUTE_INVENTORY.length;
 export function justifiedProductionRouteCount(): number {
   const reasons = new Set<string>();
   const inventory = new Set<string>(PRODUCTION_ROUTE_INVENTORY);
-  for (const entry of [...OIDC_BROWSER_ROUTES, ...PUBLIC_CATALOG_ROUTES]) {
+  for (const entry of [
+    ...OIDC_BROWSER_ROUTES,
+    ...PUBLIC_CATALOG_ROUTES,
+    ...DIRECTORY_CONSENT_WITHDRAWAL_ROUTES,
+  ]) {
     if (
       entry.reason.trim().length < 40 ||
       reasons.has(entry.reason) ||
@@ -159,11 +172,14 @@ export function justifiedProductionRouteCount(): number {
     }
     reasons.add(entry.reason);
   }
-  const expected =
-    PRIOR_PRODUCTION_ROUTE_COUNT + OIDC_BROWSER_ROUTES.length + PUBLIC_CATALOG_ROUTES.length;
+  const justified =
+    OIDC_BROWSER_ROUTES.length +
+    PUBLIC_CATALOG_ROUTES.length +
+    DIRECTORY_CONSENT_WITHDRAWAL_ROUTES.length;
+  const expected = PRIOR_PRODUCTION_ROUTE_COUNT + justified;
   if (PRODUCTION_ROUTE_INVENTORY.length !== expected) {
     throw new Error(
-      `inventory length ${String(PRODUCTION_ROUTE_INVENTORY.length)} is not ${String(PRIOR_PRODUCTION_ROUTE_COUNT)} plus ${String(OIDC_BROWSER_ROUTES.length + PUBLIC_CATALOG_ROUTES.length)} justified routes`,
+      `inventory length ${String(PRODUCTION_ROUTE_INVENTORY.length)} is not ${String(PRIOR_PRODUCTION_ROUTE_COUNT)} plus ${String(justified)} justified routes`,
     );
   }
   return expected;

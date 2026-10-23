@@ -3,6 +3,8 @@ import { inflateSync } from 'node:zlib';
 import { encodedStatusList, statusListBits } from './personnel-status-list';
 import {
   addYears,
+  assertConsentRequestReceivedAt,
+  assertDirectoryConsentAdministrator,
   assertIssuer,
   assertPublicRateLimit,
   assertStatusTransition,
@@ -145,5 +147,32 @@ describe('personnel certificate rules', () => {
       issuedAt: null,
       holderName: null,
     });
+  });
+
+  it('lets only the existing system administrator execute a directory withdrawal', () => {
+    expect(() => {
+      assertDirectoryConsentAdministrator(['STAFF_SYSADM']);
+    }).not.toThrow();
+    for (const role of [
+      'STAFF_DIR',
+      'STAFF_ROLEADM',
+      'COM_CERT',
+      'QUALITY_MANAGER',
+      'LIFECYCLE_OFFICER',
+      'ISSUANCE_OFFICER',
+      'USR_CAND',
+      'USR_CERT',
+    ]) {
+      expect(() => {
+        assertDirectoryConsentAdministrator([role]);
+      }).toThrow('ROLE_SEPARATION');
+    }
+    const now = new Date('2026-10-23T12:00:00.000Z');
+    expect(() => {
+      assertConsentRequestReceivedAt(new Date('2026-10-23T11:00:00.000Z'), now);
+    }).not.toThrow();
+    expect(() => {
+      assertConsentRequestReceivedAt(new Date('2026-10-23T12:30:00.000Z'), now);
+    }).toThrow('RECEIVED_AT');
   });
 });

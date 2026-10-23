@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpException,
   Param,
   ParseUUIDPipe,
@@ -24,12 +25,14 @@ import {
 } from '../auth/request-principal';
 import { ExamCommitteeRolesGuard } from '../exam/exam-roles.guard';
 import { AccessDeniedError } from '../tenant/tenant-errors';
+import { DirectoryConsentAdministratorGuard } from './directory-consent.guard';
 import {
   AmfProposalDto,
   ChangeCertificateStatusDto,
   CpdRecordDto,
   IssueCertificateDto,
   PublicSearchDto,
+  WithdrawDirectoryConsentDto,
 } from './dto/personnel.dto';
 import { assertPublicRateLimit, PersonnelRuleError } from './personnel-rules';
 import { PersonnelCertificateService } from './personnel.service';
@@ -141,6 +144,22 @@ export class CandidateCertificateController {
     @Req() req: RequestWithPrincipal,
   ) {
     return this.personnel.reminders(actor(req), credentialId);
+  }
+}
+
+@Controller('staff/certificates')
+@UseGuards(DirectoryConsentAdministratorGuard)
+export class StaffDirectoryConsentController {
+  constructor(private readonly personnel: PersonnelCertificateService) {}
+
+  @Post(':credentialId/directory-consent-withdrawal')
+  @HttpCode(200)
+  withdraw(
+    @Param('credentialId', ParseUUIDPipe) credentialId: string,
+    @Body() body: WithdrawDirectoryConsentDto,
+    @Req() req: RequestWithPrincipal,
+  ) {
+    return this.personnel.withdrawDirectoryConsent(actor(req), credentialId, body);
   }
 }
 
