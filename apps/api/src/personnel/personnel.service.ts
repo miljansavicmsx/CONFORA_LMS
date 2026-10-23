@@ -1,5 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { AuditService } from '../audit/audit.service';
 import type { AuthenticatedActor } from '../auth/request-principal';
@@ -7,11 +13,15 @@ import { PersonnelNotFoundError } from '../prisma/personnel-certificate-store';
 import { TenantPrismaService } from '../prisma/tenant-prisma.service';
 import { AccessDeniedError } from '../tenant/tenant-errors';
 import {
+  claimDirectoryConsentRefusalWrite,
   DIRECTORY_CONSENT_PROCEDURE,
   DIRECTORY_CONSENT_PROCEDURE_REF,
   DIRECTORY_CONSENT_SECTIONS,
+  DIRECTORY_CONSENT_VERIFY_ACTION,
+  directoryConsentVerifierRole,
   PersonnelRuleError,
   publicCertificateStatus,
+  releaseDirectoryConsentRefusalWrite,
 } from './personnel-rules';
 import { importVerificationJwk, publicJwk } from './personnel-vc';
 
@@ -58,6 +68,8 @@ function fail(error: unknown): never {
 
 @Injectable()
 export class PersonnelCertificateService {
+  private readonly logger = new Logger(PersonnelCertificateService.name);
+
   constructor(
     private readonly tenantPrisma: TenantPrismaService,
     private readonly audit: AuditService,
@@ -278,6 +290,7 @@ export class PersonnelCertificateService {
 
   /**
    * The verifier is the authenticated user. Their staff role is the one held now.
+   * A non-staff role is refused before any certificate or request read.
    */
   verifyDirectoryConsent(
     actor: AuthenticatedActor,
@@ -292,6 +305,9 @@ export class PersonnelCertificateService {
   ) {
     const now = new Date();
     const section = DIRECTORY_CONSENT_SECTIONS.identity;
+    if (!directoryConsentVerifierRole(actor.roles)) {
+      return this.refuseNonStaffVerification(actor, credentialId, now);
+    }
     return this.tenantPrisma.personnel
       .verifyDirectoryConsent({
         actor: this.actor(actor),
@@ -473,14 +489,88 @@ export class PersonnelCertificateService {
         metadata[key] = value;
       }
     }
-    await this.audit.append(actor, {
-      idempotencyKey: randomUUID(),
+    await this.appendRefusal(actor, {
       eventType: input.eventType,
-      outcome: 'DENIED',
       occurredAt: input.occurredAt,
-      resourceType: 'Credential',
-      resourceId: input.credentialId,
+      credentialId: input.credentialId,
+      result: code,
       metadata,
     });
+  }
+
+  /**
+   * Staff role comes from the session. This runs before a certificate lookup,
+   * so a missing certificate and an existing one return the same 403.
+   * The refusal row is the caller, the action, the result, and the time.
+   */
+  private async refuseNonStaffVerification(
+    actor: AuthenticatedActor,
+    credentialId: string,
+    occurredAt: Date,
+  ): Promise<never> {
+    const result = 'VERIFIER_NOT_STAFF';
+    const dedupKey = [
+      actor.tenantId,
+      actor.userId,
+      credentialId,
+      DIRECTORY_CONSENT_VERIFY_ACTION,
+      result,
+    ].join(':');
+    if (claimDirectoryConsentRefusalWrite(dedupKey, occurredAt.getTime())) {
+      const wrote = await this.appendRefusal(actor, {
+        eventType: 'DIRECTORY_CONSENT_VERIFIED',
+        occurredAt,
+        credentialId,
+        result,
+        metadata: {
+          credentialId,
+          action: DIRECTORY_CONSENT_VERIFY_ACTION,
+          result,
+          procedure: DIRECTORY_CONSENT_PROCEDURE,
+          procedureRef: `${DIRECTORY_CONSENT_PROCEDURE_REF}#identity-check`,
+          procedureSection: DIRECTORY_CONSENT_SECTIONS.identity,
+        },
+      });
+      if (!wrote) {
+        releaseDirectoryConsentRefusalWrite(dedupKey);
+      }
+    }
+    throw new AccessDeniedError();
+  }
+
+  /**
+   * A failed refusal append must not replace the original 4xx.
+   * The log names the event and the result code only.
+   */
+  private async appendRefusal(
+    actor: AuthenticatedActor,
+    input: {
+      eventType:
+        | 'DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED'
+        | 'DIRECTORY_CONSENT_VERIFIED'
+        | 'DIRECTORY_CONSENT_WITHDRAWN';
+      occurredAt: Date;
+      credentialId: string;
+      result: string;
+      metadata: Record<string, string>;
+    },
+  ): Promise<boolean> {
+    try {
+      await this.audit.append(actor, {
+        idempotencyKey: randomUUID(),
+        eventType: input.eventType,
+        outcome: 'DENIED',
+        occurredAt: input.occurredAt,
+        resourceType: 'Credential',
+        resourceId: input.credentialId,
+        metadata: input.metadata,
+      });
+      return true;
+    } catch {
+      this.logger.warn(
+        `directory consent refusal audit failed event=${input.eventType} result=${input.result}`,
+      );
+      return false;
+    }
   }
 }

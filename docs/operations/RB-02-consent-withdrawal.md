@@ -18,10 +18,9 @@ A different staff member signs in with their own session and records the verific
 
 At that moment the server requires all of the following:
 
-- The caller is the authenticated user, and that user is active in the certificate's organization.
-- The caller holds one of the existing staff roles: `STAFF_DIR`, `STAFF_SYSADM`, `STAFF_TRAINADM`, `STAFF_AUD`, or `STAFF_ROLEADM`. A candidate, a certified person, a committee role, or any other non-staff role is rejected.
-- The caller is not the holder.
-- A request for this certificate already exists.
+- The caller is the authenticated user. Before the server reads the certificate or the request, it checks the staff role on that session. A caller who does not hold one of the staff roles below receives one 403, whether or not that certificate exists. The refusal audit for that 403 records the caller, the action `DIRECTORY_CONSENT_VERIFY`, the result, and the time. It does not store the evidence reference. Repeating that denial on this server process does not append another row for the same caller and certificate.
+- The caller holds one of the existing staff roles: `STAFF_DIR`, `STAFF_SYSADM`, `STAFF_TRAINADM`, `STAFF_AUD`, or `STAFF_ROLEADM`. A candidate, a certified person, a committee role, or any other non-staff role is rejected with that 403.
+- When the caller does hold a staff role, the server then requires that the user is active in the certificate's organization, is not the holder, and that a request for this certificate already exists.
 
 `STAFF_DIR` may verify and still must not execute. The role stored on the verification is the staff role the verifier holds on this session.
 
@@ -45,7 +44,7 @@ The caller must be `STAFF_SYSADM` in the certificate's organization, with MFA. A
 
 A browser session cookie requires that session's `X-CSRF-Token` and an `Origin` in `OIDC_WEB_ORIGINS`.
 
-Each refusal appends audit event `DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED`, `DIRECTORY_CONSENT_VERIFIED`, or `DIRECTORY_CONSENT_WITHDRAWN` with outcome `DENIED`, after the business transaction has rolled back. A success appends the same event inside the transaction that records the step. The audit cites this runbook (`procedure` `RB-02`, `procedureRef`, and `procedureSection`), the method code, the verifier, the role held at verification, and `evidenceRef`. It does not store a document image, a document number, or a name.
+Each refusal appends audit event `DIRECTORY_CONSENT_WITHDRAWAL_REQUESTED`, `DIRECTORY_CONSENT_VERIFIED`, or `DIRECTORY_CONSENT_WITHDRAWN` with outcome `DENIED`, after the business transaction has rolled back. If that append fails, the server still returns the original refusal and logs the audit failure without personal data. A success appends the same event inside the transaction that records the step. The audit cites this runbook (`procedure` `RB-02`, `procedureRef`, and `procedureSection`). A recorded verification also cites the method code, the verifier, the role held at verification, and `evidenceRef`. A non-staff 403 does not store `evidenceRef`. The audit does not store a document image, a document number, or a name.
 
 After execution, signed-in name search and public verification omit the holder name. Public status stays `VALID` while the certificate is active.
 

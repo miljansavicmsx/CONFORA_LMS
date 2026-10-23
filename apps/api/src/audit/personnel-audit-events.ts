@@ -37,6 +37,7 @@ const DIRECTORY_CONSENT_WITHDRAWAL_METADATA = {
     evidenceRef: STRING_VALUE,
     verifiedAt: STRING_VALUE,
     executorUserId: STRING_VALUE,
+    action: STRING_VALUE,
     result: STRING_VALUE,
     procedure: STRING_VALUE,
     procedureRef: STRING_VALUE,

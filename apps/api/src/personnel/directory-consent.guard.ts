@@ -24,8 +24,8 @@ export class DirectoryConsentAdministratorGuard implements CanActivate {
 
 /**
  * Any authenticated member of an organization may reach the verifier step.
- * The handler then rejects a holder, a non-staff user, and a missing certificate.
- * The verifier id is the session user, never a field the executor types.
+ * The handler rejects a non-staff role from the session before it reads a
+ * certificate. The verifier id is the session user, never a typed field.
  */
 @Injectable()
 export class DirectoryConsentVerifierGuard implements CanActivate {

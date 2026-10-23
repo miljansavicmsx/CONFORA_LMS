@@ -10,11 +10,14 @@ import {
   assertIssuer,
   assertPublicRateLimit,
   assertStatusTransition,
+  claimDirectoryConsentRefusalWrite,
   directoryConsentActive,
   HIDDEN_PERSONNEL_VERIFICATION,
   PERSONNEL_VALIDITY_YEARS,
   presentPersonnelPublicVerification,
   publicCertificateStatus,
+  releaseDirectoryConsentRefusalWrite,
+  resetDirectoryConsentRefusalDedup,
   resetPublicRateLimit,
 } from './personnel-rules';
 import { signPersonnelCredential, verifyPersonnelCredential } from './personnel-vc';
@@ -213,5 +216,15 @@ describe('personnel certificate rules', () => {
     expect(() => {
       assertDirectoryConsentFourEyes('admin', 'director');
     }).not.toThrow();
+  });
+
+  it('deduplicates a repeated directory-consent refusal write', () => {
+    resetDirectoryConsentRefusalDedup();
+    const key = 'tenant:user:credential:DIRECTORY_CONSENT_VERIFY:VERIFIER_NOT_STAFF';
+    expect(claimDirectoryConsentRefusalWrite(key, 1_000)).toBe(true);
+    expect(claimDirectoryConsentRefusalWrite(key, 1_500)).toBe(false);
+    releaseDirectoryConsentRefusalWrite(key);
+    expect(claimDirectoryConsentRefusalWrite(key, 1_600)).toBe(true);
+    resetDirectoryConsentRefusalDedup();
   });
 });

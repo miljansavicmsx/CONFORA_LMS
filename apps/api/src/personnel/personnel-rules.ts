@@ -88,6 +88,37 @@ export function resetPublicRateLimit(): void {
   hits.clear();
 }
 
+/**
+ * Process-local deduplication of identical directory-consent refusal writes.
+ * Another instance does not see these keys. A failed write releases its key.
+ */
+const refusalWrites = new Map<string, number>();
+const REFUSAL_DEDUP_WINDOW_MS = 60 * 60 * 1000;
+
+export function resetDirectoryConsentRefusalDedup(): void {
+  refusalWrites.clear();
+}
+
+export function claimDirectoryConsentRefusalWrite(key: string, nowMs: number): boolean {
+  const previous = refusalWrites.get(key);
+  if (previous !== undefined && nowMs - previous < REFUSAL_DEDUP_WINDOW_MS) {
+    return false;
+  }
+  if (refusalWrites.size > 1024) {
+    for (const [stored, stamp] of refusalWrites) {
+      if (nowMs - stamp >= REFUSAL_DEDUP_WINDOW_MS) {
+        refusalWrites.delete(stored);
+      }
+    }
+  }
+  refusalWrites.set(key, nowMs);
+  return true;
+}
+
+export function releaseDirectoryConsentRefusalWrite(key: string): void {
+  refusalWrites.delete(key);
+}
+
 export function assertPublicRateLimit(
   key: string,
   nowMs: number,
@@ -191,6 +222,9 @@ export const DIRECTORY_CONSENT_VERIFIER_ROLES = [
   'STAFF_AUD',
   'STAFF_ROLEADM',
 ] as const;
+
+/** Action recorded on a non-staff verification refusal. Not an evidence reference. */
+export const DIRECTORY_CONSENT_VERIFY_ACTION = 'DIRECTORY_CONSENT_VERIFY' as const;
 
 /** Documented procedure. Audit rows cite this runbook and one of its sections. */
 export const DIRECTORY_CONSENT_PROCEDURE = 'RB-02' as const;

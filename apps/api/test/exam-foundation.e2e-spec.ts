@@ -2691,21 +2691,75 @@ describe('certification exam foundation e2e', () => {
           .send({})
       ).status,
     ).toBe(400);
-    for (const rejectedVerifier of [
-      auth(candidateSubject, ['STAFF_SYSADM']),
-      auth(candidateSubject, ['USR_CAND']),
+    expect(
+      (
+        await request(httpServer(app))
+          .post(verificationPath)
+          .set(auth(candidateSubject, ['STAFF_SYSADM']))
+          .send(verificationBody)
+      ).status,
+    ).toBe(400);
+    const nonStaffEvidence = {
+      verificationMethod: 'IN_PERSON_DOCUMENT_SIGHT' as const,
+      evidenceRef: 'RB02-NONSTAFF-PROBE',
+    };
+    const missingVerificationPath =
+      '/v1/staff/certificates/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/directory-consent-verifications';
+    const candidateAuth = auth(candidateSubject, ['USR_CAND']);
+    const deniedOnExisting = await request(httpServer(app))
+      .post(verificationPath)
+      .set(candidateAuth)
+      .send(nonStaffEvidence);
+    const deniedOnMissing = await request(httpServer(app))
+      .post(missingVerificationPath)
+      .set(candidateAuth)
+      .send(nonStaffEvidence);
+    expect(deniedOnExisting.status).toBe(403);
+    expect(deniedOnMissing.status).toBe(403);
+    expect(deniedOnExisting.body).toEqual(deniedOnMissing.body);
+    const deniedAgain = await request(httpServer(app))
+      .post(verificationPath)
+      .set(candidateAuth)
+      .send({ ...nonStaffEvidence, evidenceRef: 'RB02-NONSTAFF-REPEAT' });
+    expect(deniedAgain.status).toBe(403);
+    expect(deniedAgain.body).toEqual(deniedOnExisting.body);
+    const candidateRefusals = (
+      await requirePrisma().auditEvent.findMany({
+        where: {
+          tenantId,
+          actorUserId: candidateId,
+          eventType: 'DIRECTORY_CONSENT_VERIFIED',
+          outcome: 'DENIED',
+        },
+      })
+    ).filter((row) => {
+      const metadata = row.metadata;
+      if (metadata === null || typeof metadata !== 'object' || Array.isArray(metadata)) {
+        return false;
+      }
+      const result = (metadata as { result?: string }).result;
+      return result === 'VERIFIER_NOT_STAFF';
+    });
+    expect(candidateRefusals).toHaveLength(2);
+    const candidateRefusalText = JSON.stringify(candidateRefusals);
+    expect(candidateRefusalText).not.toContain('evidenceRef');
+    expect(candidateRefusalText).not.toContain('RB02-NONSTAFF-PROBE');
+    expect(candidateRefusalText).not.toContain('RB02-NONSTAFF-REPEAT');
+    expect(candidateRefusalText).toContain('DIRECTORY_CONSENT_VERIFY');
+    expect(candidateRefusalText).toContain('VERIFIER_NOT_STAFF');
+    for (const row of candidateRefusals) {
+      expect(row.actorUserId).toBe(candidateId);
+      expect(row.occurredAt).toBeInstanceOf(Date);
+    }
+    for (const nonStaff of [
       auth(otherSubject, ['USR_CAND']),
       auth(qualitySubject, ['QUALITY_MANAGER']),
       auth(issuerSubject, ['COM_CERT']),
     ]) {
       expect(
-        (
-          await request(httpServer(app))
-            .post(verificationPath)
-            .set(rejectedVerifier)
-            .send(verificationBody)
-        ).status,
-      ).toBe(400);
+        (await request(httpServer(app)).post(verificationPath).set(nonStaff).send(verificationBody))
+          .status,
+      ).toBe(403);
     }
     expect(
       (
@@ -2740,6 +2794,23 @@ describe('certification exam foundation e2e', () => {
           .send({})
       ).status,
     ).toBe(403);
+    const fourEyesRefusal = await requirePrisma().auditEvent.findFirst({
+      where: {
+        tenantId,
+        eventType: 'DIRECTORY_CONSENT_WITHDRAWN',
+        resourceId: issuedBody.credentialId,
+        actorUserId: qualityId,
+        outcome: 'DENIED',
+      },
+    });
+    const fourEyesMetadata =
+      fourEyesRefusal?.metadata &&
+      typeof fourEyesRefusal.metadata === 'object' &&
+      !Array.isArray(fourEyesRefusal.metadata)
+        ? fourEyesRefusal.metadata
+        : null;
+    expect(fourEyesRefusal?.outcome).toBe('DENIED');
+    expect(fourEyesMetadata).toEqual(expect.objectContaining({ result: 'FOUR_EYES' }));
     const untouched = await requirePrisma().examPersonnelCredentialLink.findFirst({
       where: { tenantId, credentialId: issuedBody.credentialId },
     });
